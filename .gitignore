@@ -1,3 +1,4 @@
+# Unity folders
 [Ll]ibrary/
 [Tt]emp/
 [Oo]bj/
@@ -5,11 +6,23 @@
 [Bb]uilds/
 [Ll]ogs/
 UserSettings/
-
 MemoryCaptures/
 
-# Visual Studio
+# Unity Addressables
+/ServerData
+/[Aa]ssets/StreamingAssets/aa*
+/[Aa]ssets/Addressables_Temp*
+
+# Visual Studio / IDE
 .vs/
+.gradle/
+.consulo/
+
+# JetBrains Rider
+/[Aa]ssets/Plugins/Editor/JetBrains*
+*.DotSettings.user
+
+# Auto-generated solution/project files
 *.csproj
 *.unityproj
 *.sln
@@ -20,6 +33,33 @@ MemoryCaptures/
 *.pidb
 *.booproj
 
-# OS
+# Debug / database files
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# Unity meta debug
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+
+# Crash / debug logs
+sysinfo.txt
+mono_crash.*
+*.log
+
+# Build outputs
+*.apk
+*.aab
+*.unitypackage
+*.app
+
+# Blender backups
+*.blend1
+*.blend1.meta
+
+# OS files
 .DS_Store
 Thumbs.db
