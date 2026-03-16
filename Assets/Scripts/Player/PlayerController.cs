@@ -1,50 +1,44 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IControllable
 {
-    [Header("캐릭터 이동 설정")]
-
-    [Range(1f, 40f)]
-    [SerializeField]
-    private float moveSpeed = 10f;
-    [Range(60f, 480f)]
-    [SerializeField]
-    private float angularSpeed = 120f;
-    [Range(4f, 100f)]
-    [SerializeField]
-    private float accelerationSpeed = 8f;
+    [SerializeField] 
+    private GameObject objSelectionArrow;
 
     private NavMeshAgent agent;
 
-    private Camera mainCamera;
     void Start()
     {
         this.agent = GetComponent<NavMeshAgent>();
-
-        this.mainCamera = Camera.main;
     }
-    void Update()
+
+    public virtual void OnSelected()
     {
-        ClickToMove();
+        if (this.objSelectionArrow != null)
+            this.objSelectionArrow.SetActive(true);
+        
+        Debug.Log(this.gameObject.name + " 선택됨");
     }
-    private void ClickToMove()
+
+    public virtual void OnDeselected()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
+        if (this.objSelectionArrow != null)
+            this.objSelectionArrow.SetActive(false);
+        Debug.Log(this.gameObject.name + " 해제됨");
+    }
 
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity))
-            {
-                this.agent.speed = this.moveSpeed;
-                this.agent.angularSpeed = this.angularSpeed;
-                this.agent.acceleration = this.accelerationSpeed;
-                this.agent.SetDestination(hit.point);
+    public virtual void MoveTo(Vector3 destination)
+    {
+        this.agent.ResetPath();
+        this.agent.velocity = Vector3.zero;
+        this.agent.SetDestination(destination);
+    }
 
-                Debug.Log("이동 목표 설정: " + hit.point);
-                Debug.DrawLine(ray.origin, hit.point, Color.red, 1.0f);
-            }
-        }
+    public void SetSpeed(float move, float angular, float accel)
+    {
+        this.agent.speed = move;
+        this.agent.angularSpeed = angular;
+        this.agent.acceleration = accel;
     }
 }
