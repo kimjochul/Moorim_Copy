@@ -21,6 +21,8 @@ public class DayData
 
 public class DayManager : MonoBehaviour
 {
+    // 날짜 계산 관련 매니저
+    
     [SerializeField] private float dayLength = 600f;
     private float _timer = 0f;
     
@@ -29,8 +31,8 @@ public class DayManager : MonoBehaviour
 
     public bool IsRunning { get; private set; }
     
-    public event Action OnDayStart;
-    public event Action OnDayEnd;
+    public event Action OnDayStart; // 각 매니저에서 가게 운영이 시작될 때의 동작들을 여기에 등록
+    public event Action OnDayEnd; // 각 매니저에서 가게 운영이 종료될 때의 동작들을 여기에 등록
 
     public void Start()
     {
@@ -40,7 +42,8 @@ public class DayManager : MonoBehaviour
             dayOfWeek = DayOfWeek.Monday
         };
     }
-
+    
+    // 가게 운영 시작 버튼이 눌리면 이 함수 호출되도록
     public void DayStart()
     {
         _timer = 0f;
