@@ -11,11 +11,20 @@ public class RestaurantEconomy
 public class EconomyManager : MonoBehaviour
 {
     // 가게의 재정 관련 행동을 할 클래스
+    [SerializeField] DayManager dayManager;
     
     public RestaurantEconomy RestaurantEconomy { get; private set; }
 
     private int _todayMoneyIncome;
     private int _todayFameIncome;
+    
+    void Awake()
+    {
+        RestaurantEconomy = new RestaurantEconomy();
+        
+        dayManager.OnDayStart += ResetDay;
+        dayManager.OnDayEnd += TotalEarningToday;
+    }
     
     // 메뉴를 판매 할 때마다 혹은 가게 운영 하루 마무리 할 때 하루 수입 정리
     public void AddMoney(int amount)

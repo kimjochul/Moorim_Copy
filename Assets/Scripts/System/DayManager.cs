@@ -34,7 +34,7 @@ public class DayManager : MonoBehaviour
     public event Action OnDayStart; // 각 매니저에서 가게 운영이 시작될 때의 동작들을 여기에 등록
     public event Action OnDayEnd; // 각 매니저에서 가게 운영이 종료될 때의 동작들을 여기에 등록
 
-    public void Start()
+    public void Awake()
     {
         DayData = new DayData
         {
