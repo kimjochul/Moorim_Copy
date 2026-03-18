@@ -111,7 +111,7 @@ public class Inventory : MonoBehaviour
             NotifyItemChanged(target.Item.ID);
     }
 
-    public void GetItem(IItem item)
+    public void GetItem(IItem item, int count)
     {
         int itemID = item.ID;
         bool changed = false;
@@ -120,7 +120,7 @@ public class Inventory : MonoBehaviour
         {
             if (!slot.IsEmpty && slot.Item.ItemName == item.ItemName && slot.Count < item.InventoryCapacity)
             {
-                slot.AddCount(1);
+                slot.AddCount(count);
                 Debug.Log($"Added {slot.Item}");
                 changed = true;
                 break;
@@ -128,7 +128,7 @@ public class Inventory : MonoBehaviour
             
             if(slot.IsEmpty)
             {
-                slot.AddItem(item, 1);
+                slot.AddItem(item, count);
                 changed = true;
                 break;
             }
