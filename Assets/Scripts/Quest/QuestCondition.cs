@@ -2,7 +2,7 @@ using UnityEngine;
 
 public enum QuestEventType
 {
-    ItemGet,
+    ItemChanged,
     Fail,
     ServeCustomer,
 }
@@ -20,4 +20,5 @@ public struct QuestEvent
 {
     public QuestEventType type;
     public int value; // itemID or 기타 값
+    public int currentCount;
 }

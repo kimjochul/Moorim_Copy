@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class Slot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDropHandler
 {
+    public Inventory Owner { get; private set; }
+    
     public IItem Item { get; private set; }
     public int Count {get; private set;}
     [field:SerializeField]public bool CountForQuest { get; private set; }
@@ -19,11 +21,18 @@ public class Slot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDropHandler
         
     public bool IsEmpty { get; private set; } = true;
 
+    public event Action<Slot, Slot> OnSlotDrop;
+    
     private void OnEnable()
     {
         slotIcon.gameObject.SetActive(!IsEmpty);
     }
 
+    public void SetOwner(Inventory owner)
+    {
+        Owner = owner;
+    }
+    
     public void AddItem(IItem item, int count)
     {
         this.Item = item;
@@ -73,54 +82,13 @@ public class Slot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDropHandler
         dragItem.transform.position = eventData.position;
     }
     
-    public void OnDrop(PointerEventData eventData) // 다른 UI창 위에서 놓은 경우
+    public void OnDrop(PointerEventData eventData) // 놓은 경우
     {
         if (dragSlot == null || dragSlot == this)
             return;
         
-        if (IsEmpty && Input.GetKey(KeyCode.LeftControl))
-        {
-            int half = dragSlot.Count / 2;
-            if (half > 0)
-            {
-                SetItem(dragSlot.Item, half);
-                dragSlot.AddCount(-half);
-            }
-            EndDrag();
-            return;
-        }
-
-        // 1. 빈 슬롯 → 전부 이동
-        if (IsEmpty)
-        {
-            SetItem(dragSlot.Item, dragSlot.Count);
-            dragSlot.Clear();
-            EndDrag();
-            return;
-        }
-
-        // 2. 같은 아이템 → 합치기
-        if (Item.ItemName == dragSlot.Item.ItemName)
-        {
-            int max = Item.InventoryCapacity;
-            int canAdd = max - Count;
-
-            if (canAdd > 0)
-            {
-                int move = Mathf.Min(canAdd, dragSlot.Count);
-                AddCount(move);
-                dragSlot.AddCount(-move);
-
-                if (dragSlot.Count <= 0)
-                    dragSlot.Clear();
-            }
-
-            EndDrag();
-            return;
-        }
-
-        // 3. 다른 아이템 → 스왑
-        SwapWith(dragSlot);
+        OnSlotDrop?.Invoke(this, dragSlot);
+        
         EndDrag();
     }
     

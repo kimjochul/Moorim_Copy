@@ -33,8 +33,8 @@ public class QuestClearBar : MonoBehaviour
             Debug.Log("아이템 부족");
             return;
         }
-        
         quest.CostForQuestClear(inventory);
+        
         // 완료 처리
         quest.Complete();
         gameObject.SetActive(false);

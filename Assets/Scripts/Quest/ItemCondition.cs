@@ -16,13 +16,13 @@ public class ItemCondition : QuestCondition
 
     public override void Notify(QuestEvent questEvent)
     {
-        if (questEvent.type != QuestEventType.ItemGet)
+        if (questEvent.type != QuestEventType.ItemChanged)
             return;
 
         if (questEvent.value != itemID)
             return;
 
-        currentCount++;
+        currentCount = questEvent.currentCount;
     }
 
     public override bool IsComplete()
