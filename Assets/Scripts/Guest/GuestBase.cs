@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public abstract class GuestEnums
 {
@@ -21,8 +22,16 @@ public abstract class GuestBase : MonoBehaviour
     [SerializeField] protected float foodMidWaitLimit = 60f;
     [SerializeField] protected float foodMaxWaitLimit = 90f;
     [SerializeField] protected float foodEatLimit = 15f;
+
+    [Header("이동(A*) 설정")]
+    [SerializeField] protected NavMeshAgent agent; // 실제로 움직이는 객체
+    public Transform targetTable; 
+    public Transform exitDoor;
     
     protected float stateTimer = 0f;
+
+    private bool isEnterPathSet = false;
+    private bool isExitPathSet = false;
     
     protected GuestEnums.GuestState currentState = GuestEnums.GuestState.Enter; 
     protected GuestEnums.GuestMood currentMood = GuestEnums.GuestMood.Neutral;
@@ -55,10 +64,10 @@ public abstract class GuestBase : MonoBehaviour
             case GuestEnums.GuestState.Eat:
                 HandleEatState();
                 break;
-            case GuestEnums.GuestState.Pay:// 1회성 행동이라 update 밖으로 빼낼지?
+            case GuestEnums.GuestState.Pay:
                 HandlePayState();
                 break;
-            case GuestEnums.GuestState.Exit:// 1회성 행동이라 update 밖으로 빼낼지?
+            case GuestEnums.GuestState.Exit:
                 HandleExitState();
                 break;
         }
@@ -66,7 +75,20 @@ public abstract class GuestBase : MonoBehaviour
 
     private void HandleEnterState()
     {
-        // TO DO :  A* 사용해서 빈 테이블로 이동
+        // 상태 진입 후 딱 한 번만 목적지 찾기
+        if (!isEnterPathSet && targetTable != null)
+        {
+            agent.SetDestination(targetTable.position);
+            isEnterPathSet = true;
+            Debug.Log("빈 테이블로 이동 시작");
+        }
+
+        // 목적지에 도착했는지 검사
+        // pathpending : 경로 계산 중인지 여부, remainingDistance : 목적지까지 남은 거리, stoppingDistance: 목표 지점에서 멈추는 거리
+        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
+        {
+            ChangeState(GuestEnums.GuestState.WaitOrder);
+        }
     }
 
     protected virtual void HandleWaitOrderState()
@@ -125,7 +147,8 @@ public abstract class GuestBase : MonoBehaviour
     {
         // TO DO : 애니메이션 변경?
         // TO DO : 아이콘 변경?
-        // TO DO : 손님 기분에 따라 보상 차등?
+        // TO DO : 손님 기분 체크
+        // TO DO : 손님 기분에 따라 보상 차등
         // TO DO : 돈 지불 -> 자동으로 하루 매출금액에 합산?
         ChangeState(GuestEnums.GuestState.Exit);
     }
@@ -133,7 +156,20 @@ public abstract class GuestBase : MonoBehaviour
 
     private void HandleExitState()
     {
-        // TO DO :  A* 사용해서 문 밖으로 이동
+        // 상태 진입 후 딱 한 번만 목적지 찾기
+        if (!isExitPathSet && exitDoor != null)
+        {
+            agent.SetDestination(exitDoor.position);
+            isExitPathSet = true;
+            Debug.Log("손님이 문으로 향해 나갑니다.");
+        }
+
+        // 목적지에 도착했는지 검사
+        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
+        {
+            Debug.Log("손님이 가게를 벗어났습니다.");
+            // 손님 객체 제거
+        }
     }
     
     public void ReceiveFood() // << 음식 받은 걸 어떻게 알게할지?? action 사용?
@@ -144,7 +180,7 @@ public abstract class GuestBase : MonoBehaviour
         // TO DO : 음식을 잘못 받을 경우
         // TO DO : 음식을 맞게 받을 경우
 
-        // TO DO : 음식 퀄리티에 따라 손님 기분 변경 >> 이 기분을 외부에 전달
+        // TO DO : 음식 퀄리티에 따라 손님 기분 변경 >> 이 기분을 HandlePayState()에 전달
 
     }
 }
