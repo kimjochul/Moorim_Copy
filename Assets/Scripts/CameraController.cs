@@ -44,21 +44,19 @@ public class CameraController : MonoBehaviour
     {
         CameraPositionInit();
     }
-
     void LateUpdate()
     {
         MoveCamera();
         ZoomCamera();
         OrbitMovement();
-
-        if (!Input.GetMouseButton(1))
-            ClampPositionToBounds();
+        ClampPositionToBounds();
+        ApplyCameraTransform();
     }
-
     private void CameraPositionInit()
     {
         Vector3 center = this.groundCollider.bounds.center;
         this.orbitTargetPoint = center;
+
         this.currentOrbitRotationY = this.startOrbitRotationY;
         this.currentOrbitRotationX = this.startOrbitRotationX;
 
@@ -69,7 +67,6 @@ public class CameraController : MonoBehaviour
         this.transform.position = center + rotation * Vector3.back * this.orbitDistance;
         this.transform.LookAt(center);
     }
-
     private void MoveCamera()
     {
         float h = Input.GetAxisRaw("Horizontal");
@@ -83,38 +80,26 @@ public class CameraController : MonoBehaviour
         right.Normalize();
 
         Vector3 moveDir = (forward * v + right * h).normalized;
-        this.transform.position += moveDir * this.moveSpeed * Time.deltaTime;
-    }
 
+        this.orbitTargetPoint += moveDir * this.moveSpeed * Time.deltaTime;
+    }
     private void ZoomCamera()
     {
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         if (scroll != 0f)
         {
-            float previousDistance = this.orbitDistance;
             this.orbitDistance -= scroll * this.zoomSpeed;
             this.orbitDistance = Mathf.Clamp(this.orbitDistance, this.minOrbitDistance, this.maxOrbitDistance);
-            float actualZoomAmount = previousDistance - this.orbitDistance;
-
-            if (!Input.GetMouseButton(1))
-            {
-                this.transform.position += this.transform.forward * actualZoomAmount;
-            }
         }
     }
-
     private void OrbitMovement()
     {
         if (Input.GetMouseButtonDown(1))
         {
-            this.orbitTargetPoint = this.transform.position + this.transform.forward * this.orbitDistance;
             Vector3 rot = this.transform.localRotation.eulerAngles;
             this.currentOrbitRotationY = rot.x;
             this.currentOrbitRotationX = rot.y;
         }
-
-
-
         if (Input.GetMouseButton(1))
         {
             float mouseX = Input.GetAxis("Mouse X") * this.orbitSpeed;
@@ -122,41 +107,26 @@ public class CameraController : MonoBehaviour
 
             this.currentOrbitRotationX += mouseX;
             this.currentOrbitRotationY -= mouseY;
+
             this.currentOrbitRotationY = Mathf.Clamp(this.currentOrbitRotationY, this.minOrbitAngleY, this.maxOrbitAngleY);
-
-            Quaternion rotation = Quaternion.Euler(this.currentOrbitRotationY, this.currentOrbitRotationX, 0f);
-            Vector3 desiredPosition = this.orbitTargetPoint + rotation * Vector3.back * this.orbitDistance;
-
-            if (this.groundCollider != null)
-            {
-                Bounds bounds = this.groundCollider.bounds;
-                Vector3 clampedPosition = desiredPosition;
-
-                clampedPosition.x = Mathf.Clamp(clampedPosition.x, bounds.min.x, bounds.max.x);
-                clampedPosition.z = Mathf.Clamp(clampedPosition.z, bounds.min.z, bounds.max.z);
-                Vector3 offset = clampedPosition - desiredPosition;
-
-                this.orbitTargetPoint += offset;
-                this.transform.position = clampedPosition;
-            }
-            else
-            {
-                this.transform.position = desiredPosition;
-            }
-            this.transform.LookAt(this.orbitTargetPoint);
         }
     }
-
     private void ClampPositionToBounds()
     {
         if (this.groundCollider == null) return;
 
-        Vector3 currentPos = this.transform.position;
+        Vector3 currentPos = this.orbitTargetPoint;
         Bounds bounds = this.groundCollider.bounds;
 
         currentPos.x = Mathf.Clamp(currentPos.x, bounds.min.x, bounds.max.x);
         currentPos.z = Mathf.Clamp(currentPos.z, bounds.min.z, bounds.max.z);
 
-        this.transform.position = currentPos;
+        this.orbitTargetPoint = currentPos;
+    }
+    private void ApplyCameraTransform()
+    {
+        Quaternion rotation = Quaternion.Euler(this.currentOrbitRotationY, this.currentOrbitRotationX, 0f);
+        this.transform.position = this.orbitTargetPoint + rotation * Vector3.back * this.orbitDistance;
+        this.transform.LookAt(this.orbitTargetPoint);
     }
 }
