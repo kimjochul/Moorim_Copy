@@ -13,30 +13,29 @@ public class QuestClearBar : MonoBehaviour
         inventory = FindFirstObjectByType<Inventory>();
     }
 
-    public void Init(Quest quest)
+    public void Init(Quest quest, Inventory inventory)
     {
         this.quest = quest;
+        this.inventory = inventory;
+
+        clearButton.onClick.RemoveAllListeners();
         clearButton.onClick.AddListener(OnClickClear);
     }
 
+    
     private void OnClickClear()
     {
         if (!quest.CanClear())
             return;
-
-        foreach (var item in quest.Data.requireItems)
-        {
-            int have = inventory.GetItemCount(item.questItem);
         
-            if (have < item.requestCount)
-            {
-                Debug.Log("아이템이 부족합니다");
-                return;
-            }
-            
-            inventory.RemoveItem(item.questItem, item.requestCount);
+        if (!quest.CanRemoveItems(inventory))
+        {
+            Debug.Log("아이템 부족");
+            return;
         }
         
+        quest.CostForQuestClear(inventory);
+        // 완료 처리
         quest.Complete();
         gameObject.SetActive(false);
     }

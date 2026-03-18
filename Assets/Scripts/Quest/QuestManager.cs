@@ -10,6 +10,8 @@ public class QuestManager : Singleton<QuestManager>, ISubject
     [SerializeField] private GameObject[] questClearButtons;
     [SerializeField] private Transform questClearUI;
     [SerializeField] private QuestData[] datas;
+    
+    [SerializeField] private Inventory inventory;
 
     protected override void Awake()
     {
@@ -24,11 +26,11 @@ public class QuestManager : Singleton<QuestManager>, ISubject
 
     private void SetButton(int index)
     {
-        Quest quest = new Quest(datas[index]);
+        Quest quest = new Quest(datas[index]); // 퀘스트 데이터의 id를 통해서 접근하도록 변경하는게 좋을 듯 
         questButtons[index].gameObject.SetActive(false);
         
         GameObject clearobj = Instantiate(questClearButtons[index], questClearUI);
-        clearobj.GetComponent<QuestClearBar>().Init(quest);
+        clearobj.GetComponent<QuestClearBar>().Init(quest, inventory);
     }
 
     public void AddObserver(IObserver observer)
@@ -43,9 +45,9 @@ public class QuestManager : Singleton<QuestManager>, ISubject
         Debug.Log($"퀘스트 {observer.QuestName}를 삭제하였습니다.");
     }
 
-    public void NotifyListener(string questName)
+    public void NotifyListener(QuestEvent questEvent)
     {
         for (int i = observers.Count - 1; i >= 0; i--)
-            observers[i].Notify(questName);
+            observers[i].Notify(questEvent);
     }
 }

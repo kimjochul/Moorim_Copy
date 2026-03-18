@@ -8,13 +8,10 @@ public class Quest : IObserver
     
     public int QuestID { get; }
     public string QuestName { get; private set; }
-    public int CurrentCount { get; private set; }
     public bool IsCompleted { get; private set; }
     public bool IsFailed { get; private set; }
 
-    private Dictionary<string, int> itemCountMap;
-    public Dictionary<string, int> ItemCountMap => itemCountMap;
-    
+    private List<QuestCondition> conditions;
     public Quest(QuestData questData)
     {
         data = questData;
@@ -22,25 +19,35 @@ public class Quest : IObserver
         QuestName = data.questName;
         IsCompleted = false;
         
-        itemCountMap = new Dictionary<string, int>();
+        conditions = new List<QuestCondition>();
+        var inventory = Object.FindFirstObjectByType<Inventory>();
 
-        foreach (var item in data.requireItems)
+        foreach (var condition in data.conditions)
         {
-            itemCountMap[item.questItem] = 0; // 인벤토리 만들면 여기에 값 넣어주면 됨
+            var instance = condition.Clone();
+            instance.Init(inventory);
+                
+            conditions.Add(instance);
         }
         
         QuestManager.Instance.AddObserver(this);
     }
     
-    public void Notify(string questItemName)
+    public void Notify(QuestEvent questEvent)
     {
-        if (IsCompleted)
+        if (IsCompleted || IsFailed)
             return;
 
-        if (!itemCountMap.ContainsKey(questItemName))
-            return;
-
-        itemCountMap[questItemName]++;
+        foreach (var condition in conditions)
+        {
+            condition.Notify(questEvent);
+            
+            if (condition is FailLimitCondition failCondition && failCondition.IsFailed())
+            {
+                Fail();
+                return;
+            }
+        }
 
         if (CanClear())
         {
@@ -50,17 +57,50 @@ public class Quest : IObserver
 
     public bool CanClear()
     {
-        foreach (var require in data.requireItems)
+        foreach (var condition in conditions)
         {
-            if (itemCountMap[require.questItem] < require.requestCount)
+            if (!condition.IsComplete())
                 return false;
         }
         return true;
     }
+    
+    public bool CanRemoveItems(Inventory inventory)
+    {
+        foreach (var condition in conditions)
+        {
+            if (condition is ItemCondition itemCondition)
+            {
+                int have = inventory.GetItemCount(itemCondition.itemID);
+                if (have < itemCondition.requiredCount)
+                    return false;
+            }
+        }
+        return true;
+    }
 
+    public void CostForQuestClear(Inventory inventory)
+    {
+        foreach (var condition in conditions)
+        {
+            if (condition is ItemCondition itemCondition)
+            {
+                inventory.RemoveItem(itemCondition.itemID, itemCondition.requiredCount);
+            }
+        }
+    }
+    
     public void Complete()
     {
         IsCompleted = true;
         Debug.Log($"퀘스트 완료: {QuestName}");
+        QuestManager.Instance.RemoveObserver(this);
+    }
+    
+    public void Fail()
+    {
+        IsFailed = true;
+        Debug.Log($"퀘스트 실패: {QuestName}");
+        QuestManager.Instance.RemoveObserver(this);
     }
 }

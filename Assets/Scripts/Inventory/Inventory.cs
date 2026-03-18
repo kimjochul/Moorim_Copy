@@ -6,8 +6,14 @@ public class Inventory : MonoBehaviour
     
     public void GetItem(IItem item)
     {
-        string questName = item.ItemName.Replace(" ", ""); // 이름 정하는 기준 + 설정 필요
-        QuestManager.Instance.NotifyListener(questName);
+        int itemID = item.ID;
+        QuestManager.Instance.NotifyListener(
+            new QuestEvent
+            {
+                type = QuestEventType.ItemGet,
+                value = item.ID
+            });
+        
         foreach (var slot in slots)
         {
             if (!slot.IsEmpty && slot.Item.ItemName == item.ItemName)
@@ -25,7 +31,7 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    public void RemoveItem(string itemName, int removeCount)
+    public void RemoveItem(int itemID, int removeCount)
     {
         foreach (var slot in slots)
         {
@@ -35,7 +41,7 @@ public class Inventory : MonoBehaviour
             if (slot.IsEmpty)
                 continue;
             
-            if (slot.Item.ItemName != itemName)
+            if (slot.Item.ID != itemID)
                 continue;
             
             int removable = Mathf.Min(slot.Count, removeCount);
@@ -47,7 +53,7 @@ public class Inventory : MonoBehaviour
         }
     }
     
-    public int GetItemCount(string itemName)
+    public int GetItemCount(int itemID)
     {
         int count = 0;
 
@@ -59,7 +65,7 @@ public class Inventory : MonoBehaviour
             if (!slot.CountForQuest)
                 continue;
 
-            if (slot.Item.ItemName != itemName)
+            if (slot.Item.ID != itemID)
                 continue;
 
             count += slot.Count;

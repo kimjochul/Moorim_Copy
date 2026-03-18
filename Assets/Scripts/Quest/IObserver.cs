@@ -4,9 +4,8 @@ public interface IObserver
 {
     int QuestID { get; }
     string QuestName { get; }
-    int CurrentCount { get; }
     bool IsCompleted { get; }
-    void Notify(string questName);
+    void Notify(QuestEvent questEvent);
     bool CanClear();
     void Complete();
 }
