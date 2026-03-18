@@ -1,7 +1,16 @@
-﻿using UnityEngine;
+﻿using DG.Tweening;
+using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
+    [Header("시작 설정")]
+    [SerializeField]
+    private float startOrbitRotationY = 45f;
+    [SerializeField]
+    private float startOrbitRotationX = 45f;
+    [SerializeField]
+    private float startHeight = 10;
+
     [Header("카메라 이동")]
     [SerializeField]
     private float moveSpeed = 10f;
@@ -33,25 +42,32 @@ public class CameraController : MonoBehaviour
 
     void Start()
     {
-        Vector3 startPos = this.transform.position;
-        this.transform.position = startPos;
-
-        Vector3 rot = this.transform.localRotation.eulerAngles;
-        this.currentOrbitRotationY = rot.x;
-        this.currentOrbitRotationX = rot.y;
+        CameraPositionInit();
     }
 
-    void Update()
+    void LateUpdate()
     {
         MoveCamera();
         ZoomCamera();
-
-        OrbitMovement(); 
+        OrbitMovement();
 
         if (!Input.GetMouseButton(1))
-        {
             ClampPositionToBounds();
-        }
+    }
+
+    private void CameraPositionInit()
+    {
+        Vector3 center = this.groundCollider.bounds.center;
+        this.orbitTargetPoint = center;
+        this.currentOrbitRotationY = this.startOrbitRotationY;
+        this.currentOrbitRotationX = this.startOrbitRotationX;
+
+        float targetHeight = 10f;
+        this.orbitDistance = targetHeight / Mathf.Sin(this.currentOrbitRotationY * Mathf.Deg2Rad);
+
+        Quaternion rotation = Quaternion.Euler(this.currentOrbitRotationY, this.currentOrbitRotationX, 0f);
+        this.transform.position = center + rotation * Vector3.back * this.orbitDistance;
+        this.transform.LookAt(center);
     }
 
     private void MoveCamera()
@@ -73,14 +89,11 @@ public class CameraController : MonoBehaviour
     private void ZoomCamera()
     {
         float scroll = Input.GetAxis("Mouse ScrollWheel");
-
         if (scroll != 0f)
         {
             float previousDistance = this.orbitDistance;
-
             this.orbitDistance -= scroll * this.zoomSpeed;
             this.orbitDistance = Mathf.Clamp(this.orbitDistance, this.minOrbitDistance, this.maxOrbitDistance);
-
             float actualZoomAmount = previousDistance - this.orbitDistance;
 
             if (!Input.GetMouseButton(1))
@@ -95,11 +108,12 @@ public class CameraController : MonoBehaviour
         if (Input.GetMouseButtonDown(1))
         {
             this.orbitTargetPoint = this.transform.position + this.transform.forward * this.orbitDistance;
-
             Vector3 rot = this.transform.localRotation.eulerAngles;
             this.currentOrbitRotationY = rot.x;
             this.currentOrbitRotationX = rot.y;
         }
+
+
 
         if (Input.GetMouseButton(1))
         {
@@ -108,11 +122,9 @@ public class CameraController : MonoBehaviour
 
             this.currentOrbitRotationX += mouseX;
             this.currentOrbitRotationY -= mouseY;
-
             this.currentOrbitRotationY = Mathf.Clamp(this.currentOrbitRotationY, this.minOrbitAngleY, this.maxOrbitAngleY);
 
             Quaternion rotation = Quaternion.Euler(this.currentOrbitRotationY, this.currentOrbitRotationX, 0f);
-
             Vector3 desiredPosition = this.orbitTargetPoint + rotation * Vector3.back * this.orbitDistance;
 
             if (this.groundCollider != null)
@@ -122,7 +134,6 @@ public class CameraController : MonoBehaviour
 
                 clampedPosition.x = Mathf.Clamp(clampedPosition.x, bounds.min.x, bounds.max.x);
                 clampedPosition.z = Mathf.Clamp(clampedPosition.z, bounds.min.z, bounds.max.z);
-
                 Vector3 offset = clampedPosition - desiredPosition;
 
                 this.orbitTargetPoint += offset;
@@ -132,7 +143,6 @@ public class CameraController : MonoBehaviour
             {
                 this.transform.position = desiredPosition;
             }
-
             this.transform.LookAt(this.orbitTargetPoint);
         }
     }
