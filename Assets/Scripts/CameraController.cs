@@ -32,6 +32,10 @@ public class CameraController : MonoBehaviour
     [SerializeField]
     private float maxOrbitDistance = 30f;
 
+    [Header("카메라 제한")]
+    [SerializeField]
+    private float maxCameraOverhang = 5f;
+
     [SerializeField]
     private Collider groundCollider;
 
@@ -126,7 +130,30 @@ public class CameraController : MonoBehaviour
     private void ApplyCameraTransform()
     {
         Quaternion rotation = Quaternion.Euler(this.currentOrbitRotationY, this.currentOrbitRotationX, 0f);
-        this.transform.position = this.orbitTargetPoint + rotation * Vector3.back * this.orbitDistance;
+        Vector3 desiredCameraPos = this.orbitTargetPoint + rotation * Vector3.back * this.orbitDistance;
+
+        if (this.groundCollider != null)
+        {
+            Bounds bounds = this.groundCollider.bounds;
+
+            float minX = bounds.min.x - this.maxCameraOverhang;
+            float maxX = bounds.max.x + this.maxCameraOverhang;
+            float minZ = bounds.min.z - this.maxCameraOverhang;
+            float maxZ = bounds.max.z + this.maxCameraOverhang;
+
+            Vector3 clampedCameraPos = desiredCameraPos;
+            clampedCameraPos.x = Mathf.Clamp(clampedCameraPos.x, minX, maxX);
+            clampedCameraPos.z = Mathf.Clamp(clampedCameraPos.z, minZ, maxZ);
+
+            if (clampedCameraPos != desiredCameraPos)
+            {
+                Vector3 offset = clampedCameraPos - desiredCameraPos;
+                this.orbitTargetPoint += offset;
+                desiredCameraPos = clampedCameraPos; 
+            }
+        }
+
+        this.transform.position = desiredCameraPos;
         this.transform.LookAt(this.orbitTargetPoint);
     }
 }
