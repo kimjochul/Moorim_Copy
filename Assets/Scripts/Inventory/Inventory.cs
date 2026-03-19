@@ -15,7 +15,7 @@ public class Inventory : MonoBehaviour
 {
     [SerializeField] private GameObject slotPrefab;
     [SerializeField] private int slotCount = 10;
-    private List<Slot> slots  = new List<Slot>();
+    [SerializeField] private List<Slot> slots  = new List<Slot>();
     
     [SerializeField] private InventoryType type;
     public InventoryType Type => type;
@@ -25,7 +25,7 @@ public class Inventory : MonoBehaviour
         CreateSlots(slotCount);
 
         var itemFactory = GameObject.FindFirstObjectByType<Shop>().GetComponent<Shop>();
-        itemFactory.Buy(0, 1);
+        itemFactory.Buy(0, 11);
     }
 
     private void CreateSlots(int num)
@@ -78,6 +78,7 @@ public class Inventory : MonoBehaviour
 
         int itemID = source.Item.ID;
 
+        // 컨트롤 누른 채 드래그하면 절반으로 줄이기
         if (target.IsEmpty && Input.GetKey(KeyCode.LeftControl))
         {
             int half = source.Count / 2;
@@ -136,23 +137,45 @@ public class Inventory : MonoBehaviour
         int itemID = item.ID;
         bool changed = false;
         
+        // 1. 기존 슬롯 채우기
         foreach (var slot in slots)
         {
-            if (!slot.IsEmpty && slot.Item.ItemName == item.ItemName && slot.Count < item.InventoryCapacity)
-            {
-                slot.AddCount(count);
-                Debug.Log($"Added {slot.Item}");
-                changed = true;
+            if (count <= 0)
                 break;
-            }
-            
-            if(slot.IsEmpty)
-            {
-                slot.AddItem(item, count);
-                changed = true;
-                break;
-            }
+
+            if (slot.IsEmpty)
+                continue;
+
+            if (slot.Item.ID != itemID)
+                continue;
+
+            int max = item.InventoryCapacity;
+            int canAdd = max - slot.Count;
+
+            if (canAdd <= 0)
+                continue;
+
+            int add = Mathf.Min(canAdd, count);
+            slot.AddCount(add);
+            count -= add;
+            changed = true;
         }
+
+        // 2. 빈 슬롯에 넣기
+        foreach (var slot in slots)
+        {
+            if (count <= 0)
+                break;
+
+            if (!slot.IsEmpty)
+                continue;
+
+            int add = Mathf.Min(item.InventoryCapacity, count);
+            slot.AddItem(new Item(item.Data), add);
+            count -= add;   
+            changed = true;
+        }
+        
         if (changed)
             NotifyItemChanged(itemID);
     }

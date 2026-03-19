@@ -10,8 +10,6 @@ public class Shop : MonoBehaviour
         // 돈 체크는 생략
         Item item = itemFactory.CreateItem(itemID);
 
-        playerInventory.GetItem(item, 1);
-
-        Debug.Log("구매 완료");
+        playerInventory.GetItem(item, count);
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class Slot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDropHandler
+public class Slot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDropHandler, IEndDragHandler
 {
     public Inventory Owner { get; private set; }
     
@@ -21,6 +21,24 @@ public class Slot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDropHandler
     public bool IsEmpty { get; private set; } = true;
 
     public event Action<Slot, Slot> OnSlotDrop; // 드래그 중인 아이템을 슬롯에서 놓을 때 호출 용
+    
+    // // 디버그용
+    // [SerializeField] private ItemData debugItemData;
+    // [SerializeField] private int debugCount;
+    // private void Update()
+    // {
+    //     if (Item != null)
+    //     {
+    //         debugItemData = Item.Data;
+    //         debugCount = Count;
+    //     }
+    //     else
+    //     {
+    //         debugItemData = null;
+    //         debugCount = 0;
+    //     }
+    // }
+    
     
     private void OnEnable()
     {
@@ -130,5 +148,10 @@ public class Slot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDropHandler
         dragItem.gameObject.SetActive(false);
         dragItem.raycastTarget = true;
         dragSlot = null;
+    }
+
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        EndDrag();
     }
 }
