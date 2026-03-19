@@ -23,6 +23,9 @@ public class Inventory : MonoBehaviour
     private void Start()
     {
         CreateSlots(slotCount);
+
+        var itemFactory = GameObject.FindFirstObjectByType<Shop>().GetComponent<Shop>();
+        itemFactory.Buy(0, 1);
     }
 
     private void CreateSlots(int num)
@@ -117,7 +120,8 @@ public class Inventory : MonoBehaviour
         {
             IItem tempItem = target.Item;
             int tempCount = target.Count;
-
+            // dragslot은 원래 슬롯을 참조하는 것이기 때문에 원래 슬롯이 변경됨
+            //“dragSlot은 A 슬롯 객체를 참조하고 있고, dragSlot을 통해 호출한 메서드는 A 슬롯 인스턴스의 상태를 직접 변경한다.”
             target.SetItem(source.Item, source.Count);
             source.SetItem(tempItem, tempCount);
         }

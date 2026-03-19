@@ -51,7 +51,7 @@ public class Slot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDropHandler
         if (Item == null)
             return;
 
-        Item.Use();
+        //Item.Use();
         AddCount(-1);
         
         if (Count <= 0)
@@ -122,16 +122,6 @@ public class Slot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDropHandler
     public void Clear()
     {
         SetItem(null, 0);
-    }
-    
-    private void SwapWith(Slot other)
-    {
-        IItem tempItem = Item;
-        int tempCount = Count;
-        // dragslot은 원래 슬롯을 참조하는 것이기 때문에 원래 슬롯이 변경됨
-        //“dragSlot은 A 슬롯 객체를 참조하고 있고, dragSlot을 통해 호출한 메서드는 A 슬롯 인스턴스의 상태를 직접 변경한다.”
-        SetItem(other.Item, other.Count);
-        other.SetItem(tempItem, tempCount);
     }
     
     private void EndDrag()
