@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-// using DG.Tweening;
 
 [RequireComponent(typeof(CanvasGroup))]
 public class PopupController : MonoBehaviour
@@ -19,7 +18,6 @@ public class PopupController : MonoBehaviour
     // 팝업 표시
     public void Show()
     {
-        Debug.Log("Show panel");
         
         // TODO: Fade in
     }

@@ -1,22 +1,30 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
 public class DialogPopupController : PopupController
 {
-    [SerializeField] TMP_Text _recipeNameText;
-    [SerializeField] TMP_Text _recipeCountText;
     [SerializeField] TMP_Text _characterNameText;
-    [SerializeField] TMP_Text _characterSpeciesText;
-    [SerializeField] TMP_Text _characterJobText;
     [SerializeField] TMP_Text _dialogText;
-    public void Show(Dictionary<Recipe, int> recipes/*, Guest guest*/)
+    [SerializeField] private float textSpeed = 0.2f;
+
+    private string _currentFullDialog;
+    public void Show(string characterName, string dialog)
     {
-        _recipeNameText.text = recipes.recipeName;
-        // 주문 음식 개수 가져오기
-        _recipeCountText.text = 1.ToString();
-        _characterJobText.text = 
-        base.Show();        
+        base.Show();   
+        _currentFullDialog = dialog;
+        _characterNameText.text = characterName;
+        _dialogText.text = "";
+        StartCoroutine(ShowDialog(dialog));
+    }
+
+    // 마우스 클릭 시 전부 보여주기
+    private void OnMouseClicked()
+    {
+        StopCoroutine(nameof(ShowDialog));
+        _dialogText.text = _currentFullDialog;
     }
 
     public void OnClickConfirmButton()
@@ -27,5 +35,14 @@ public class DialogPopupController : PopupController
     public void OnClickCancelButton()
     {
         Hide();
+    }
+
+    IEnumerator ShowDialog(string dialog)
+    {
+        foreach (char c in dialog)
+        {
+            _dialogText.text += c;
+            yield return new WaitForSeconds(textSpeed);
+        }
     }
 }

@@ -8,19 +8,16 @@ public class UIManager : Singleton<UIManager>
     private Canvas _canvas;
     [SerializeField] private GameObject dialogPopupPrefab;
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         _canvas = FindFirstObjectByType<Canvas>();
     }
     
-    /// <summary>
-    /// 대화 팝업 열기
-    /// </summary>
-    /// <param name="recipes">주문할 레시피들과 수량</param>
-    public void OpenDialogPopup(Dictionary<Recipe, int> recipes)
+    public void OpenDialogPopup(string characterName, string dialog)
     {
         var dialogPopupObject = Instantiate(dialogPopupPrefab, _canvas.transform);
-        dialogPopupObject.GetComponent<DialogPopupController>().Show(recipes);
+        dialogPopupObject.GetComponent<DialogPopupController>().Show(characterName, dialog);
     }
 
     
