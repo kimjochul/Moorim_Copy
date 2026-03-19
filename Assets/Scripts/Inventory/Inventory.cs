@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum InventoryType
@@ -11,18 +13,32 @@ public enum InventoryType
 
 public class Inventory : MonoBehaviour
 {
-    [SerializeField] private Slot[] slots;
+    [SerializeField] private GameObject slotPrefab;
+    [SerializeField] private int slotCount = 10;
+    private List<Slot> slots  = new List<Slot>();
     
     [SerializeField] private InventoryType type;
     public InventoryType Type => type;
-    
-    private void Awake()
+
+    private void Start()
     {
-        foreach (var slot in slots)
+        CreateSlots(slotCount);
+    }
+
+    private void CreateSlots(int num)
+    {
+        for (int i = 0; i < num; i++)
         {
+            Slot slot = Instantiate(slotPrefab, transform).GetComponent<Slot>();
             slot.SetOwner(this);
             slot.OnSlotDrop += HandleSlotDrop;
+            slots.Add(slot);
         }
+    }
+    
+    public void AddSlot(int amount)
+    {
+        CreateSlots(amount);
     }
     
     private void NotifyItemChanged(int itemID)
@@ -173,9 +189,6 @@ public class Inventory : MonoBehaviour
         foreach (var slot in slots)
         {
             if (slot.IsEmpty)
-                continue;
-
-            if (!slot.CountForQuest)
                 continue;
 
             if (slot.Item.ID != itemID)
