@@ -21,8 +21,6 @@ public class PlayerManager : Singleton<PlayerManager>
     private IControllable selectedUnit;
     private Camera mainCamera;
 
-    protected override void OnSceneLoad(Scene scene, LoadSceneMode mode) { }
-
     void Start()
     {
         this.mainCamera = Camera.main;

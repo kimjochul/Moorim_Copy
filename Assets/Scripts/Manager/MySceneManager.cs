@@ -4,8 +4,6 @@ using UnityEngine.SceneManagement;
 
 public class MySceneManager : Singleton<MySceneManager>
 {
-    protected override void OnSceneLoad(Scene scene, LoadSceneMode mode) { }
-
     public void LoadSceneWithCallback<TargetType>(string sceneName, Action<TargetType> onSceneLoad) where TargetType : MonoBehaviour
     {
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
