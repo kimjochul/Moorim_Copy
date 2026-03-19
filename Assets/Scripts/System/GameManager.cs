@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -7,7 +8,12 @@ public class GameManager : MonoBehaviour
     // [SerializeField] private EventManager eventManager;
     // [SerializeField] private EconomyManager economyManager;
     // [SerializeField] private CustomerManager customerManager;
-    
+
+    private void Start()
+    {
+        dayManager.DayStart();
+    }
+
     public void StartDayButton()
     {
         dayManager.DayStart();

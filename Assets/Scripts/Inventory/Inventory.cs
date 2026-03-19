@@ -26,6 +26,7 @@ public class Inventory : MonoBehaviour
 
         var itemFactory = GameObject.FindFirstObjectByType<Shop>().GetComponent<Shop>();
         itemFactory.Buy(0, 11);
+        itemFactory.Buy(101, 3);
     }
 
     private void CreateSlots(int num)
