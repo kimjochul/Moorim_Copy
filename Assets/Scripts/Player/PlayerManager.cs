@@ -1,5 +1,7 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using static Constants;
 
 public class PlayerManager : Singleton<PlayerManager>
 {
@@ -19,47 +21,35 @@ public class PlayerManager : Singleton<PlayerManager>
     private PlayerController[] players;
 
     private IControllable selectedUnit;
-    private Camera mainCamera;
+    public IControllable SelectedUnit => this.selectedUnit;
+    public PlayerType CurrentPlayer { get; private set; }
 
     void Start()
     {
-        this.mainCamera = Camera.main;
-
-        if (this.players.Length > 0) 
-            SelectPlayer(0);
+        SelectPlayer(PlayerType.Myungwol);
     }
 
-    void Update()
+    public void SelectPlayer(PlayerType playerType)
     {
-        ClickToMovePlayer();
-    }
-    private void ClickToMovePlayer()
-    {
-        if (Input.GetKeyDown(KeyCode.F1)) 
-            SelectPlayer(0);
-        if (Input.GetKeyDown(KeyCode.F2)) 
-            SelectPlayer(1);
-
-        if (Input.GetMouseButtonDown(0) && this.selectedUnit != null)
-        {
-            Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-
-            this.selectedUnit.SetSpeed(this.moveSpeed, this.angularSpeed, this.accelerationSpeed);
-
-            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity))
-            {
-                this.selectedUnit.MoveTo(hit.point);
-            }
-        }
-    }
-    private void SelectPlayer(int index)
-    {
+        int index = (int)playerType;
         if (index >= this.players.Length || this.players[index] == null) return;
 
-        if (this.selectedUnit != null) 
+        if (this.selectedUnit != null)
             this.selectedUnit.OnDeselected();
 
         this.selectedUnit = this.players[index];
+        this.CurrentPlayer = playerType;
         this.selectedUnit.OnSelected();
+
+        Debug.Log($"{playerType} 캐릭터 선택");
+    }
+
+    public void MoveSelectedUnitTo(Vector3 destination)
+    {
+        if (this.selectedUnit != null)
+        {
+            this.selectedUnit.SetSpeed(this.moveSpeed, this.angularSpeed, this.accelerationSpeed);
+            this.selectedUnit.MoveTo(destination);
+        }
     }
 }

@@ -1,0 +1,67 @@
+using UnityEngine;
+using UnityEngine.Events;
+using static Constants;
+
+public class PlayerInput : MonoBehaviour
+{
+    private Camera mainCamera;
+    public UnityAction onMove;
+
+    private void Start()
+    {
+        this.mainCamera = Camera.main;
+    }
+
+    private void Update()
+    {
+        HandlePlayerSelection();
+        HandleMouseClick();
+    }
+    private void HandlePlayerSelection()
+    {
+        if (Input.GetKeyDown(KeyCode.F1))
+        {
+            PlayerManager.Instance.SelectPlayer(PlayerType.Myungwol);
+        }
+        else if (Input.GetKeyDown(KeyCode.F2))
+        {
+            PlayerManager.Instance.SelectPlayer(PlayerType.Sowol);
+        }
+    }
+    private void HandleMouseClick()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            Ray ray = this.mainCamera.ScreenPointToRay(Input.mousePosition);
+
+            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity))
+            {
+                // 오브젝트가 상호작용 가능한 사물인지 확인
+                IInteractable interactable = hit.collider.GetComponent<IInteractable>();
+
+                if (interactable != null)
+                {
+                    Interaction(interactable);
+                }
+                else
+                {
+                    Movement(hit.point);
+                }
+            }
+        }
+    }
+    private void Interaction(IInteractable target)
+    {
+        PlayerType currentPlayer = PlayerManager.Instance.CurrentPlayer;
+
+        if (target.CanInteract(currentPlayer))
+        {
+            IControllable player = PlayerManager.Instance.SelectedUnit;
+            target.Interact(player);
+        }
+    }
+    private void Movement(Vector3 destination)
+    {
+        PlayerManager.Instance.MoveSelectedUnitTo(destination);
+    }
+}
