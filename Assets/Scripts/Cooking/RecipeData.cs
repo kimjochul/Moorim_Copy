@@ -8,6 +8,7 @@ public class RecipeData : ScriptableObject
     public string recipeName;
     public List<IngredientAmount> ingredients;
     public Constants.CookingMethod cookingMethod;
+    public Sprite icon;
     public int price;
     public bool isLocked;
     public string description;
