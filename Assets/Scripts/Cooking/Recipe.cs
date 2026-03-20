@@ -5,26 +5,25 @@ using UnityEngine;
 [Serializable]
 public class IngredientAmount
 {
-    public Ingredient ingredient;
+    public IngredientData ingredient;
     public int amount;
 }
 
 [Serializable]
 public class Recipe
 {
-    public int id;
-    
-    public string recipeName;
+    public RecipeData Data { get; private set; }
+    public bool IsCookCompleted { get; private set; }
 
-    public List<IngredientAmount> ingredients;
+    public Recipe(RecipeData data)
+    {
+        Data = data;
+    }
 
-    public Constants.CookingMethod cookingMethod;
-
-    public int price;
-
-    public bool isCookCompleted;
-    
-    public bool isLocked;
+    public void CompleteCook()
+    {
+        IsCookCompleted = true;
+    }
 }
 
 // ordering, serving 기능을 위해서 GameObject로 생성하는 아이템을 만들기는 해야할 듯

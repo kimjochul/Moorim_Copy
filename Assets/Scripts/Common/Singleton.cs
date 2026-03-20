@@ -11,7 +11,7 @@ public class Singleton<T> : MonoBehaviour where T: MonoBehaviour // where T: mon
         {
             if (instance == null)
             {
-                instance = FindObjectOfType<T>();
+                instance = FindFirstObjectByType<T>();
                 if (instance == null)
                 {
                     var newObj = new GameObject(typeof(T).ToString());
