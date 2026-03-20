@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class CookingStation : MonoBehaviour
 {
-    // 조리 UI : UI용 스크립트가 들어간 오브젝트를 연결
-    // 완성될 요리가 가야할 배식구 : 배식구용 스크립트가 들어간 오브젝트를 연결
+    [SerializeField] private CookingView cookingView;
+
 
     [SerializeField] private float cookTime = 15f;
 
@@ -48,8 +48,6 @@ public class CookingStation : MonoBehaviour
     // 냄비 애니메이션, SFX 실행
     // 15초 끝날경우
     // 플레이어 데이터(요리 횟수)를 읽어서 음식 퀄리티(보통/숙련/일품) 처리
-    // 배식구로 이동
-
-    // 제안 넣어볼만한 것 : 완성된 음식이 10초 이상 방치되면 타면서 없어짐
+    // 플레이어가 상호작용하면 플레이어 인벤토리에 들어감(플레이어 인벤토리가 꽉찼다면 안들어감)
     /////////////////////////////////////
 }

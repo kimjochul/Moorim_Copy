@@ -3,10 +3,19 @@ using UnityEngine;
 public class NormalGuest : GuestBase
 {
     
-    protected override void HandleWaitOrderState() {}
+    protected override void HandleWaitOrderState()
+    {
+        base.HandleWaitOrderState();
+    }
 
-    protected override void HandleWaitFoodState() {}
+    protected override void HandleWaitFoodState()
+    {
+        base.HandleWaitFoodState();
+    }
     
-    protected override void HandleEatState() {}
+    protected override void HandleEatState()
+    {
+        base.HandleEatState();
+    }
 
 }

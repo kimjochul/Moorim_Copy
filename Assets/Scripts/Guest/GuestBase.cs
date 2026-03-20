@@ -94,6 +94,7 @@ public abstract class GuestBase : MonoBehaviour
     protected virtual void HandleWaitOrderState()
     {
         stateTimer += Time.deltaTime;
+        Debug.Log(stateTimer);
 
         if (stateTimer >= orderWaitLimit)
         {
@@ -168,7 +169,6 @@ public abstract class GuestBase : MonoBehaviour
         if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
         {
             Debug.Log("손님이 가게를 벗어났습니다.");
-            // 손님 객체 제거
         }
     }
     
