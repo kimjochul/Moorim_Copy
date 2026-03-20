@@ -76,15 +76,13 @@ public class ServingSlot : MonoBehaviour, IInteractable
     {
         return this.servingPoint.position;
     }
-    public void Interact(IControllable player) 
+    public void Interact() 
     {
-        Debug.Log(player);
-        player.MoveTo(GetInteractPosition(), () =>
+        PlayerManager.Instance.MoveSelectedUnitTo(GetInteractPosition(), () =>
         {
-            //이동 끝난 후 상호작용
+            // 상호작용 작업
         });
     }
-
     public bool CanInteract(PlayerType playerType)
     {
         return playerType == this.playerType;

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using static Constants;
@@ -44,12 +45,12 @@ public class PlayerManager : Singleton<PlayerManager>
         Debug.Log($"{playerType} 캐릭터 선택");
     }
 
-    public void MoveSelectedUnitTo(Vector3 destination)
+    public void MoveSelectedUnitTo(Vector3 destination, UnityAction action = null)
     {
         if (this.selectedUnit != null)
         {
             this.selectedUnit.SetSpeed(this.moveSpeed, this.angularSpeed, this.accelerationSpeed);
-            this.selectedUnit.MoveTo(destination);
+            this.selectedUnit.MoveTo(destination, action);
         }
     }
 }

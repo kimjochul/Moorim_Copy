@@ -4,6 +4,6 @@ using static Constants;
 public interface IInteractable
 {
     //상호작용
-    void Interact(IControllable player);
+    void Interact();
     bool CanInteract(PlayerType playerType);
 }

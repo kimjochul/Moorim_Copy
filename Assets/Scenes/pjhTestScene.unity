@@ -1178,9 +1178,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 721fdef0972744c428759beb7df521f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerManager
-  moveSpeed: 10
-  angularSpeed: 999
-  accelerationSpeed: 999
+  moveSpeed: 7
+  angularSpeed: 480
+  accelerationSpeed: 100
   players:
   - {fileID: 827586004}
   - {fileID: 1636746652}
@@ -2479,8 +2479,9 @@ GameObject:
   - component: {fileID: 1986411578}
   - component: {fileID: 1986411577}
   - component: {fileID: 1986411576}
+  - component: {fileID: 1986411580}
   m_Layer: 0
-  m_Name: Counter
+  m_Name: ServingCounter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2580,6 +2581,27 @@ Transform:
   - {fileID: 1844068199}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1986411580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1986411575}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b5fa28b2ad0a3b4b9a54ca869d10bce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ServingCounter
+  allSlots:
+  - {fileID: 1877830837}
+  - {fileID: 2092605108}
+  - {fileID: 78064459}
+  - {fileID: 221983108}
+  - {fileID: 148654895}
+  - {fileID: 1506644886}
+  - {fileID: 920344437}
+  - {fileID: 1995306216}
 --- !u!1 &1995306214
 GameObject:
   m_ObjectHideFlags: 0

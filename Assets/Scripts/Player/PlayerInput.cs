@@ -5,7 +5,6 @@ using static Constants;
 public class PlayerInput : MonoBehaviour
 {
     private Camera mainCamera;
-    public UnityAction onMove;
 
     private void Start()
     {
@@ -56,8 +55,7 @@ public class PlayerInput : MonoBehaviour
 
         if (target.CanInteract(currentPlayer))
         {
-            IControllable player = PlayerManager.Instance.SelectedUnit;
-            target.Interact(player);
+            target.Interact();
         }
     }
     private void Movement(Vector3 destination)
