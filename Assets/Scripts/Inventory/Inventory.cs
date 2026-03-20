@@ -33,7 +33,10 @@ public class Inventory : MonoBehaviour
         itemFactory.Buy(101, 1);
     }
 
-    // 슬롯을 생성하는 함수
+    /// <summary>
+    /// 슬롯을 생성하는 함수
+    /// </summary>
+    /// <param name="num"></param>
     private void CreateSlots(int num)
     {
         for (int i = 0; i < num; i++)
@@ -45,13 +48,19 @@ public class Inventory : MonoBehaviour
         }
     }
     
-    // 업그레이드 등으로 슬롯의 개수가 늘어날 때 사용하는 슬롯 추가 함수
+    /// <summary>
+    /// 업그레이드 등으로 슬롯의 개수가 늘어날 때 사용하는 슬롯 추가 함수
+    /// </summary>
+    /// <param name="amount"></param>
     public void AddSlot(int amount)
     {
         CreateSlots(amount);
     }
     
-    // 슬롯에서 아이템 추가, 이동 등의 변경이 일어났을 때 냉장고의 아이템들을 기준으로 퀘스트 완료 가능 여부를 업데이트하기 위한 함수 
+    /// <summary>
+    /// 슬롯에서 아이템 추가, 이동 등의 변경이 일어났을 때 냉장고의 아이템들을 기준으로 퀘스트 완료 가능 여부를 업데이트하기 위한 함수 
+    /// </summary>
+    /// <returns></returns>
     private void NotifyItemChanged(int itemID)
     {
         if (type != InventoryType.Fridge)
@@ -65,7 +74,11 @@ public class Inventory : MonoBehaviour
         });
     }
     
-    // 슬롯간의 아이템 이동을 처리하는 함수, 슬롯과의 소통을 담당하는 함수
+    /// <summary>
+    /// 슬롯간의 아이템 이동을 처리하는 함수, 슬롯과의 소통을 담당하는 함수
+    /// </summary>
+    /// <param name="target"></param>
+    /// <param name="source"></param>
     private void HandleSlotDrop(Slot target, Slot source)
     {
         if (!target.Owner.CanAcceptFoodItem(source.Item))
