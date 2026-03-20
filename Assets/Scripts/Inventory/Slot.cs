@@ -22,22 +22,22 @@ public class Slot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDropHandler
 
     public event Action<Slot, Slot> OnSlotDrop; // 드래그 중인 아이템을 슬롯에서 놓을 때 호출 용
     
-    // // 디버그용
-    // [SerializeField] private ItemData debugItemData;
-    // [SerializeField] private int debugCount;
-    // private void Update()
-    // {
-    //     if (Item != null)
-    //     {
-    //         debugItemData = Item.Data;
-    //         debugCount = Count;
-    //     }
-    //     else
-    //     {
-    //         debugItemData = null;
-    //         debugCount = 0;
-    //     }
-    // }
+    // 디버그용
+    [SerializeField] private ItemData debugItemData;
+    [SerializeField] private int debugCount;
+    private void Update()
+    {
+        if (Item != null)
+        {
+            debugItemData = Item.Data;
+            debugCount = Count;
+        }
+        else
+        {
+            debugItemData = null;
+            debugCount = 0;
+        }
+    }
     
     
     private void OnEnable()

@@ -7,4 +7,5 @@ public abstract class ItemData : ScriptableObject
     public int price;
     public int maxCapacity;
     public Sprite icon;
+    public string description;
 }

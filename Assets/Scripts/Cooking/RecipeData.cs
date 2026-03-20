@@ -10,4 +10,5 @@ public class RecipeData : ScriptableObject
     public Constants.CookingMethod cookingMethod;
     public int price;
     public bool isLocked;
+    public string description;
 }

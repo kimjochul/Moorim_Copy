@@ -60,12 +60,18 @@ public class Inventory : MonoBehaviour
     
     private void HandleSlotDrop(Slot target, Slot source)
     {
+        if (!target.Owner.CanAcceptFoodItem(source.Item))
+        {
+            Debug.Log("이 인벤토리에는 넣을 수 없음");
+            return;
+        }
+        
         // 같은 인벤토리면 내가 처리
         if (target.Owner == this && source.Owner == this)
         {
             MoveItem(target, source);
         }
-        // 다른 인벤토리면 "target 쪽"이 처리
+        // 다른 인벤토리면 target 쪽이 본인의 컴포넌트에서 처리
         else if (target.Owner == this)
         {
             MoveItem(target, source);
@@ -226,5 +232,13 @@ public class Inventory : MonoBehaviour
         }
 
         return count;
+    }
+    
+    public bool CanAcceptFoodItem(IItem item)
+    {
+        if (type == InventoryType.Fridge)
+            return item.Data is FoodData;
+
+        return true;
     }
 }
