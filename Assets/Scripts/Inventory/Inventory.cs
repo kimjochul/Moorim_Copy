@@ -15,7 +15,7 @@ public class Inventory : MonoBehaviour
 {
     [SerializeField] private GameObject slotPrefab;
     [SerializeField] private int slotCount = 10;
-    private List<Slot> slots  = new List<Slot>();
+    [SerializeField] private List<Slot> slots  = new List<Slot>();
     
     [SerializeField] private InventoryType type;
     public InventoryType Type => type;
@@ -23,6 +23,10 @@ public class Inventory : MonoBehaviour
     private void Start()
     {
         CreateSlots(slotCount);
+
+        var itemFactory = GameObject.FindFirstObjectByType<Shop>().GetComponent<Shop>();
+        itemFactory.Buy(0, 11);
+        itemFactory.Buy(101, 3);
     }
 
     private void CreateSlots(int num)
@@ -56,12 +60,18 @@ public class Inventory : MonoBehaviour
     
     private void HandleSlotDrop(Slot target, Slot source)
     {
+        if (!target.Owner.CanAcceptFoodItem(source.Item))
+        {
+            Debug.Log("이 인벤토리에는 넣을 수 없음");
+            return;
+        }
+        
         // 같은 인벤토리면 내가 처리
         if (target.Owner == this && source.Owner == this)
         {
             MoveItem(target, source);
         }
-        // 다른 인벤토리면 "target 쪽"이 처리
+        // 다른 인벤토리면 target 쪽이 본인의 컴포넌트에서 처리
         else if (target.Owner == this)
         {
             MoveItem(target, source);
@@ -75,6 +85,7 @@ public class Inventory : MonoBehaviour
 
         int itemID = source.Item.ID;
 
+        // 컨트롤 누른 채 드래그하면 절반으로 줄이기
         if (target.IsEmpty && Input.GetKey(KeyCode.LeftControl))
         {
             int half = source.Count / 2;
@@ -117,7 +128,8 @@ public class Inventory : MonoBehaviour
         {
             IItem tempItem = target.Item;
             int tempCount = target.Count;
-
+            // dragslot은 원래 슬롯을 참조하는 것이기 때문에 원래 슬롯이 변경됨
+            //“dragSlot은 A 슬롯 객체를 참조하고 있고, dragSlot을 통해 호출한 메서드는 A 슬롯 인스턴스의 상태를 직접 변경한다.”
             target.SetItem(source.Item, source.Count);
             source.SetItem(tempItem, tempCount);
         }
@@ -132,23 +144,45 @@ public class Inventory : MonoBehaviour
         int itemID = item.ID;
         bool changed = false;
         
+        // 1. 기존 슬롯 채우기
         foreach (var slot in slots)
         {
-            if (!slot.IsEmpty && slot.Item.ItemName == item.ItemName && slot.Count < item.InventoryCapacity)
-            {
-                slot.AddCount(count);
-                Debug.Log($"Added {slot.Item}");
-                changed = true;
+            if (count <= 0)
                 break;
-            }
-            
-            if(slot.IsEmpty)
-            {
-                slot.AddItem(item, count);
-                changed = true;
-                break;
-            }
+
+            if (slot.IsEmpty)
+                continue;
+
+            if (slot.Item.ID != itemID)
+                continue;
+
+            int max = item.InventoryCapacity;
+            int canAdd = max - slot.Count;
+
+            if (canAdd <= 0)
+                continue;
+
+            int add = Mathf.Min(canAdd, count);
+            slot.AddCount(add);
+            count -= add;
+            changed = true;
         }
+
+        // 2. 빈 슬롯에 넣기
+        foreach (var slot in slots)
+        {
+            if (count <= 0)
+                break;
+
+            if (!slot.IsEmpty)
+                continue;
+
+            int add = Mathf.Min(item.InventoryCapacity, count);
+            slot.AddItem(new Item(item.Data), add);
+            count -= add;   
+            changed = true;
+        }
+        
         if (changed)
             NotifyItemChanged(itemID);
     }
@@ -198,5 +232,13 @@ public class Inventory : MonoBehaviour
         }
 
         return count;
+    }
+    
+    public bool CanAcceptFoodItem(IItem item)
+    {
+        if (type == InventoryType.Fridge)
+            return item.Data is FoodData;
+
+        return true;
     }
 }

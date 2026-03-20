@@ -46,6 +46,7 @@ public class DayManager : MonoBehaviour
     // 가게 운영 시작 버튼이 눌리면 이 함수 호출되도록
     public void DayStart()
     {
+        Debug.Log("Day Start");
         _timer = 0f;
         IsRunning = true;
         OnDayStart?.Invoke();
@@ -65,6 +66,7 @@ public class DayManager : MonoBehaviour
 
     public void DayEnd()
     {
+        Debug.Log("Day End");
         IsRunning = false;
         UpdateDayData();
         OnDayEnd?.Invoke();
