@@ -9,5 +9,6 @@
         Myungwol, Sowol
     }
     public const float SPOIL_TIME = 180f;
-    public const int MAXCOUNT_SLOT = 8;
+    public const int SERVINGSLOT_MAXCOUNT = 8;
+    public const int FRIDGE_SIZE = 4;
 }

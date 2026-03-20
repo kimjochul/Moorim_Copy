@@ -6,7 +6,7 @@ using static Constants;
 public class ServingCounter : MonoBehaviour
 {
     [SerializeField]
-    private ServingSlot[] allSlots = new ServingSlot[MAXCOUNT_SLOT];
+    private ServingSlot[] allSlots = new ServingSlot[SERVINGSLOT_MAXCOUNT];
 
     private List<ServingSlot> listActiveSlots = new List<ServingSlot>();
 
