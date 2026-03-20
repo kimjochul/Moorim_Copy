@@ -1,5 +1,9 @@
 using UnityEngine;
 
+
+/// <summary>
+/// 주문 서빙 시스템 구현할 때 사용하려고 만들어 놓은 클래스
+/// </summary>
 public class OrderServeSystem : MonoBehaviour
 {
     // 가게의 주문, 판매에 대한 매니저
