@@ -11,6 +11,10 @@ public enum InventoryType
     Ingredients,
 }
 
+/// <summary>
+/// 인벤토리 클래스, 각 인벤토리 UI에서 슬롯들을 묶는 group역할을 하는 오브젝트에 컴포넌트로 들어간다.
+/// 인벤토리 안의 슬롯에 담긴 아이템을 관리하는 클래스.
+/// </summary>
 public class Inventory : MonoBehaviour
 {
     [SerializeField] private GameObject slotPrefab;
@@ -25,10 +29,11 @@ public class Inventory : MonoBehaviour
         CreateSlots(slotCount);
 
         var itemFactory = GameObject.FindFirstObjectByType<Shop>().GetComponent<Shop>();
-        itemFactory.Buy(0, 11);
-        itemFactory.Buy(101, 3);
+        itemFactory.Buy(0, 1);
+        itemFactory.Buy(101, 1);
     }
 
+    // 슬롯을 생성하는 함수
     private void CreateSlots(int num)
     {
         for (int i = 0; i < num; i++)
@@ -40,11 +45,13 @@ public class Inventory : MonoBehaviour
         }
     }
     
+    // 업그레이드 등으로 슬롯의 개수가 늘어날 때 사용하는 슬롯 추가 함수
     public void AddSlot(int amount)
     {
         CreateSlots(amount);
     }
     
+    // 슬롯에서 아이템 추가, 이동 등의 변경이 일어났을 때 냉장고의 아이템들을 기준으로 퀘스트 완료 가능 여부를 업데이트하기 위한 함수 
     private void NotifyItemChanged(int itemID)
     {
         if (type != InventoryType.Fridge)
@@ -58,6 +65,7 @@ public class Inventory : MonoBehaviour
         });
     }
     
+    // 슬롯간의 아이템 이동을 처리하는 함수, 슬롯과의 소통을 담당하는 함수
     private void HandleSlotDrop(Slot target, Slot source)
     {
         if (!target.Owner.CanAcceptFoodItem(source.Item))
@@ -77,7 +85,12 @@ public class Inventory : MonoBehaviour
             MoveItem(target, source);
         }
     }
-
+    
+    /// <summary>
+    /// 소스 슬롯에서 타겟 슬롯에 아이템을 이동시키는 함수
+    /// </summary>
+    /// <param name="target"></param>
+    /// <param name="source"></param>
     private void MoveItem(Slot target, Slot source)
     {
         if (source.IsEmpty)
@@ -139,6 +152,11 @@ public class Inventory : MonoBehaviour
             NotifyItemChanged(target.Item.ID);
     }
 
+    /// <summary>
+    /// 아이템을 획득 했을 때 호출되는 함수
+    /// </summary>
+    /// <param name="item"></param>
+    /// <param name="count"></param>
     public void GetItem(IItem item, int count)
     {
         int itemID = item.ID;
@@ -187,6 +205,11 @@ public class Inventory : MonoBehaviour
             NotifyItemChanged(itemID);
     }
 
+    /// <summary>
+    /// 아이템을 인벤토리에서 지울 때 호출하는 함수
+    /// </summary>
+    /// <param name="itemID"></param>
+    /// <param name="removeCount"></param>
     public void RemoveItem(int itemID, int removeCount)
     {
         bool changed = false;
@@ -216,6 +239,11 @@ public class Inventory : MonoBehaviour
             NotifyItemChanged(itemID);
     }
     
+    /// <summary>
+    /// 본인 인벤토리 내의 아이템의 전체 개수를 구하는 함수
+    /// </summary>
+    /// <param name="itemID"></param>
+    /// <returns></returns>
     public int GetItemCount(int itemID)
     {
         int count = 0;
@@ -234,6 +262,11 @@ public class Inventory : MonoBehaviour
         return count;
     }
     
+    /// <summary>
+    /// 음식 아이템을 넣을 수 있는 곳인지 확인하는 함수(냉장고에는 재료 아이템을 넣을 수 없다.)
+    /// </summary>
+    /// <param name="item"></param>
+    /// <returns></returns>
     public bool CanAcceptFoodItem(IItem item)
     {
         if (type == InventoryType.Fridge)
