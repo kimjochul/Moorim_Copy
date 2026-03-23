@@ -64,8 +64,7 @@ public class CameraController : MonoBehaviour
         this.currentOrbitRotationY = this.startOrbitRotationY;
         this.currentOrbitRotationX = this.startOrbitRotationX;
 
-        float targetHeight = 10f;
-        this.orbitDistance = targetHeight / Mathf.Sin(this.currentOrbitRotationY * Mathf.Deg2Rad);
+        this.orbitDistance = this.maxOrbitDistance;
 
         Quaternion rotation = Quaternion.Euler(this.currentOrbitRotationY, this.currentOrbitRotationX, 0f);
         this.transform.position = center + rotation * Vector3.back * this.orbitDistance;

@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// 인벤토리에 들어가는 아이템을 선언할 때 사용하기 위한 클래스 new Item(~~~) 이런 식으로 호출해서 사용
+/// </summary>
 public class Item : IItem
 {
     public int ID { get; }

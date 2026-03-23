@@ -1,6 +1,11 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+
+/// <summary>
+/// 퀘스트 클리어 창에서, 퀘스트 완료 바에 대한 클래스
+/// 퀘스트 실패 시 퀘스트 바 삭제를 하는 함수 추가 필요
+/// </summary>
 public class QuestClearBar : MonoBehaviour
 {
     [SerializeField] private Button clearButton;
@@ -22,7 +27,9 @@ public class QuestClearBar : MonoBehaviour
         clearButton.onClick.AddListener(OnClickClear);
     }
 
-    
+    /// <summary>
+    /// 버튼이 클릭됐을 때 퀘스트가 완료 가능한지 확인하고 가능하면 완료 처리 하는 함수
+    /// </summary>
     private void OnClickClear()
     {
         if (!quest.CanClear())
