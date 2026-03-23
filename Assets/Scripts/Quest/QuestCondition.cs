@@ -8,6 +8,7 @@ public enum QuestEventType
     ItemChanged,
     Fail,
     ServeCustomer,
+    GenerateQuest
 }
 
 /// <summary>
@@ -16,7 +17,7 @@ public enum QuestEventType
 public struct QuestEvent
 {
     public QuestEventType type;
-    public int value; // 아이템이 필요한 퀘스트의 경우, itemID를 담는 값
+    public int ID; // 아이템이 필요한 퀘스트의 경우, itemID를 담는 값, 혹은 실패의 경우 퀘스트 ID
     public int currentCount; // 퀘스트 진행 상황 카운트 값
 }
 
