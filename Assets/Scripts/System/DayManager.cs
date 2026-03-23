@@ -19,6 +19,10 @@ public class DayData
     internal DayOfWeek dayOfWeek;
 }
 
+
+/// <summary>
+/// 주간 운영에서 시간, 날짜를 관리하는 클래스
+/// </summary>
 public class DayManager : MonoBehaviour
 {
     // 날짜 계산 관련 매니저
@@ -43,9 +47,12 @@ public class DayManager : MonoBehaviour
         };
     }
     
-    // 가게 운영 시작 버튼이 눌리면 이 함수 호출되도록
+    /// <summary>
+    /// 주간 영업이 시작될 때 호출되는 함수. OnDayStart Action을 이용해 다른 매니저들도 영업이 시작될 때 맞는 행동을 한다.
+    /// </summary>
     public void DayStart()
     {
+        Debug.Log("Day Start");
         _timer = 0f;
         IsRunning = true;
         OnDayStart?.Invoke();
@@ -62,14 +69,21 @@ public class DayManager : MonoBehaviour
             DayEnd();
         }
     }
-
+    
+    /// <summary>
+    /// 주간 영업이 끝날 때 호출되는 함수. OnDayStart Action을 이용해 다른 매니저들도 영업이 끝날 때 맞는 행동을 한다.
+    /// </summary>
     public void DayEnd()
     {
+        Debug.Log("Day End");
         IsRunning = false;
         UpdateDayData();
         OnDayEnd?.Invoke();
     }
 
+    /// <summary>
+    /// 날짜 데이터 업데이트 함수
+    /// </summary>
     private void UpdateDayData()
     {
         dayData.day++;

@@ -4,7 +4,11 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class Slot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDropHandler
+
+/// <summary>
+/// UI상에서 슬롯에 있는 아이템 시각적으로 표시하고 인벤토리에 어떤 아이템이 담겨져있는지 알려주기 위한 클래스, 인벤토리하고만 소통
+/// </summary>
+public class Slot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDropHandler, IEndDragHandler
 {
     public Inventory Owner { get; private set; }
     
@@ -21,6 +25,24 @@ public class Slot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDropHandler
     public bool IsEmpty { get; private set; } = true;
 
     public event Action<Slot, Slot> OnSlotDrop; // 드래그 중인 아이템을 슬롯에서 놓을 때 호출 용
+    
+    // 디버그용
+    [SerializeField] private ItemData debugItemData;
+    [SerializeField] private int debugCount;
+    private void Update()
+    {
+        if (Item != null)
+        {
+            debugItemData = Item.Data;
+            debugCount = Count;
+        }
+        else
+        {
+            debugItemData = null;
+            debugCount = 0;
+        }
+    }
+    
     
     private void OnEnable()
     {
@@ -51,7 +73,7 @@ public class Slot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDropHandler
         if (Item == null)
             return;
 
-        Item.Use();
+        //Item.Use();
         AddCount(-1);
         
         if (Count <= 0)
@@ -124,21 +146,16 @@ public class Slot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDropHandler
         SetItem(null, 0);
     }
     
-    private void SwapWith(Slot other)
-    {
-        IItem tempItem = Item;
-        int tempCount = Count;
-        // dragslot은 원래 슬롯을 참조하는 것이기 때문에 원래 슬롯이 변경됨
-        //“dragSlot은 A 슬롯 객체를 참조하고 있고, dragSlot을 통해 호출한 메서드는 A 슬롯 인스턴스의 상태를 직접 변경한다.”
-        SetItem(other.Item, other.Count);
-        other.SetItem(tempItem, tempCount);
-    }
-    
     private void EndDrag()
     {
         dragItem.sprite = null;
         dragItem.gameObject.SetActive(false);
         dragItem.raycastTarget = true;
         dragSlot = null;
+    }
+
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        EndDrag();
     }
 }

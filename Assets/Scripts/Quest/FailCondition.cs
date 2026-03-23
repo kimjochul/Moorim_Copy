@@ -1,17 +1,28 @@
 using System;
 using UnityEngine;
 
+/// <summary>
+/// 실패 횟수를 체크하는 퀘스트 조건을 만들기 위한 클래스(ex. 기분나쁜 손님을 3명 이상 만들지 마시오)
+/// </summary>
 [CreateAssetMenu(menuName = "Quest/Condition/Fail")]
 public class FailLimitCondition : QuestCondition
 {
     public int maxFailCount;
     private int currentFailCount;
 
+    /// <summary>
+    /// 실패 횟수를 0에서 시작하면서 카운팅
+    /// </summary>
+    /// <param name="inventory"></param>
     public override void Init(Inventory inventory)
     {
         currentFailCount = 0;
     }
 
+    /// <summary>
+    /// 만약 들어온 questevent의 type이 fail이면 업데이트(조건 구분하기 위한 id 추가 필요)
+    /// </summary>
+    /// <param name="questEvent"></param>
     public override void Notify(QuestEvent questEvent)
     {
         if (questEvent.type != QuestEventType.Fail)
@@ -20,16 +31,28 @@ public class FailLimitCondition : QuestCondition
         currentFailCount++;
     }
 
+    /// <summary>
+    /// 퀘스트 완료인 지 체크 함수
+    /// </summary>
+    /// <returns></returns>
     public override bool IsComplete()
     {
         return currentFailCount <= maxFailCount;
     }
 
+    /// <summary>
+    /// 퀘스트 실패인 지 체크 함수
+    /// </summary>
+    /// <returns></returns>
     public bool IsFailed()
     {
         return currentFailCount > maxFailCount;
     }
     
+    /// <summary>
+    /// 퀘스트 파일에서 퀘스트 조건 등록을 위한 클로닝 함수
+    /// </summary>
+    /// <returns></returns>
     public override QuestCondition Clone()
     {
         var instance = CreateInstance<FailLimitCondition>();
