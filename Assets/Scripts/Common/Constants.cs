@@ -1,5 +1,19 @@
 ﻿public class Constants
 {
+    public enum IngredientType
+    {
+        Vegetable,
+        Meat,
+        Spices,
+    }
+    public enum FoodType
+    {
+        Meal,
+        Drink,
+        Dessert,
+        SideDish
+    }
+    
     public enum CookingMethod
     {
         None, Bake, Fry, Boil, Mix, Braise

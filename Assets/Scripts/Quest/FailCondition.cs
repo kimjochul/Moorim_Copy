@@ -1,12 +1,18 @@
 using System;
 using UnityEngine;
 
+public enum FailType
+{
+    CustomerAngry = 1,
+}
+
 /// <summary>
 /// 실패 횟수를 체크하는 퀘스트 조건을 만들기 위한 클래스(ex. 기분나쁜 손님을 3명 이상 만들지 마시오)
 /// </summary>
 [CreateAssetMenu(menuName = "Quest/Condition/Fail")]
 public class FailLimitCondition : QuestCondition
 {
+    public FailType failType;
     public int maxFailCount;
     private int currentFailCount;
 
@@ -27,8 +33,12 @@ public class FailLimitCondition : QuestCondition
     {
         if (questEvent.type != QuestEventType.Fail)
             return;
+        
+        if (questEvent.ID != (int)failType)
+            return;
 
-        currentFailCount++;
+
+        currentFailCount += questEvent.currentCount;
     }
 
     /// <summary>
@@ -56,6 +66,7 @@ public class FailLimitCondition : QuestCondition
     public override QuestCondition Clone()
     {
         var instance = CreateInstance<FailLimitCondition>();
+        instance.failType = failType;
         instance.maxFailCount = maxFailCount;
         
         return instance;

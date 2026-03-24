@@ -30,7 +30,7 @@ public class ItemCondition : QuestCondition
         if (questEvent.type != QuestEventType.ItemChanged)
             return;
 
-        if (questEvent.value != itemID)
+        if (questEvent.ID != itemID)
             return;
 
         currentCount = questEvent.currentCount;
