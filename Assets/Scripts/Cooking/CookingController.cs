@@ -16,7 +16,7 @@ public class CookingController : MonoBehaviour
     // 내가 기억해야 할 데이터
     private CookingModel model = new CookingModel();
     private List<Recipe> runtimeRecipes = new List<Recipe>();
-    private CookingStation currentStation;
+    private CookingStation currentStation; // 어떤 요리대인지 기억
 
     void Awake()
     {
