@@ -13,4 +13,5 @@ public class RecipeData : ScriptableObject
     public bool isLocked;
     public Constants.FoodType foodType;
     public string description;
+    public FoodData result;
 }
