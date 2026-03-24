@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class OrderIconController : PopupController
 {
     private Button _button;
-    public void Show()
+    public void Showt()
     {
         base.Show();
         _button = GetComponent<Button>();
