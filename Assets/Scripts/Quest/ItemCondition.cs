@@ -7,7 +7,12 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Quest/Condition/Item")]
 public class ItemCondition : QuestCondition
 {
-    public int itemID;
+    public bool useRandomItem;     // 랜덤 여부
+    public bool useFoodType;       // 타입 기반 랜덤
+
+    public int itemID;             // 고정용
+    public Constants.FoodType foodType; // 타입 지정
+    
     public int requiredCount;
 
     private int currentCount;
@@ -54,6 +59,11 @@ public class ItemCondition : QuestCondition
         var instance = CreateInstance<ItemCondition>();
         instance.itemID = itemID;
         instance.requiredCount = requiredCount;
+        
+        instance.useRandomItem = useRandomItem;
+        instance.useFoodType = useFoodType;
+        instance.foodType = foodType;
+
         
         return instance;
     }

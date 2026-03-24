@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        
+        dayManager.DayStart();
     }
 
     public void StartDayButton()

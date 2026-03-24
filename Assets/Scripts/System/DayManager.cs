@@ -88,5 +88,6 @@ public class DayManager : MonoBehaviour
     {
         dayData.day++;
         dayData.dayOfWeek = (DayOfWeek)(((int)dayData.dayOfWeek + 1) % 7);
+        Debug.Log($"오늘 날짜 {dayData.day}일, {dayData.dayOfWeek}");
     }
 }
