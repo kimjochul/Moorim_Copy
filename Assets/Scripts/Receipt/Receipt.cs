@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using DG.Tweening;
 using UnityEngine.Events;
+using UnityEngine.UI;
 public class Receipt : MonoBehaviour
 {
     private ReceiptData data;
@@ -43,8 +44,12 @@ public class Receipt : MonoBehaviour
     [SerializeField]
     private float lastAppendInterval;
 
-    void Start()
+    // 명세표 연출
+    private Sequence receiptSequence;
+
+    void Awake()
     {
+        Show();
         StartAnimationText();
     }
     public void Init(ReceiptData data)
@@ -53,11 +58,12 @@ public class Receipt : MonoBehaviour
     }
     public void Show()
     {
-        this.gameObject.SetActive(true);
+        ClearSlotText();
     }
     public void Hide()
     {
-        this.gameObject.SetActive(false);
+        ClearSequence();
+        ClearSlotText();
     }
     public void StartAnimationText(UnityAction onComplete = null)
     {
@@ -73,36 +79,40 @@ public class Receipt : MonoBehaviour
             netIncome = 65178
         };
 
-        ClearSlotText();
-
         this.txtDay.text = data.week.day + "일째";
 
-        Sequence seq = DOTween.Sequence();
+        this.receiptSequence = DOTween.Sequence();
 
-        seq.AppendInterval(0.5f);
-
+        this.receiptSequence.AppendInterval(0.5f);
+      
         // Append: 애니메이션 / AppendInterval: 쉬는 시간 추가
-        seq.Append(this.totalRevenue.AnimationText(this.data.totalRevenue, this.labelDelay, this.valueDuration));
-        seq.AppendInterval(this.appendInterval);
+        this.receiptSequence.Append(this.totalRevenue.AnimationText(this.data.totalRevenue, this.labelDelay, this.valueDuration));
+        this.receiptSequence.AppendInterval(this.appendInterval);
+  
+        this.receiptSequence.Append(this.fame.AnimationText(this.data.fame, this.labelDelay, this.valueDuration));
+        this.receiptSequence.AppendInterval(this.appendInterval);
 
-        seq.Append(this.fame.AnimationText(this.data.fame, this.labelDelay, this.valueDuration));
-        seq.AppendInterval(this.appendInterval);
+        this.receiptSequence.Append(this.debt.AnimationText(this.data.debt, this.labelDelay, this.valueDuration));
+        this.receiptSequence.AppendInterval(this.appendInterval);
 
-        seq.Append(this.debt.AnimationText(this.data.debt, this.labelDelay, this.valueDuration));
-        seq.AppendInterval(this.appendInterval);
-
-        seq.Append(this.happyGuests.AnimationText(this.data.happyGuests, this.labelDelay, this.valueDuration));
-        seq.AppendInterval(this.appendInterval);
-
-        seq.Append(this.angryGuests.AnimationText(this.data.angryGuests, this.labelDelay, this.valueDuration));
-        seq.AppendInterval(this.lastAppendInterval);
-
-        seq.Append(this.netIncome.AnimationText(this.data.netIncome, this.netIncomeDelay, this.netIncomeDuration));
-
-        seq.OnComplete(() => {
+        this.receiptSequence.Append(this.happyGuests.AnimationText(this.data.happyGuests, this.labelDelay, this.valueDuration));
+        this.receiptSequence.AppendInterval(this.appendInterval);
+   
+        this.receiptSequence.Append(this.angryGuests.AnimationText(this.data.angryGuests, this.labelDelay, this.valueDuration));
+        this.receiptSequence.AppendInterval(this.lastAppendInterval);
+  
+        this.receiptSequence.Append(this.netIncome.AnimationText(this.data.netIncome, this.netIncomeDelay, this.netIncomeDuration));
+   
+        this.receiptSequence.OnComplete(() => {
             // 전부 끝나면 할 행동
+            this.receiptSequence = null;
             onComplete?.Invoke();
         });
+    }
+    private void ClearSequence()
+    {
+        this.receiptSequence.Kill();
+        this.receiptSequence = null;
     }
     private void ClearSlotText()
     {
