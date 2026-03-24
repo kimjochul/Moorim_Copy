@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -16,12 +17,13 @@ public class Quest : IObserver
     public bool IsFailed { get; private set; }
 
     private List<QuestCondition> conditions;
+    public List<QuestCondition> Conditions => conditions;
     
     /// <summary>
     /// 퀘스트를 생성하는 생성자, 퀘스트 데이터를 받아서 퀘스트를 생성
     /// </summary>
     /// <param name="questData"></param>
-    public Quest(QuestData questData)
+    public Quest(QuestData questData, Inventory inventory)
     {
         data = questData;
         QuestID = data.id;
@@ -29,7 +31,6 @@ public class Quest : IObserver
         IsCompleted = false;
         
         conditions = new List<QuestCondition>();
-        var inventory = Object.FindFirstObjectByType<Inventory>();
 
         foreach (var condition in data.conditions)
         {
@@ -38,8 +39,6 @@ public class Quest : IObserver
                 
             conditions.Add(instance);
         }
-        
-        QuestManager.Instance.AddObserver(this);
     }
     
     /// <summary>

@@ -13,11 +13,6 @@ public class QuestClearBar : MonoBehaviour
     
     private Quest quest;
 
-    private void OnEnable()
-    {
-        inventory = FindFirstObjectByType<Inventory>();
-    }
-
     public void Init(Quest quest, Inventory inventory)
     {
         this.quest = quest;
@@ -44,6 +39,10 @@ public class QuestClearBar : MonoBehaviour
         
         // 완료 처리
         quest.Complete();
+        
+        if(quest.Data.questType == QuestType.Story)
+            StoryQuestController.Instance.StartNextQuest(inventory);
+        
         gameObject.SetActive(false);
     }
 }

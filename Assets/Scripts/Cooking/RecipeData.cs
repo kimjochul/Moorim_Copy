@@ -11,5 +11,7 @@ public class RecipeData : ScriptableObject
     public Sprite icon;
     public int price;
     public bool isLocked;
+    public Constants.FoodType foodType;
     public string description;
+    public FoodData result;
 }
