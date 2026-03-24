@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 /// <summary>
@@ -6,6 +7,9 @@ using UnityEngine;
 public class CustomerManager : MonoBehaviour
 {
     [SerializeField] private DayManager dayManager;
+
+    public static event Action OnCustomerServed;
+    private int customerCount = 0;
     
     void Awake()
     {
@@ -24,6 +28,16 @@ public class CustomerManager : MonoBehaviour
     void SpawnCustomer()
     {
         Debug.Log("손님 생성");
+        ServeCustomer();
+    }
+    
+    /// <summary>
+    /// 손님을 제대로 서빙까지 마쳐서 성공적으로 대접이 끝날 때 호출(인원 갱신 및 economymanager에 액션 전송)
+    /// </summary>
+    void ServeCustomer()
+    {
+        customerCount++;
+        OnCustomerServed?.Invoke(); // ⭐ 이벤트 발행
     }
     
     /// <summary>

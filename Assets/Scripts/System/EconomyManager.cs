@@ -20,13 +20,31 @@ public class EconomyManager : MonoBehaviour
 
     private int _todayMoneyIncome;
     private int _todayFameIncome;
+    private int _todayCustomerCount;
     
     void Awake()
     {
         RestaurantEconomy = new RestaurantEconomy();
-        
+    }
+    
+    void OnEnable()
+    {
+        Debug.Log("Eco Enable");
         dayManager.OnDayStart += ResetDay;
         dayManager.OnDayEnd += TotalEarningToday;
+        dayManager.OnDayEnd += TodayResult;
+
+        CustomerManager.OnCustomerServed += OnCustomerServed;
+    }
+
+    void OnDisable()
+    {
+        Debug.Log("Eco Disable");
+        dayManager.OnDayStart -= ResetDay;
+        dayManager.OnDayEnd -= TotalEarningToday;
+        dayManager.OnDayEnd -= TodayResult;
+
+        CustomerManager.OnCustomerServed -= OnCustomerServed;
     }
     
     /// <summary>
@@ -48,12 +66,21 @@ public class EconomyManager : MonoBehaviour
     }
     
     /// <summary>
+    /// CustomerManager 액션 받는 장소
+    /// </summary>
+    void OnCustomerServed()
+    {
+        _todayCustomerCount++;
+    }
+    
+    /// <summary>
     /// 영업 시작 시, 금일 영업 이득을 0으로 초기화하기 위한 함수
     /// </summary>
     public void ResetDay()
     {
         _todayMoneyIncome = 0;
         _todayFameIncome = 0;
+        _todayCustomerCount = 0;
     }
 
     /// <summary>
@@ -63,5 +90,15 @@ public class EconomyManager : MonoBehaviour
     {
         RestaurantEconomy.Money += _todayMoneyIncome;
         RestaurantEconomy.Fame += _todayFameIncome;
+    }
+
+    /// <summary>
+    /// 증가량, 결과 재정, 왔던 손님 수 등등 전체 종합
+    /// </summary>
+    public void TodayResult()
+    {
+        Debug.Log($"금일 수입 : {_todayMoneyIncome}, 금일 명성 증가량 : {_todayFameIncome}");
+        Debug.Log($"처리한 손님 수 : {_todayCustomerCount}");
+        Debug.Log($"결과 재정 상태: {RestaurantEconomy.Money}, 결과 명성 수치 : {RestaurantEconomy.Fame}");
     }
 }

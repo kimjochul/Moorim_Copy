@@ -11,7 +11,8 @@ public class RecipeData : ScriptableObject
     public Sprite icon;
     public int price;
     public bool isLocked;
-    public Constants.FoodType foodType;
+    public Constants.FoodType foodType; // 음식 타입
+    public Constants.RecipeClass recipeClass; // 레시피 분류
     public string description;
     public FoodData result;
 }

@@ -1,5 +1,15 @@
 ﻿public class Constants
 {
+    public enum IngredientRarity
+    {
+        Normal,
+        Epic,
+    }
+    public enum RecipeClass
+    {
+        Normal,
+        Event,
+    }
     public enum IngredientType
     {
         Vegetable,
