@@ -27,7 +27,7 @@ public class PlayerController : MonoBehaviour, IControllable
         {
             if (!this.agent.hasPath || this.agent.velocity.sqrMagnitude == 0f)
             {
-                this.onMoveEnd.Invoke();
+                this.onMoveEnd?.Invoke();
 
                 this.onMoveEnd = null;
             }
@@ -54,7 +54,7 @@ public class PlayerController : MonoBehaviour, IControllable
         this.agent.velocity = Vector3.zero;
         this.agent.SetDestination(destination);
 
-        //이동 끝난 후 이벤트
+        //이동 끝난 후 이벤트 등록
         this.onMoveEnd = action;
     }
 

@@ -6,17 +6,17 @@ public class PlayerInput : MonoBehaviour
 {
     private Camera mainCamera;
 
-    private void Start()
+    void Start()
     {
         this.mainCamera = Camera.main;
     }
 
-    private void Update()
+    void Update()
     {
-        HandlePlayerSelection();
-        HandleMouseClick();
+        PlayerSelection();
+        MouseClick();
     }
-    private void HandlePlayerSelection()
+    private void PlayerSelection()
     {
         if (Input.GetKeyDown(KeyCode.F1))
         {
@@ -27,7 +27,7 @@ public class PlayerInput : MonoBehaviour
             PlayerManager.Instance.SelectPlayer(PlayerType.Sowol);
         }
     }
-    private void HandleMouseClick()
+    private void MouseClick()
     {
         if (Input.GetMouseButtonDown(0))
         {
