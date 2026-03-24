@@ -282,8 +282,11 @@ public class Inventory : MonoBehaviour
     /// <returns></returns>
     public bool CanAcceptFoodItem(IItem item)
     {
-        if (type == InventoryType.Fridge)
+        if (type is InventoryType.Fridge or InventoryType.MealTable or InventoryType.Chef or InventoryType.Server)
             return item.Data is FoodData;
+        
+        if(type == InventoryType.Ingredients)
+            return item.Data is IngredientData;
 
         return true;
     }

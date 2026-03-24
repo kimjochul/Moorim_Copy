@@ -60,11 +60,6 @@ public class Quest : IObserver
                 return;
             }
         }
-
-        if (CanClear())
-        {
-            Complete();
-        }
     }
 
     /// <summary>

@@ -9,8 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a5221f69e77027448a4019eeae673717, type: 3}
-  m_Name: QuestPool
-  m_EditorClassIdentifier: Assembly-CSharp::QuestPool
-  quests:
-  - {fileID: 11400000, guid: feb487051efd47349b6a08d79233c3d6, type: 2}
+  m_Script: {fileID: 11500000, guid: 30591bccf088ba64cb4e63f8297cb536, type: 3}
+  m_Name: RandomFoodCondition
+  m_EditorClassIdentifier: Assembly-CSharp::ItemCondition
+  useRandomItem: 1
+  useFoodType: 0
+  itemID: 0
+  foodType: 0
+  requiredCount: 0
