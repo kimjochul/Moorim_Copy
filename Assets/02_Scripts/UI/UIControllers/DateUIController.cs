@@ -12,23 +12,68 @@ public class DateUIController : MonoBehaviour
     void Awake()
     {
         _dayManager = FindFirstObjectByType<DayManager>();
-        _dayManager.OnDayStart += DayUIUpdate;
-    }
-    void Update()
-    {
-        
+        _dayManager.OnDayStart += DateUIUpdate;
     }
 
-    void DayUIUpdate()
+    // 하루 시작할 때마다 날짜 UI 업데이트
+    void DateUIUpdate()
     {
+        if (_dayManager == null || _dayManager.DayData == null)
+            return;
         
-        string dateText = "";
+        string dayofweekText;
         
-        _dateText = _dayManager.DayData.day;
+        // 한글 요일로 변환
+        switch (_dayManager.DayData.dayOfWeek)
+        {
+            case DayOfWeek.Monday:
+                dayofweekText = "월";
+                break;
+            case DayOfWeek.Tuesday:
+                dayofweekText = "화";
+                break;
+            case DayOfWeek.Wednesday:
+                dayofweekText = "수";
+                break;
+            case DayOfWeek.Thursday:
+                dayofweekText = "목";
+                break;
+            case DayOfWeek.Friday:
+                dayofweekText = "금";
+                break;
+            case DayOfWeek.Saturday:
+                dayofweekText = "토";
+                break;
+            case DayOfWeek.Sunday:
+                dayofweekText = "일";
+                break;
+            default:
+                Debug.Log("DateUIController: DayData에서 DayofWeek 값이 없음");
+                dayofweekText = "";
+                break;
+        }
+        
+        _dateText.text = "Day " + _dayManager.DayData.day.ToString();
+        _dayOfWeekText.text = dayofweekText;
+    }
+
+    void TimeUIUpdate()
+    {
+        string timeText;
+        string ampmText;
+        
+        // temp
+        int hour = 0;
+        int minute = 0;
+        
+        ampmText = hour <= 12 ? "AM" : "PM";
+        
+        timeText = $"{hour.ToString()}:{minute.ToString()} {ampmText}";
+        _timeText.text = timeText;
     }
 
     void OnDestroy()
     {
-        _dayManager.OnDayStart -= DayUIUpdate;
+        _dayManager.OnDayStart -= DateUIUpdate;
     }
 }
