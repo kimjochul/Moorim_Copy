@@ -20,5 +20,11 @@ public class UIManager : Singleton<UIManager>
         dialogPopupObject.GetComponent<DialogPopupController>().Show(characterName, dialog);
     }
 
-    
+    public void EnableGuestOrderUI(/*GuestBase guestBase*/)
+    {
+        // Instantiate 말고 enabled로 바꿀수도
+        var guestOrderUIObject = Instantiate(dialogPopupPrefab/* guestBase*/);
+        
+        guestOrderUIObject.GetComponent<OrderIconController>().Show();
+    }
 }
