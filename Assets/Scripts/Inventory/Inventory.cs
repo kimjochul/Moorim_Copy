@@ -69,7 +69,7 @@ public class Inventory : MonoBehaviour
         QuestManager.Instance.NotifyListener(new QuestEvent
         {
             type = QuestEventType.ItemChanged,
-            value = itemID,
+            ID = itemID,
             currentCount = GetItemCount(itemID)
         });
     }

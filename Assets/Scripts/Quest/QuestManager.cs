@@ -1,6 +1,6 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 /// <summary>
 /// 퀘스트 데이터를 받아 퀘스트를 생성해서 버튼을 누를 시 버튼에 해당하는 퀘스트를 받게 하고
@@ -10,40 +10,53 @@ using UnityEngine.UI;
 /// </summary>
 public class QuestManager : Singleton<QuestManager>, ISubject
 {
+    [SerializeField] private QuestUIManager uiManager;
+    
     private List<IObserver> observers = new List<IObserver>();
     
-    [SerializeField] private Button[] questButtons;
-    [SerializeField] private GameObject[] questClearButtons;
-    [SerializeField] private Transform questClearUI;
-    [SerializeField] private QuestData[] datas;
+    [SerializeField] private QuestGenerator generator;
     
     [SerializeField] private Inventory inventory;
-
+    private List<Quest> activeQuests = new List<Quest>();
+    
     protected override void Awake()
     {
         base.Awake();
+    }
 
-        for (int i = 0; i < questButtons.Length; i++)
+    private void Start()
+    {
+        QuestManager.Instance.NotifyListener(new QuestEvent
         {
-            int j = i;
-            questButtons[i].onClick.AddListener(()=>SetButton(j));
-        }
+            type = QuestEventType.GenerateQuest
+        });
     }
 
     /// <summary>
-    /// 퀘스트 창에서 퀘스트를 받을 때, 퀘스트 데이터를 index(아마 id로 대체될 듯)를 통해 받고
+    /// 퀘스트 수락 전 제안
+    /// </summary>
+    /// <param name="data"></param>
+    public void OfferQuest(Quest quest)
+    {
+        uiManager.CreateAcceptUI(quest);
+    }
+    
+    /// <summary>
+    /// 퀘스트 창에서 퀘스트를 받을 때
     /// 퀘스트 클리어 창에 퀘스트 클리어 바를 생성하는 함수
     /// </summary>
     /// <param name="index"></param>
-    private void SetButton(int index)
+    public void AcceptQuest(Quest quest)
     {
-        Quest quest = new Quest(datas[index]); // 퀘스트 데이터의 id를 통해서 접근하도록 변경하는게 좋을 듯 
-        questButtons[index].gameObject.SetActive(false);
-        
-        GameObject clearobj = Instantiate(questClearButtons[index], questClearUI);
-        clearobj.GetComponent<QuestClearBar>().Init(quest, inventory);
-    }
+        if (activeQuests.Exists(q => q.QuestID == quest.QuestID))
+            return;
 
+        activeQuests.Add(quest);
+        Instance.AddObserver(quest);
+     
+        uiManager.CreateClearUI(quest, inventory);
+    }
+    
     /// <summary>
     /// 퀘스트를 생성할 때 퀘스트 매니저에서 퀘스트를 추적하기 위해 설정을 하는 함수
     /// </summary>
@@ -63,14 +76,31 @@ public class QuestManager : Singleton<QuestManager>, ISubject
         observers.Remove(observer);
         Debug.Log($"퀘스트 {observer.QuestName}를 삭제하였습니다.");
     }
-
     
     /// <summary>
+    /// 이벤트 타입이 퀘스트생성이면 생성기에게 퀘스트 생성 명령
     /// 퀘스트 진행 여부를 QuestEvent를 받았을 때, 지금 추적 중인 모든 퀘스트에게 공지하여 본인이 해당이 되는지 알리는 함수
+    ///
+    /// 아래와 같은 호출 방식을 이용하면 랜덤 퀘스트 생성
+    ///QuestManager.Instance.NotifyListener(new QuestEvent
+    /// {
+    ///     type = QuestEventType.GenerateQuest
+    /// });
+    /// 
     /// </summary>
     /// <param name="questEvent"></param>
     public void NotifyListener(QuestEvent questEvent)
     {
+        if (questEvent.type == QuestEventType.GenerateQuest)
+        {
+            var quest = generator.GenerateRandomQuest();
+
+            if (quest != null)
+                OfferQuest(quest);
+
+            return;
+        }
+        
         for (int i = observers.Count - 1; i >= 0; i--)
             observers[i].Notify(questEvent);
     }
