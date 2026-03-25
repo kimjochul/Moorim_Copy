@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+// TODO:  UI 업데이트를 위해 활성화된 퀘스트 리스트가 변경될 때마다 action 같은 것으로 알려줄 수 있게 QuestManager에 추가, 현재 돈/명성이 변경될 때 action같은 것도 추가
+
 /// <summary>
 /// 퀘스트 데이터를 받아 퀘스트를 생성해서 버튼을 누를 시 버튼에 해당하는 퀘스트를 받게 하고
 /// 퀘스트 클리어 창에 퀘스트 클리어에 대한 클리어 바를 만드는 클래스
