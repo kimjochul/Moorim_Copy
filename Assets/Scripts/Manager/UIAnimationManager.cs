@@ -110,6 +110,24 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
     [Tooltip("기존 위치에서 얼마나 위쪽에서 떨어질지 설정")]
     [SerializeField] private float bouncePopStartOffset = 1000f;
 
+    [Space(30)]
+
+    [Header("=== 지그재그 바운스 연출 ===")]
+    [Header("Show 설정")]
+    [Range(0.5f, 2f)]
+    [SerializeField] private float zigzagShowDuration = 1.2f; // 튕기며 이동할 충분한 시간
+
+    [Header("Hide 설정")]
+    [Range(0.1f, 1f)]
+    [SerializeField] private float zigzagHideDuration = 0.3f;
+    [SerializeField] private Ease zigzagHideEase = Ease.InBack;
+
+    [Tooltip("시작할 때 위로 얼마나 올라가 있을지")]
+    [SerializeField] private float zigzagDropHeight = 800f;
+    [Tooltip("시작할 때 왼쪽으로 얼마나 치우쳐 있을지 (음수/양수)")]
+    [SerializeField] private float zigzagLeftOffset = 400f;
+    [Tooltip("중앙을 지나 오른쪽으로 튕겨 나갈 거리")]
+    [SerializeField] private float zigzagRightOffset = 200f;
     protected override void Awake()
     {
         base.Awake();
@@ -132,12 +150,10 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         cg.blocksRaycasts = false;
 
         ui.localScale = Vector3.one * this.popStartScale;
+
         cg.alpha = 0f;
 
-        ui.gameObject.SetActive(true);
-
         Sequence seq = DOTween.Sequence();
-
         // 시작할 때
         seq.OnStart(() => {
             onStart?.Invoke();
@@ -167,7 +183,6 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         cg.blocksRaycasts = false;
 
         Sequence seq = DOTween.Sequence();
-
         // 시작할 때
         seq.OnStart(() => {
             onStart?.Invoke();
@@ -178,7 +193,6 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
 
         // 끝날 때
         seq.OnComplete(() => {
-            ui.gameObject.SetActive(false);
             onComplete?.Invoke();
         });
     }
@@ -204,7 +218,6 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         ui.gameObject.SetActive(true);
 
         Sequence seq = DOTween.Sequence();
-
         // 시작할 때
         seq.OnStart(() => {
             SetPivot(ui, new Vector2(0.5f, 0f));
@@ -237,7 +250,6 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         cg.blocksRaycasts = false;
 
         Sequence seq = DOTween.Sequence();
-
         // 시작할 때
         seq.OnStart(() => {
             SetPivot(ui, new Vector2(0.5f, 0f));
@@ -266,16 +278,12 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
 
         cg.DOKill();
 
-        // 클릭 방지
         cg.blocksRaycasts = false;
 
         ui.localScale = new Vector3(1f, 0f, 1f);
         cg.alpha = 0f;
 
-        ui.gameObject.SetActive(true);
-
         Sequence seq = DOTween.Sequence();
-
         // 시작할 때
         seq.OnStart(() => {
             onStart?.Invoke();
@@ -305,7 +313,6 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         cg.blocksRaycasts = false;
 
         Sequence seq = DOTween.Sequence();
-
         // 시작할 때
         seq.OnStart(() => {
             onStart?.Invoke();
@@ -316,7 +323,6 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
 
         // 끝날 때
         seq.OnComplete(() => {
-            ui.gameObject.SetActive(false);
             onComplete?.Invoke();
         });
     }
@@ -336,10 +342,7 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         ui.localScale = new Vector3(0f, 1f, 1f);
         cg.alpha = 0f;
 
-        ui.gameObject.SetActive(true);
-
         Sequence seq = DOTween.Sequence();
-
         // 시작할 때
         seq.OnStart(() => {
             onStart?.Invoke();
@@ -363,12 +366,12 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         CanvasGroup cg = ui.GetComponent<CanvasGroup>();
         if (cg == null)
             cg = ui.gameObject.AddComponent<CanvasGroup>();
+
         cg.DOKill();
 
         cg.blocksRaycasts = false; 
 
         Sequence seq = DOTween.Sequence();
-
         // 시작할 때
         seq.OnStart(() => {
             onStart?.Invoke();
@@ -379,7 +382,6 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
 
         // 끝날 때
         seq.OnComplete(() => {
-            ui.gameObject.SetActive(false);
             onComplete?.Invoke();
         });
     }
@@ -401,10 +403,8 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
 
         cg.alpha = 0f;
 
-        ui.gameObject.SetActive(true);
-
         Sequence seq = DOTween.Sequence();
-
+        // 시작할 때
         seq.OnStart(() => {
             SetPivot(ui, new Vector2(1f, 1f));
             onStart?.Invoke();
@@ -434,7 +434,7 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         cg.blocksRaycasts = false;
 
         Sequence seq = DOTween.Sequence();
-
+        // 시작할 때
         seq.OnStart(() => {
             SetPivot(ui, new Vector2(1f, 1f));
             onStart?.Invoke();
@@ -445,7 +445,163 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
 
         seq.OnComplete(() => {
             SetPivot(ui, new Vector2(0.5f, 0.5f));
-            ui.gameObject.SetActive(false);
+            onComplete?.Invoke();
+        });
+    }
+    public void ShowBounce(RectTransform ui, UnityAction onStart = null, UnityAction onComplete = null)
+    {
+        if (ui == null) return;
+
+        ui.DOKill();
+
+        CanvasGroup cg = ui.GetComponent<CanvasGroup>();
+        if (cg == null) 
+            cg = ui.gameObject.AddComponent<CanvasGroup>();
+
+        cg.DOKill();
+
+        cg.blocksRaycasts = false;
+
+        Vector2 targetPos = ui.anchoredPosition;
+
+        ui.anchoredPosition = new Vector2(targetPos.x, targetPos.y + this.bouncePopStartOffset);
+
+        ui.localScale = Vector3.one;
+
+        cg.alpha = 0f;
+
+        Sequence seq = DOTween.Sequence();
+        // 시작할 때
+        seq.OnStart(() => {
+            onStart?.Invoke();
+        });
+
+        seq.Append(ui.DOAnchorPos(targetPos, this.bouncePopShowDuration).SetEase(this.bouncePopShowEase));
+        seq.Join(cg.DOFade(1f, this.bouncePopShowDuration * 0.5f).SetEase(Ease.Linear));
+
+        seq.OnComplete(() => {
+            cg.blocksRaycasts = true;
+            onComplete?.Invoke();
+        });
+    }
+    public void HideBounce(RectTransform ui, UnityAction onStart = null, UnityAction onComplete = null)
+    {
+        if (ui == null) return;
+
+        ui.DOKill();
+
+        CanvasGroup cg = ui.GetComponent<CanvasGroup>();
+        if (cg == null)
+            cg = ui.gameObject.AddComponent<CanvasGroup>();
+
+        cg.DOKill();
+
+        cg.blocksRaycasts = false;
+
+        Sequence seq = DOTween.Sequence();
+        // 시작할 때
+        seq.OnStart(() =>
+        {
+            onStart?.Invoke();
+        });
+
+        seq.Append(ui.DOScale(Vector3.one * this.bouncePopStartOffset, this.bouncePopHideDuration).SetEase(this.bouncePopHideEase));
+        seq.Join(cg.DOFade(0f, this.bouncePopHideDuration).SetEase(Ease.Linear));
+
+        seq.OnComplete(() =>
+        {
+            onComplete?.Invoke();
+        });
+    }
+    public void ShowZigzag(RectTransform ui, UnityAction onStart = null, UnityAction onComplete = null)
+    {
+        if (ui == null) return;
+
+        ui.DOKill();
+
+        CanvasGroup cg = ui.GetComponent<CanvasGroup>();
+        if (cg == null)
+            cg = ui.gameObject.AddComponent<CanvasGroup>();
+
+        cg.DOKill();
+
+        cg.blocksRaycasts = false;
+
+        Vector2 targetPos = ui.anchoredPosition;
+
+        ui.anchoredPosition = new Vector2(targetPos.x - this.zigzagLeftOffset, targetPos.y + this.zigzagDropHeight);
+        ui.localScale = Vector3.one;
+        cg.alpha = 0f;
+
+        ui.localEulerAngles = Vector3.zero;
+
+        ui.gameObject.SetActive(true);
+
+        Sequence seq = DOTween.Sequence();
+        // 시작할 때
+        seq.OnStart(() => {
+            onStart?.Invoke();
+        });
+
+        float dropTime = this.zigzagShowDuration * 0.25f;    
+        float bounceTime1 = this.zigzagShowDuration * 0.35f; 
+        float bounceTime2 = this.zigzagShowDuration * 0.20f; 
+        float settleTime = this.zigzagShowDuration * 0.20f;  
+
+        seq.Join(cg.DOFade(1f, dropTime).SetEase(Ease.Linear));
+
+
+        seq.Append(ui.DOAnchorPos(new Vector2(targetPos.x - this.zigzagLeftOffset, targetPos.y), 
+                                    dropTime).SetEase(Ease.InQuad));
+        seq.Join(ui.DOLocalRotate(new Vector3(0, 0, 15f), dropTime).SetEase(Ease.InOutQuad));
+
+        float jumpHeight1 = this.zigzagDropHeight * 0.25f;
+        seq.Append(ui.DOJumpAnchorPos(new Vector2(targetPos.x + this.zigzagRightOffset, targetPos.y), 
+                                        jumpHeight1, 1, bounceTime1).SetEase(Ease.Linear));
+        seq.Join(ui.DOLocalRotate(new Vector3(0, 0, -15f), bounceTime1).SetEase(Ease.InOutQuad));
+
+        float jumpHeight2 = this.zigzagDropHeight * 0.08f;
+        seq.Append(ui.DOJumpAnchorPos(targetPos, jumpHeight2, 1, bounceTime2).SetEase(Ease.Linear));
+
+        seq.Join(ui.DOLocalRotate(new Vector3(0, 0, 15f), bounceTime2).SetEase(Ease.InOutQuad));
+
+        seq.Append(ui.DOLocalRotate(Vector3.zero, settleTime).SetEase(Ease.OutQuad));
+
+        // 끝날 때
+        seq.OnComplete(() => {
+            cg.blocksRaycasts = true;
+            onComplete?.Invoke();
+        });
+    }
+    public void HideZigzag(RectTransform ui, UnityAction onStart = null, UnityAction onComplete = null)
+    {
+        if (ui == null) return;
+
+        ui.DOKill();
+
+        CanvasGroup cg = ui.GetComponent<CanvasGroup>();
+        if (cg == null) 
+            cg = ui.gameObject.AddComponent<CanvasGroup>();
+
+        cg.DOKill();
+
+        cg.blocksRaycasts = false;
+
+        Vector2 originalPos = ui.anchoredPosition;
+
+        Vector2 endPos = new Vector2(ui.anchoredPosition.x, ui.anchoredPosition.y + this.zigzagDropHeight);
+
+        Sequence seq = DOTween.Sequence();
+        // 시작할 때
+        seq.OnStart(() => {
+            onStart?.Invoke();
+        });
+
+        seq.Append(ui.DOAnchorPosY(endPos.y, this.zigzagHideDuration).SetEase(this.zigzagHideEase));
+        seq.Join(cg.DOFade(0f, this.zigzagHideDuration).SetEase(Ease.Linear));
+
+        seq.OnComplete(() => {
+            ui.anchoredPosition = originalPos;
             onComplete?.Invoke();
         });
     }
