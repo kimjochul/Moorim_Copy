@@ -3,15 +3,16 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-
 public class UIManager : Singleton<UIManager>
 {
     private Canvas _canvas;
     [SerializeField] private GameObject dialogPopupPrefab;
     [SerializeField] private GameObject questPopupObj;
     [SerializeField] private GameObject orderPopupObj;
+    
     [SerializeField] private Button _questButton;
     [SerializeField] private Button _orderButton;
+    
     private bool _isQuestPopupOpen = false;
     private bool _isOrderPopupOpen = false;
     
@@ -20,11 +21,12 @@ public class UIManager : Singleton<UIManager>
     [SerializeField] private GuestData tempGuestData;
     [SerializeField] private List<RecipeData> recipes;
     List<Order> tempOrders = new List<Order>();
-
+    
     protected override void Awake()
     {
         base.Awake();
         _canvas = FindFirstObjectByType<Canvas>();
+        
         _questButton.onClick.AddListener(OpenQuestPopup);
         _orderButton.onClick.AddListener(OpenOrdersPopup);
         
@@ -38,22 +40,26 @@ public class UIManager : Singleton<UIManager>
         }
     }
     
+    // 스토리에서 대화창 열기
     public void OpenDialogPopup(string characterName, string dialog)
     {
         var dialogPopupObject = Instantiate(dialogPopupPrefab, _canvas.transform);
         dialogPopupObject.GetComponent<DialogPopupController>().Show(characterName, dialog);
     }
     
+    // 게임씬의 오른쪽 위 버튼 누르면 나오는 활성화 퀘스트 창 열기
     public void OpenQuestPopup()
     {
         questPopupObj.SetActive(!questPopupObj.activeSelf);
         if (questPopupObj.activeSelf)
         {
-            questPopupObj.GetComponent<QuestPopupController>().Show(/*QuestManager.Instance.activeQuests*/);
+            // TODO: QuestManager에서 activeQuests 받아오는 거로 바꾸기
+            questPopupObj.GetComponent<QuestPopupController>().Show(new List<Quest>());
         }
             
     }
 
+    // 게임씬의 오른쪽 위 버튼 누르면 나오는 활성화 주문 창 열기
     public void OpenOrdersPopup()
     {
         orderPopupObj.SetActive(!orderPopupObj.activeSelf);
@@ -64,6 +70,7 @@ public class UIManager : Singleton<UIManager>
             
     }
     
+    // 아직 쓸지 미정(Guest에서 구현시 삭제필요)
     public void EnableGuestOrderUI(/*GuestBase guestBase*/)
     {
         // Instantiate 말고 enabled로 바꿀수도

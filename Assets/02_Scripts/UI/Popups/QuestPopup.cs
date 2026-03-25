@@ -9,9 +9,17 @@ public class QuestPopup : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _questDescriptionText;
     [SerializeField] private Image _questImage;
 
+    private bool isShown = false;
+    public bool IsShown => isShown;
+    
     void Awake()
     {
         _closeButton.onClick.AddListener(() => Destroy(gameObject));
+    }
+
+    void OnEnable()
+    {
+        isShown = true;
     }
 
     public void Init(Quest quest)
