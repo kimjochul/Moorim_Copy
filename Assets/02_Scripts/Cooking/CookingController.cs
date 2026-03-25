@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class CookingController : MonoBehaviour
@@ -89,23 +90,24 @@ public class CookingController : MonoBehaviour
     // 매개 변수 : 드랍된 재료/갯수
     // 1. 모델에게 투입 검사 지시 -> 통과 시 ui 숫자 올림
     // 2. 재료 다 모이면 조리 버튼 활성화
-    private void OnIngredientClicked(Slot inventorySlot)
+    public void OnIngredientClicked(Slot inventorySlot)
     {
-        IngredientData clickedIngredient = inventorySlot.Item as IngredientData;
-
-        if (clickedIngredient == null)
+        if (inventorySlot.IsEmpty || inventorySlot.Item == null)
             return;
+
+        // IItem 인터페이스에서 ID 가져오기
+        int ingredientId = inventorySlot.Item.ID;
 
         // 모델에게 투입 검사 지시
         // 클릭 한 번에 재료 하나씩 투입하는 방식
-        int consumedAmount = model.TryAddIngredient(clickedIngredient.id, 1);
+        int consumedAmount = model.TryAddIngredient(ingredientId, 1);
 
         if (consumedAmount > 0)
         {
-            // 조리 뷰에서 실제로 들어간 갯수 만큼 숫자 올리기
-            cookingview.UpdateSlotUI(clickedIngredient.id, consumedAmount);
+            // 실제로 들어간 갯수 만큼 조리뷰 재료 슬롯에 숫자 올리기
+            cookingview.UpdateSlotUI(ingredientId, consumedAmount);
 
-            // 인벤토리에서 실제로 들어간 갯수만큼 차감
+            // Slot 클래스의 AddCount와 Clear를 그대로 사용해서 아이템 차감
             inventorySlot.AddCount(-consumedAmount);
             if (inventorySlot.Count <= 0)
                 inventorySlot.Clear();
@@ -130,5 +132,12 @@ public class CookingController : MonoBehaviour
             currentStation.StartCooking(model.CurrentRecipe);
             CloseCookingSystem();
         }
+    }
+
+    public void ShowRecipesByCategory(Constants.FoodType targetCategory)
+    {
+        List<Recipe> fillterList = runtimeRecipes.Where(r => r.Data.foodType == targetCategory).ToList();
+
+        recipeListView.PopulateList(fillterList);
     }
 }

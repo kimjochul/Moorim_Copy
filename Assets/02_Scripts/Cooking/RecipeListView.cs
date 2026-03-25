@@ -5,12 +5,15 @@ using UnityEngine.UI;
 
 public class RecipeListView : MonoBehaviour
 {
-    // 필요한 ui 컴포넌트들
-    // 버튼들을 생성할 스크롤 뷰의 컨텐츠의 tranform
-    // 만들어낼 버튼의 프리팹
-    [Header("UI 컴포넌트")]
+    [Header("UI")]
     [SerializeField] private Transform content;
     [SerializeField] private GameObject recipeSlotPrefab;
+
+    [Header("Button")]
+    [SerializeField] private Button mainDishBtn;
+    [SerializeField] private Button sideDishBtn;
+    [SerializeField] private Button drinkBtn;
+    [SerializeField] private Button dessertBtn;
 
     // 기억해야 할 데이터
     private CookingController controller;
@@ -22,6 +25,11 @@ public class RecipeListView : MonoBehaviour
     public void Init(CookingController ctrl)
     {
         controller = ctrl;
+
+        mainDishBtn.onClick.AddListener(() => controller.ShowRecipesByCategory(Constants.FoodType.MianDish));
+        sideDishBtn.onClick.AddListener(() => controller.ShowRecipesByCategory(Constants.FoodType.SideDish));
+        drinkBtn.onClick.AddListener(() => controller.ShowRecipesByCategory(Constants.FoodType.Drink));
+        dessertBtn.onClick.AddListener(() => controller.ShowRecipesByCategory(Constants.FoodType.Dessert));
     }
 
     // 메소드2. 리스트를 깔아주는 함수 // 중요@!!!!
