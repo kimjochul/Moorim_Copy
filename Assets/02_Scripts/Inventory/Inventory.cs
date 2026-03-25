@@ -52,6 +52,7 @@ public class Inventory : MonoBehaviour
     public void AddSlot(int amount)
     {
         CreateSlots(amount);
+        slotCount += amount;
     }
     
     /// <summary>
@@ -288,6 +289,8 @@ public class Inventory : MonoBehaviour
             {
                 return ingredientData.type is Constants.IngredientType.Meats;
             }
+            else
+                return false;
         }
         
         if(type == InventoryType.Ingredients)
@@ -296,6 +299,8 @@ public class Inventory : MonoBehaviour
             {
                 return ingredientData.type is not Constants.IngredientType.Meats;
             }
+            else
+                return false;
         }
 
         return true;
