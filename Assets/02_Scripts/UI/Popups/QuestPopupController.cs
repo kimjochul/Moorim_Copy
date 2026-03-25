@@ -7,11 +7,10 @@ public class QuestPopupController : PopupController
     [SerializeField] private GameObject _questPopupPrefab;
     [SerializeField] private Transform _contentTransform;
     List<QuestPopup>  _questPopups = new List<QuestPopup>();
-    public void Show()
+    public void Show(List<Quest> activeQuests)
     {
         base.Show();
-        // GameObject newQuestPopup = Instantiate(_questPopupPrefab, _contentTransform);
-
+        MakeAllQuestPopups(activeQuests);
     }
 
     public void OnClickConfirmButton()
@@ -24,6 +23,14 @@ public class QuestPopupController : PopupController
         Hide();
     }
 
+    // QuestManager의 activeQuests 리스틀 받아오기
+    public void MakeAllQuestPopups(List<Quest> activeQuests)
+    {
+        foreach (var quest in activeQuests)
+        {
+            AddQuest(quest);
+        }
+    }
     public void AddQuest(Quest quest)
     {
         var newQuestPopup = Instantiate(_questPopupPrefab, _contentTransform);
