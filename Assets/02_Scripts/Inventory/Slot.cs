@@ -4,9 +4,6 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-
-// 재료 아이템 타입 별 슬롯 제작 가능하면 변경
-
 /// <summary>
 /// UI상에서 슬롯에 있는 아이템 시각적으로 표시하고 인벤토리에 어떤 아이템이 담겨져있는지 알려주기 위한 클래스, 인벤토리하고만 소통
 /// </summary>
