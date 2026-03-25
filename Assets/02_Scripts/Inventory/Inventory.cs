@@ -52,6 +52,7 @@ public class Inventory : MonoBehaviour
     public void AddSlot(int amount)
     {
         CreateSlots(amount);
+        slotCount += amount;
     }
     
     /// <summary>
