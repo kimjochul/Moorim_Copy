@@ -9,6 +9,7 @@ public enum InventoryType
     Server,
     MealTable,
     Ingredients,
+    IngredientsButMeatOnly
 }
 
 /// <summary>
@@ -27,10 +28,6 @@ public class Inventory : MonoBehaviour
     private void Start()
     {
         CreateSlots(slotCount);
-
-        var itemFactory = GameObject.FindFirstObjectByType<Shop>().GetComponent<Shop>();
-        itemFactory.Buy(0, 1);
-        itemFactory.Buy(101, 1);
     }
 
     /// <summary>
@@ -284,9 +281,22 @@ public class Inventory : MonoBehaviour
     {
         if (type is InventoryType.Fridge or InventoryType.MealTable or InventoryType.Chef or InventoryType.Server)
             return item.Data is FoodData;
+
+        if (type == InventoryType.IngredientsButMeatOnly)
+        {
+            if (item.Data is IngredientData ingredientData)
+            {
+                return ingredientData.type is Constants.IngredientType.Meats;
+            }
+        }
         
         if(type == InventoryType.Ingredients)
-            return item.Data is IngredientData;
+        {
+            if (item.Data is IngredientData ingredientData)
+            {
+                return ingredientData.type is not Constants.IngredientType.Meats;
+            }
+        }
 
         return true;
     }
