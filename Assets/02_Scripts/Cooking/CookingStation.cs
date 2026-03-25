@@ -54,6 +54,7 @@ public class CookingStation : MonoBehaviour
     private IEnumerator CookingRoutine()
     {
         // TO DO : 애니메이션 및 SFX 실행
+        // TO DO : 요리 진행도에 따른 게이지바 상승
         
         yield return new WaitForSeconds(cookTime);
 
