@@ -1,0 +1,465 @@
+using UnityEngine;
+using DG.Tweening;
+using UnityEngine.Events;
+using UnityEngine.UI;
+
+public class UIAnimationManager : Singleton<UIAnimationManager>
+{
+    [Header("=== 점점 커지는 연출 ===")]
+    [Header("Show 설정")]
+    [Range(0.1f, 1f)]
+    [SerializeField] 
+    private float popShowDuration  = 0.3f; 
+    [Range(0f, 1f)]
+    [SerializeField] 
+    private float popStartScale  = 0.5f;
+    [SerializeField] 
+    private Ease popShowEase = Ease.OutBack;
+
+    [Header("Hide 설정")]
+    [Range(0.1f, 1f)]
+    [SerializeField] 
+    private float popHideDuration = 0.2f;
+    [Range(0f, 1f)]
+    [SerializeField] 
+    private float popEndScale = 0.0f;
+    [SerializeField] 
+    private Ease popHideEase = Ease.InBack;
+
+    [Space(30)]
+
+    [Header("=== 말풍선 펼치기 연출 ===")]
+    [Header("Show 설정")]
+    [Range(0.1f, 1f)]
+    [SerializeField]
+    private float orderShowDuration = 0.3f;
+    [SerializeField] 
+    private Ease orderShowEase = Ease.OutBack; 
+
+    [Header("Hide 설정")]
+    [Range(0.1f, 1f)]
+    [SerializeField] 
+    private float orderHideDuration = 0.2f;
+    [SerializeField] 
+    private Ease orderHideEase = Ease.InBack;
+
+    [Space(30)]
+
+    [Header("=== 세로 펼치기 연출 ===")]
+    [Header("Show 설정")]
+    [Range(0.1f, 1f)]
+    [SerializeField] 
+    private float vUnfoldShowDuration = 0.3f;
+    [SerializeField] 
+    private Ease vUnfoldShowEase = Ease.OutBack;
+
+    [Header("Hide 설정")]
+    [Range(0.1f, 1f)]
+    [SerializeField] 
+    private float vUnfoldHideDuration = 0.2f;
+    [SerializeField] 
+    private Ease vUnfoldHideEase = Ease.InBack;
+
+    [Space(30)]
+
+    [Header("=== 가로 펼치기 연출 ===")]
+    [Header("Show 설정")]
+    [Range(0.1f, 1f)]
+    [SerializeField]
+    private float hUnfoldShowDuration = 0.3f;
+    [SerializeField]
+    private Ease hUnfoldShowEase = Ease.OutBack;
+
+    [Header("Hide 설정")]
+    [Range(0.1f, 1f)]
+    [SerializeField]
+    private float hUnfoldHideDuration = 0.2f;
+    [SerializeField]
+    private Ease hUnfoldHideEase = Ease.InBack;
+
+    [Space(30)]
+
+    [Header("=== 종이 펼치기 연출 ===")]
+    [Header("Show 설정")]
+    [Range(0.1f, 1f)]
+    [SerializeField] 
+    private float paperShowDuration = 0.5f;
+    [SerializeField] 
+    private Ease paperShowEase = Ease.OutQuart;
+
+    [Header("Hide 설정")]
+    [Range(0.1f, 1f)]
+    [SerializeField] 
+    private float paperHideDuration = 0.3f;
+    [SerializeField] 
+    private Ease paperHideEase = Ease.InQuart;
+
+    [Space(30)]
+
+    [Header("=== 위에서 떨어져 통통 튀는 연출 ===")]
+    [Header("Show 설정")]
+    [Range(0.1f, 1.5f)]
+    [SerializeField] private float bouncePopShowDuration = 0.8f;
+    private Ease bouncePopShowEase = Ease.OutBounce;
+
+    [Header("Hide 설정")]
+    [Range(0.1f, 1f)]
+    [SerializeField] private float bouncePopHideDuration = 0.3f;
+    [SerializeField] private Ease bouncePopHideEase = Ease.InBack;
+
+    [Tooltip("기존 위치에서 얼마나 위쪽에서 떨어질지 설정")]
+    [SerializeField] private float bouncePopStartOffset = 1000f;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        
+        DOTween.Init();
+    }
+    public void ShowPop(RectTransform ui, UnityAction onStart = null, UnityAction onComplete = null)
+    {
+        if (ui == null) return;
+
+        // 1. 기존 트윈 끄기
+        ui.DOKill();
+
+        CanvasGroup cg = ui.GetComponent<CanvasGroup>();
+        if (cg == null)
+            cg = ui.gameObject.AddComponent<CanvasGroup>();
+
+        cg.DOKill();
+
+        cg.blocksRaycasts = false;
+
+        ui.localScale = Vector3.one * this.popStartScale;
+        cg.alpha = 0f;
+
+        ui.gameObject.SetActive(true);
+
+        Sequence seq = DOTween.Sequence();
+
+        // 시작할 때
+        seq.OnStart(() => {
+            onStart?.Invoke();
+        });
+
+        seq.Append(ui.DOScale(Vector3.one, this.popShowDuration).SetEase(this.popShowEase));
+        seq.Join(cg.DOFade(1f, this.popShowDuration).SetEase(Ease.Linear));
+
+        // 끝날 때
+        seq.OnComplete(() => {
+            cg.blocksRaycasts = true;
+            onComplete?.Invoke();
+        });
+    }
+    public void HidePop(RectTransform ui, UnityAction onStart = null, UnityAction onComplete = null)
+    {
+        if (ui == null) return;
+
+        ui.DOKill();
+
+        CanvasGroup cg = ui.GetComponent<CanvasGroup>();
+        if (cg == null)
+            cg = ui.gameObject.AddComponent<CanvasGroup>();
+
+        cg.DOKill();
+
+        cg.blocksRaycasts = false;
+
+        Sequence seq = DOTween.Sequence();
+
+        // 시작할 때
+        seq.OnStart(() => {
+            onStart?.Invoke();
+        });
+
+        seq.Append(ui.DOScale(Vector3.one * this.popEndScale, this.popHideDuration).SetEase(this.popHideEase));
+        seq.Join(cg.DOFade(0f, this.popHideDuration).SetEase(Ease.Linear));
+
+        // 끝날 때
+        seq.OnComplete(() => {
+            ui.gameObject.SetActive(false);
+            onComplete?.Invoke();
+        });
+    }
+    public void ShowOrder(RectTransform ui, UnityAction onStart = null, UnityAction onComplete = null)
+    {
+        if (ui == null) return;
+
+        ui.DOKill();
+
+        CanvasGroup cg = ui.GetComponent<CanvasGroup>();
+
+        if (cg == null) 
+            cg = ui.gameObject.AddComponent<CanvasGroup>();
+
+        cg.DOKill();
+
+        cg.blocksRaycasts = false;
+
+        ui.localScale = new Vector3(1f, 0f, 1f);
+
+        cg.alpha = 0f;
+
+        ui.gameObject.SetActive(true);
+
+        Sequence seq = DOTween.Sequence();
+
+        // 시작할 때
+        seq.OnStart(() => {
+            SetPivot(ui, new Vector2(0.5f, 0f));
+            onStart?.Invoke();
+        });
+
+        seq.Append(ui.DOScaleY(1f, this.orderShowDuration).SetEase(this.orderShowEase));
+        seq.Join(cg.DOFade(1f, this.orderShowDuration).SetEase(Ease.Linear));
+
+        // 끝날 때
+        seq.OnComplete(() => {
+            SetPivot(ui, new Vector2(0.5f, 0.5f));
+            cg.blocksRaycasts = true;
+            onComplete?.Invoke();
+        });
+    }
+    public void HideOrder(RectTransform ui, UnityAction onStart = null, UnityAction onComplete = null)
+    {
+        if (ui == null) return;
+
+        ui.DOKill();
+
+        CanvasGroup cg = ui.GetComponent<CanvasGroup>();
+
+        if (cg == null) 
+            cg = ui.gameObject.AddComponent<CanvasGroup>();
+
+        cg.DOKill();
+
+        cg.blocksRaycasts = false;
+
+        Sequence seq = DOTween.Sequence();
+
+        // 시작할 때
+        seq.OnStart(() => {
+            SetPivot(ui, new Vector2(0.5f, 0f));
+            onStart?.Invoke();
+        });
+
+        seq.Append(ui.DOScaleY(0f, this.orderHideDuration).SetEase(this.orderHideEase));
+        seq.Join(cg.DOFade(0f, this.orderHideDuration).SetEase(Ease.Linear));
+
+        // 끝날 때
+        seq.OnComplete(() => {
+            SetPivot(ui, new Vector2(0.5f, 0.5f));
+            ui.gameObject.SetActive(false);
+            onComplete?.Invoke();
+        });
+    }
+    public void ShowVerticalUnfold(RectTransform ui, UnityAction onStart = null, UnityAction onComplete = null)
+    {
+        if (ui == null) return;
+
+        ui.DOKill();
+
+        CanvasGroup cg = ui.GetComponent<CanvasGroup>();
+        if (cg == null)
+            cg = ui.gameObject.AddComponent<CanvasGroup>();
+
+        cg.DOKill();
+
+        // 클릭 방지
+        cg.blocksRaycasts = false;
+
+        ui.localScale = new Vector3(1f, 0f, 1f);
+        cg.alpha = 0f;
+
+        ui.gameObject.SetActive(true);
+
+        Sequence seq = DOTween.Sequence();
+
+        // 시작할 때
+        seq.OnStart(() => {
+            onStart?.Invoke();
+        });
+
+        seq.Append(ui.DOScaleY(1f, this.vUnfoldShowDuration).SetEase(this.vUnfoldShowEase));
+        seq.Join(cg.DOFade(1f, this.vUnfoldShowDuration).SetEase(Ease.Linear));
+
+        // 끝날 때
+        seq.OnComplete(() => {
+            cg.blocksRaycasts = true;
+            onComplete?.Invoke();
+        });
+    }
+    public void HideVerticalUnfold(RectTransform ui, UnityAction onStart = null, UnityAction onComplete = null)
+    {
+        if (ui == null) return;
+
+        ui.DOKill();
+
+        CanvasGroup cg = ui.GetComponent<CanvasGroup>();
+        if (cg == null)
+            cg = ui.gameObject.AddComponent<CanvasGroup>();
+
+        cg.DOKill();
+
+        cg.blocksRaycasts = false;
+
+        Sequence seq = DOTween.Sequence();
+
+        // 시작할 때
+        seq.OnStart(() => {
+            onStart?.Invoke();
+        });
+
+        seq.Append(ui.DOScaleY(0f, this.vUnfoldHideDuration).SetEase(this.vUnfoldHideEase));
+        seq.Join(cg.DOFade(0f, this.vUnfoldHideDuration).SetEase(Ease.Linear));
+
+        // 끝날 때
+        seq.OnComplete(() => {
+            ui.gameObject.SetActive(false);
+            onComplete?.Invoke();
+        });
+    }
+    public void ShowHorizontalUnfold(RectTransform ui, UnityAction onStart = null, UnityAction onComplete = null)
+    {
+        if (ui == null) return;
+
+        ui.DOKill();
+
+        CanvasGroup cg = ui.GetComponent<CanvasGroup>();
+        if (cg == null)
+            cg = ui.gameObject.AddComponent<CanvasGroup>();
+        cg.DOKill();
+
+        cg.blocksRaycasts = false;
+
+        ui.localScale = new Vector3(0f, 1f, 1f);
+        cg.alpha = 0f;
+
+        ui.gameObject.SetActive(true);
+
+        Sequence seq = DOTween.Sequence();
+
+        // 시작할 때
+        seq.OnStart(() => {
+            onStart?.Invoke();
+        });
+
+        seq.Append(ui.DOScaleX(1f, this.hUnfoldShowDuration).SetEase(this.hUnfoldShowEase));
+        seq.Join(cg.DOFade(1f, this.hUnfoldShowDuration).SetEase(Ease.Linear));
+
+        // 끝날 때
+        seq.OnComplete(() => {
+            cg.blocksRaycasts = true;
+            onComplete?.Invoke();
+        });
+    }
+    public void HideHorizontalUnfold(RectTransform ui, UnityAction onStart = null, UnityAction onComplete = null)
+    {
+        if (ui == null) return;
+
+        ui.DOKill();
+
+        CanvasGroup cg = ui.GetComponent<CanvasGroup>();
+        if (cg == null)
+            cg = ui.gameObject.AddComponent<CanvasGroup>();
+        cg.DOKill();
+
+        cg.blocksRaycasts = false; 
+
+        Sequence seq = DOTween.Sequence();
+
+        // 시작할 때
+        seq.OnStart(() => {
+            onStart?.Invoke();
+        });
+
+        seq.Append(ui.DOScaleX(0f, this.hUnfoldHideDuration).SetEase(this.hUnfoldHideEase));
+        seq.Join(cg.DOFade(0f, this.hUnfoldHideDuration).SetEase(Ease.Linear));
+
+        // 끝날 때
+        seq.OnComplete(() => {
+            ui.gameObject.SetActive(false);
+            onComplete?.Invoke();
+        });
+    }
+    public void ShowPaper(RectTransform ui, UnityAction onStart = null, UnityAction onComplete = null)
+    {
+        if (ui == null) return;
+
+        ui.DOKill();
+
+        CanvasGroup cg = ui.GetComponent<CanvasGroup>();
+        if (cg == null) 
+            cg = ui.gameObject.AddComponent<CanvasGroup>();
+
+        cg.DOKill();
+
+        cg.blocksRaycasts = false;
+
+        ui.localScale = Vector3.zero;
+
+        cg.alpha = 0f;
+
+        ui.gameObject.SetActive(true);
+
+        Sequence seq = DOTween.Sequence();
+
+        seq.OnStart(() => {
+            SetPivot(ui, new Vector2(1f, 1f));
+            onStart?.Invoke();
+        });
+
+        seq.Append(ui.DOScale(Vector3.one, this.paperShowDuration).SetEase(this.paperShowEase));
+        seq.Join(cg.DOFade(1f, this.paperShowDuration).SetEase(Ease.Linear));
+
+        seq.OnComplete(() => {
+            SetPivot(ui, new Vector2(0.5f, 0.5f));
+            cg.blocksRaycasts = true;
+            onComplete?.Invoke();
+        });
+    }
+    public void HidePaper(RectTransform ui, UnityAction onStart = null, UnityAction onComplete = null)
+    {
+        if (ui == null) return;
+
+        ui.DOKill();
+
+        CanvasGroup cg = ui.GetComponent<CanvasGroup>();
+        if (cg == null) 
+            cg = ui.gameObject.AddComponent<CanvasGroup>();
+
+        cg.DOKill();
+
+        cg.blocksRaycasts = false;
+
+        Sequence seq = DOTween.Sequence();
+
+        seq.OnStart(() => {
+            SetPivot(ui, new Vector2(1f, 1f));
+            onStart?.Invoke();
+        });
+
+        seq.Append(ui.DOScale(Vector3.zero, this.paperHideDuration).SetEase(this.paperHideEase));
+        seq.Join(cg.DOFade(0f, this.paperHideDuration).SetEase(Ease.Linear));
+
+        seq.OnComplete(() => {
+            SetPivot(ui, new Vector2(0.5f, 0.5f));
+            ui.gameObject.SetActive(false);
+            onComplete?.Invoke();
+        });
+    }
+    private void SetPivot(RectTransform rt, Vector2 newPivot)
+    {
+        if (rt == null) return;
+
+        Vector2 size = rt.rect.size;
+        Vector2 deltaPivot = rt.pivot - newPivot;
+
+        // 피벗이 변한 만큼 위치(localPosition)를 반대로 밀어줘서 제자리에 있는 것처럼 눈속임합니다.
+        Vector3 deltaPosition = new Vector3(deltaPivot.x * size.x, deltaPivot.y * size.y);
+
+        rt.pivot = newPivot;
+        rt.localPosition -= deltaPosition;
+    }
+}

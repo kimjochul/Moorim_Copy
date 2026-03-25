@@ -1,0 +1,134 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+public class CookingController : MonoBehaviour
+{
+    public static CookingController Instance { get; private set; }
+    public bool IsCookingUIOpne => mainCookingUICanvas.activeSelf;
+
+    [Header("UI 컴포넌트")]
+    [SerializeField] private RecipeList masterRecipeList;
+    [SerializeField] private GameObject mainCookingUICanvas;
+    [SerializeField] private RecipeListView recipeListView;
+    [SerializeField] private CookingView cookingview;
+    [SerializeField] private CookingIngredientSlotUI IngredientSlotUI;
+
+    // 내가 기억해야 할 데이터
+    private CookingModel model = new CookingModel();
+    private List<Recipe> runtimeRecipes = new List<Recipe>();
+    private CookingStation currentStation; // 어떤 요리대인지 기억
+
+    void Awake()
+    {
+        Instance = this;
+    }
+
+    void Start()
+    {
+        mainCookingUICanvas.SetActive(false);
+        cookingview.Init(this);
+        recipeListView.Init(this);
+
+        // 레시피리스트를 읽어서 게임용 리스트로 포장
+        runtimeRecipes.Clear();
+        foreach (RecipeData data in masterRecipeList.recipes)
+            runtimeRecipes.Add(new Recipe(data));
+
+        // 포장된 리스트를 메뉴 뷰에게 건네주기
+        recipeListView.PopulateList(runtimeRecipes);
+    }
+
+    // 메소드2. 시스템 on/off
+    public void OpenCookingSystem(CookingStation station)
+    {
+        currentStation = station;
+        mainCookingUICanvas.SetActive(true);
+    }
+
+    public void CloseCookingSystem()
+    {
+        ReturnIngredientsToInventory();
+        
+        cookingview.ClearView();
+        model.ClearTarget();
+
+        mainCookingUICanvas.SetActive(false);
+        currentStation = null;
+    }
+
+    private void ReturnIngredientsToInventory()
+    {
+        foreach (var kvp in model.InsertedIngredients)
+        {
+            int ingredientId = kvp.Key;
+            int amount = kvp.Value;
+
+            if (amount > 0)
+            {
+                // 인벤토리 시스템의 '아이템 획득' 함수 호출
+                
+                Debug.Log($"[재료 반환] 취소됨! ID: {ingredientId} 재료 {amount}개를 인벤토리로 다시 돌려보냅니다.");
+            }
+        }
+    }
+
+    // 메소드3. 메뉴에서 요리가 선택 됐을 때 함수
+    // 매개 변수 : 선택된 레시피
+    // 1. 모델에게 타겟 설정하라 지시.
+    // 2. 조리 뷰에게 화면 바꾸라 지시/
+    // 3. 조리 버튼 잠금
+    public void OnRecipeSelected(Recipe selectedRecipe)
+    {
+        // 모델에게 타겟 설정, 조리뷰에게 화면 바꾸기 지시, 조리 버튼 잠금
+        model.SetTargetRecipe(selectedRecipe);
+        cookingview.UpdateRecipe(selectedRecipe);
+        cookingview.SetCookStartInteractable(false);
+    }
+
+    // 메소드4. 인벤토리에서 재료가 드랍됐을 때
+    // 매개 변수 : 드랍된 재료/갯수
+    // 1. 모델에게 투입 검사 지시 -> 통과 시 ui 숫자 올림
+    // 2. 재료 다 모이면 조리 버튼 활성화
+    private void OnIngredientClicked(Slot inventorySlot)
+    {
+        IngredientData clickedIngredient = inventorySlot.Item as IngredientData;
+
+        if (clickedIngredient == null)
+            return;
+
+        // 모델에게 투입 검사 지시
+        // 클릭 한 번에 재료 하나씩 투입하는 방식
+        int consumedAmount = model.TryAddIngredient(clickedIngredient.id, 1);
+
+        if (consumedAmount > 0)
+        {
+            // 조리 뷰에서 실제로 들어간 갯수 만큼 숫자 올리기
+            cookingview.UpdateSlotUI(clickedIngredient.id, consumedAmount);
+
+            // 인벤토리에서 실제로 들어간 갯수만큼 차감
+            inventorySlot.AddCount(-consumedAmount);
+            if (inventorySlot.Count <= 0)
+                inventorySlot.Clear();
+            
+            // 재료가 다 모이면 버튼 활성화
+            if (model.IsReadyToCook())
+                cookingview.SetCookStartInteractable(true);
+        }
+        else
+        {
+            // 0이 반환되었다면
+            Debug.Log("이 요리에 필요 없거나, 이미 꽉찬 재료입니다!");
+        }
+    }
+
+    // 메소트5. 조리 시작 버튼 눌렀을 때
+    // 스테이션에게 요리 시작하라 명령 시스템 끄기
+    public void OnCookButtonClicked()
+    {
+        if (currentStation != null)
+        {
+            currentStation.StartCooking(model.CurrentRecipe);
+            CloseCookingSystem();
+        }
+    }
+}
