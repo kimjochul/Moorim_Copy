@@ -25,6 +25,14 @@ public class UITest : MonoBehaviour
     private Button btnShowPaper;
     [SerializeField]
     private Button btnHidePaper;
+    [SerializeField]
+    private Button btnShowBounce;
+    [SerializeField]
+    private Button btnHideBounce;
+    [SerializeField]
+    private Button btnShowZigzag;
+    [SerializeField]
+    private Button btnHideZigzag;
 
     void Start()
     {
@@ -43,5 +51,11 @@ public class UITest : MonoBehaviour
 
         this.btnShowPaper.onClick.AddListener(() => ui.ShowPaper(this.rt));
         this.btnHidePaper.onClick.AddListener(() => ui.HidePaper(this.rt));
+
+        this.btnShowBounce.onClick.AddListener(() => ui.ShowBounce(this.rt));
+        this.btnHideBounce.onClick.AddListener(() => ui.HideBounce(this.rt));
+
+        this.btnShowZigzag.onClick.AddListener(() => ui.ShowZigzag(this.rt));
+        this.btnHideZigzag.onClick.AddListener(() => ui.HideZigzag(this.rt));
     }
 }
