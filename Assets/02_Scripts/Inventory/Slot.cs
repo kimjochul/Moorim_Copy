@@ -5,6 +5,8 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 
+// 재료 아이템 타입 별 슬롯 제작 가능하면 변경
+
 /// <summary>
 /// UI상에서 슬롯에 있는 아이템 시각적으로 표시하고 인벤토리에 어떤 아이템이 담겨져있는지 알려주기 위한 클래스, 인벤토리하고만 소통
 /// </summary>
@@ -21,7 +23,7 @@ public class Slot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDropHandler
     [SerializeField] private Image dragItem;  // 드래그해서 실제로 움직이는건 이미지만
     private static Slot dragSlot;             
     // dragSlot은 옮겨지는 슬롯을 참조한다. class, monobehavior, GameObject, Transform 등등은 참조타입
-        
+    
     public bool IsEmpty { get; private set; } = true;
 
     public event Action<Slot, Slot> OnSlotDrop; // 드래그 중인 아이템을 슬롯에서 놓을 때 호출 용
