@@ -90,7 +90,7 @@ public class CookingController : MonoBehaviour
     // 매개 변수 : 드랍된 재료/갯수
     // 1. 모델에게 투입 검사 지시 -> 통과 시 ui 숫자 올림
     // 2. 재료 다 모이면 조리 버튼 활성화
-    private void OnIngredientClicked(Slot inventorySlot)
+    public void OnIngredientClicked(Slot inventorySlot)
     {
         if (inventorySlot.IsEmpty || inventorySlot.Item == null)
             return;
