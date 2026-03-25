@@ -8,22 +8,22 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
     [Header("=== 점점 커지는 연출 ===")]
     [Header("Show 설정")]
     [Range(0.1f, 1f)]
-    [SerializeField] 
-    private float popShowDuration  = 0.3f; 
+    [SerializeField]
+    private float popShowDuration = 0.3f;
     [Range(0f, 1f)]
-    [SerializeField] 
-    private float popStartScale  = 0.5f;
-    [SerializeField] 
+    [SerializeField]
+    private float popStartScale = 0.5f;
+    [SerializeField]
     private Ease popShowEase = Ease.OutBack;
 
     [Header("Hide 설정")]
     [Range(0.1f, 1f)]
-    [SerializeField] 
+    [SerializeField]
     private float popHideDuration = 0.2f;
     [Range(0f, 1f)]
-    [SerializeField] 
+    [SerializeField]
     private float popEndScale = 0.0f;
-    [SerializeField] 
+    [SerializeField]
     private Ease popHideEase = Ease.InBack;
 
     [Space(30)]
@@ -33,14 +33,14 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
     [Range(0.1f, 1f)]
     [SerializeField]
     private float orderShowDuration = 0.3f;
-    [SerializeField] 
-    private Ease orderShowEase = Ease.OutBack; 
+    [SerializeField]
+    private Ease orderShowEase = Ease.OutBack;
 
     [Header("Hide 설정")]
     [Range(0.1f, 1f)]
-    [SerializeField] 
+    [SerializeField]
     private float orderHideDuration = 0.2f;
-    [SerializeField] 
+    [SerializeField]
     private Ease orderHideEase = Ease.InBack;
 
     [Space(30)]
@@ -48,16 +48,16 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
     [Header("=== 세로 펼치기 연출 ===")]
     [Header("Show 설정")]
     [Range(0.1f, 1f)]
-    [SerializeField] 
+    [SerializeField]
     private float vUnfoldShowDuration = 0.3f;
-    [SerializeField] 
+    [SerializeField]
     private Ease vUnfoldShowEase = Ease.OutBack;
 
     [Header("Hide 설정")]
     [Range(0.1f, 1f)]
-    [SerializeField] 
+    [SerializeField]
     private float vUnfoldHideDuration = 0.2f;
-    [SerializeField] 
+    [SerializeField]
     private Ease vUnfoldHideEase = Ease.InBack;
 
     [Space(30)]
@@ -82,16 +82,16 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
     [Header("=== 종이 펼치기 연출 ===")]
     [Header("Show 설정")]
     [Range(0.1f, 1f)]
-    [SerializeField] 
+    [SerializeField]
     private float paperShowDuration = 0.5f;
-    [SerializeField] 
+    [SerializeField]
     private Ease paperShowEase = Ease.OutQuart;
 
     [Header("Hide 설정")]
     [Range(0.1f, 1f)]
-    [SerializeField] 
+    [SerializeField]
     private float paperHideDuration = 0.3f;
-    [SerializeField] 
+    [SerializeField]
     private Ease paperHideEase = Ease.InQuart;
 
     [Space(30)]
@@ -99,39 +99,50 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
     [Header("=== 위에서 떨어져 통통 튀는 연출 ===")]
     [Header("Show 설정")]
     [Range(0.1f, 1.5f)]
-    [SerializeField] private float bouncePopShowDuration = 0.8f;
+    [SerializeField] 
+    private float bouncePopShowDuration = 0.8f;
+    [SerializeField]
     private Ease bouncePopShowEase = Ease.OutBounce;
 
     [Header("Hide 설정")]
     [Range(0.1f, 1f)]
-    [SerializeField] private float bouncePopHideDuration = 0.3f;
-    [SerializeField] private Ease bouncePopHideEase = Ease.InBack;
+    [SerializeField]
+    private float bounceHideDuration = 0.3f;
+    [SerializeField]
+    private Ease bounceHideEase = Ease.InBack;
 
     [Tooltip("기존 위치에서 얼마나 위쪽에서 떨어질지 설정")]
-    [SerializeField] private float bouncePopStartOffset = 1000f;
+    [SerializeField] 
+    private float bouncePopStartOffset = 1000f;
 
     [Space(30)]
 
     [Header("=== 지그재그 바운스 연출 ===")]
     [Header("Show 설정")]
     [Range(0.5f, 2f)]
-    [SerializeField] private float zigzagShowDuration = 1.2f; // 튕기며 이동할 충분한 시간
+    [SerializeField] 
+    private float zigzagShowDuration = 1.2f; // 튕기며 이동할 충분한 시간
 
     [Header("Hide 설정")]
     [Range(0.1f, 1f)]
-    [SerializeField] private float zigzagHideDuration = 0.3f;
-    [SerializeField] private Ease zigzagHideEase = Ease.InBack;
+    [SerializeField]
+    private float zigzagHideDuration = 0.3f;
+    [SerializeField]
+    private Ease zigzagHideEase = Ease.InBack;
 
-    [Tooltip("시작할 때 위로 얼마나 올라가 있을지")]
-    [SerializeField] private float zigzagDropHeight = 800f;
-    [Tooltip("시작할 때 왼쪽으로 얼마나 치우쳐 있을지 (음수/양수)")]
-    [SerializeField] private float zigzagLeftOffset = 400f;
-    [Tooltip("중앙을 지나 오른쪽으로 튕겨 나갈 거리")]
-    [SerializeField] private float zigzagRightOffset = 200f;
+    [Tooltip("시작할 때 높이 값")]
+    [SerializeField] 
+    private float zigzagDropHeight = 800f;
+    [Tooltip("시작할 때 왼쪽 값")]
+    [SerializeField] 
+    private float zigzagLeftOffset = 400f;
+    [Tooltip("왼쪽에서 튕긴 후 오른쪽 값")]
+    [SerializeField] 
+    private float zigzagRightOffset = 200f;
     protected override void Awake()
     {
         base.Awake();
-        
+
         DOTween.Init();
     }
     public void ShowPop(RectTransform ui, UnityAction onStart = null, UnityAction onComplete = null)
@@ -204,7 +215,7 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
 
         CanvasGroup cg = ui.GetComponent<CanvasGroup>();
 
-        if (cg == null) 
+        if (cg == null)
             cg = ui.gameObject.AddComponent<CanvasGroup>();
 
         cg.DOKill();
@@ -242,7 +253,7 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
 
         CanvasGroup cg = ui.GetComponent<CanvasGroup>();
 
-        if (cg == null) 
+        if (cg == null)
             cg = ui.gameObject.AddComponent<CanvasGroup>();
 
         cg.DOKill();
@@ -369,7 +380,7 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
 
         cg.DOKill();
 
-        cg.blocksRaycasts = false; 
+        cg.blocksRaycasts = false;
 
         Sequence seq = DOTween.Sequence();
         // 시작할 때
@@ -392,7 +403,7 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         ui.DOKill();
 
         CanvasGroup cg = ui.GetComponent<CanvasGroup>();
-        if (cg == null) 
+        if (cg == null)
             cg = ui.gameObject.AddComponent<CanvasGroup>();
 
         cg.DOKill();
@@ -426,7 +437,7 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         ui.DOKill();
 
         CanvasGroup cg = ui.GetComponent<CanvasGroup>();
-        if (cg == null) 
+        if (cg == null)
             cg = ui.gameObject.AddComponent<CanvasGroup>();
 
         cg.DOKill();
@@ -455,7 +466,7 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         ui.DOKill();
 
         CanvasGroup cg = ui.GetComponent<CanvasGroup>();
-        if (cg == null) 
+        if (cg == null)
             cg = ui.gameObject.AddComponent<CanvasGroup>();
 
         cg.DOKill();
@@ -498,18 +509,22 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
 
         cg.blocksRaycasts = false;
 
+        Vector2 originalPos = ui.anchoredPosition;
+
+        Vector2 endPos = new Vector2(ui.anchoredPosition.x, ui.anchoredPosition.y + this.zigzagDropHeight);
+
         Sequence seq = DOTween.Sequence();
         // 시작할 때
-        seq.OnStart(() =>
-        {
+        seq.OnStart(() => {
             onStart?.Invoke();
         });
 
-        seq.Append(ui.DOScale(Vector3.one * this.bouncePopStartOffset, this.bouncePopHideDuration).SetEase(this.bouncePopHideEase));
-        seq.Join(cg.DOFade(0f, this.bouncePopHideDuration).SetEase(Ease.Linear));
+        seq.Append(ui.DOAnchorPosY(endPos.y, this.zigzagHideDuration).SetEase(this.bounceHideEase));
+        seq.Join(cg.DOFade(0f, this.zigzagHideDuration).SetEase(Ease.Linear));
 
-        seq.OnComplete(() =>
-        {
+        // 끝날 때
+        seq.OnComplete(() => {
+            ui.anchoredPosition = originalPos;
             onComplete?.Invoke();
         });
     }
@@ -543,20 +558,20 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
             onStart?.Invoke();
         });
 
-        float dropTime = this.zigzagShowDuration * 0.25f;    
-        float bounceTime1 = this.zigzagShowDuration * 0.35f; 
-        float bounceTime2 = this.zigzagShowDuration * 0.20f; 
-        float settleTime = this.zigzagShowDuration * 0.20f;  
+        float dropTime = this.zigzagShowDuration * 0.25f;
+        float bounceTime1 = this.zigzagShowDuration * 0.35f;
+        float bounceTime2 = this.zigzagShowDuration * 0.20f;
+        float settleTime = this.zigzagShowDuration * 0.20f;
 
         seq.Join(cg.DOFade(1f, dropTime).SetEase(Ease.Linear));
 
 
-        seq.Append(ui.DOAnchorPos(new Vector2(targetPos.x - this.zigzagLeftOffset, targetPos.y), 
+        seq.Append(ui.DOAnchorPos(new Vector2(targetPos.x - this.zigzagLeftOffset, targetPos.y),
                                     dropTime).SetEase(Ease.InQuad));
         seq.Join(ui.DOLocalRotate(new Vector3(0, 0, 15f), dropTime).SetEase(Ease.InOutQuad));
 
         float jumpHeight1 = this.zigzagDropHeight * 0.25f;
-        seq.Append(ui.DOJumpAnchorPos(new Vector2(targetPos.x + this.zigzagRightOffset, targetPos.y), 
+        seq.Append(ui.DOJumpAnchorPos(new Vector2(targetPos.x + this.zigzagRightOffset, targetPos.y),
                                         jumpHeight1, 1, bounceTime1).SetEase(Ease.Linear));
         seq.Join(ui.DOLocalRotate(new Vector3(0, 0, -15f), bounceTime1).SetEase(Ease.InOutQuad));
 
@@ -580,28 +595,25 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         ui.DOKill();
 
         CanvasGroup cg = ui.GetComponent<CanvasGroup>();
-        if (cg == null) 
+        if (cg == null)
             cg = ui.gameObject.AddComponent<CanvasGroup>();
 
         cg.DOKill();
 
         cg.blocksRaycasts = false;
 
-        Vector2 originalPos = ui.anchoredPosition;
-
-        Vector2 endPos = new Vector2(ui.anchoredPosition.x, ui.anchoredPosition.y + this.zigzagDropHeight);
-
         Sequence seq = DOTween.Sequence();
         // 시작할 때
-        seq.OnStart(() => {
+        seq.OnStart(() =>
+        {
             onStart?.Invoke();
         });
 
-        seq.Append(ui.DOAnchorPosY(endPos.y, this.zigzagHideDuration).SetEase(this.zigzagHideEase));
+        seq.Append(ui.DOScale(Vector3.one * this.bouncePopStartOffset, this.zigzagHideDuration).SetEase(this.zigzagHideEase));
         seq.Join(cg.DOFade(0f, this.zigzagHideDuration).SetEase(Ease.Linear));
 
-        seq.OnComplete(() => {
-            ui.anchoredPosition = originalPos;
+        seq.OnComplete(() =>
+        {
             onComplete?.Invoke();
         });
     }
@@ -612,7 +624,6 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         Vector2 size = rt.rect.size;
         Vector2 deltaPivot = rt.pivot - newPivot;
 
-        // 피벗이 변한 만큼 위치(localPosition)를 반대로 밀어줘서 제자리에 있는 것처럼 눈속임합니다.
         Vector3 deltaPosition = new Vector3(deltaPivot.x * size.x, deltaPivot.y * size.y);
 
         rt.pivot = newPivot;
