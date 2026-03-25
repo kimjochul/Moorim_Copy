@@ -16,7 +16,7 @@
         Meats, // 돼지고기, 소고기, 닭고기, 계란같은 축산물
         Dairy, // 우유, 치즈 같은 유제품
         Spices, // 소금, 후추 같은 조미료
-        Processed // 두부, 어묵, 밀가루, 오일 같은 가공식재료
+        Processed, // 두부, 어묵, 밀가루, 오일 같은 가공식재료
     }
     public enum FoodType
     {
