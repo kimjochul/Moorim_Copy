@@ -13,6 +13,9 @@ public class UIManager : Singleton<UIManager>
     [SerializeField] private Button _questButton;
     [SerializeField] private Button _orderButton;
     
+    [SerializeField] QuestPopupController _questPopupCtr;
+    [SerializeField] OrdersPopupController _orderPopupCtr;
+    
     private bool _isQuestPopupOpen = false;
     private bool _isOrderPopupOpen = false;
     
@@ -53,8 +56,7 @@ public class UIManager : Singleton<UIManager>
         questPopupObj.SetActive(!questPopupObj.activeSelf);
         if (questPopupObj.activeSelf)
         {
-            // TODO: QuestManager에서 activeQuests 받아오는 거로 바꾸기
-            questPopupObj.GetComponent<QuestPopupController>().Show(new List<Quest>());
+            _questPopupCtr.Showt();
         }
             
     }
@@ -65,7 +67,7 @@ public class UIManager : Singleton<UIManager>
         orderPopupObj.SetActive(!orderPopupObj.activeSelf);
         if (orderPopupObj.activeSelf)
         {
-            orderPopupObj.GetComponent<OrdersPopupController>().Show(tempOrders);
+            _orderPopupCtr.Showt();
         }
             
     }
