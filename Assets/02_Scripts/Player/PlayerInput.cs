@@ -40,7 +40,10 @@ public class PlayerInput : MonoBehaviour
 
                 if (interactable != null)
                 {
-                    Interaction(interactable);
+                    PlayerManager.Instance.MoveSelectedUnitTo(interactable.GetInteractPosition(), () =>
+                    {
+                        Interaction(interactable);
+                    });
                 }
                 else
                 {
