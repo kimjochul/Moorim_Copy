@@ -217,5 +217,8 @@ public class QuestGenerator : MonoBehaviour
                 failCondition.maxFailCount = Random.Range(1, 5);
             }
         }
+        // 보상도 랜덤으로 설정
+        quest.Data.reward.gold = Random.Range(50, 150); 
+        quest.Data.reward.reputation = Random.Range(1, 10);
     }
 }

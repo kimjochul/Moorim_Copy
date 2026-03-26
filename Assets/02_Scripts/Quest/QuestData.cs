@@ -12,6 +12,16 @@ public enum QuestType
 }
 
 /// <summary>
+/// 퀘스트 보상 클래스
+/// </summary>
+[Serializable]
+public class QuestReward
+{
+    public int gold;
+    public int reputation;
+}
+
+/// <summary>
 /// 각각의 퀘스트에 대한 데이터를 SO로 생성하기 위한 클래스
 /// condition은 퀘스트 완료 조건에 대한 변수
 /// </summary>
@@ -22,5 +32,6 @@ public class QuestData : ScriptableObject
     public QuestType questType;
     public string questName;
     public List<QuestCondition> conditions;
+    public QuestReward reward;
 }
 

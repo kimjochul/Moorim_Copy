@@ -21,18 +21,24 @@ public class Postman : MonoBehaviour, IInteractable
         gameObject.SetActive(false);
     }
     
+    /// <summary>
+    /// 랜덤 퀘스트 이전거 삭제 후 3개 재발행 (매주 화 목요일 마다 호출)
+    /// </summary>
     private void DailyQuestCreate()
     {
-        // 1. 기존 랜덤 퀘스트 제거
-        QuestManager.Instance.ClearRandomQuests();
-
-        // 2. 새 랜덤 퀘스트 3개 생성
-        for (int i = 0; i < 3; i++)
+        if (dayManager.DayData.dayOfWeek == DayOfWeek.Tuesday || dayManager.DayData.dayOfWeek == DayOfWeek.Thursday)
         {
-            QuestManager.Instance.NotifyListener(new QuestEvent
+            // 1. 기존 랜덤 퀘스트 제거
+            QuestManager.Instance.ClearRandomQuests();
+
+            // 2. 새 랜덤 퀘스트 3개 생성
+            for (int i = 0; i < 3; i++)
             {
-                type = QuestEventType.GenerateQuest
-            });
+                QuestManager.Instance.NotifyListener(new QuestEvent
+                {
+                    type = QuestEventType.GenerateQuest
+                });
+            }
         }
     }
 }
