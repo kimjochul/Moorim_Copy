@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-// TODO:  UI 업데이트를 위해 활성화된 퀘스트 리스트가 변경될 때마다 action 같은 것으로 알려줄 수 있게 QuestManager에 추가, 현재 돈/명성이 변경될 때 action같은 것도 추가
 
 /// <summary>
 /// 퀘스트 데이터를 받아 퀘스트를 생성해서 버튼을 누를 시 버튼에 해당하는 퀘스트를 받게 하고
@@ -12,7 +11,7 @@ using UnityEngine;
 /// </summary>
 public class QuestManager : Singleton<QuestManager>, ISubject
 {
-    [SerializeField] private QuestUIManager uiManager;
+    [SerializeField] private QuestUIManager questUIManager;
     
     private List<IObserver> observers = new List<IObserver>();
     
@@ -20,6 +19,9 @@ public class QuestManager : Singleton<QuestManager>, ISubject
     
     [SerializeField] private Inventory inventory;
     private List<Quest> activeQuests = new List<Quest>();
+    public event Action<Quest> OnActiveQuestAdded; // ActiveQuest 리스트에 새 퀘스트 추가 시 호출 
+    public event Action<Quest> OnActiveQuestRemoved; // ActiveQuest 리스트에 퀘스트 제거 시 호출
+    private List<Quest> waitingQuests = new List<Quest>();
     
     protected override void Awake()
     {
@@ -40,7 +42,8 @@ public class QuestManager : Singleton<QuestManager>, ISubject
     /// <param name="data"></param>
     public void OfferQuest(Quest quest)
     {
-        uiManager.CreateAcceptUI(quest);
+        waitingQuests.Add(quest);
+        questUIManager.CreateAcceptUI(quest);
     }
     
     /// <summary>
@@ -54,9 +57,24 @@ public class QuestManager : Singleton<QuestManager>, ISubject
             return;
 
         activeQuests.Add(quest);
+        waitingQuests.Remove(quest);
         Instance.AddObserver(quest);
      
-        uiManager.CreateClearUI(quest, inventory);
+        OnActiveQuestAdded?.Invoke(quest);
+        
+        questUIManager.CreateClearUI(quest, inventory);
+    }
+
+    /// <summary>
+    /// 퀘스트 완료될 때 호출, 현재 진행하는 activequest 리스트에서 퀘스트 삭제 후 알림 액션 호출
+    /// </summary>
+    /// <param name="quest"></param>
+    public void EraseQuestFromActive(Quest quest)
+    {
+        if (activeQuests.Exists(q => q.QuestID == quest.QuestID))
+            activeQuests.Remove(quest);
+        
+        OnActiveQuestRemoved?.Invoke(quest);
     }
     
     /// <summary>
