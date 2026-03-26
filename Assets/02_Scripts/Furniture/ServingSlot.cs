@@ -78,10 +78,7 @@ public class ServingSlot : MonoBehaviour, IInteractable
     }
     public void Interact(Inventory inventory = null) 
     {
-        PlayerManager.Instance.MoveSelectedUnitTo(GetInteractPosition(), () =>
-        {
-            // ��ȣ�ۿ� �۾�
-        });
+        // 상호 작용
     }
     public bool CanInteract(PlayerType playerType)
     {

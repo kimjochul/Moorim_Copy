@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.Events;
 
 public class ShopProduct : MonoBehaviour
 {
@@ -17,11 +18,13 @@ public class ShopProduct : MonoBehaviour
     [SerializeField]
     private Button btnBuy;
 
+    public UnityAction<ItemData> onClickBuy;
+
     void Start()
     {
         this.btnBuy.onClick.AddListener(() =>
         {
-            UIManager.Instance.CreateAmountPopup("구매하시겠습니까?", this.itemData, true);
+            this.onClickBuy?.Invoke(this.itemData);
         });
     }
 

@@ -16,13 +16,13 @@ public class AmountPopup : PopupController
     private Button btnPlus;
     [SerializeField]
     private TextMeshProUGUI totalPrice;
+    [SerializeField]
+    private GameObject objPrice;
 
     [SerializeField]
     private Button btnOk;
     [SerializeField]
     private Button btnCancel;
-
-    private bool isPrice;
 
     private int currentAmount;
     private int maxAmount;
@@ -40,7 +40,7 @@ public class AmountPopup : PopupController
         this.price = itemData.price;
         this.currentAmount = 1;
 
-        this.totalPrice.gameObject.SetActive(this.isPrice);
+        this.objPrice.SetActive(isPrice);
 
         UpdateUI();
     }
@@ -67,12 +67,19 @@ public class AmountPopup : PopupController
         this.amount.text = this.currentAmount.ToString();
         this.totalPrice.text = (this.price * this.currentAmount).ToString();
     }
-    public void ButtonOk(UnityAction action)
+    public void ButtonOk(UnityAction<int> action)
     {
-        this.btnOk.onClick.AddListener(action);
+        this.btnOk.onClick.AddListener(() =>
+        {
+            action?.Invoke(this.currentAmount);
+
+            Destroy(this.gameObject);
+        });
     }
     public void ButtonCancel(UnityAction action)
     {
         this.btnCancel.onClick.AddListener(action);
+
+        Destroy(this.gameObject);
     }
 }
