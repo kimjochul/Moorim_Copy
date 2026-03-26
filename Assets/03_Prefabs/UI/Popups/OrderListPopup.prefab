@@ -85,6 +85,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3030714776928874112}
   - component: {fileID: 2504491745703313675}
+  - component: {fileID: 4747855200390728872}
   m_Layer: 5
   m_Name: OrderListPopup
   m_TagString: Untagged
@@ -124,6 +125,23 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &4747855200390728872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1419186270301132167}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2772569e8295cc24c88649b908ad7154, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OrdersPopupController
+  panelTransform: {fileID: 3030714776928874112}
+  _closeButton: {fileID: 4832388754091745718}
+  _orderPopupPrefab: {fileID: 517293383872934121, guid: f721a631d81bf97488b97452c7e08d73, type: 3}
+  _contentTransform: {fileID: 639925181775517305}
+  _orderNotificationObj: {fileID: 8177296661687531422, guid: 12820ead4ba32834eabc1b24327b253f, type: 3}
 --- !u!1 &1570567304647469182
 GameObject:
   m_ObjectHideFlags: 0
