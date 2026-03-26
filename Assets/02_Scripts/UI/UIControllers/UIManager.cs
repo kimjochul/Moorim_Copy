@@ -11,6 +11,7 @@ public class UIManager : Singleton<UIManager>
     [SerializeField] private GameObject commonInventoryPopupPrefab;
     
     [SerializeField] private GameObject amountPopupObj;
+    [SerializeField] private GameObject inventoryObj;
 
     
     
@@ -56,19 +57,21 @@ public class UIManager : Singleton<UIManager>
     }
     
     // 공용 인벤토리 열기
-    public void OpenCommonInventoryPopup()
+    public void OpenCommonInventoryPopup(bool open = true)
     {
-        inventory = Instantiate(commonInventoryPopupPrefab, _canvas.transform);
-        var inven = inventory.GetComponent<InventoryPopupController>();
+        var inven = inventoryObj.GetComponent<InventoryPopupController>();
+        inventoryObj.SetActive(open);
         if (inven == null)
+        {
             return;
-        inventory.GetComponent<InventoryPopupController>().Show();
+        }
+        inven.Show();
     }
     
     // 공용 인벤토리 닫기
     public void DestroyCommonInventoryPopup()
     {
-        Destroy(inventory);
+        inventoryObj.SetActive(false);
     }
     
     // 스토리에서 대화창 열기
