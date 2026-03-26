@@ -10,6 +10,7 @@ public class UIManager : Singleton<UIManager>
     [SerializeField] private GameObject dialogPopupPrefab;
     [SerializeField] private GameObject questPopupObj;
     [SerializeField] private GameObject orderPopupObj;
+    [SerializeField] private GameObject amountPopupObj;
     [SerializeField] private Button _questButton;
     [SerializeField] private Button _orderButton;
     private bool _isQuestPopupOpen = false;
@@ -70,5 +71,13 @@ public class UIManager : Singleton<UIManager>
         var guestOrderUIObject = Instantiate(dialogPopupPrefab/* guestBase*/);
         
         guestOrderUIObject.GetComponent<OrderIconController>().Showt();
+    }
+
+    public AmountPopup CreateAmountPopup(string message, ItemData itemData, bool isPrice = false)
+    {
+        var popup = Instantiate(amountPopupObj, _canvas.transform).GetComponent<AmountPopup>();
+        popup.Init(message, itemData, isPrice);
+
+        return popup;
     }
 }
