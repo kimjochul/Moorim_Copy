@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -31,7 +32,8 @@ public class UIManager : Singleton<UIManager>
     protected override void Awake()
     {
         base.Awake();
-        _canvas = FindFirstObjectByType<Canvas>();
+        _canvas = FindObjectsByType<Canvas>(FindObjectsSortMode.None)
+            .FirstOrDefault(c => c.isRootCanvas);
         
         _questPopupCtr = FindFirstObjectByType<QuestPopupController>();
         _orderPopupCtr = FindFirstObjectByType<OrdersPopupController>();
