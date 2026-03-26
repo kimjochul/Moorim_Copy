@@ -18,7 +18,7 @@ public class PopupController : MonoBehaviour
     // 팝업 표시
     public void Show()
     {
-        
+        gameObject.SetActive(true);
         // TODO: Fade in
     }
 
@@ -26,7 +26,7 @@ public class PopupController : MonoBehaviour
     public void Hide(PanelControllerHideDelegate onComplete = null)
     {
         onComplete?.Invoke();
-        Destroy(gameObject);       
+        gameObject.SetActive(false);    
         
         // TODO: Fade out
     }
