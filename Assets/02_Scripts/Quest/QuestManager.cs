@@ -101,11 +101,11 @@ public class QuestManager : Singleton<QuestManager>, ISubject
     /// 
     /// </summary>
     /// <param name="questEvent"></param>
-    public void NotifyListener(QuestEvent questEvent)
+    public void NotifyListener(QuestEvent questEvent, QuestType questType = QuestType.None)
     {
         if (questEvent.type == QuestEventType.GenerateQuest)
         {
-            var quest = generator.GenerateRandomQuest();
+            var quest = generator.GenerateRandomQuest(questType);
 
             if (quest != null && !HasSameRandomQuest(quest))
                 OfferQuest(quest);
@@ -126,7 +126,7 @@ public class QuestManager : Singleton<QuestManager>, ISubject
         {
             var quest = activeQuests[i];
 
-            if (quest.QuestType != QuestType.Random)
+            if (quest.QuestType == QuestType.Story)
                 continue;
 
             quest.Fail(); // 내부에서 RemoveObserver 호출됨
@@ -144,7 +144,7 @@ public class QuestManager : Singleton<QuestManager>, ISubject
     public bool HasSameRandomQuest(Quest newQuest)
     {
         return activeQuests.Exists(q => 
-            q.QuestType == QuestType.Random && 
+            q.QuestType != QuestType.Story && 
             q.Data.id == newQuest.Data.id);
     }
 }

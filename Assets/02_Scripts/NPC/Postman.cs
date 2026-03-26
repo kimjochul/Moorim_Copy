@@ -36,8 +36,8 @@ public class Postman : MonoBehaviour, IInteractable
             {
                 QuestManager.Instance.NotifyListener(new QuestEvent
                 {
-                    type = QuestEventType.GenerateQuest
-                });
+                    type = QuestEventType.GenerateQuest 
+                }, QuestType.PostMan);
             }
         }
     }
