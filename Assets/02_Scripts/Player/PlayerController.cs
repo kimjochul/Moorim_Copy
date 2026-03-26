@@ -4,9 +4,6 @@ using UnityEngine.Events;
 
 public class PlayerController : MonoBehaviour, IControllable
 {
-    [SerializeField] 
-    private GameObject objSelectionArrow;
-
     private NavMeshAgent agent;
 
     private UnityAction onMoveEnd;
@@ -35,16 +32,11 @@ public class PlayerController : MonoBehaviour, IControllable
     }
     public virtual void OnSelected()
     {
-        if (this.objSelectionArrow != null)
-            this.objSelectionArrow.SetActive(true);
-        
         Debug.Log(this.gameObject.name + " º±≈√µ ");
     }
 
     public virtual void OnDeselected()
     {
-        if (this.objSelectionArrow != null)
-            this.objSelectionArrow.SetActive(false);
         Debug.Log(this.gameObject.name + " «ÿ¡¶µ ");
     }
 

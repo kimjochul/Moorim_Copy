@@ -41,4 +41,9 @@ public class Postman : MonoBehaviour, IInteractable
             }
         }
     }
+
+    public Vector3 GetInteractPosition()
+    {
+        return default;
+    }
 }

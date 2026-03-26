@@ -85,4 +85,9 @@ public class CookingStation : MonoBehaviour, IInteractable
             // resultObj.SetActive(false);
         }
     }
+
+    Vector3 IInteractable.GetInteractPosition()
+    {
+        return default;
+    }
 }

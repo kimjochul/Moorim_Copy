@@ -11,4 +11,9 @@ public class Merchant : MonoBehaviour, IInteractable
     {
         
     }
+
+    public Vector3 GetInteractPosition()
+    {
+        return default;
+    }
 }

@@ -2,6 +2,7 @@
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 public class UIManager : Singleton<UIManager>
@@ -125,10 +126,12 @@ public class UIManager : Singleton<UIManager>
     }
 
     // 갯수가 필요한 팝업
-    public AmountPopup CreateAmountPopup(string message, ItemData itemData, bool isPrice = false)
+    public AmountPopup CreateAmountPopup(string message, ItemData itemData, UnityAction<int> onOk, UnityAction onCancel, bool isPrice = false)
     {
         var popup = Instantiate(amountPopupObj, _canvas.transform).GetComponent<AmountPopup>();
         popup.Init(message, itemData, isPrice);
+        popup.ButtonOk(onOk);
+        popup.ButtonCancel(onCancel);
 
         return popup;
     }
