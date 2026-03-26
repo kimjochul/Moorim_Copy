@@ -32,8 +32,7 @@ public class UIManager : Singleton<UIManager>
     protected override void Awake()
     {
         base.Awake();
-        _canvas = FindObjectsByType<Canvas>(FindObjectsSortMode.None)
-            .FirstOrDefault(c => c.isRootCanvas);
+        _canvas = GameObject.FindGameObjectWithTag("Canvas").GetComponent<Canvas>();
         
         _questPopupCtr = FindFirstObjectByType<QuestPopupController>();
         _orderPopupCtr = FindFirstObjectByType<OrdersPopupController>();
@@ -59,7 +58,7 @@ public class UIManager : Singleton<UIManager>
     // 공용 인벤토리 열기
     public void OpenCommonInventoryPopup()
     {
-        inventory = Instantiate(dialogPopupPrefab, _canvas.transform);
+        inventory = Instantiate(commonInventoryPopupPrefab, _canvas.transform);
         var inven = inventory.GetComponent<InventoryPopupController>();
         if (inven == null)
             return;
