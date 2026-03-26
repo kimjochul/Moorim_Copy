@@ -2518,7 +2518,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1465248516}
   - component: {fileID: 1465248518}
-  - component: {fileID: 1465248517}
   m_Layer: 5
   m_Name: OrderListPopup
   m_TagString: Untagged
@@ -2546,23 +2545,6 @@ RectTransform:
   m_AnchoredPosition: {x: -181, y: -327}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1465248517
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1465248515}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2772569e8295cc24c88649b908ad7154, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::OrdersPopupController
-  panelTransform: {fileID: 1465248516}
-  _closeButton: {fileID: 1209372390}
-  _orderPopupPrefab: {fileID: 517293383872934121, guid: f721a631d81bf97488b97452c7e08d73, type: 3}
-  _contentTransform: {fileID: 913323700}
-  _orderNotificationObj: {fileID: 1438558093}
 --- !u!225 &1465248518
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -2792,7 +2774,8 @@ GameObject:
   - component: {fileID: 1642907013}
   - component: {fileID: 1642907012}
   - component: {fileID: 1642907011}
-  - component: {fileID: 1642907010}
+  - component: {fileID: 1642907016}
+  - component: {fileID: 1642907015}
   m_Layer: 0
   m_Name: UI Managers
   m_TagString: Untagged
@@ -2800,22 +2783,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1642907010
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1642907009}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f1de6118a30147448897679210b9b1a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::QuestPopupController
-  panelTransform: {fileID: 0}
-  _questPopupPrefab: {fileID: 2208274632244788568, guid: 7113af0a75e345b4cb3f4a35e2afcd8c, type: 3}
-  _contentTransform: {fileID: 0}
-  _questNotificationObj: {fileID: 0}
 --- !u!225 &1642907011
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -2908,6 +2875,39 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1642907015
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1642907009}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2772569e8295cc24c88649b908ad7154, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OrdersPopupController
+  panelTransform: {fileID: 1465248516}
+  _closeButton: {fileID: 1209372390}
+  _orderPopupPrefab: {fileID: 517293383872934121, guid: f721a631d81bf97488b97452c7e08d73, type: 3}
+  _contentTransform: {fileID: 913323700}
+  _orderNotificationObj: {fileID: 1438558093}
+--- !u!114 &1642907016
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1642907009}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f1de6118a30147448897679210b9b1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::QuestPopupController
+  panelTransform: {fileID: 5350377547225367735}
+  _questPopupPrefab: {fileID: 2208274632244788568, guid: 7113af0a75e345b4cb3f4a35e2afcd8c, type: 3}
+  _contentTransform: {fileID: 5350377547225367735}
+  _questNotificationObj: {fileID: 2057454039}
 --- !u!1 &1667261444
 GameObject:
   m_ObjectHideFlags: 0
@@ -4917,22 +4917,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &8168526552763139584
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8630812563302152672}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f1de6118a30147448897679210b9b1a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::QuestPopupController
-  panelTransform: {fileID: 5350377547225367735}
-  _questPopupPrefab: {fileID: 1946038701394529161, guid: 9a2a2727411e1be44a20bbd30f69a626, type: 3}
-  _contentTransform: {fileID: 5350377547225367735}
-  _questNotificationObj: {fileID: 2057454039}
 --- !u!1 &8630812563302152672
 GameObject:
   m_ObjectHideFlags: 0
@@ -4943,7 +4927,6 @@ GameObject:
   m_Component:
   - component: {fileID: 6071119895638763359}
   - component: {fileID: 1823008032731912596}
-  - component: {fileID: 8168526552763139584}
   m_Layer: 5
   m_Name: QuestListPopup
   m_TagString: Untagged
