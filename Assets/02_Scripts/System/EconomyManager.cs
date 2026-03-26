@@ -1,31 +1,22 @@
 using System;
 using UnityEngine;
 
-[Serializable]
-public class RestaurantEconomy
-{
-    internal int Money;
-    internal int Fame;
-}
-
 /// <summary>
 /// 객잔의 경제 관련 기능을 할 때 사용하는 클래스
 /// </summary>
 public class EconomyManager : MonoBehaviour
 {
     // 가게의 재정 관련 행동을 할 클래스
-    [SerializeField] DayManager dayManager;
-    
-    public RestaurantEconomy RestaurantEconomy { get; private set; }
+    [SerializeField] private DayManager dayManager;
+    [SerializeField] private RestaurantEconomy restaurantEconomy;
+    public RestaurantEconomy RestaurantEconomy => restaurantEconomy;
 
     private int _todayMoneyIncome;
     private int _todayFameIncome;
     private int _todayCustomerCount;
+
+    public event Action RestaurantEconomyChanged;
     
-    void Awake()
-    {
-        RestaurantEconomy = new RestaurantEconomy();
-    }
     
     void OnEnable()
     {
@@ -90,6 +81,8 @@ public class EconomyManager : MonoBehaviour
     {
         RestaurantEconomy.Money += _todayMoneyIncome;
         RestaurantEconomy.Fame += _todayFameIncome;
+        
+        RestaurantEconomyChanged?.Invoke();
     }
 
     /// <summary>
