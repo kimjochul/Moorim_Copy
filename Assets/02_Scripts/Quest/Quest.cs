@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+// TODO: 퀘스트 보상관련 추가
 
 /// <summary>
 /// 퀘스트 객체에 대한 클래스
@@ -117,6 +118,7 @@ public class Quest : IObserver
     {
         IsCompleted = true;
         Debug.Log($"퀘스트 완료: {QuestName}");
+        QuestManager.Instance.EraseQuestFromActive(this);
         QuestManager.Instance.RemoveObserver(this);
     }
     
