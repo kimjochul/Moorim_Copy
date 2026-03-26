@@ -35,6 +35,7 @@ public class QuestGenerator : MonoBehaviour
             return null;
         }
 
+        Debug.Log(validTemplates.Count);
         QuestData selected = validTemplates[Random.Range(0, validTemplates.Count)];
         
         Quest quest = new Quest(selected, inventory);
@@ -144,7 +145,7 @@ public class QuestGenerator : MonoBehaviour
 
         foreach (var recipe in allRecipes.recipes)
         {
-            Debug.Log($"레시피 체크: {recipe.recipeName}, unlocked: {recipeUnlockManager.IsUnlocked(recipe.id)}");
+            //Debug.Log($"레시피 체크: {recipe.recipeName}, unlocked: {recipeUnlockManager.IsUnlocked(recipe.id)}");
             
             if (recipeUnlockManager.IsUnlocked(recipe.id))
                 list.Add(recipe);

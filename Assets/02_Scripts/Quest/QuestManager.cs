@@ -28,14 +28,6 @@ public class QuestManager : Singleton<QuestManager>, ISubject
         base.Awake();
     }
 
-    private void Start()
-    {
-        QuestManager.Instance.NotifyListener(new QuestEvent
-        {
-            type = QuestEventType.GenerateQuest
-        });
-    }
-
     /// <summary>
     /// 퀘스트 수락 전 제안
     /// </summary>
@@ -115,7 +107,7 @@ public class QuestManager : Singleton<QuestManager>, ISubject
         {
             var quest = generator.GenerateRandomQuest();
 
-            if (quest != null)
+            if (quest != null && !HasSameRandomQuest(quest))
                 OfferQuest(quest);
 
             return;
@@ -123,5 +115,36 @@ public class QuestManager : Singleton<QuestManager>, ISubject
         
         for (int i = observers.Count - 1; i >= 0; i--)
             observers[i].Notify(questEvent);
+    }
+    
+    /// <summary>
+    /// 하루가 종료 됐을 때 그 날 생성된 랜덤 퀘스트들은 전부 삭제
+    /// </summary>
+    public void ClearRandomQuests()
+    {
+        for (int i = activeQuests.Count - 1; i >= 0; i--)
+        {
+            var quest = activeQuests[i];
+
+            if (quest.QuestType != QuestType.Random)
+                continue;
+
+            quest.Fail(); // 내부에서 RemoveObserver 호출됨
+
+            activeQuests.RemoveAt(i);
+            OnActiveQuestRemoved?.Invoke(quest); // 퀘스트 UI 창 업데이트 함수 연결해야함
+        }
+    }
+    
+    /// <summary>
+    /// 랜덤 퀘스트 중에서 동일한 퀘스트가 이미 등록됐는지 확인하는 함수
+    /// </summary>
+    /// <param name="newQuest"></param>
+    /// <returns></returns>
+    public bool HasSameRandomQuest(Quest newQuest)
+    {
+        return activeQuests.Exists(q => 
+            q.QuestType == QuestType.Random && 
+            q.Data.id == newQuest.Data.id);
     }
 }
