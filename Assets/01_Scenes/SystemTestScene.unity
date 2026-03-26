@@ -480,6 +480,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EconomyManager
   dayManager: {fileID: 1119780642}
+  restaurantEconomy: {fileID: 0}
 --- !u!4 &710953795
 Transform:
   m_ObjectHideFlags: 0
@@ -936,7 +937,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6486a6082807884fa112959cc8476d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::QuestManager
-  uiManager: {fileID: 2110535954}
+  questUIManager: {fileID: 0}
   generator: {fileID: 868857641}
   inventory: {fileID: 0}
 --- !u!4 &1314386188
@@ -2098,7 +2099,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6643587543179989893, guid: 41327dfa5af19764bb9640c899fd047b, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 300.00003
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 6767578965827446345, guid: 41327dfa5af19764bb9640c899fd047b, type: 3}
       propertyPath: m_Pivot.x
