@@ -110,7 +110,6 @@ public class Shop : MonoBehaviour
     }
     private void UpdateProductList(IngredientType type)
     {
-        Debug.Log(type);
         List<IngredientData> targetDataList = DataManager.Instance.GetIngredientList(type);
 
         if (this.listProduct.Count < targetDataList.Count)
