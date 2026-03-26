@@ -12,8 +12,6 @@ GameObject:
   - component: {fileID: 6031629939594915773}
   - component: {fileID: 3097089116953780395}
   - component: {fileID: 8879920912751730264}
-  - component: {fileID: 4952077822545029070}
-  - component: {fileID: 9040050661849932806}
   m_Layer: 0
   m_Name: UI Managers
   m_TagString: Untagged
@@ -49,14 +47,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIManager
   dialogPopupPrefab: {fileID: 8818912250172461115, guid: f03dad30d4b36b64792b3d9a51404b16, type: 3}
-  questPopupObj: {fileID: 6495528479827912298, guid: 59d5fa6a75a3a034ab131d750446ea5a, type: 3}
-  orderPopupObj: {fileID: 1419186270301132167, guid: 86ff5f958d8902245a24d278ed963242, type: 3}
   commonInventoryPopupPrefab: {fileID: 4631136036883731046, guid: 2c40bf3773bf4ca4c87f12497767546e, type: 3}
   amountPopupObj: {fileID: 7939990253794488638, guid: 8d4397d685e008a458c0812e5cbe03b2, type: 3}
-  _questButton: {fileID: 4772164343608434327, guid: 083eebe8d4fe51c46a70d3c89e39dede, type: 3}
-  _orderButton: {fileID: 7677412247251502935, guid: 12820ead4ba32834eabc1b24327b253f, type: 3}
-  _questPopupCtr: {fileID: 4952077822545029070}
-  _orderPopupCtr: {fileID: 9040050661849932806}
+  defaultUI: {fileID: 245850363357209031, guid: 5d3109dae117dbc47b3d052961c6a083, type: 3}
   tempGuestData: {fileID: 11400000, guid: 88c698d04248ba942998aa4c267e52b3, type: 2}
   recipes:
   - {fileID: 11400000, guid: 3db4de0c04ae3ce4b8d22c6343c6aa29, type: 2}
@@ -117,36 +110,3 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
---- !u!114 &4952077822545029070
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4968422201483729203}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f1de6118a30147448897679210b9b1a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::QuestPopupController
-  panelTransform: {fileID: 0}
-  _questPopupPrefab: {fileID: 2208274632244788568, guid: 7113af0a75e345b4cb3f4a35e2afcd8c, type: 3}
-  _contentTransform: {fileID: 0}
-  _questNotificationObj: {fileID: 0}
---- !u!114 &9040050661849932806
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4968422201483729203}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2772569e8295cc24c88649b908ad7154, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::OrdersPopupController
-  panelTransform: {fileID: 0}
-  _closeButton: {fileID: 0}
-  _orderPopupPrefab: {fileID: 517293383872934121, guid: f721a631d81bf97488b97452c7e08d73, type: 3}
-  _contentTransform: {fileID: 0}
-  _orderNotificationObj: {fileID: 0}

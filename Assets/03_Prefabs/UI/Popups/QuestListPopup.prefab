@@ -368,6 +368,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5561858671962669955}
   - component: {fileID: 9016156115686153160}
+  - component: {fileID: 8811545819861355040}
   m_Layer: 5
   m_Name: QuestListPopup
   m_TagString: Untagged
@@ -407,6 +408,22 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &8811545819861355040
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6495528479827912298}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f1de6118a30147448897679210b9b1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::QuestPopupController
+  panelTransform: {fileID: 5561858671962669955}
+  _questPopupPrefab: {fileID: 2208274632244788568, guid: 7113af0a75e345b4cb3f4a35e2afcd8c, type: 3}
+  _contentTransform: {fileID: 6376275359922385862}
+  _questNotificationObj: {fileID: 7664649343671455381, guid: 083eebe8d4fe51c46a70d3c89e39dede, type: 3}
 --- !u!1 &7045902384278882912
 GameObject:
   m_ObjectHideFlags: 0
