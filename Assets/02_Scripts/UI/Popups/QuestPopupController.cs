@@ -17,7 +17,7 @@ public class QuestPopupController : PopupController
         QuestManager.Instance.OnActiveQuestRemoved += DeleteQuestPopup;
     }
     
-    public void Show(List<Quest> activeQuests)
+    public void Showt()
     {
         base.Show();
         UpdateNotification(false);
