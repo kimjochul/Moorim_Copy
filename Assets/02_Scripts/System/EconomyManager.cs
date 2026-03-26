@@ -12,10 +12,14 @@ public class EconomyManager : MonoBehaviour
     public RestaurantEconomy RestaurantEconomy => restaurantEconomy;
 
     private int _todayMoneyIncome;
+    public int TodayMoneyIncome => _todayMoneyIncome;
     private int _todayFameIncome;
+    public int TodayFameIncome => _todayFameIncome;
     private int _todayCustomerCount;
+    public int TodayCustomerCount => _todayCustomerCount;
 
     public event Action RestaurantEconomyChanged;
+    public event Action TodayEconomyChanged;
     
     
     void OnEnable()
@@ -45,6 +49,7 @@ public class EconomyManager : MonoBehaviour
     public void AddMoney(int amount)
     {
         _todayMoneyIncome += amount;
+        TodayEconomyChanged?.Invoke();
     }
     
     /// <summary>
@@ -54,6 +59,7 @@ public class EconomyManager : MonoBehaviour
     public void AddFame(int amount)
     {
         _todayFameIncome += amount;
+        TodayEconomyChanged?.Invoke();
     }
     
     /// <summary>
@@ -62,6 +68,7 @@ public class EconomyManager : MonoBehaviour
     void OnCustomerServed()
     {
         _todayCustomerCount++;
+        TodayEconomyChanged?.Invoke();
     }
     
     /// <summary>
@@ -72,6 +79,7 @@ public class EconomyManager : MonoBehaviour
         _todayMoneyIncome = 0;
         _todayFameIncome = 0;
         _todayCustomerCount = 0;
+        TodayEconomyChanged?.Invoke();
     }
 
     /// <summary>
