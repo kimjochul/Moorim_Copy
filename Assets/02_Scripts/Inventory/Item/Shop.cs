@@ -34,9 +34,9 @@ public class Shop : MonoBehaviour
 
     private void Start()
     {
-        // Buy(0,3);
-        // Buy(11, 5);
-        // Buy(101,3);
+        Buy(0, 1);
+        Buy(5,2);
+        Buy(6,1);
 
         CreateCategory();
     }
@@ -51,12 +51,12 @@ public class Shop : MonoBehaviour
         {
             if (ingredientData.type == Constants.IngredientType.Meats)
             {
-                Debug.Log($"{ingredientData.name} is a meat");
+                //Debug.Log($"{ingredientData.name} is a meat");
                 playerMeatInventory.GetItem(item, count);
             }
             else
             {
-                Debug.Log($"{ingredientData.name} is not a meat");
+                //Debug.Log($"{ingredientData.name} is not a meat");
                 playerOtherIngredientInventory.GetItem(item, count);
             }
         }

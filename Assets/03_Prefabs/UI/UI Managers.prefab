@@ -1,0 +1,113 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4968422201483729203
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7636877668441743737}
+  - component: {fileID: 6031629939594915773}
+  - component: {fileID: 3097089116953780395}
+  - component: {fileID: 8879920912751730264}
+  m_Layer: 0
+  m_Name: UI Managers
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7636877668441743737
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4968422201483729203}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 439.27603, y: 0.00001, z: 6811.8267}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6031629939594915773
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4968422201483729203}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b38d0376e58414c84432c07352e7bf5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIManager
+  dialogPopupPrefab: {fileID: 8818912250172461115, guid: f03dad30d4b36b64792b3d9a51404b16, type: 3}
+  commonInventoryPopupPrefab: {fileID: 4631136036883731046, guid: 2c40bf3773bf4ca4c87f12497767546e, type: 3}
+  amountPopupObj: {fileID: 7939990253794488638, guid: 8d4397d685e008a458c0812e5cbe03b2, type: 3}
+  inventoryObj: {fileID: 4631136036883731046, guid: 2c40bf3773bf4ca4c87f12497767546e, type: 3}
+  defaultUI: {fileID: 245850363357209031, guid: 5d3109dae117dbc47b3d052961c6a083, type: 3}
+  tempGuestData: {fileID: 11400000, guid: 88c698d04248ba942998aa4c267e52b3, type: 2}
+  recipes:
+  - {fileID: 11400000, guid: 3db4de0c04ae3ce4b8d22c6343c6aa29, type: 2}
+--- !u!114 &3097089116953780395
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4968422201483729203}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90ee388a99a977e4886acd64355c2e79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIAnimationManager
+  popShowDuration: 0.3
+  popStartScale: 0.5
+  popShowEase: 27
+  popHideDuration: 0.2
+  popEndScale: 0
+  popHideEase: 26
+  orderShowDuration: 0.3
+  orderShowEase: 27
+  orderHideDuration: 0.2
+  orderHideEase: 26
+  vUnfoldShowDuration: 0.3
+  vUnfoldShowEase: 27
+  vUnfoldHideDuration: 0.2
+  vUnfoldHideEase: 26
+  hUnfoldShowDuration: 0.3
+  hUnfoldShowEase: 27
+  hUnfoldHideDuration: 0.2
+  hUnfoldHideEase: 26
+  paperShowDuration: 0.5
+  paperShowEase: 12
+  paperHideDuration: 0.3
+  paperHideEase: 11
+  bouncePopShowDuration: 0.8
+  bouncePopShowEase: 30
+  bounceHideDuration: 0.3
+  bounceHideEase: 26
+  bouncePopStartOffset: 1000
+  zigzagShowDuration: 1.2
+  zigzagHideDuration: 0.3
+  zigzagHideEase: 26
+  zigzagDropHeight: 800
+  zigzagLeftOffset: 400
+  zigzagRightOffset: 200
+--- !u!225 &8879920912751730264
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4968422201483729203}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0

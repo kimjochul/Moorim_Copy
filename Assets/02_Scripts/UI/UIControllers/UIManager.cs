@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
@@ -8,18 +9,21 @@ public class UIManager : Singleton<UIManager>
 {
     private Canvas _canvas;
     [SerializeField] private GameObject dialogPopupPrefab;
-    [SerializeField] private GameObject questPopupObj;
-    [SerializeField] private GameObject orderPopupObj;
-    [SerializeField] private GameObject amountPopupObj;
-
-    [SerializeField] private Button _questButton;
-    [SerializeField] private Button _orderButton;
+    [SerializeField] private GameObject commonInventoryPopupPrefab;
     
-    [SerializeField] QuestPopupController _questPopupCtr;
-    [SerializeField] OrdersPopupController _orderPopupCtr;
+    [SerializeField] private GameObject amountPopupObj;
+    [SerializeField] private GameObject inventoryObj;
+
+    
+    
+    QuestPopupController _questPopupCtr;
+    OrdersPopupController _orderPopupCtr;
+    [SerializeField] private GameObject defaultUI;
     
     private bool _isQuestPopupOpen = false;
     private bool _isOrderPopupOpen = false;
+
+    private GameObject inventory;
     
     // temp 
     private Dictionary<Recipe, int> tempRecipes;
@@ -30,10 +34,13 @@ public class UIManager : Singleton<UIManager>
     protected override void Awake()
     {
         base.Awake();
-        _canvas = FindFirstObjectByType<Canvas>();
+        _canvas = GameObject.FindGameObjectWithTag("Canvas").GetComponent<Canvas>();
         
-        _questButton.onClick.AddListener(OpenQuestPopup);
-        _orderButton.onClick.AddListener(OpenOrdersPopup);
+        _questPopupCtr = FindFirstObjectByType<QuestPopupController>();
+        _orderPopupCtr = FindFirstObjectByType<OrdersPopupController>();
+        
+        OpenDefaultUI();
+        
         
         // temp
         foreach (var recipe in recipes)
@@ -44,6 +51,29 @@ public class UIManager : Singleton<UIManager>
             tempOrders.Add(new Order(order, tempGuestData));
         }
     }
+
+    public void OpenDefaultUI()
+    {
+        Instantiate(defaultUI,  _canvas.transform);
+    }
+    
+    // 공용 인벤토리 열기
+    public void OpenCommonInventoryPopup(bool open = true)
+    {
+        var inven = inventoryObj.GetComponent<InventoryPopupController>();
+        inventoryObj.SetActive(open);
+        if (inven == null)
+        {
+            return;
+        }
+        inven.Show();
+    }
+    
+    // 공용 인벤토리 닫기
+    public void DestroyCommonInventoryPopup()
+    {
+        inventoryObj.SetActive(false);
+    }
     
     // 스토리에서 대화창 열기
     public void OpenDialogPopup(string characterName, string dialog)
@@ -53,22 +83,34 @@ public class UIManager : Singleton<UIManager>
     }
     
     // 게임씬의 오른쪽 위 버튼 누르면 나오는 활성화 퀘스트 창 열기
-    public void OpenQuestPopup()
+    public void OpenQuestPopup(GameObject questObj)
     {
-        questPopupObj.SetActive(!questPopupObj.activeSelf);
-        if (questPopupObj.activeSelf)
+        questObj.SetActive(!questObj.activeSelf);
+        if (questObj.activeSelf)
         {
+            _questPopupCtr = defaultUI.GetComponent<QuestPopupController>();
+            if (_questPopupCtr == null)
+            {
+                Debug.LogError("QuestPopupCtrl is null");
+                return;
+            }
             _questPopupCtr.Showt();
         }
             
     }
 
     // 게임씬의 오른쪽 위 버튼 누르면 나오는 활성화 주문 창 열기
-    public void OpenOrdersPopup()
+    public void OpenOrdersPopup(GameObject orderObj)
     {
-        orderPopupObj.SetActive(!orderPopupObj.activeSelf);
-        if (orderPopupObj.activeSelf)
+        orderObj.SetActive(!orderObj.activeSelf);
+        if (orderObj.activeSelf)
         {
+            _orderPopupCtr = defaultUI.GetComponent<OrdersPopupController>();
+            if (_orderPopupCtr == null)
+            {
+                Debug.LogError("OrdersPopupCtrl is null");
+                return;
+            }
             _orderPopupCtr.Showt();
         }
             

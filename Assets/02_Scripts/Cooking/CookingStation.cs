@@ -7,26 +7,27 @@ using UnityEngine.UI;
 
 public enum CookingState { Idle, Cooking, Done }
 
-public class CookingStation : MonoBehaviour
+public class CookingStation : MonoBehaviour, IInteractable
 {
-    [Header("UI")]
-    [SerializeField] private GameObject resultObj;
-    [SerializeField] private Image resultFoodIcon;
+    // [Header("UI")]
+    // [SerializeField] private GameObject resultObj;
+    // [SerializeField] private Image resultFoodIcon;
 
     [Header("조리 설정")]
     [SerializeField] private float cookTime = 15f;
 
     public CookingState CurrentState { get; private set; } = CookingState.Idle;
     private Recipe currentRecipe;
-
+    
     void Start()
     {
-        if (resultObj != null)
-            resultObj.SetActive(false);
+        // if (resultObj != null)
+        //     resultObj.SetActive(false);
     }
     
+    
     // 플레이어가 조리대에 상호작용했을 때 실행되어야할 기능
-    private void Interact(Inventory playerInventory)
+    public void Interact(Inventory playerInventory)
     {
         if (CurrentState == CookingState.Idle && CookingController.Instance != null)
         {
@@ -40,6 +41,14 @@ public class CookingStation : MonoBehaviour
         {
             CollectFood(playerInventory);
         }
+    }
+
+    public bool CanInteract(Constants.PlayerType playerType)
+    {
+        if(playerType == Constants.PlayerType.Sowol)
+            return true;
+        
+        return false;
     }
 
     // 조리 버튼이 눌렸을 때 실행되어야할 기능
@@ -60,8 +69,8 @@ public class CookingStation : MonoBehaviour
 
         CurrentState = CookingState.Done;
 
-        resultFoodIcon.sprite = currentRecipe.Data.icon;
-        resultObj.SetActive(true);
+        // resultFoodIcon.sprite = currentRecipe.Data.icon;
+        // resultObj.SetActive(true);
     }
 
     private void CollectFood(Inventory targetInventory)
@@ -73,7 +82,7 @@ public class CookingStation : MonoBehaviour
 
             CurrentState = CookingState.Idle;
             currentRecipe = null;
-            resultObj.SetActive(false);
+            // resultObj.SetActive(false);
         }
     }
 }

@@ -25,7 +25,7 @@ public class Inventory : MonoBehaviour
     [SerializeField] private InventoryType type;
     public InventoryType Type => type;
 
-    private void Start()
+    private void Awake()
     {
         CreateSlots(slotCount);
     }
@@ -190,6 +190,8 @@ public class Inventory : MonoBehaviour
 
             if (canAdd <= 0)
                 continue;
+            
+            Debug.Log($"{slot.name}에 {itemID} 생성");
 
             int add = Mathf.Min(canAdd, count);
             slot.AddCount(add);
@@ -205,6 +207,8 @@ public class Inventory : MonoBehaviour
 
             if (!slot.IsEmpty)
                 continue;
+            
+            Debug.Log($"{slot.name}에 {itemID} 생성");
 
             int add = Mathf.Min(item.InventoryCapacity, count);
             slot.AddItem(new Item(item.Data), add);

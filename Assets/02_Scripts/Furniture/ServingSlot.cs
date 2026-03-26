@@ -5,15 +5,15 @@ using static Constants;
 
 public class ServingSlot : MonoBehaviour, IInteractable
 {
-    [Header("»óÈ£ÀÛ¿ë Ä³¸¯ÅÍ")]
+    [Header("ï¿½ï¿½È£ï¿½Û¿ï¿½ Ä³ï¿½ï¿½ï¿½ï¿½")]
     [SerializeField]
     private PlayerType playerType;
     [SerializeField] 
     private Transform servingPoint;
 
-    //¿ä¸® ¿ÀºêÁ§Æ®
+    //ï¿½ä¸® ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
     private GameObject objFoodPrefab;
-    //¿Ï¼ºµÈ ¿ä¸® ½ºÅ©¸³Æ® ³Ö¾îÁÙ ¿¹Á¤
+    //ï¿½Ï¼ï¿½ï¿½ï¿½ ï¿½ä¸® ï¿½ï¿½Å©ï¿½ï¿½Æ® ï¿½Ö¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     private GameObject currentFood;
     public float Timer { get; private set; } = 0f;
     public bool IsEmpty => this.currentFood == null;
@@ -27,7 +27,7 @@ public class ServingSlot : MonoBehaviour, IInteractable
 
         if (this.currentFood != null)
         {
-            //¿ä¸® ¿ÀºêÁ§Æ® »ý¼º
+            //ï¿½ä¸® ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
         }
 
         if (this.coroutineSpoil != null) StopCoroutine(this.coroutineSpoil);
@@ -40,7 +40,7 @@ public class ServingSlot : MonoBehaviour, IInteractable
 
         if (this.objFoodPrefab != null)
         {
-            //GameObjectÀÇ ¸ðµ¨¸µ¸¸ º¯°æÇÏ´Â ¹æ¹ýÀÌ ÁÁÀ½
+            //GameObjectï¿½ï¿½ ï¿½ðµ¨¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             Destroy(this.objFoodPrefab);
             this.objFoodPrefab = null;
         }
@@ -66,7 +66,7 @@ public class ServingSlot : MonoBehaviour, IInteractable
     }
     private void SpoilFood()
     {
-        Debug.Log($"{this.currentFood.name} ¿ä¸® Æó±â");
+        Debug.Log($"{this.currentFood.name} ï¿½ä¸® ï¿½ï¿½ï¿½");
 
         this.currentFood = null;
         this.Timer = 0f;
@@ -76,11 +76,11 @@ public class ServingSlot : MonoBehaviour, IInteractable
     {
         return this.servingPoint.position;
     }
-    public void Interact() 
+    public void Interact(Inventory inventory = null) 
     {
         PlayerManager.Instance.MoveSelectedUnitTo(GetInteractPosition(), () =>
         {
-            // »óÈ£ÀÛ¿ë ÀÛ¾÷
+            // ï¿½ï¿½È£ï¿½Û¿ï¿½ ï¿½Û¾ï¿½
         });
     }
     public bool CanInteract(PlayerType playerType)
