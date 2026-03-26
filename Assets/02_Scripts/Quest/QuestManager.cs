@@ -143,8 +143,11 @@ public class QuestManager : Singleton<QuestManager>, ISubject
     /// <returns></returns>
     public bool HasSameRandomQuest(Quest newQuest)
     {
-        return activeQuests.Exists(q => 
-            q.QuestType != QuestType.Story && 
-            q.Data.id == newQuest.Data.id);
+        return activeQuests.Exists(q =>
+                   q.QuestType != QuestType.Story &&
+                   q.QuestID == newQuest.QuestID)
+               || waitingQuests.Exists(q =>
+                   q.QuestType != QuestType.Story &&
+                   q.QuestID == newQuest.QuestID);
     }
 }
