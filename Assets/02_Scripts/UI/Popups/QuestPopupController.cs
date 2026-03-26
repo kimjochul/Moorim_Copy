@@ -11,13 +11,12 @@ public class QuestPopupController : PopupController
     
     Dictionary<QuestPopup, Quest>  _questPopups = new Dictionary<QuestPopup, Quest>();
 
-    void Start()
+    void Awake()
     {
-        // TODO: GuestManager의 action에 UpdateQuestPopups()붙이기
-        
-        // TODO: 퀘스트 리스트 받아오는 거로 바꾸기
-        MakeAllQuestPopups(new List<Quest>());
+        QuestManager.Instance.OnActiveQuestAdded += AddQuestPopup;
+        QuestManager.Instance.OnActiveQuestRemoved += DeleteQuestPopup;
     }
+    
     public void Show(List<Quest> activeQuests)
     {
         base.Show();
@@ -43,9 +42,10 @@ public class QuestPopupController : PopupController
         }
     }
     
-    // 해당 퀘스트를 퀘스트 목록 UI에 추가 (QuestManager의 액션에 붙일 예정)
+    // 해당 퀘스트를 퀘스트 목록 UI에 추가 
     public void AddQuestPopup(Quest quest)
     {
+        Debug.Log("<color=red>AddPopup</color>");
         var newQuestPopup = Instantiate(_questPopupPrefab, _contentTransform);
         Transform pos =  newQuestPopup.transform;
         newQuestPopup.transform.localPosition = new Vector3(pos.position.x, pos.position.y, 0);
@@ -56,7 +56,7 @@ public class QuestPopupController : PopupController
         UpdateNotification(!gameObject.activeSelf);
     }
 
-    // 해당 퀘스트를 퀘스트 목록 UI에서 제거 (QuestManager의 액션에 붙일 예정)
+    // 해당 퀘스트를 퀘스트 목록 UI에서 제거 
     public void DeleteQuestPopup(Quest quest)
     {
         foreach (var popup in _questPopups)
@@ -78,6 +78,7 @@ public class QuestPopupController : PopupController
 
     void OnDestroy()
     {
-        // TODO: 액션에서 빼기
+        QuestManager.Instance.OnActiveQuestAdded -= AddQuestPopup;
+        QuestManager.Instance.OnActiveQuestRemoved -= DeleteQuestPopup;
     }
 }
