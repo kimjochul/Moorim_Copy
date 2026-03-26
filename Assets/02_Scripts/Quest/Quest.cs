@@ -11,6 +11,7 @@ public class Quest : IObserver
 {
     private QuestData data;
     public QuestData Data => data;
+    public QuestType QuestType => data.questType;
     
     public int QuestID { get; }
     public string QuestName { get; private set; }
