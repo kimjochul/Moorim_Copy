@@ -9,6 +9,8 @@ public class UIManager : Singleton<UIManager>
     [SerializeField] private GameObject dialogPopupPrefab;
     [SerializeField] private GameObject questPopupObj;
     [SerializeField] private GameObject orderPopupObj;
+    [SerializeField] private GameObject commonInventoryPopupPrefab;
+    
     [SerializeField] private GameObject amountPopupObj;
 
     [SerializeField] private Button _questButton;
@@ -42,6 +44,13 @@ public class UIManager : Singleton<UIManager>
             order.Add(newRecipe, Random.Range(0, 3));
             tempOrders.Add(new Order(order, tempGuestData));
         }
+    }
+    
+    // 공용 인벤토리 열기
+    public void OpenCommonInventoryPopup()
+    {
+        var inventory = Instantiate(dialogPopupPrefab, _canvas.transform);
+        inventory.GetComponent<InventoryPopupController>().Show();
     }
     
     // 스토리에서 대화창 열기
