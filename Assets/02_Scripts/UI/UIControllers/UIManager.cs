@@ -21,6 +21,8 @@ public class UIManager : Singleton<UIManager>
     
     private bool _isQuestPopupOpen = false;
     private bool _isOrderPopupOpen = false;
+
+    private GameObject inventory;
     
     // temp 
     private Dictionary<Recipe, int> tempRecipes;
@@ -49,8 +51,17 @@ public class UIManager : Singleton<UIManager>
     // 공용 인벤토리 열기
     public void OpenCommonInventoryPopup()
     {
-        var inventory = Instantiate(dialogPopupPrefab, _canvas.transform);
+        inventory = Instantiate(dialogPopupPrefab, _canvas.transform);
+        var inven = inventory.GetComponent<InventoryPopupController>();
+        if (inven == null)
+            return;
         inventory.GetComponent<InventoryPopupController>().Show();
+    }
+    
+    // 공용 인벤토리 닫기
+    public void DestroyCommonInventoryPopup()
+    {
+        Destroy(inventory);
     }
     
     // 스토리에서 대화창 열기
