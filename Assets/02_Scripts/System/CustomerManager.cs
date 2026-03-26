@@ -15,17 +15,18 @@ public class CustomerManager : MonoBehaviour
     {
         dayManager.OnDayStart += StartSpawn;
         dayManager.OnDayEnd += StopSpawn;
+        dayManager.OnDayEnd += ResetCustomerCount;
     }
     
     /// <summary>
     /// 손님 스폰 시작 함수
     /// </summary>
-    public void StartSpawn()
+    private void StartSpawn()
     {
         InvokeRepeating(nameof(SpawnCustomer), 1f, 5f); // 고객 생성, 랜덤 요소 추가 필요
     }
 
-    void SpawnCustomer()
+    private void SpawnCustomer()
     {
         Debug.Log("손님 생성");
         ServeCustomer();
@@ -37,13 +38,18 @@ public class CustomerManager : MonoBehaviour
     void ServeCustomer()
     {
         customerCount++;
-        OnCustomerServed?.Invoke(); // ⭐ 이벤트 발행
+        OnCustomerServed?.Invoke(); 
+    }
+
+    private void ResetCustomerCount()
+    {
+        customerCount = 0;
     }
     
     /// <summary>
     /// 손님 스폰 종료 함수
     /// </summary>
-    public void StopSpawn()
+    private void StopSpawn()
     {
         CancelInvoke();
     }
