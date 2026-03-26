@@ -11,6 +11,8 @@ public class UIManager : Singleton<UIManager>
     [SerializeField] private GameObject orderPopupObj;
     [SerializeField] private GameObject commonInventoryPopupPrefab;
     
+    [SerializeField] private GameObject amountPopupObj;
+
     [SerializeField] private Button _questButton;
     [SerializeField] private Button _orderButton;
     
@@ -87,5 +89,14 @@ public class UIManager : Singleton<UIManager>
         var guestOrderUIObject = Instantiate(dialogPopupPrefab/* guestBase*/);
         
         guestOrderUIObject.GetComponent<OrderIconController>().Showt();
+    }
+
+    // 갯수가 필요한 팝업
+    public AmountPopup CreateAmountPopup(string message, ItemData itemData, bool isPrice = false)
+    {
+        var popup = Instantiate(amountPopupObj, _canvas.transform).GetComponent<AmountPopup>();
+        popup.Init(message, itemData, isPrice);
+
+        return popup;
     }
 }
