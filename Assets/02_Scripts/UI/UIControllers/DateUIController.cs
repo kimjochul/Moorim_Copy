@@ -13,6 +13,7 @@ public class DateUIController : MonoBehaviour
     {
         _dayManager = FindFirstObjectByType<DayManager>();
         _dayManager.OnDayStart += DateUIUpdate;
+        _dayManager.OnTimeChanged += TimeUIUpdate;
     }
 
     // 하루 시작할 때마다 날짜 UI 업데이트
@@ -57,18 +58,16 @@ public class DateUIController : MonoBehaviour
         _dayOfWeekText.text = dayofweekText;
     }
 
-    void TimeUIUpdate()
+    void TimeUIUpdate(int hour, int minute)
     {
         string timeText;
         string ampmText;
         
-        // temp
-        int hour = 0;
-        int minute = 0;
-        
         ampmText = hour <= 12 ? "AM" : "PM";
         
-        timeText = $"{hour.ToString()}:{minute.ToString()} {ampmText}";
+        string minuteText = minute < 10 ? "0" + minute.ToString() : minute.ToString();
+        string hourText = hour < 10 ? "0" + hour.ToString() : hour.ToString();
+        timeText = $"{hourText}:{minuteText} {ampmText}";
         _timeText.text = timeText;
     }
 

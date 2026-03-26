@@ -9,6 +9,9 @@ public class OrderPopup : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _recipeDescriptionText;
     [SerializeField] private Image _recipeIcon;
     [SerializeField] private Image _ordererIcon;
+    
+    private bool isShown = false;
+    public bool IsShown => isShown;
 
     public void Init(Order order)
     {
