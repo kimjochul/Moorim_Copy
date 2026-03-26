@@ -32,8 +32,7 @@ public class UIManager : Singleton<UIManager>
     protected override void Awake()
     {
         base.Awake();
-        _canvas = FindObjectsByType<Canvas>(FindObjectsSortMode.None)
-            .FirstOrDefault(c => c.isRootCanvas);
+        _canvas = GameObject.FindGameObjectWithTag("Canvas").GetComponent<Canvas>();
         
         _questPopupCtr = FindFirstObjectByType<QuestPopupController>();
         _orderPopupCtr = FindFirstObjectByType<OrdersPopupController>();
