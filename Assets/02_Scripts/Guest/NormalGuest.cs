@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class NormalGuest : GuestBase
 {
-    
     protected override void HandleWaitOrderState()
     {
         base.HandleWaitOrderState();
@@ -18,4 +17,13 @@ public class NormalGuest : GuestBase
         base.HandleEatState();
     }
 
+    protected override void HandlePayState()
+    {
+        base.HandlePayState();
+    }
+
+    protected override int CalculateFinalPrice()
+    {
+        return base.CalculateFinalPrice();
+    }
 }
