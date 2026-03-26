@@ -78,7 +78,10 @@ public class QuestPopupController : PopupController
 
     void OnDestroy()
     {
-        QuestManager.Instance.OnActiveQuestAdded -= AddQuestPopup;
-        QuestManager.Instance.OnActiveQuestRemoved -= DeleteQuestPopup;
+        if (QuestManager.Instance != null)
+        {
+            QuestManager.Instance.OnActiveQuestAdded -= AddQuestPopup;
+            QuestManager.Instance.OnActiveQuestRemoved -= DeleteQuestPopup;
+        }
     }
 }

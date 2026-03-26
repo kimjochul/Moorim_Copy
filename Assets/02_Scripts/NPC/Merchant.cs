@@ -7,7 +7,7 @@ public class Merchant : MonoBehaviour, IInteractable
         return false;
     }
 
-    public void Interact()
+    public void Interact(Inventory inventory = null)
     {
         
     }

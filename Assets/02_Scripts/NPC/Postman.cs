@@ -9,7 +9,7 @@ public class Postman : MonoBehaviour, IInteractable
         return false;
     }
 
-    public void Interact()
+    public void Interact(Inventory inventory = null)
     {
         // UI 창 호출 눌렀을 때
         gameObject.SetActive(true);
