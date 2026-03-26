@@ -4,7 +4,7 @@ using UnityEngine;
 /// <summary>
 /// 객잔의 경제 관련 기능을 할 때 사용하는 클래스
 /// </summary>
-public class EconomyManager : MonoBehaviour
+public class EconomyManager : Singleton<EconomyManager>
 {
     // 가게의 재정 관련 행동을 할 클래스
     [SerializeField] private DayManager dayManager;

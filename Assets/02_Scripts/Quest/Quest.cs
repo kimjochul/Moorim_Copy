@@ -18,6 +18,8 @@ public class Quest : IObserver
     public bool IsCompleted { get; private set; }
     public bool IsFailed { get; private set; }
 
+    public QuestReward RuntimeReward => data.reward;
+
     private List<QuestCondition> conditions;
     public List<QuestCondition> Conditions => conditions;
     
@@ -119,6 +121,10 @@ public class Quest : IObserver
     {
         IsCompleted = true;
         Debug.Log($"퀘스트 완료: {QuestName}");
+        
+        EconomyManager.Instance.AddMoney(RuntimeReward.gold);
+        EconomyManager.Instance.AddFame(RuntimeReward.reputation);
+        
         QuestManager.Instance.EraseQuestFromActive(this);
         QuestManager.Instance.RemoveObserver(this);
     }
