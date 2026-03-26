@@ -850,8 +850,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 447102931d0e0874bbe7ef11f8584509, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CookingStation
-  resultObj: {fileID: 0}
-  resultFoodIcon: {fileID: 0}
   cookTime: 15
 --- !u!65 &82545916
 BoxCollider:
@@ -2266,6 +2264,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 171759557}
   m_CullTransparentMesh: 1
+--- !u!1 &180911692
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 180911694}
+  - component: {fileID: 180911693}
+  m_Layer: 0
+  m_Name: ItemFactory
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &180911693
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 180911692}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38bb031c49fbb454eb8c7525496705a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ItemFactory
+  itemDatabase: {fileID: 11400000, guid: a9e45f247bd88ef458c1fcbcfdc25690, type: 2}
+--- !u!4 &180911694
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 180911692}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0, y: -0, z: -0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &206457400
 GameObject:
   m_ObjectHideFlags: 0
@@ -3040,7 +3083,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.0010131289}
+  m_AnchoredPosition: {x: 0, y: 0.0009655704}
   m_SizeDelta: {x: 0, y: 364}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &293357186
@@ -4785,10 +4828,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 676ba9932656576438c727551b3f48c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Shop
-  itemFactory: {fileID: 0}
+  itemFactory: {fileID: 180911693}
   playerMeatInventory: {fileID: 225833800}
   playerOtherIngredientInventory: {fileID: 1679356172}
-  playerFoodInventory: {fileID: 0}
+  playerFoodInventory: {fileID: 282554022}
   objCategory: {fileID: 2561351744351848293, guid: 602071467b7db8b4a8c86ded85f867b3, type: 3}
   tsCategory: {fileID: 2101176272}
   objProduct: {fileID: 8071365009312174689, guid: 6d36be9991ad69f43b3eebc5286d0115, type: 3}
@@ -6724,7 +6767,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a82595332a77724fa76919641ab8fd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DayManager
-  dayLength: 10
+  dayLength: 600
   gameStartHour: 9
   gameEndHour: 21
 --- !u!4 &739405825
@@ -6756,7 +6799,7 @@ GameObject:
   - component: {fileID: 740029483}
   m_Layer: 5
   m_Name: Canvas
-  m_TagString: Untagged
+  m_TagString: Canvas
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -6935,13 +6978,15 @@ GameObject:
   - component: {fileID: 759611086}
   - component: {fileID: 759611088}
   - component: {fileID: 759611087}
+  - component: {fileID: 759611090}
+  - component: {fileID: 759611089}
   m_Layer: 5
   m_Name: Inventory Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &759611086
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7002,6 +7047,31 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 759611085}
   m_CullTransparentMesh: 1
+--- !u!114 &759611089
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 759611085}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0aa422d029d743129946f31744033e6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventoryPopupController
+  panelTransform: {fileID: 759611086}
+--- !u!225 &759611090
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 759611085}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &760057414
 GameObject:
   m_ObjectHideFlags: 0
@@ -8610,7 +8680,7 @@ RectTransform:
   m_Father: {fileID: 589462931}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 0.99999696}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -9299,7 +9369,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.0007481306}
+  m_AnchoredPosition: {x: 0, y: -0.00059762143}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1046199432
@@ -10850,6 +10920,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: UI Managers
       objectReference: {fileID: 0}
+    - target: {fileID: 6031629939594915773, guid: 1c6d1568aa6d671408e2deee7b1bb4ef, type: 3}
+      propertyPath: inventoryObj
+      value: 
+      objectReference: {fileID: 759611085}
+    - target: {fileID: 6031629939594915773, guid: 1c6d1568aa6d671408e2deee7b1bb4ef, type: 3}
+      propertyPath: commonInventoryPopupPrefab
+      value: 
+      objectReference: {fileID: 759611085}
     - target: {fileID: 7636877668441743737, guid: 1c6d1568aa6d671408e2deee7b1bb4ef, type: 3}
       propertyPath: m_LocalPosition.x
       value: -5.72442
@@ -13911,7 +13989,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1635059871
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13973,7 +14051,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!224 &1635059874
 RectTransform:
@@ -17984,7 +18062,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 966726344}
   m_Direction: 2
   m_Value: 0
-  m_Size: 1
+  m_Size: 0.99999696
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -18137,7 +18215,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: -22.999634, y: -40}
+  m_AnchoredPosition: {x: -22.999756, y: -40}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2092247280
@@ -18620,6 +18698,7 @@ SceneRoots:
   - {fileID: 298915272}
   - {fileID: 739405825}
   - {fileID: 1019874592}
+  - {fileID: 180911694}
   - {fileID: 1845544285}
   - {fileID: 740029486}
   - {fileID: 1754079610}
