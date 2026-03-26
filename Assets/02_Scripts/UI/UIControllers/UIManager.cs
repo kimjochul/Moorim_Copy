@@ -58,7 +58,7 @@ public class UIManager : Singleton<UIManager>
     // 공용 인벤토리 열기
     public void OpenCommonInventoryPopup()
     {
-        inventory = Instantiate(dialogPopupPrefab, _canvas.transform);
+        inventory = Instantiate(commonInventoryPopupPrefab, _canvas.transform);
         var inven = inventory.GetComponent<InventoryPopupController>();
         if (inven == null)
             return;
