@@ -4,6 +4,16 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 
+public class GuestEnums
+{
+    public enum GuestState { Enter, WaitOrder, WaitFood, Eat, Pay, Exit }
+    public enum GuestMood { VeryBad, Bad, Neutral, Good, VeryGood }
+    public enum GuestType { Normal, Rich, Thief }
+    public enum GuestAppearance { NormalMaleA, NormalMaleB, NormalFemaleA, NormalFemaleB, RichMan, ThiefGuy }
+
+    public enum FoodQuality { Normal, Fine, Good }
+}
+
 // 부모 클래스
 public abstract class GuestBase : MonoBehaviour 
 {
@@ -34,7 +44,7 @@ public abstract class GuestBase : MonoBehaviour
     
     protected GuestEnums.GuestState currentState = GuestEnums.GuestState.Enter; 
     protected GuestEnums.GuestMood currentMood = GuestEnums.GuestMood.Neutral;
-    // 결제 시 정산할 퀄리티 및 꼼수 방지용 그릇 카운터
+    // 결제 시 정산할 퀄리티 및 꼼수 방지용
     private GuestEnums.FoodQuality FoodQuality = GuestEnums.FoodQuality.Normal;
     private int totalReceivedPlates = 0;
 
