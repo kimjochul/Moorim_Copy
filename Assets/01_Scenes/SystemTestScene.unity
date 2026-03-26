@@ -223,7 +223,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &339698414
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -480,6 +480,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EconomyManager
   dayManager: {fileID: 1119780642}
+  restaurantEconomy: {fileID: 0}
 --- !u!4 &710953795
 Transform:
   m_ObjectHideFlags: 0
@@ -662,7 +663,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::QuestGenerator
   questPool: {fileID: 11400000, guid: 9c013438a92b1f34791c8087ada5c88e, type: 2}
-  inventory: {fileID: 0}
+  inventory: {fileID: 394680774}
   recipeUnlockManager: {fileID: 339698414}
   allRecipes: {fileID: 11400000, guid: 6d1d33b9b84924d419f1e13f1b6636fc, type: 2}
 --- !u!4 &868857642
@@ -878,7 +879,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1119780642
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -892,6 +893,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DayManager
   dayLength: 10
+  gameStartHour: 9
+  gameEndHour: 18
 --- !u!4 &1119780643
 Transform:
   m_ObjectHideFlags: 0
@@ -936,9 +939,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6486a6082807884fa112959cc8476d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::QuestManager
-  uiManager: {fileID: 2110535954}
+  questUIManager: {fileID: 2110535954}
   generator: {fileID: 868857641}
-  inventory: {fileID: 0}
+  inventory: {fileID: 394680774}
 --- !u!4 &1314386188
 Transform:
   m_ObjectHideFlags: 0
@@ -965,6 +968,51 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb67004da70babc4687e4e7af38bbd24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Inventory
+--- !u!1 &1354892594
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1354892596}
+  - component: {fileID: 1354892595}
+  m_Layer: 0
+  m_Name: PostMan
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1354892595
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1354892594}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08a2c76d236938a40973ad81a2f7cf7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Postman
+  dayManager: {fileID: 1119780642}
+--- !u!4 &1354892596
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1354892594}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 939.02075, y: 476.39603, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1365087407
 GameObject:
   m_ObjectHideFlags: 0
@@ -981,7 +1029,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1365087408
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1104,7 +1152,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1510178199
 Transform:
   m_ObjectHideFlags: 0
@@ -2098,7 +2146,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6643587543179989893, guid: 41327dfa5af19764bb9640c899fd047b, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 300.00003
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 6767578965827446345, guid: 41327dfa5af19764bb9640c899fd047b, type: 3}
       propertyPath: m_Pivot.x
@@ -2456,6 +2504,7 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 869337628}
+  - {fileID: 1480453360}
   - {fileID: 1846640606}
   - {fileID: 3746149007117276193}
   - {fileID: 892803687}
@@ -2466,4 +2515,4 @@ SceneRoots:
   - {fileID: 1510178199}
   - {fileID: 710953795}
   - {fileID: 708729135}
-  - {fileID: 1480453360}
+  - {fileID: 1354892596}

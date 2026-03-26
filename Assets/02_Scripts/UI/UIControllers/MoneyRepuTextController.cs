@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 
@@ -8,49 +9,50 @@ public class MoneyRepuTextController : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI moneyText;
     [SerializeField] private TextMeshProUGUI fameText;
-
+    [SerializeField] private RestaurantEconomy restaurantEconomy;
+    
     EconomyManager economyManager;
+    
     private int currMoney;
     private int currFame;
-    
-    void Start()
+
+    void Awake()
     {
         economyManager = FindFirstObjectByType<EconomyManager>();
-        if (economyManager == null)
+        economyManager.TodayEconomyChanged += OnEconomyChanged;
+    }
+
+    void Start()
+    {
+        if (restaurantEconomy == null)
         {
-            Debug.LogError("Couldn't find EconomyManager");
+            Debug.LogError("Couldn't find RestuarantEconomy SO");
         }
-            
-        if (economyManager.RestaurantEconomy == null)
-        {
-            Debug.LogError("Couldn't find RestaurantEconomy");
-        }
-        currMoney = economyManager.RestaurantEconomy.Money;
-        currFame = economyManager.RestaurantEconomy.Fame;
+        
+        currMoney = restaurantEconomy.Money;
+        currFame = restaurantEconomy.Fame;
         moneyText.text = currMoney.ToString();
         fameText.text = currFame.ToString();
     }
 
-    void Update()
+    public void OnEconomyChanged()
     {
-        if (currMoney != economyManager.RestaurantEconomy.Money)
-        {
-            OnMoneyChanged(economyManager.RestaurantEconomy.Money);
-        }
-
-        if (currFame != economyManager.RestaurantEconomy.Fame)
-        {
-            OnFameChanged(economyManager.RestaurantEconomy.Fame);
-        }
+        OnMoneyChanged();
+        OnFameChanged();
     }
     
-    public void OnMoneyChanged(int currentMoney)
+    public void OnMoneyChanged()
     {
-        moneyText.text = currentMoney.ToString();
+        moneyText.text = economyManager.TodayMoneyIncome.ToString();
     }
 
-    public void OnFameChanged(int currentReputation)
+    public void OnFameChanged()
     {
-        fameText.text = currentReputation.ToString();
+        fameText.text = economyManager.TodayFameIncome.ToString();
+    }
+
+    void OnDestroy()
+    {
+        economyManager.TodayEconomyChanged -= OnEconomyChanged;
     }
 }

@@ -8,5 +8,5 @@ public interface ISubject
 {
     void AddObserver(IObserver observer);
     void RemoveObserver(IObserver observer);
-    void NotifyListener(QuestEvent questEvent);
+    void NotifyListener(QuestEvent questEvent, QuestType questType);
 }

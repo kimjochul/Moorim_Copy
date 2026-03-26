@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+// TODO: 퀘스트 보상관련 추가
 
 /// <summary>
 /// 퀘스트 객체에 대한 클래스
@@ -10,11 +11,14 @@ public class Quest : IObserver
 {
     private QuestData data;
     public QuestData Data => data;
+    public QuestType QuestType => data.questType;
     
     public int QuestID { get; }
     public string QuestName { get; private set; }
     public bool IsCompleted { get; private set; }
     public bool IsFailed { get; private set; }
+
+    public QuestReward RuntimeReward => data.reward;
 
     private List<QuestCondition> conditions;
     public List<QuestCondition> Conditions => conditions;
@@ -117,6 +121,11 @@ public class Quest : IObserver
     {
         IsCompleted = true;
         Debug.Log($"퀘스트 완료: {QuestName}");
+        
+        EconomyManager.Instance.AddMoney(RuntimeReward.gold);
+        EconomyManager.Instance.AddFame(RuntimeReward.reputation);
+        
+        QuestManager.Instance.EraseQuestFromActive(this);
         QuestManager.Instance.RemoveObserver(this);
     }
     
