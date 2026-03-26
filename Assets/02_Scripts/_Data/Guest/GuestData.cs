@@ -2,15 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class GuestEnums
-{
-    public enum GuestState { Enter, WaitOrder, WaitFood, Eat, Pay, Exit }
-    public enum GuestMood { VeryBad, Bad, Neutral, Good, VeryGood }
-    public enum GuestType { Normal, Rich, Thief }
-    public enum GuestAppearance { NormalMaleA, NormalMaleB, NormalFemaleA, NormalFemaleB, RichMan, ThiefGuy }
-
-    public enum FoodQuality { Normal, Fine, Good }
-}
 
 [System.Serializable] // 인스펙터 노출용 개별 주문서
 public class OrderItem
@@ -22,7 +13,7 @@ public class OrderItem
     public bool IsComplete => servedAmount >= requredAmount;
 }
 
-[System.Serializable] // 손님이 주ㅏㅣ고 있을 전체 주문서
+[System.Serializable] // 손님이 쥐고 있을 전체 주문서
 public class RuntimeOrder
 {
     public List<OrderItem> item = new List<OrderItem>();

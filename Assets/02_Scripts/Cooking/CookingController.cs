@@ -18,6 +18,9 @@ public class CookingController : MonoBehaviour
     private CookingModel model = new CookingModel();
     private List<Recipe> runtimeRecipes = new List<Recipe>();
     private CookingStation currentStation; // 어떤 요리대인지 기억
+    private Inventory targetInventory; // 아이템 돌려줄 때 어느 인벤토리에서 온건지 기억
+
+    private Dictionary<int, IItem> cachedItems = new Dictionary<int, IItem>(); // ID(int)를 넣으면 원본 아이템(IItem)을 뱉어내는 임시 기억 장치
 
     void Awake()
     {
@@ -60,6 +63,9 @@ public class CookingController : MonoBehaviour
     // 요리 시작 안 하고 창을 닫았을 때 인벤토리로 다시 재료를 돌려주는 메소드 
     private void ReturnIngredientsToInventory()
     {
+        if (targetInventory == null) 
+            return;
+        
         foreach (var kvp in model.InsertedIngredients)
         {
             int ingredientId = kvp.Key;
@@ -67,8 +73,9 @@ public class CookingController : MonoBehaviour
 
             if (amount > 0)
             {
-                // 인벤토리 시스템의 '아이템 획득' 함수 호출
-                
+                IItem returnItem = cachedItems[ingredientId];
+
+                targetInventory.GetItem(returnItem, amount);
                 Debug.Log($"[재료 반환] 취소됨! ID: {ingredientId} 재료 {amount}개를 인벤토리로 다시 돌려보냅니다.");
             }
         }
@@ -96,9 +103,14 @@ public class CookingController : MonoBehaviour
         if (inventorySlot.IsEmpty || inventorySlot.Item == null)
             return;
 
+        targetInventory = inventorySlot.Owner;
         // IItem 인터페이스에서 ID 가져오기
         int ingredientId = inventorySlot.Item.ID;
 
+        // 나중에 돌려줄 상황을 대비해서, 원본 아이템 객체를 기억해둡니다!
+        if (!cachedItems.ContainsKey(ingredientId))
+            cachedItems.Add(ingredientId, inventorySlot.Item);
+        
         // 모델에게 투입 검사 지시
         // 클릭 한 번에 재료 하나씩 투입하는 방식
         int consumedAmount = model.TryAddIngredient(ingredientId, 1);
@@ -131,6 +143,7 @@ public class CookingController : MonoBehaviour
         if (currentStation != null)
         {
             currentStation.StartCooking(model.CurrentRecipe);
+            model.InsertedIngredients.Clear();
             CloseCookingSystem();
         }
     }
