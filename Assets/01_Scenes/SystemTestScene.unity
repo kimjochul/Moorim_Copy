@@ -435,6 +435,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CustomerManager
   dayManager: {fileID: 1119780642}
+  spawnPoint: {fileID: 0}
+  targetTable: {fileID: 0}
+  exitPoint: {fileID: 0}
+  normalGuestPrefabs: []
+  richGuestPrefab: {fileID: 0}
+  thiefGuestPrefab: {fileID: 0}
 --- !u!4 &708729135
 Transform:
   m_ObjectHideFlags: 0
@@ -894,7 +900,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DayManager
   dayLength: 10
   gameStartHour: 9
-  gameEndHour: 18
+  gameEndHour: 21
 --- !u!4 &1119780643
 Transform:
   m_ObjectHideFlags: 0
@@ -1204,6 +1210,11 @@ MonoBehaviour:
   playerMeatInventory: {fileID: 157982395}
   playerOtherIngredientInventory: {fileID: 1329451592}
   playerFoodInventory: {fileID: 394680774}
+  objCategory: {fileID: 0}
+  tsCategory: {fileID: 0}
+  objProduct: {fileID: 0}
+  tsProduct: {fileID: 0}
+  categoryGroup: {fileID: 0}
 --- !u!4 &1805201025
 Transform:
   m_ObjectHideFlags: 0
@@ -2146,7 +2157,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6643587543179989893, guid: 41327dfa5af19764bb9640c899fd047b, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 300
+      value: 300.00003
       objectReference: {fileID: 0}
     - target: {fileID: 6767578965827446345, guid: 41327dfa5af19764bb9640c899fd047b, type: 3}
       propertyPath: m_Pivot.x

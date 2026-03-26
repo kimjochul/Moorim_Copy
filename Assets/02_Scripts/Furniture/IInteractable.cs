@@ -3,7 +3,7 @@ using static Constants;
 
 public interface IInteractable
 {
-    //»óÈ£ÀÛ¿ë
-    void Interact();
+    //ï¿½ï¿½È£ï¿½Û¿ï¿½
+    void Interact(Inventory inventory = null);
     bool CanInteract(PlayerType playerType);
 }

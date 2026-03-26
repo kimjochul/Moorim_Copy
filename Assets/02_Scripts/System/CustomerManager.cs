@@ -27,9 +27,8 @@ public class CustomerManager : MonoBehaviour
     
     void Awake()
     {
-        // dayManager.OnDayStart += StartSpawn;
-        // dayManager.OnDayEnd += StopSpawn;
-        StartSpawn();
+        dayManager.OnDayStart += StartSpawn;
+        dayManager.OnDayEnd += StopSpawn;
     }
     
     private void StartSpawn()
