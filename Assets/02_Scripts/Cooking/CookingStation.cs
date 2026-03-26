@@ -18,12 +18,13 @@ public class CookingStation : MonoBehaviour
 
     public CookingState CurrentState { get; private set; } = CookingState.Idle;
     private Recipe currentRecipe;
-
+    
     void Start()
     {
         if (resultObj != null)
             resultObj.SetActive(false);
     }
+    
     
     // 플레이어가 조리대에 상호작용했을 때 실행되어야할 기능
     private void Interact(Inventory playerInventory)
