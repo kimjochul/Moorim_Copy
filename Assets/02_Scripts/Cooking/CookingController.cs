@@ -57,6 +57,7 @@ public class CookingController : MonoBehaviour
         currentStation = null;
     }
 
+    // 요리 시작 안 하고 창을 닫았을 때 인벤토리로 다시 재료를 돌려주는 메소드 
     private void ReturnIngredientsToInventory()
     {
         foreach (var kvp in model.InsertedIngredients)
