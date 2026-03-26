@@ -13,7 +13,7 @@ public class QuestGenerator : MonoBehaviour
     /// 해금이 되어있는 아이템을 필요로 하는 퀘스트만 나오게 설정해야함
     /// 퀘스트 풀에 있는 데이터들 중 하나를 랜덤으로 골라서, 리턴
     /// </summary>
-    public Quest GenerateRandomQuest()
+    public Quest GenerateRandomQuest(QuestType questType)
     {
         if (questPool.quests.Count == 0)
             return null;
@@ -22,7 +22,7 @@ public class QuestGenerator : MonoBehaviour
 
         foreach (var template in questPool.quests)
         {
-            if (IsValidTemplate(template))
+            if (IsValidTemplate(template, questType))
             {
                 validTemplates.Add(template);
                 Debug.Log(template.name);   
@@ -45,14 +45,24 @@ public class QuestGenerator : MonoBehaviour
         
         return quest;
     }
-    
+
     /// <summary>
     /// 데이터로 들어온 퀘스트가 필요로 하는 아이템이 언락됐는지 확인하고 맞을 경우 템플릿에 넣을 수 있게 true를 리턴하는 함수 
     /// </summary>
     /// <param name="data"></param>
+    /// <param name="questType">누가 주는 퀘스트인지 구분</param>
     /// <returns></returns>
-    private bool IsValidTemplate(QuestData data)
+    private bool IsValidTemplate(QuestData data, QuestType questType)
     {
+        if (data == null)
+        {
+            Debug.Log("QuestData is null");
+            return false;
+        }
+
+        if (questType != data.questType)
+            return false;
+        
         foreach (var condition in data.conditions)
         {
             if (condition is ItemCondition itemCondition)
@@ -217,5 +227,8 @@ public class QuestGenerator : MonoBehaviour
                 failCondition.maxFailCount = Random.Range(1, 5);
             }
         }
+        // 보상도 랜덤으로 설정
+        quest.Data.reward.gold = Random.Range(50, 150); 
+        quest.Data.reward.reputation = Random.Range(1, 10);
     }
 }
