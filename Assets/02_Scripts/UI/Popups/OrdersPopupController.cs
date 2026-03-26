@@ -20,7 +20,7 @@ public class OrdersPopupController : PopupController
         MakeAllOrderPopups(new  List<Order>());
     }
     
-    public void Show(List<Order> activeOrders)
+    public void Showt()
     {
         base.Show();
         _closeButton.onClick.AddListener(OnClickCancelButton);
