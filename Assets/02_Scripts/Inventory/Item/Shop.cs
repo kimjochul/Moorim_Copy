@@ -2,6 +2,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
@@ -74,6 +75,7 @@ public class Shop : MonoBehaviour
             Debug.Log("Not a valid item");
         }
     }
+    // 카테고리 생성
     public void CreateCategory()
     {
         int length = System.Enum.GetValues(typeof(IngredientType)).Length;
@@ -97,6 +99,7 @@ public class Shop : MonoBehaviour
             this.dicCategory.Add(type, category);
         }
     }
+    // 상점 요소 생성
     public void CreateProduct()
     {
         for (int i = 0; i < 30; i++)
@@ -108,6 +111,8 @@ public class Shop : MonoBehaviour
             this.listProduct.Add(slot);
         }
     }
+
+    // 카테고리 클릭시 카테고리에 해당되는 상점 요소로 바꾸기
     private void UpdateProductList(IngredientType type)
     {
         List<IngredientData> targetDataList = DataManager.Instance.GetIngredientList(type);
@@ -125,18 +130,34 @@ public class Shop : MonoBehaviour
 
         for (int i = 0; i < this.listProduct.Count; i++)
         {
-            if (i < targetDataList.Count)
+            this.listProduct[i].SetActive(false);
+
+            ShopProduct slotScript = this.listProduct[i].GetComponent<ShopProduct>();
+            slotScript.onClickBuy -= OnProductClicked;
+        }
+
+        for (int i = 0; i < targetDataList.Count; i++)
+        {
+            if (i < this.listProduct.Count)
             {
                 this.listProduct[i].SetActive(true);
 
                 ShopProduct slotScript = this.listProduct[i].GetComponent<ShopProduct>();
-
                 slotScript.Init(targetDataList[i]);
-            }
-            else
-            {
-                this.listProduct[i].SetActive(false);
+                slotScript.onClickBuy += OnProductClicked;
             }
         }
+    }
+    private void OnProductClicked(ItemData itemData)
+    {
+        UIManager.Instance.CreateAmountPopup("구매하시겠습니까?", itemData,
+        (amount) =>
+        {
+            Buy(itemData.id, amount);
+        },
+        () =>
+        {
+            Debug.Log("취소 버튼 눌림");
+        });
     }
 }
