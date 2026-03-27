@@ -18,8 +18,9 @@ public class CookingController : MonoBehaviour
     private CookingModel model = new CookingModel();
     private List<Recipe> runtimeRecipes = new List<Recipe>();
     private CookingStation currentStation; // 어떤 요리대인지 기억
-    private Inventory targetInventory; // 아이템 돌려줄 때 어느 인벤토리에서 온건지 기억
-
+    private Inventory targetInventoryMeat; // 아이템 돌려줄 때 어느 인벤토리에서 온건지 기억
+    private Inventory targetInventoryOther;
+    
     private Dictionary<int, IItem> cachedItems = new Dictionary<int, IItem>(); // ID(int)를 넣으면 원본 아이템(IItem)을 뱉어내는 임시 기억 장치
 
     void Awake()
@@ -65,7 +66,7 @@ public class CookingController : MonoBehaviour
     // 요리 시작 안 하고 창을 닫았을 때 인벤토리로 다시 재료를 돌려주는 메소드 
     private void ReturnIngredientsToInventory()
     {
-        if (targetInventory == null) 
+        if (targetInventoryMeat == null && targetInventoryOther == null) 
             return;
         
         foreach (var kvp in model.InsertedIngredients)
@@ -77,7 +78,13 @@ public class CookingController : MonoBehaviour
             {
                 IItem returnItem = cachedItems[ingredientId];
 
-                targetInventory.GetItem(returnItem, amount);
+                if (returnItem.Data is IngredientData ingredientData)
+                {
+                    if(ingredientData.type == Constants.IngredientType.Meats)
+                        targetInventoryMeat.GetItem(returnItem, amount);
+                    else if(ingredientData.type != Constants.IngredientType.Meats)
+                        targetInventoryOther.GetItem(returnItem, amount);
+                }
                 Debug.Log($"[재료 반환] 취소됨! ID: {ingredientId} 재료 {amount}개를 인벤토리로 다시 돌려보냅니다.");
             }
         }
@@ -105,7 +112,11 @@ public class CookingController : MonoBehaviour
         if (inventorySlot.IsEmpty || inventorySlot.Item == null)
             return;
 
-        targetInventory = inventorySlot.Owner;
+        if (inventorySlot.Owner.Type == InventoryType.IngredientsButMeatOnly) 
+            targetInventoryMeat = inventorySlot.Owner;
+        else if (inventorySlot.Owner.Type == InventoryType.Ingredients ) 
+            targetInventoryOther = inventorySlot.Owner;
+        
         // IItem 인터페이스에서 ID 가져오기
         int ingredientId = inventorySlot.Item.ID;
 
@@ -142,7 +153,7 @@ public class CookingController : MonoBehaviour
     // 스테이션에게 요리 시작하라 명령 시스템 끄기
     public void OnCookButtonClicked()
     {
-        if (currentStation != null)
+        if (currentStation != null && model.IsReadyToCook())
         {
             currentStation.StartCooking(model.CurrentRecipe);
             model.InsertedIngredients.Clear();
