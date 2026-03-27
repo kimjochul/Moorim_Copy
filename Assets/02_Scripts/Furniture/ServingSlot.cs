@@ -30,7 +30,8 @@ public class ServingSlot : MonoBehaviour, IInteractable
             //�丮 ������Ʈ ����
         }
 
-        if (this.coroutineSpoil != null) StopCoroutine(this.coroutineSpoil);
+        if (this.coroutineSpoil != null) 
+            StopCoroutine(this.coroutineSpoil);
 
         this.coroutineSpoil = StartCoroutine(SpoilTimerRoutine());
     }
