@@ -20,6 +20,8 @@ public class PlayerManager : Singleton<PlayerManager>
 
     [SerializeField] 
     private PlayerController[] players;
+    public PlayerController CurrentPlayerController => this.players[(int)this.CurrentPlayer];
+    public IInteractable ReservedInteractable { get; set; }
 
     private IControllable selectedUnit;
     public IControllable SelectedUnit => this.selectedUnit;
