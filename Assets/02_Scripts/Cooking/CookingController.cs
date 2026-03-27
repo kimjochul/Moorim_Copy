@@ -48,6 +48,7 @@ public class CookingController : MonoBehaviour
     {
         currentStation = station;
         mainCookingUICanvas.SetActive(true);
+        cookingview.SetCookStartInteractable(false);
         UIManager.Instance.OpenCommonInventoryPopup();
     }
 
