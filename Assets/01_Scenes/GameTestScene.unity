@@ -870,8 +870,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.6, y: 1, z: 2.39}
-  m_Center: {x: 0, y: 0, z: 0.75}
+  m_Size: {x: 3.0838428, y: 1, z: 2.6732256}
+  m_Center: {x: -0.060248673, y: 0, z: 0.89161265}
 --- !u!65 &82545917
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6767,7 +6767,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a82595332a77724fa76919641ab8fd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DayManager
-  dayLength: 600
+  dayLength: 100
   gameStartHour: 9
   gameEndHour: 21
 --- !u!4 &739405825
@@ -13843,7 +13843,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.16666667
+  m_VoxelSize: 0.083333336
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: c41c309dd856d034fae5cdc8227f37a9, type: 2}
   m_BuildHeightMesh: 0
@@ -15753,6 +15753,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Sowol
   objSelectionArrow: {fileID: 153157802}
+  myInventory: {fileID: 282554022}
+  cookingStation: {fileID: 82545915}
 --- !u!4 &1836712514
 Transform:
   m_ObjectHideFlags: 0
