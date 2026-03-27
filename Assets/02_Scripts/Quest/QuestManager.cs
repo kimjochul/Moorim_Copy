@@ -22,10 +22,10 @@ public class QuestManager : Singleton<QuestManager>, ISubject
     public event Action<Quest> OnActiveQuestAdded; // ActiveQuest 리스트에 새 퀘스트 추가 시 호출 
     public event Action<Quest> OnActiveQuestRemoved; // ActiveQuest 리스트에 퀘스트 제거 시 호출
     private List<Quest> waitingQuests = new List<Quest>();
-    
-    protected override void Awake()
+
+    private void Start()
     {
-        base.Awake();
+        inventory = InventoryManager.Instance.GetInventory(InventoryType.Chef);
     }
 
     /// <summary>

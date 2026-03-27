@@ -27,7 +27,9 @@ public class InventoryManager : Singleton<InventoryManager>
     private void Start()
     {
         OpenCommonInventory();
+        CloseCommonInventory();
         OpenInventory(InventoryType.Chef);
+        CloseInventory(InventoryType.Chef);
     }
 
     public Inventory GetInventory(InventoryType type)
