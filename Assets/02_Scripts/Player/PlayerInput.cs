@@ -38,15 +38,18 @@ public class PlayerInput : MonoBehaviour
                 // 오브젝트가 상호작용 가능한 사물인지 확인
                 IInteractable interactable = hit.collider.GetComponent<IInteractable>();
 
-                if (interactable != null)
+                if (interactable != null)   //상호 작용
                 {
                     PlayerManager.Instance.MoveSelectedUnitTo(interactable.GetInteractPosition(), () =>
                     {
                         Interaction(interactable);
                     });
                 }
-                else
+                else    // 이동
                 {
+                    if (PlayerManager.Instance.CurrentPlayer == PlayerType.Sowol)
+                        return;
+
                     Movement(hit.point);
                 }
             }
