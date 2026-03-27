@@ -9,7 +9,8 @@ public enum InventoryType
     Server,
     MealTable,
     Ingredients,
-    IngredientsButMeatOnly
+    IngredientsButMeatOnly,
+    BondItem
 }
 
 /// <summary>
