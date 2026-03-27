@@ -16,7 +16,6 @@ public class Shop : MonoBehaviour
     [SerializeField] private ItemFactory itemFactory;
     [SerializeField] private Inventory playerMeatInventory;
     [SerializeField] private Inventory playerOtherIngredientInventory;
-    [SerializeField] private Inventory playerFoodInventory;
 
     [SerializeField] private GameObject objCategory;
     [SerializeField] private Transform tsCategory;
@@ -34,6 +33,9 @@ public class Shop : MonoBehaviour
 
     private void Start()
     {
+        playerMeatInventory = InventoryManager.Instance.GetInventory(InventoryType.IngredientsButMeatOnly);
+        playerOtherIngredientInventory = InventoryManager.Instance.GetInventory(InventoryType.Ingredients);
+        
         Buy(0, 1);
         Buy(5,2);
         Buy(6,1);
@@ -63,7 +65,6 @@ public class Shop : MonoBehaviour
         else if (item.Data is FoodData foodData)
         {
             Debug.Log($"{foodData.name} is a food");
-            playerFoodInventory.GetItem(item, count);
         }
         else if (item.Data is BondItemData bondItemData)
         {
@@ -71,7 +72,6 @@ public class Shop : MonoBehaviour
         }
         else
         {
-            
             Debug.Log("Not a valid item");
         }
     }
