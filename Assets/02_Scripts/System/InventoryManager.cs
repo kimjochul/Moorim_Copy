@@ -47,16 +47,26 @@ public class InventoryManager : Singleton<InventoryManager>
         };
     }
 
+    /// <summary>
+    /// 공용 인벤토리 열기
+    /// </summary>
     public void OpenCommonInventory()
     {
         UIManager.Instance.OpenCommonInventoryPopup(commonInventoryRoot);
     }
 
+    /// <summary>
+    /// 공용 인벤토리 닫기
+    /// </summary>
     public void CloseCommonInventory()
     {
         UIManager.Instance.CloseCommonInventoryPopup(commonInventoryRoot);
     }
     
+    /// <summary>
+    /// 특정 인벤토리 열기
+    /// </summary>
+    /// <param name="type"></param>
     public void OpenInventory(InventoryType type)
     {
         var inventory = GetInventory(type);
@@ -70,6 +80,10 @@ public class InventoryManager : Singleton<InventoryManager>
         UIManager.Instance.OpenInventoryPopup(inventory);
     }
 
+    /// <summary>
+    /// 특정 인벤토리 닫기
+    /// </summary>
+    /// <param name="type"></param>
     public void CloseInventory(InventoryType type)
     {
         var inventory = GetInventory(type);
