@@ -48,7 +48,8 @@ public class CookingController : MonoBehaviour
     {
         currentStation = station;
         mainCookingUICanvas.SetActive(true);
-        UIManager.Instance.OpenCommonInventoryPopup();
+        cookingview.SetCookStartInteractable(false);
+        InventoryManager.Instance.OpenCommonInventory();
     }
 
     public void CloseCookingSystem()
@@ -59,7 +60,7 @@ public class CookingController : MonoBehaviour
         model.ClearTarget();
 
         mainCookingUICanvas.SetActive(false);
-        UIManager.Instance.DestroyCommonInventoryPopup();
+        InventoryManager.Instance.CloseCommonInventory();
         currentStation = null;
     }
 
