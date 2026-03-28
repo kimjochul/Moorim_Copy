@@ -3,6 +3,21 @@ using DG.Tweening;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
+public enum OrderDirection
+{
+    Top,
+    Bottom,
+    Left,
+    Right
+}
+public enum PaperDirection
+{
+    TopLeft,      // 왼쪽 위
+    TopRight,     // 오른쪽 위
+    BottomLeft,   // 왼쪽 아래
+    BottomRight   // 오른쪽 아래
+}
+
 public class UIAnimationManager : Singleton<UIAnimationManager>
 {
     [Header("=== 점점 커지는 연출 ===")]
@@ -139,6 +154,16 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
     [Tooltip("왼쪽에서 튕긴 후 오른쪽 값")]
     [SerializeField] 
     private float zigzagRightOffset = 200f;
+
+    [Space(30)]
+
+    [Header("Stamp 연출 설정")]
+    [SerializeField] 
+    private Vector2 stampStartScale = new Vector2(10f, 10f); 
+    [SerializeField] 
+    private float stampAnimDuration = 0.5f;
+    [SerializeField] 
+    private Ease stampEase = Ease.OutBack;
     protected override void Awake()
     {
         base.Awake();
@@ -207,35 +232,51 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
             onComplete?.Invoke();
         });
     }
-    public void ShowOrder(RectTransform ui, UnityAction onStart = null, UnityAction onComplete = null)
+    public void ShowOrder(RectTransform ui, OrderDirection direction = OrderDirection.Right, UnityAction onStart = null, UnityAction onComplete = null)
     {
         if (ui == null) return;
 
         ui.DOKill();
 
         CanvasGroup cg = ui.GetComponent<CanvasGroup>();
-
         if (cg == null)
             cg = ui.gameObject.AddComponent<CanvasGroup>();
 
         cg.DOKill();
-
         cg.blocksRaycasts = false;
 
-        ui.localScale = new Vector3(1f, 0f, 1f);
+        bool isVertical = (direction == OrderDirection.Top || direction == OrderDirection.Bottom);
+
+        ui.localScale = isVertical ? new Vector3(1f, 0f, 1f) : new Vector3(0f, 1f, 1f);
 
         cg.alpha = 0f;
 
-        ui.gameObject.SetActive(true);
-
         Sequence seq = DOTween.Sequence();
+
+        Vector2 startPivot = new Vector2(0.5f, 0.5f);
+        switch (direction)
+        {
+            case OrderDirection.Top: startPivot = new Vector2(0.5f, 1f); break; // 위쪽 고정
+            case OrderDirection.Bottom: startPivot = new Vector2(0.5f, 0f); break; // 아래쪽 고정
+            case OrderDirection.Left: startPivot = new Vector2(0f, 0.5f); break; // 왼쪽 고정
+            case OrderDirection.Right: startPivot = new Vector2(1f, 0.5f); break; // 오른쪽 고정
+        }
+
         // 시작할 때
         seq.OnStart(() => {
-            SetPivot(ui, new Vector2(0.5f, 0f));
+            SetPivot(ui, startPivot);
             onStart?.Invoke();
         });
 
-        seq.Append(ui.DOScaleY(1f, this.orderShowDuration).SetEase(this.orderShowEase));
+        if (isVertical)
+        {
+            seq.Append(ui.DOScaleY(1f, this.orderShowDuration).SetEase(this.orderShowEase));
+        }
+        else
+        {
+            seq.Append(ui.DOScaleX(1f, this.orderShowDuration).SetEase(this.orderShowEase));
+        }
+
         seq.Join(cg.DOFade(1f, this.orderShowDuration).SetEase(Ease.Linear));
 
         // 끝날 때
@@ -245,35 +286,51 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
             onComplete?.Invoke();
         });
     }
-    public void HideOrder(RectTransform ui, UnityAction onStart = null, UnityAction onComplete = null)
+    public void HideOrder(RectTransform ui, OrderDirection direction = OrderDirection.Right, UnityAction onStart = null, UnityAction onComplete = null)
     {
         if (ui == null) return;
 
         ui.DOKill();
 
         CanvasGroup cg = ui.GetComponent<CanvasGroup>();
-
         if (cg == null)
             cg = ui.gameObject.AddComponent<CanvasGroup>();
 
         cg.DOKill();
-
         cg.blocksRaycasts = false;
 
+        bool isVertical = (direction == OrderDirection.Top || direction == OrderDirection.Bottom);
+
         Sequence seq = DOTween.Sequence();
+
+        Vector2 startPivot = new Vector2(0.5f, 0.5f);
+        switch (direction)
+        {
+            case OrderDirection.Top: startPivot = new Vector2(0.5f, 1f); break;
+            case OrderDirection.Bottom: startPivot = new Vector2(0.5f, 0f); break;
+            case OrderDirection.Left: startPivot = new Vector2(0f, 0.5f); break;
+            case OrderDirection.Right: startPivot = new Vector2(1f, 0.5f); break;
+        }
+
         // 시작할 때
         seq.OnStart(() => {
-            SetPivot(ui, new Vector2(0.5f, 0f));
+            SetPivot(ui, startPivot);
             onStart?.Invoke();
         });
 
-        seq.Append(ui.DOScaleY(0f, this.orderHideDuration).SetEase(this.orderHideEase));
+        if (isVertical)
+        {
+            seq.Append(ui.DOScaleY(0f, this.orderHideDuration).SetEase(this.orderHideEase));
+        }
+        else
+        {
+            seq.Append(ui.DOScaleX(0f, this.orderHideDuration).SetEase(this.orderHideEase));
+        }
+
         seq.Join(cg.DOFade(0f, this.orderHideDuration).SetEase(Ease.Linear));
 
-        // 끝날 때
         seq.OnComplete(() => {
             SetPivot(ui, new Vector2(0.5f, 0.5f));
-            ui.gameObject.SetActive(false);
             onComplete?.Invoke();
         });
     }
@@ -396,7 +453,7 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
             onComplete?.Invoke();
         });
     }
-    public void ShowPaper(RectTransform ui, UnityAction onStart = null, UnityAction onComplete = null)
+    public void ShowPaper(RectTransform ui, PaperDirection direction = PaperDirection.TopRight, UnityAction onStart = null, UnityAction onComplete = null)
     {
         if (ui == null) return;
 
@@ -407,17 +464,18 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
             cg = ui.gameObject.AddComponent<CanvasGroup>();
 
         cg.DOKill();
-
         cg.blocksRaycasts = false;
 
         ui.localScale = Vector3.zero;
-
         cg.alpha = 0f;
 
         Sequence seq = DOTween.Sequence();
+
+        Vector2 startPivot = GetPivotFromDirection(direction);
+
         // 시작할 때
         seq.OnStart(() => {
-            SetPivot(ui, new Vector2(1f, 1f));
+            SetPivot(ui, startPivot); 
             onStart?.Invoke();
         });
 
@@ -425,12 +483,12 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         seq.Join(cg.DOFade(1f, this.paperShowDuration).SetEase(Ease.Linear));
 
         seq.OnComplete(() => {
-            SetPivot(ui, new Vector2(0.5f, 0.5f));
+            SetPivot(ui, new Vector2(0.5f, 0.5f)); 
             cg.blocksRaycasts = true;
             onComplete?.Invoke();
         });
     }
-    public void HidePaper(RectTransform ui, UnityAction onStart = null, UnityAction onComplete = null)
+    public void HidePaper(RectTransform ui, PaperDirection direction = PaperDirection.TopRight, UnityAction onStart = null, UnityAction onComplete = null)
     {
         if (ui == null) return;
 
@@ -441,21 +499,24 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
             cg = ui.gameObject.AddComponent<CanvasGroup>();
 
         cg.DOKill();
-
         cg.blocksRaycasts = false;
 
         Sequence seq = DOTween.Sequence();
+
+        Vector2 startPivot = GetPivotFromDirection(direction);
+
         // 시작할 때
         seq.OnStart(() => {
-            SetPivot(ui, new Vector2(1f, 1f));
+            SetPivot(ui, startPivot);
             onStart?.Invoke();
         });
 
         seq.Append(ui.DOScale(Vector3.zero, this.paperHideDuration).SetEase(this.paperHideEase));
         seq.Join(cg.DOFade(0f, this.paperHideDuration).SetEase(Ease.Linear));
 
+        // 끝날 때
         seq.OnComplete(() => {
-            SetPivot(ui, new Vector2(0.5f, 0.5f));
+            SetPivot(ui, new Vector2(0.5f, 0.5f)); 
             onComplete?.Invoke();
         });
     }
@@ -550,8 +611,6 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
 
         ui.localEulerAngles = Vector3.zero;
 
-        ui.gameObject.SetActive(true);
-
         Sequence seq = DOTween.Sequence();
         // 시작할 때
         seq.OnStart(() => {
@@ -617,6 +676,38 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
             onComplete?.Invoke();
         });
     }
+    public void ShowStamp(RectTransform ui, UnityAction onStart = null, UnityAction onComplete = null)
+    {
+        if (ui == null) return;
+
+        ui.DOKill();
+
+        CanvasGroup cg = ui.GetComponent<CanvasGroup>();
+        if (cg == null)
+            cg = ui.gameObject.AddComponent<CanvasGroup>();
+
+        cg.DOKill();
+        cg.blocksRaycasts = false;
+
+        ui.localScale = new Vector3(this.stampStartScale.x, this.stampStartScale.y, 1f);
+        cg.alpha = 0f;
+
+        Sequence seq = DOTween.Sequence();
+
+        // 시작할 때
+        seq.OnStart(() => {
+            onStart?.Invoke();
+        });
+
+        seq.Append(ui.DOScale(Vector3.one, this.stampAnimDuration).SetEase(this.stampEase));
+        seq.Join(cg.DOFade(1f, this.stampAnimDuration * 0.5f).SetEase(Ease.Linear)); 
+
+        // 끝날 때
+        seq.OnComplete(() => {
+            cg.blocksRaycasts = true;
+            onComplete?.Invoke();
+        });
+    }
     private void SetPivot(RectTransform rt, Vector2 newPivot)
     {
         if (rt == null) return;
@@ -628,5 +719,16 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
 
         rt.pivot = newPivot;
         rt.localPosition -= deltaPosition;
+    }
+    private Vector2 GetPivotFromDirection(PaperDirection direction)
+    {
+        switch (direction)
+        {
+            case PaperDirection.TopLeft: return new Vector2(0f, 1f);
+            case PaperDirection.TopRight: return new Vector2(1f, 1f);
+            case PaperDirection.BottomLeft: return new Vector2(0f, 0f);
+            case PaperDirection.BottomRight: return new Vector2(1f, 0f);
+            default: return new Vector2(0.5f, 0.5f); // 기본값 중앙
+        }
     }
 }
