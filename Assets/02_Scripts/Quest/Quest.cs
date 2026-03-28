@@ -6,6 +6,10 @@ using UnityEngine;
 
 /// <summary>
 /// 퀘스트 객체에 대한 클래스
+/// Condition 리스트 보관
+/// Condition에게 이벤트 전달
+/// 전체 완료 여부 판단
+/// Complete / Fail 처리
 /// </summary>
 public class Quest : IObserver
 {
@@ -137,5 +141,14 @@ public class Quest : IObserver
         IsFailed = true;
         Debug.Log($"퀘스트 실패: {QuestName}");
         QuestManager.Instance.RemoveObserver(this);
+    }
+    
+    /// <summary>
+    /// 퀘스트 조건들 호출(주로 진행도 확인 용)
+    /// </summary>
+    /// <returns></returns>
+    public List<QuestCondition> GetConditions()
+    {
+        return conditions;
     }
 }

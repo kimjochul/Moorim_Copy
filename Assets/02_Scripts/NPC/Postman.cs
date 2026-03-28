@@ -4,16 +4,7 @@ public class Postman : MonoBehaviour, IInteractable
 {
     [SerializeField] private DayManager dayManager;
     
-    public bool CanInteract(Constants.PlayerType playerType)
-    {
-        return false;
-    }
-
-    public void Interact(Inventory inventory = null)
-    {
-        // UI 창 호출 눌렀을 때
-        gameObject.SetActive(true);
-    }
+    [SerializeField] private GameObject postmanView;
 
     private void Start()
     {
@@ -21,12 +12,29 @@ public class Postman : MonoBehaviour, IInteractable
         gameObject.SetActive(false);
     }
     
+    private void Update()
+    {
+        postmanView.SetActive(IsAvailableDay());
+    }
+    
+    public bool CanInteract(Constants.PlayerType playerType)
+    {
+        return IsAvailableDay();
+    }
+
+    public void Interact(Inventory inventory = null)
+    {
+        if (!IsAvailableDay()) return;
+        // UI 창 호출 눌렀을 때
+        // UI 호출 코드
+    }
+    
     /// <summary>
     /// 랜덤 퀘스트 이전거 삭제 후 3개 재발행 (매주 화 목요일 마다 호출)
     /// </summary>
     private void DailyQuestCreate()
     {
-        if (dayManager.DayData.dayOfWeek == DayOfWeek.Tuesday || dayManager.DayData.dayOfWeek == DayOfWeek.Thursday)
+        if (IsAvailableDay())
         {
             // 1. 기존 랜덤 퀘스트 제거
             QuestManager.Instance.ClearRandomQuests();
@@ -40,6 +48,12 @@ public class Postman : MonoBehaviour, IInteractable
                 }, QuestType.PostMan);
             }
         }
+    }
+    
+    private bool IsAvailableDay()
+    {
+        return dayManager.DayData.dayOfWeek == DayOfWeek.Tuesday ||
+               dayManager.DayData.dayOfWeek == DayOfWeek.Thursday;
     }
 
     public Vector3 GetInteractPosition()

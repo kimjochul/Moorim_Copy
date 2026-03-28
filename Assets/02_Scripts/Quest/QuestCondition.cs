@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 /// <summary>
@@ -23,6 +24,10 @@ public struct QuestEvent
 
 /// <summary>
 /// 퀘스트 완료 조건을 생성하기 위한 SO(퀘스트의 정보를 담고 있는 questdata에 변수 값으로 들어갈 SO를 생성하기 위한 클래스)
+/// 진행도 직접 관리
+/// 이벤트 처리
+/// 완료 여부 판단
+/// UI용 데이터 제공
 /// </summary>
 public abstract class QuestCondition : ScriptableObject
 {
@@ -30,4 +35,13 @@ public abstract class QuestCondition : ScriptableObject
     public abstract void Notify(QuestEvent questEvent);
     public abstract bool IsComplete();
     public abstract QuestCondition Clone();
+    
+    public abstract string GetDescription();
+    public abstract string GetProgressText();
+    
+    public event Action OnConditionUpdated;
+    protected void NotifyUpdated()
+    {
+        OnConditionUpdated?.Invoke();
+    }
 }

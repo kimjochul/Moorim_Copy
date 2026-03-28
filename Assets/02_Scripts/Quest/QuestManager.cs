@@ -1,26 +1,31 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 
 /// <summary>
-/// 퀘스트 데이터를 받아 퀘스트를 생성해서 버튼을 누를 시 버튼에 해당하는 퀘스트를 받게 하고
-/// 퀘스트 클리어 창에 퀘스트 클리어에 대한 클리어 바를 만드는 클래스
-/// 게임 구조에 따라 변경될 가능성이 큼
-/// 게임 데이터와 게임 수락 바를 인게임 중에 생성하는 함수 추가 필요
+/// 퀘스트 데이터를 관리하는 매니저 UI에는 관여하지 않고 액션을 통해 변경사항을 갱신하도록 한다.
+/// 퀘스트 생성
+/// waiting / active 리스트 관리
+/// 이벤트 전달 (Notify)
+/// Observer 등록/해제
 /// </summary>
 public class QuestManager : Singleton<QuestManager>, ISubject
 {
-    [SerializeField] private QuestUIManager questUIManager;
-    
     private List<IObserver> observers = new List<IObserver>();
     
     [SerializeField] private QuestGenerator generator;
     
     [SerializeField] private Inventory inventory;
     private List<Quest> activeQuests = new List<Quest>();
-    public event Action<Quest> OnActiveQuestAdded; // ActiveQuest 리스트에 새 퀘스트 추가 시 호출 
+    
+    public event Action<Quest> OnActiveQuestAdded; // ActiveQuest 리스트에 새 퀘스트 추가 시 호출 (quest pop up controller에서 사용)
     public event Action<Quest> OnActiveQuestRemoved; // ActiveQuest 리스트에 퀘스트 제거 시 호출
+    
+    public event Action OnActiveQuestChanged; // 진행 중인 퀘스트 UI 갱신 시 호출
+    public event Action OnWaitingQuestChanged;// 수락 대기중인 퀘스트 수 변경 시 호출
+    
     private List<Quest> waitingQuests = new List<Quest>();
 
     private void Start()
@@ -35,7 +40,8 @@ public class QuestManager : Singleton<QuestManager>, ISubject
     public void OfferQuest(Quest quest)
     {
         waitingQuests.Add(quest);
-        questUIManager.CreateAcceptUI(quest);
+        
+        OnWaitingQuestChanged?.Invoke();
     }
     
     /// <summary>
@@ -50,11 +56,12 @@ public class QuestManager : Singleton<QuestManager>, ISubject
 
         activeQuests.Add(quest);
         waitingQuests.Remove(quest);
+        
         Instance.AddObserver(quest);
      
         OnActiveQuestAdded?.Invoke(quest);
-        
-        questUIManager.CreateClearUI(quest, inventory);
+        OnWaitingQuestChanged?.Invoke();
+        OnActiveQuestChanged?.Invoke();
     }
 
     /// <summary>
@@ -67,6 +74,7 @@ public class QuestManager : Singleton<QuestManager>, ISubject
             activeQuests.Remove(quest);
         
         OnActiveQuestRemoved?.Invoke(quest);
+        OnActiveQuestChanged?.Invoke();
     }
     
     /// <summary>
@@ -122,6 +130,7 @@ public class QuestManager : Singleton<QuestManager>, ISubject
     /// </summary>
     public void ClearRandomQuests()
     {
+        bool isChanged = false;
         for (int i = activeQuests.Count - 1; i >= 0; i--)
         {
             var quest = activeQuests[i];
@@ -133,7 +142,11 @@ public class QuestManager : Singleton<QuestManager>, ISubject
 
             activeQuests.RemoveAt(i);
             OnActiveQuestRemoved?.Invoke(quest); // 퀘스트 UI 창 업데이트 함수 연결해야함
+            
+            isChanged = true;
         }
+        if (isChanged)
+            OnActiveQuestChanged?.Invoke();
     }
     
     /// <summary>
@@ -149,5 +162,25 @@ public class QuestManager : Singleton<QuestManager>, ISubject
                || waitingQuests.Exists(q =>
                    q.QuestType != QuestType.Story &&
                    q.QuestID == newQuest.QuestID);
+    }
+    
+    /// <summary>
+    /// 현재 진행 중에 있는 퀘스트 조회 함수
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    public List<Quest> GetQuests(QuestType type)
+    {
+        return activeQuests.Where(q => q.QuestType == type).ToList();
+    }
+    
+    /// <summary>
+    /// 현재 퀘스트 수락 대기 창에 있는 퀘스트 조회
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    public List<Quest> GetWaitingQuests(QuestType type)
+    {
+        return waitingQuests.Where(q => q.QuestType == type).ToList();
     }
 }
