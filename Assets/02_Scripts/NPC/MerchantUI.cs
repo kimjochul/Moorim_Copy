@@ -13,6 +13,7 @@ public class MerchantUI : MonoBehaviour
     [SerializeField] private GameObject clearSlotPrefab;
     
     private Merchant merchant;
+    private Shop shop;
     private Inventory inventory;
     private void OnEnable()
     {
@@ -27,11 +28,19 @@ public class MerchantUI : MonoBehaviour
     {
         QuestManager.Instance.OnWaitingQuestChanged -= RefreshAccept;
         QuestManager.Instance.OnActiveQuestChanged -= RefreshClear;
+        
+        if (shop != null)
+            shop.OnProductClicked -= HandleProductClicked;
     }
 
     public void Init(Merchant merchant)
     {
         this.merchant = merchant;
+        shop = merchant.GetComponent<Shop>();
+        shop.Init();
+        
+        shop.OnProductClicked += HandleProductClicked;
+        
         inventory = InventoryManager.Instance.GetInventory(InventoryType.Fridge);
         
         OpenTalk(); // 기본 탭
@@ -73,8 +82,23 @@ public class MerchantUI : MonoBehaviour
         shopPanel.SetActive(true);
         questPanel.SetActive(false);
         talkPanel.SetActive(false);
+        
+        shop.CreateCategory();
     }
-
+    
+    private void HandleProductClicked(ItemData itemData)
+    {
+        UIManager.Instance.CreateAmountPopup("구매하시겠습니까?", itemData,
+            (amount) =>
+            {
+                shop.Buy(itemData.id, amount);
+            },
+            () =>
+            {
+                Debug.Log("취소 버튼 눌림");
+            });
+    }
+    
     public void OpenQuest()
     {
         shopPanel.SetActive(false);
