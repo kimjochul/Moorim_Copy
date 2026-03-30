@@ -10,7 +10,8 @@ public enum QuestType
     None, // null 대신 쓸 타입
     Merchant, // 상인이 주는 퀘스트
     PostMan, // 우체부가 주는 퀘스트
-    Story
+    MainStory,
+    SubStory
 }
 
 /// <summary>
@@ -35,5 +36,7 @@ public class QuestData : ScriptableObject
     public string questName;
     public List<QuestCondition> conditions;
     public QuestReward reward;
+
+    public QuestData nextQuest; // 다음 퀘스트
 }
 
