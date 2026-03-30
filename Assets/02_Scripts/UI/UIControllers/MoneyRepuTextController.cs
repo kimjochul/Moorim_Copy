@@ -22,6 +22,22 @@ public class MoneyRepuTextController : MonoBehaviour
         economyManager.TodayEconomyChanged += OnEconomyChanged;
     }
 
+    private void OnEnable()
+    {
+        EconomyManager.Instance.RestaurantEconomyChanged += Refresh;
+        Refresh();
+    }
+
+    private void OnDisable()
+    {
+        EconomyManager.Instance.RestaurantEconomyChanged -= Refresh;
+    }
+
+    private void Refresh()
+    {
+        moneyText.text = EconomyManager.Instance.RestaurantEconomy.Money.ToString();
+    }
+    
     void Start()
     {
         if (restaurantEconomy == null)
