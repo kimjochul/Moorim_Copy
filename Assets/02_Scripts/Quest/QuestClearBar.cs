@@ -11,6 +11,9 @@ public class QuestClearBar : MonoBehaviour
     [SerializeField] private Button clearButton;
     [SerializeField] private Inventory inventory;
     
+    [SerializeField] private Transform conditionContent;
+    [SerializeField] private GameObject conditionSlotPrefab;
+    
     private Quest quest;
 
     public void Init(Quest quest, Inventory inventory)
@@ -20,6 +23,15 @@ public class QuestClearBar : MonoBehaviour
 
         clearButton.onClick.RemoveAllListeners();
         clearButton.onClick.AddListener(OnClickClear);
+        
+        foreach (Transform child in conditionContent)
+            Destroy(child.gameObject);
+        
+        foreach (var condition in quest.GetConditions())
+        {
+            var obj = Instantiate(conditionSlotPrefab, conditionContent);
+            obj.GetComponent<QuestConditionUI>().Init(condition, false);
+        }
     }
 
     /// <summary>
@@ -42,7 +54,5 @@ public class QuestClearBar : MonoBehaviour
         
         if(quest.Data.questType == QuestType.Story)
             StoryQuestController.Instance.StartNextQuest(inventory);
-        
-        gameObject.SetActive(false);
     }
 }

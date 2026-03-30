@@ -20,14 +20,6 @@ public class ShopProduct : MonoBehaviour
 
     public UnityAction<ItemData> onClickBuy;
 
-    void Start()
-    {
-        this.btnBuy.onClick.AddListener(() =>
-        {
-            this.onClickBuy?.Invoke(this.itemData);
-        });
-    }
-
     public void Init(ItemData itemData)
     {
         this.itemData = itemData;
@@ -35,6 +27,12 @@ public class ShopProduct : MonoBehaviour
         this.itemName.text = this.itemData.itemName;
         this.amount.text = this.itemData.maxCapacity.ToString();
         this.price.text = this.itemData.price.ToString();
+        
+        btnBuy.onClick.RemoveAllListeners();
+        this.btnBuy.onClick.AddListener(() =>
+        {
+            this.onClickBuy?.Invoke(this.itemData);
+        });
     }
     
 }

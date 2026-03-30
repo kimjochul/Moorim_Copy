@@ -30,8 +30,10 @@ public class Shop : MonoBehaviour
     // 상점 요소
     private List<GameObject> listProduct = new List<GameObject>();
 
+    public Action<ItemData> OnProductClicked;
+    
 
-    private void Start()
+    public void Init()
     {
         playerMeatInventory = InventoryManager.Instance.GetInventory(InventoryType.IngredientsButMeatOnly);
         playerOtherIngredientInventory = InventoryManager.Instance.GetInventory(InventoryType.Ingredients);
@@ -133,7 +135,7 @@ public class Shop : MonoBehaviour
             this.listProduct[i].SetActive(false);
 
             ShopProduct slotScript = this.listProduct[i].GetComponent<ShopProduct>();
-            slotScript.onClickBuy -= OnProductClicked;
+            slotScript.onClickBuy = null;
         }
 
         for (int i = 0; i < targetDataList.Count; i++)
@@ -144,20 +146,13 @@ public class Shop : MonoBehaviour
 
                 ShopProduct slotScript = this.listProduct[i].GetComponent<ShopProduct>();
                 slotScript.Init(targetDataList[i]);
-                slotScript.onClickBuy += OnProductClicked;
+                
+                slotScript.onClickBuy += (itemData) =>
+                {
+                    OnProductClicked?.Invoke(itemData);
+                };
             }
         }
     }
-    private void OnProductClicked(ItemData itemData)
-    {
-        UIManager.Instance.CreateAmountPopup("구매하시겠습니까?", itemData,
-        (amount) =>
-        {
-            Buy(itemData.id, amount);
-        },
-        () =>
-        {
-            Debug.Log("취소 버튼 눌림");
-        });
-    }
+    
 }
