@@ -45,12 +45,22 @@ public class Shop : MonoBehaviour
         CreateCategory();
     }
 
-    public void Buy(int itemID, int count)
+    public bool Buy(int itemID, int count)
     {
         Debug.Log("Buying " + itemID);
         // 돈 체크는 생략
         Item item = itemFactory.CreateItem(itemID);
 
+        int totalPrice = item.Data.price * count;
+        
+        if (!EconomyManager.Instance.CanSpend(totalPrice))
+        {
+            Debug.Log("돈 부족");
+            return false;
+        }
+        
+        EconomyManager.Instance.SpendMoney(totalPrice);
+        
         if (item.Data is IngredientData ingredientData)
         {
             if (ingredientData.type == Constants.IngredientType.Meats)
@@ -76,6 +86,8 @@ public class Shop : MonoBehaviour
         {
             Debug.Log("Not a valid item");
         }
+
+        return true;
     }
     // 카테고리 생성
     public void CreateCategory()

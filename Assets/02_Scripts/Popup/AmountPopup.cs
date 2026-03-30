@@ -44,7 +44,7 @@ public class AmountPopup : PopupController
 
         UpdateUI();
     }
-    // Áõ°¡
+    // ï¿½ï¿½ï¿½ï¿½
     private void OnClickPlus()
     {
         if (this.currentAmount < this.maxAmount)
@@ -53,7 +53,7 @@ public class AmountPopup : PopupController
             UpdateUI();
         }
     }
-    // °¨¼Ò
+    // ï¿½ï¿½ï¿½ï¿½
     private void OnClickMinus()
     {
         if (this.currentAmount > 1)
@@ -65,7 +65,14 @@ public class AmountPopup : PopupController
     private void UpdateUI()
     {
         this.amount.text = this.currentAmount.ToString();
-        this.totalPrice.text = (this.price * this.currentAmount).ToString();
+        
+        int total = price * currentAmount;
+        totalPrice.text = total.ToString();
+
+        if (EconomyManager.Instance.CanSpend(total))
+            totalPrice.color = Color.white;
+        else
+            totalPrice.color = Color.red;
     }
     public void ButtonOk(UnityAction<int> action)
     {

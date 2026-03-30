@@ -102,4 +102,30 @@ public class EconomyManager : Singleton<EconomyManager>
         Debug.Log($"처리한 손님 수 : {_todayCustomerCount}");
         Debug.Log($"결과 재정 상태: {RestaurantEconomy.Money}, 결과 명성 수치 : {RestaurantEconomy.Fame}");
     }
+    
+    /// <summary>
+    /// 돈 사용 가능 여부
+    /// </summary>
+    /// <param name="amount"></param>
+    /// <returns></returns>
+    public bool CanSpend(int amount)
+    {
+        return restaurantEconomy.Money >= amount;
+    }
+
+    /// <summary>
+    /// 돈 사용 함수
+    /// </summary>
+    /// <param name="amount"></param>
+    /// <returns></returns>
+    public bool SpendMoney(int amount)
+    {
+        if (!CanSpend(amount))
+            return false;
+
+        restaurantEconomy.Money -= amount;
+
+        RestaurantEconomyChanged?.Invoke();
+        return true;
+    }
 }
