@@ -2,8 +2,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
+using System;
 
-public class ShopProduct : MonoBehaviour
+public class ShopProduct : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     private ItemData itemData;
     [SerializeField]
@@ -27,6 +29,8 @@ public class ShopProduct : MonoBehaviour
     private Button btnBuy;
 
     public UnityAction<ItemData> onClickBuy;
+    public Action<ItemData> onHoverEnter;
+    public Action onHoverExit;
 
     public void Init(ItemData itemData)
     {
@@ -52,6 +56,8 @@ public class ShopProduct : MonoBehaviour
         this.itemName.text = "";
         this.amount.text = "";
         this.price.text = "";
+        this.onHoverEnter = null;
+        this.onHoverExit = null;
 
         Background();
     }
@@ -69,5 +75,16 @@ public class ShopProduct : MonoBehaviour
             this.icon.gameObject.SetActive(false);
             this.btnBuy.interactable = false;
         }
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (this.itemData)
+            this.onHoverEnter?.Invoke(this.itemData);
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        this.onHoverExit?.Invoke();
     }
 }
