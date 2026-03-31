@@ -142,9 +142,12 @@ public abstract class GuestBase : MonoBehaviour
             
             int randomIndex = UnityEngine.Random.Range(0, menuBoard.recipes.Count);
             RecipeData choseRecipe = menuBoard.recipes[randomIndex];
+
+            FoodData choseFood = choseRecipe.result;
+
             Debug.Log($"[{individualId}]가 {choseRecipe}를 골랐습니다.");
 
-            myOrder.recipe = choseRecipe;
+            myOrder.orderedFood = choseFood;
             myOrder.isServed = false;
 
             OnGuestReadyToOrder?.Invoke(this); // UI에게 주문 대기 아이콘 띄우라 하기
@@ -204,7 +207,7 @@ public abstract class GuestBase : MonoBehaviour
         if (currentState != Constants.GuestState.WaitFood)
             return;
 
-        if (myOrder.recipe == deliveredFood && !myOrder.isServed)
+        if (myOrder.orderedFood == deliveredFood && !myOrder.isServed)
         {
             myOrder.isServed = true;
             FoodQuality = quality;
@@ -255,8 +258,8 @@ public abstract class GuestBase : MonoBehaviour
     {
         basePrise = 0;
 
-        if (myOrder != null && myOrder.recipe != null)
-            basePrise = myOrder.recipe.price;
+        if (myOrder != null && myOrder.orderedFood != null)
+            basePrise = myOrder.orderedFood.price;
 
         float moodMultiplier = 1.0f;
 
