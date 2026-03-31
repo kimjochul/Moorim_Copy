@@ -142,7 +142,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 80
   m_CollisionDetection: 0
 --- !u!195 &7826770281131221139
 NavMeshAgent:
@@ -185,8 +185,8 @@ MonoBehaviour:
   foodEatLimit: 15
   menuBoard: {fileID: 11400000, guid: 6d1d33b9b84924d419f1e13f1b6636fc, type: 2}
   agent: {fileID: 7826770281131221139}
-  targetTable: {fileID: 0}
   exitDoor: {fileID: 0}
+  myChair: {fileID: 0}
   individualId: 0
   myApperance: 0
   myOrder:

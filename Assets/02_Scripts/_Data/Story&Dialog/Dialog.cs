@@ -6,8 +6,6 @@ using UnityEngine;
 public class Dialog
 {
     public int id;
-    // 대화 상대 NPC
-    public GuestData guest;
     
     [TextArea(3, 10)]
     public List<string> dialogs;

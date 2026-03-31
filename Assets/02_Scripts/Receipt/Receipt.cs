@@ -23,6 +23,10 @@ public class Receipt : MonoBehaviour
     private ReceiptSlot angryGuests;
     [SerializeField]
     private ReceiptSlot netIncome;
+    [SerializeField] 
+    private GameObject objStamp;
+    [SerializeField] 
+    private Button btnConfirm;
 
     [Header("애니메이션 연출 시간")]
     [Range(0f, 3f)]
@@ -59,6 +63,11 @@ public class Receipt : MonoBehaviour
     public void Show()
     {
         ClearSlotText();
+
+        if (this.objStamp != null) 
+            this.objStamp.SetActive(false);
+        if (this.btnConfirm != null) 
+            this.btnConfirm.gameObject.SetActive(false);
     }
     public void Hide()
     {
@@ -92,21 +101,35 @@ public class Receipt : MonoBehaviour
         this.receiptSequence.Append(this.fame.AnimationText(this.data.fame, this.labelDelay, this.valueDuration));
         this.receiptSequence.AppendInterval(this.appendInterval);
 
-        this.receiptSequence.Append(this.debt.AnimationText(this.data.debt, this.labelDelay, this.valueDuration));
+        this.receiptSequence.Append(this.happyGuests.AnimationText(this.data.happyGuests, this.labelDelay, this.valueDuration));
         this.receiptSequence.AppendInterval(this.appendInterval);
 
-        this.receiptSequence.Append(this.happyGuests.AnimationText(this.data.happyGuests, this.labelDelay, this.valueDuration));
+        this.receiptSequence.Append(this.debt.AnimationText(this.data.debt, this.labelDelay, this.valueDuration));
         this.receiptSequence.AppendInterval(this.appendInterval);
    
         this.receiptSequence.Append(this.angryGuests.AnimationText(this.data.angryGuests, this.labelDelay, this.valueDuration));
         this.receiptSequence.AppendInterval(this.lastAppendInterval);
   
         this.receiptSequence.Append(this.netIncome.AnimationText(this.data.netIncome, this.netIncomeDelay, this.netIncomeDuration));
-   
+
         this.receiptSequence.OnComplete(() => {
-            // 전부 끝나면 할 행동
             this.receiptSequence = null;
-            onComplete?.Invoke();
+            RectTransform rt = this.objStamp.GetComponent<RectTransform>();
+            UIAnimationManager.Instance.ShowStamp(rt,
+
+                onStart: () =>
+                {
+                    if (this.objStamp != null)
+                        this.objStamp.SetActive(true);
+                },
+
+                onComplete: () =>
+                {
+                    if (this.btnConfirm != null)
+                        this.btnConfirm.gameObject.SetActive(true);
+                    onComplete?.Invoke();
+                }
+            );
         });
     }
     private void ClearSequence()

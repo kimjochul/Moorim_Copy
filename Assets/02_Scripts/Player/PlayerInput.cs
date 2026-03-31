@@ -13,18 +13,44 @@ public class PlayerInput : MonoBehaviour
 
     void Update()
     {
+        if (PlayerManager.Instance.SelectedUnit.CurrentState == PlayerState.Interact)
+            return;
+
         PlayerSelection();
         MouseClick();
+        InteractInput();
     }
+
     private void PlayerSelection()
     {
         if (Input.GetKeyDown(KeyCode.F1))
-        {
             PlayerManager.Instance.SelectPlayer(PlayerType.Myungwol);
-        }
         else if (Input.GetKeyDown(KeyCode.F2))
-        {
             PlayerManager.Instance.SelectPlayer(PlayerType.Sowol);
+    }
+    private void InteractInput()
+    {
+        IControllable currentUnit = PlayerManager.Instance.SelectedUnit;
+
+        if (currentUnit == null) return;
+
+        if (Input.GetKeyDown(KeyCode.F) && currentUnit.CurrentState == PlayerState.Idle)
+        {
+            IInteractable target = PlayerManager.Instance.ActiveInteractable;
+
+            if (target != null)
+            {
+                PlayerType currentPlayer = PlayerManager.Instance.CurrentPlayer;
+
+                if (target.CanInteract(currentPlayer))
+                {
+                    currentUnit.ChangeState(PlayerState.Interact);
+                    target.Interact();
+
+                    PlayerManager.Instance.ReservedInteractable = null;
+                    PlayerManager.Instance.ActiveInteractable = null;
+                }
+            }
         }
     }
     private void MouseClick()
@@ -35,32 +61,25 @@ public class PlayerInput : MonoBehaviour
 
             if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity))
             {
-                // 오브젝트가 상호작용 가능한 사물인지 확인
-                IInteractable interactable = hit.collider.GetComponent<IInteractable>();
+                IInteractable interactable = hit.collider.GetComponentInParent<IInteractable>();
 
                 if (interactable != null)
                 {
-                    PlayerManager.Instance.MoveSelectedUnitTo(interactable.GetInteractPosition(), () =>
-                    {
-                        Interaction(interactable);
-                    });
+                    PlayerManager.Instance.ReservedInteractable = interactable;
+                    PlayerManager.Instance.MoveSelectedUnitTo(interactable.GetInteractPosition());
                 }
                 else
                 {
+                    PlayerManager.Instance.ReservedInteractable = null;
+
+                    if (PlayerManager.Instance.CurrentPlayer == PlayerType.Sowol) return;
+
                     Movement(hit.point);
                 }
             }
         }
     }
-    private void Interaction(IInteractable target)
-    {
-        PlayerType currentPlayer = PlayerManager.Instance.CurrentPlayer;
 
-        if (target.CanInteract(currentPlayer))
-        {
-            target.Interact();
-        }
-    }
     private void Movement(Vector3 destination)
     {
         PlayerManager.Instance.MoveSelectedUnitTo(destination);

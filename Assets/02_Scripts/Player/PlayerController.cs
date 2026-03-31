@@ -2,8 +2,13 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
 
+public enum PlayerState { Idle, Move, Interact }
+
 public class PlayerController : MonoBehaviour, IControllable
 {
+    private PlayerState currentState;
+    public PlayerState CurrentState => this.currentState;
+
     private NavMeshAgent agent;
 
     private UnityAction onMoveEnd;
@@ -12,45 +17,63 @@ public class PlayerController : MonoBehaviour, IControllable
     {
         this.agent = GetComponent<NavMeshAgent>();
     }
+
     void Update()
     {
         CheckArrival();
     }
+
     private void CheckArrival()
     {
-        if (this.onMoveEnd == null) return;
+        if (this.CurrentState != PlayerState.Move) return;
 
         if (!this.agent.pathPending && this.agent.remainingDistance <= this.agent.stoppingDistance)
         {
             if (!this.agent.hasPath || this.agent.velocity.sqrMagnitude == 0f)
             {
-                this.onMoveEnd?.Invoke();
+                ChangeState(PlayerState.Idle);
 
-                this.onMoveEnd = null;
+                if (this.onMoveEnd != null)
+                {
+                    this.onMoveEnd.Invoke();
+                    this.onMoveEnd = null;
+                }
             }
         }
     }
-    public virtual void OnSelected()
-    {
-        Debug.Log(this.gameObject.name + " 선택됨");
-    }
 
-    public virtual void OnDeselected()
+    public virtual void OnSelected() { Debug.Log(this.gameObject.name + " 선택됨"); }
+    public virtual void OnDeselected() { Debug.Log(this.gameObject.name + " 해제됨"); }
+
+    public virtual void ChangeState(PlayerState state)
     {
-        Debug.Log(this.gameObject.name + " 해제됨");
+        if (this.currentState == state) return;
+
+        this.currentState = state;
+
+        switch (this.currentState)
+        {
+            case PlayerState.Idle: 
+                break;
+            case PlayerState.Move: 
+                break;
+            case PlayerState.Interact:
+                break;
+        }
     }
 
     public virtual void MoveTo(Vector3 destination, UnityAction action)
     {
+        ChangeState(PlayerState.Move);
+
         this.agent.ResetPath();
         this.agent.velocity = Vector3.zero;
         this.agent.SetDestination(destination);
 
-        //이동 끝난 후 이벤트 등록
         this.onMoveEnd = action;
     }
 
-    public void SetSpeed(float move, float angular, float accel)
+    public virtual void SetSpeed(float move, float angular, float accel)
     {
         this.agent.speed = move;
         this.agent.angularSpeed = angular;

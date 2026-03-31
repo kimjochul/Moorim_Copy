@@ -67,6 +67,9 @@ public class CookingStation : MonoBehaviour, IInteractable
         
         yield return new WaitForSeconds(cookTime);
 
+        // 요리 완료 시 현재 플레이어 상태를 interact -> idle로 바꿔서 다시 클릭, 캐릭터 변경이 가능하게
+        PlayerManager.Instance.StopCurrentPlayer(); 
+        
         CurrentState = CookingState.Done;
 
         // resultFoodIcon.sprite = currentRecipe.Data.icon;

@@ -32,7 +32,6 @@ public class GuestData : ScriptableObject
     public string guestName;
     public GameObject guestPrefab;
     public Sprite icon;
-    public Constants.GuestGender guestGender;
     public Order order;
     
     // 대사 등

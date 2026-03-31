@@ -6,6 +6,10 @@ using UnityEngine;
 
 /// <summary>
 /// 퀘스트 객체에 대한 클래스
+/// Condition 리스트 보관
+/// Condition에게 이벤트 전달
+/// 전체 완료 여부 판단
+/// Complete / Fail 처리
 /// </summary>
 public class Quest : IObserver
 {
@@ -23,6 +27,8 @@ public class Quest : IObserver
     private List<QuestCondition> conditions;
     public List<QuestCondition> Conditions => conditions;
     
+    private Inventory inventory;
+    
     /// <summary>
     /// 퀘스트를 생성하는 생성자, 퀘스트 데이터를 받아서 퀘스트를 생성
     /// </summary>
@@ -33,6 +39,8 @@ public class Quest : IObserver
         QuestID = data.id;
         QuestName = data.questName;
         IsCompleted = false;
+        
+        this.inventory = inventory;
         
         conditions = new List<QuestCondition>();
 
@@ -127,6 +135,14 @@ public class Quest : IObserver
         
         QuestManager.Instance.EraseQuestFromActive(this);
         QuestManager.Instance.RemoveObserver(this);
+        
+        if (QuestType == QuestType.SubStory)
+        {
+            SubStoryQuestController.Instance.OnQuestCompleted(this, inventory);
+        }
+        
+        if(Data.questType == QuestType.MainStory)
+            MainStoryQuestController.Instance.StartNextQuest(inventory);
     }
     
     /// <summary>
@@ -137,5 +153,14 @@ public class Quest : IObserver
         IsFailed = true;
         Debug.Log($"퀘스트 실패: {QuestName}");
         QuestManager.Instance.RemoveObserver(this);
+    }
+    
+    /// <summary>
+    /// 퀘스트 조건들 호출(주로 진행도 확인 용)
+    /// </summary>
+    /// <returns></returns>
+    public List<QuestCondition> GetConditions()
+    {
+        return conditions;
     }
 }

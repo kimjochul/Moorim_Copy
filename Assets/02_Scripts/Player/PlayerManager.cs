@@ -7,23 +7,24 @@ using static Constants;
 public class PlayerManager : Singleton<PlayerManager>
 {
     [Header("캐릭터 이동 설정")]
-
     [Range(1f, 40f)]
-    [SerializeField]
+    [SerializeField] 
     private float moveSpeed = 10f;
     [Range(60f, 480f)]
-    [SerializeField]
+    [SerializeField] 
     private float angularSpeed = 120f;
     [Range(4f, 100f)]
-    [SerializeField]
+    [SerializeField] 
     private float accelerationSpeed = 8f;
 
-    [SerializeField] 
-    private PlayerController[] players;
+    [SerializeField] private PlayerController[] players;
 
     private IControllable selectedUnit;
     public IControllable SelectedUnit => this.selectedUnit;
     public PlayerType CurrentPlayer { get; private set; }
+
+    public IInteractable ReservedInteractable { get; set; } // 마우스로 클릭한 물체
+    public IInteractable ActiveInteractable { get; set; } // 충돌한 물체
 
     void Start()
     {
@@ -52,5 +53,9 @@ public class PlayerManager : Singleton<PlayerManager>
             this.selectedUnit.SetSpeed(this.moveSpeed, this.angularSpeed, this.accelerationSpeed);
             this.selectedUnit.MoveTo(destination, action);
         }
+    }
+    public void StopCurrentPlayer()
+    {
+        this.selectedUnit?.ChangeState(PlayerState.Idle);
     }
 }

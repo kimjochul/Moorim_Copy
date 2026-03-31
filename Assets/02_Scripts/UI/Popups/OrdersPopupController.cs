@@ -59,6 +59,11 @@ public class OrdersPopupController : PopupController
     {
         _orderNotificationObj.SetActive(isActive);
     }
+
+    void OnDestroy()
+    {
+        GuestBase.OnOrderPlaced -= AddOrder;
+    }
 }
 
 

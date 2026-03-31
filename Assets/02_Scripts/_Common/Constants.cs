@@ -20,15 +20,10 @@
     }
     public enum FoodType
     {
-        MianDish,
+        MainDish,
         SideDish,
         Drink,
         Dessert
-    }
-    
-    public enum CookingMethod
-    {
-        None, Bake, Fry, Boil, Mix, Braise
     }
 
     public enum PlayerType
@@ -36,10 +31,21 @@
         Myungwol, Sowol
     }
 
-    public enum GuestGender
-    {
-        Male, Female
-    }
+    public enum GuestState 
+    { Enter, WaitOrder, WaitFood, Eat, Pay, Exit }
+
+    public enum GuestMood 
+    { VeryBad, Bad, Neutral, Good, VeryGood }
+
+    public enum GuestType 
+    { Normal, Rich, Thief }
+
+    public enum GuestAppearance 
+    { NormalMaleA, NormalMaleB, NormalFemaleA, NormalFemaleB, RichMan, ThiefGuy }
+
+    public enum FoodQuality 
+    { Normal, Fine, Good }
+
 
     public const float SPOIL_TIME = 180f;
     public const int SERVINGSLOT_MAXCOUNT = 8;

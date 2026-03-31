@@ -1,4 +1,5 @@
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Sowol : PlayerController
@@ -14,7 +15,7 @@ public class Sowol : PlayerController
     {
         base.OnDeselected();
     }
-
+    
     private void LateUpdate()
     {
         GetFoodItem();

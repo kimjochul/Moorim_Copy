@@ -26,7 +26,7 @@ public class RecipeListView : MonoBehaviour
     {
         controller = ctrl;
 
-        mainDishBtn.onClick.AddListener(() => controller.ShowRecipesByCategory(Constants.FoodType.MianDish));
+        mainDishBtn.onClick.AddListener(() => controller.ShowRecipesByCategory(Constants.FoodType.MainDish));
         sideDishBtn.onClick.AddListener(() => controller.ShowRecipesByCategory(Constants.FoodType.SideDish));
         drinkBtn.onClick.AddListener(() => controller.ShowRecipesByCategory(Constants.FoodType.Drink));
         dessertBtn.onClick.AddListener(() => controller.ShowRecipesByCategory(Constants.FoodType.Dessert));
