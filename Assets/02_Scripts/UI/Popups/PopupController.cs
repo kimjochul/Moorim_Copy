@@ -26,7 +26,6 @@ public class PopupController : MonoBehaviour
     public void Hide(PanelControllerHideDelegate onComplete = null)
     {
         onComplete?.Invoke();
-        gameObject.SetActive(false);    
         
         // TODO: Fade out
     }

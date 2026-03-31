@@ -11,19 +11,20 @@ public class OrdersPopupController : PopupController
     [SerializeField] private Transform _contentTransform;
     
     [SerializeField] private GameObject _orderNotificationObj;
+    [SerializeField] private GameObject _orderPopupBackgroundObj;
     
-    Dictionary<OrderPopup, Order>  _activeOrders = new Dictionary<OrderPopup, Order>();
+    Dictionary<GuestBase, RuntimeOrder>  _activeOrders = new Dictionary<GuestBase, RuntimeOrder>();
 
     void Start()
     {
-        // 주문 리스트 받아오기
-        MakeAllOrderPopups(new  List<Order>());
+        GuestBase.OnOrderPlaced += AddOrder;
+        _closeButton.onClick.AddListener(OnClickCancelButton);
     }
     
     public void Showt()
     {
         base.Show();
-        _closeButton.onClick.AddListener(OnClickCancelButton);
+        
         UpdateNotification(false);
     }
 
@@ -34,27 +35,21 @@ public class OrdersPopupController : PopupController
 
     public void OnClickCancelButton()
     {
-        Hide();
+        Hide(() => _orderPopupBackgroundObj.SetActive(false));
     }
 
-    // 퀘스트 추가될 때마다 QuestManager의 activeQuests 리스트 받아오기
-    public void MakeAllOrderPopups(List<Order> activeOrders)
+    
+    public void AddOrder(GuestBase guestBase, RuntimeOrder order)
     {
-        foreach (var order in activeOrders)
-        {
-            AddOrder(order);
-        }
-    }
-    public void AddOrder(Order order)
-    {
-        if (_activeOrders.ContainsValue(order))
+        if (_activeOrders[guestBase] == order)
             return;
+        
         var newOrderPopup = Instantiate(_orderPopupPrefab, _contentTransform);
         Transform pos =  newOrderPopup.transform;
         newOrderPopup.transform.localPosition = new Vector3(pos.position.x, pos.position.y, 0);
         var orderPopup =  newOrderPopup.GetComponent<OrderPopup>();
-        orderPopup.Init(order);
-        _activeOrders[orderPopup] = order;
+        orderPopup.Init(guestBase, order);
+        _activeOrders[guestBase] = order;
 
         // 창이 켜져 있지 않으면 알림 켜기
         UpdateNotification(!gameObject.activeSelf);
