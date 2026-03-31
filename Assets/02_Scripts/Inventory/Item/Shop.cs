@@ -31,16 +31,20 @@ public class Shop : MonoBehaviour
     private List<GameObject> listProduct = new List<GameObject>();
 
     public Action<ItemData> OnProductClicked;
-    
+
+    void Start()
+    {
+        Init();
+    }
 
     public void Init()
     {
-        playerMeatInventory = InventoryManager.Instance.GetInventory(InventoryType.IngredientsButMeatOnly);
-        playerOtherIngredientInventory = InventoryManager.Instance.GetInventory(InventoryType.Ingredients);
+        //playerMeatInventory = InventoryManager.Instance.GetInventory(InventoryType.IngredientsButMeatOnly);
+        //playerOtherIngredientInventory = InventoryManager.Instance.GetInventory(InventoryType.Ingredients);
         
-        Buy(0, 1);
-        Buy(5,2);
-        Buy(6,1);
+        //Buy(0, 1);
+        //Buy(5,2);
+        //Buy(6,1);
 
         CreateCategory();
     }
@@ -119,9 +123,12 @@ public class Shop : MonoBehaviour
     {
         List<IngredientData> targetDataList = DataManager.Instance.GetIngredientList(type);
 
-        if (this.listProduct.Count < targetDataList.Count)
+        int minSlotCount = 3;
+        int displayCount = Mathf.Max(targetDataList.Count, minSlotCount);
+
+        if (this.listProduct.Count < displayCount)
         {
-            int needCount = targetDataList.Count - this.listProduct.Count;
+            int needCount = displayCount - this.listProduct.Count;
             for (int i = 0; i < needCount; i++)
             {
                 GameObject product = Instantiate(this.objProduct, this.tsProduct);
@@ -134,20 +141,20 @@ public class Shop : MonoBehaviour
         {
             this.listProduct[i].SetActive(false);
 
-            ShopProduct slotScript = this.listProduct[i].GetComponent<ShopProduct>();
-            slotScript.onClickBuy = null;
+            ShopProduct product = this.listProduct[i].GetComponent<ShopProduct>();
+            product.Clear();
         }
 
-        for (int i = 0; i < targetDataList.Count; i++)
+        for (int i = 0; i < displayCount; i++)
         {
-            if (i < this.listProduct.Count)
-            {
-                this.listProduct[i].SetActive(true);
+            this.listProduct[i].SetActive(true);
 
-                ShopProduct slotScript = this.listProduct[i].GetComponent<ShopProduct>();
-                slotScript.Init(targetDataList[i]);
-                
-                slotScript.onClickBuy += (itemData) =>
+            ShopProduct product = this.listProduct[i].GetComponent<ShopProduct>();
+            if (i < targetDataList.Count)
+            {
+                product.Init(targetDataList[i]); 
+
+                product.onClickBuy = (itemData) =>
                 {
                     OnProductClicked?.Invoke(itemData);
                 };
