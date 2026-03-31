@@ -1,19 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using NUnit.Framework.Interfaces;
+using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
+using UnityEngine.Splines;
 using UnityEngine.UI;
 public class UIManager : Singleton<UIManager>
 {
     private Canvas _canvas;
     [SerializeField] private GameObject dialogPopupPrefab;
-    [SerializeField] private GameObject commonInventoryPopupPrefab;
     
     [SerializeField] private GameObject amountPopupObj;
-    [SerializeField] private GameObject inventoryObj;
-
+    [SerializeField] private GameObject okPopupObj;
     
     
     QuestPopupController _questPopupCtr;
@@ -57,22 +57,45 @@ public class UIManager : Singleton<UIManager>
         Instantiate(defaultUI,  _canvas.transform);
     }
     
-    // 공용 인벤토리 열기
-    public void OpenCommonInventoryPopup(bool open = true)
+    // 공용 인벤토리 호출시 나오는 함수
+    public void OpenCommonInventoryPopup(InventoryPopupController commonInventory)
     {
-        var inven = inventoryObj.GetComponent<InventoryPopupController>();
-        inventoryObj.SetActive(open);
-        if (inven == null)
+        if (commonInventory == null) return;
+
+        commonInventory.Show();
+    }
+    
+    // 공용 인벤 내릴 때 호출
+    public void CloseCommonInventoryPopup(InventoryPopupController commonInventory)
+    {
+        if (commonInventory == null) return;
+
+        commonInventory.Hide();
+    }
+    
+    // 각 인벤토리 열 때 호출되는 함수
+    public void OpenInventoryPopup(Inventory inventory)
+    {
+        var popup = inventory.transform.parent.GetComponent<InventoryPopupController>();
+        
+        if (popup == null)
         {
+            Debug.LogError("Popup 없음");
             return;
         }
-        inven.Show();
+
+        popup.Show();
     }
     
     // 공용 인벤토리 닫기
-    public void DestroyCommonInventoryPopup()
+    public void CloseInventoryPopup(Inventory inventory)
     {
-        inventoryObj.SetActive(false);
+        var popup = inventory.GetComponentInParent<InventoryPopupController>();
+
+        if (popup != null)
+        {
+            popup.Hide();
+        }
     }
     
     // 스토리에서 대화창 열기
@@ -132,6 +155,15 @@ public class UIManager : Singleton<UIManager>
         popup.Init(message, itemData, isPrice);
         popup.ButtonOk(onOk);
         popup.ButtonCancel(onCancel);
+
+        return popup;
+    }
+    // 설명을 띄워줄 팝업
+    public OkPopup CreateOkPopup(string message, UnityAction onOk)
+    {
+        var popup = Instantiate(okPopupObj, _canvas.transform).GetComponent<OkPopup>();
+        popup.Init(message);
+        popup.ButtonOk(onOk);
 
         return popup;
     }
