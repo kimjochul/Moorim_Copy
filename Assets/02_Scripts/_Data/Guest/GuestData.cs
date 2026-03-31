@@ -3,25 +3,14 @@ using System.Linq;
 using UnityEngine;
 
 
-[System.Serializable] // 인스펙터 노출용 개별 주문서
-public class OrderItem
-{
-    public RecipeData recipe; // 주문한 요리
-    public int requredAmount; // 요구 수량
-    public int servedAmount; // 플레ㅣ어가 서빙한 수량
-
-    public bool IsComplete => servedAmount >= requredAmount;
-}
-
 [System.Serializable] // 손님이 쥐고 있을 전체 주문서
 public class RuntimeOrder
 {
-    public List<OrderItem> item = new List<OrderItem>();
+    public RecipeData recipe; // 고른 메뉴
+    public bool isServed; // 음식을 받았는지 여부
 
-    public bool IsAllOrderComplete()
-    {
-        return item.All(item => item.IsComplete);
-    }
+    // 메뉴가 채워져 있으면 주문 완료 상태로 봄
+    public bool HasOrdered => recipe != null;
 }
 
 
