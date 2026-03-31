@@ -27,6 +27,8 @@ public class Quest : IObserver
     private List<QuestCondition> conditions;
     public List<QuestCondition> Conditions => conditions;
     
+    private Inventory inventory;
+    
     /// <summary>
     /// 퀘스트를 생성하는 생성자, 퀘스트 데이터를 받아서 퀘스트를 생성
     /// </summary>
@@ -37,6 +39,8 @@ public class Quest : IObserver
         QuestID = data.id;
         QuestName = data.questName;
         IsCompleted = false;
+        
+        this.inventory = inventory;
         
         conditions = new List<QuestCondition>();
 
@@ -131,6 +135,14 @@ public class Quest : IObserver
         
         QuestManager.Instance.EraseQuestFromActive(this);
         QuestManager.Instance.RemoveObserver(this);
+        
+        if (QuestType == QuestType.SubStory)
+        {
+            SubStoryQuestController.Instance.OnQuestCompleted(this, inventory);
+        }
+        
+        if(Data.questType == QuestType.MainStory)
+            MainStoryQuestController.Instance.StartNextQuest(inventory);
     }
     
     /// <summary>

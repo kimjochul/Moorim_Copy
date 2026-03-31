@@ -19,6 +19,7 @@ public class QuestManager : Singleton<QuestManager>, ISubject
     
     [SerializeField] private Inventory inventory;
     private List<Quest> activeQuests = new List<Quest>();
+    private List<Quest> waitingQuests = new List<Quest>();
     
     public event Action<Quest> OnActiveQuestAdded; // ActiveQuest 리스트에 새 퀘스트 추가 시 호출 (quest pop up controller에서 사용)
     public event Action<Quest> OnActiveQuestRemoved; // ActiveQuest 리스트에 퀘스트 제거 시 호출
@@ -26,7 +27,6 @@ public class QuestManager : Singleton<QuestManager>, ISubject
     public event Action OnActiveQuestChanged; // 진행 중인 퀘스트 UI 갱신 시 호출
     public event Action OnWaitingQuestChanged;// 수락 대기중인 퀘스트 수 변경 시 호출
     
-    private List<Quest> waitingQuests = new List<Quest>();
 
     private void Start()
     {
@@ -39,6 +39,9 @@ public class QuestManager : Singleton<QuestManager>, ISubject
     /// <param name="data"></param>
     public void OfferQuest(Quest quest)
     {
+        if (HasQuest(quest.QuestID))
+            return;
+
         waitingQuests.Add(quest);
         
         OnWaitingQuestChanged?.Invoke();
@@ -51,7 +54,7 @@ public class QuestManager : Singleton<QuestManager>, ISubject
     /// <param name="index"></param>
     public void AcceptQuest(Quest quest)
     {
-        if (activeQuests.Exists(q => q.QuestID == quest.QuestID))
+        if (HasQuest(quest.QuestID) && activeQuests.Contains(quest))
             return;
 
         activeQuests.Add(quest);
@@ -135,7 +138,7 @@ public class QuestManager : Singleton<QuestManager>, ISubject
         {
             var quest = activeQuests[i];
 
-            if (quest.QuestType == QuestType.Story)
+            if (quest.QuestType == QuestType.MainStory || quest.QuestType == QuestType.SubStory)
                 continue;
 
             quest.Fail(); // 내부에서 RemoveObserver 호출됨
@@ -157,10 +160,10 @@ public class QuestManager : Singleton<QuestManager>, ISubject
     public bool HasSameRandomQuest(Quest newQuest)
     {
         return activeQuests.Exists(q =>
-                   q.QuestType != QuestType.Story &&
+                   q.QuestType is not (QuestType.MainStory or QuestType.SubStory) &&
                    q.QuestID == newQuest.QuestID)
                || waitingQuests.Exists(q =>
-                   q.QuestType != QuestType.Story &&
+                   q.QuestType is not (QuestType.MainStory or QuestType.SubStory) &&
                    q.QuestID == newQuest.QuestID);
     }
     
@@ -182,5 +185,16 @@ public class QuestManager : Singleton<QuestManager>, ISubject
     public List<Quest> GetWaitingQuests(QuestType type)
     {
         return waitingQuests.Where(q => q.QuestType == type).ToList();
+    }
+    
+    /// <summary>
+    /// 동일한 퀘스트 있는 지 확인용
+    /// </summary>
+    /// <param name="questID"></param>
+    /// <returns></returns>
+    public bool HasQuest(int questID)
+    {
+        return activeQuests.Exists(q => q.QuestID == questID)
+               || waitingQuests.Exists(q => q.QuestID == questID);
     }
 }

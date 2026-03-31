@@ -16,6 +16,7 @@ public class Shop : MonoBehaviour
     [SerializeField] private ItemFactory itemFactory;
     [SerializeField] private Inventory playerMeatInventory;
     [SerializeField] private Inventory playerOtherIngredientInventory;
+    [SerializeField] private Inventory fridgeInventory;
 
     [SerializeField] private GameObject objCategory;
     [SerializeField] private Transform tsCategory;
@@ -31,30 +32,37 @@ public class Shop : MonoBehaviour
     private List<GameObject> listProduct = new List<GameObject>();
 
     public Action<ItemData> OnProductClicked;
-
-    void Start()
-    {
-        Init();
-    }
+    
 
     public void Init()
     {
-        //playerMeatInventory = InventoryManager.Instance.GetInventory(InventoryType.IngredientsButMeatOnly);
-        //playerOtherIngredientInventory = InventoryManager.Instance.GetInventory(InventoryType.Ingredients);
+        playerMeatInventory = InventoryManager.Instance.GetInventory(InventoryType.IngredientsButMeatOnly);
+        playerOtherIngredientInventory = InventoryManager.Instance.GetInventory(InventoryType.Ingredients);
+        fridgeInventory = InventoryManager.Instance.GetInventory(InventoryType.Fridge);
         
-        //Buy(0, 1);
-        //Buy(5,2);
-        //Buy(6,1);
+        Buy(0, 1);
+        Buy(5,2);
+        Buy(6,1);
 
         CreateCategory();
     }
 
-    public void Buy(int itemID, int count)
+    public bool Buy(int itemID, int count)
     {
         Debug.Log("Buying " + itemID);
         // 돈 체크는 생략
         Item item = itemFactory.CreateItem(itemID);
 
+        int totalPrice = item.Data.price * count;
+        
+        if (!EconomyManager.Instance.CanSpend(totalPrice))
+        {
+            Debug.Log("돈 부족");
+            return false;
+        }
+        
+        EconomyManager.Instance.SpendMoney(totalPrice);
+        
         if (item.Data is IngredientData ingredientData)
         {
             if (ingredientData.type == Constants.IngredientType.Meats)
@@ -70,6 +78,7 @@ public class Shop : MonoBehaviour
         }
         else if (item.Data is FoodData foodData)
         {
+            fridgeInventory.GetItem(item, count);
             Debug.Log($"{foodData.name} is a food");
         }
         else if (item.Data is BondItemData bondItemData)
@@ -80,6 +89,8 @@ public class Shop : MonoBehaviour
         {
             Debug.Log("Not a valid item");
         }
+
+        return true;
     }
     // 카테고리 생성
     public void CreateCategory()
@@ -123,12 +134,9 @@ public class Shop : MonoBehaviour
     {
         List<IngredientData> targetDataList = DataManager.Instance.GetIngredientList(type);
 
-        int minSlotCount = 3;
-        int displayCount = Mathf.Max(targetDataList.Count, minSlotCount);
-
-        if (this.listProduct.Count < displayCount)
+        if (this.listProduct.Count < targetDataList.Count)
         {
-            int needCount = displayCount - this.listProduct.Count;
+            int needCount = targetDataList.Count - this.listProduct.Count;
             for (int i = 0; i < needCount; i++)
             {
                 GameObject product = Instantiate(this.objProduct, this.tsProduct);
@@ -141,20 +149,20 @@ public class Shop : MonoBehaviour
         {
             this.listProduct[i].SetActive(false);
 
-            ShopProduct product = this.listProduct[i].GetComponent<ShopProduct>();
-            product.Clear();
+            ShopProduct slotScript = this.listProduct[i].GetComponent<ShopProduct>();
+            slotScript.onClickBuy = null;
         }
 
-        for (int i = 0; i < displayCount; i++)
+        for (int i = 0; i < targetDataList.Count; i++)
         {
-            this.listProduct[i].SetActive(true);
-
-            ShopProduct product = this.listProduct[i].GetComponent<ShopProduct>();
-            if (i < targetDataList.Count)
+            if (i < this.listProduct.Count)
             {
-                product.Init(targetDataList[i]); 
+                this.listProduct[i].SetActive(true);
 
-                product.onClickBuy = (itemData) =>
+                ShopProduct slotScript = this.listProduct[i].GetComponent<ShopProduct>();
+                slotScript.Init(targetDataList[i]);
+                
+                slotScript.onClickBuy += (itemData) =>
                 {
                     OnProductClicked?.Invoke(itemData);
                 };

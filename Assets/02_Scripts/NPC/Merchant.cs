@@ -5,10 +5,12 @@ public class Merchant : MonoBehaviour, IInteractable
     [SerializeField] private DayManager dayManager;
     
     [SerializeField] private GameObject merchantView;
+    [SerializeField] private MerchantUI merchantUI;
 
     private void Start()
     {
         dayManager.OnDayEnd += DailyQuestCreate; 
+        merchantUI.Init(this);
         gameObject.SetActive(false);
     }
     

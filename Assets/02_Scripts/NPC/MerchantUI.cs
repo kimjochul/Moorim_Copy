@@ -91,7 +91,20 @@ public class MerchantUI : MonoBehaviour
         UIManager.Instance.CreateAmountPopup("구매하시겠습니까?", itemData,
             (amount) =>
             {
-                shop.Buy(itemData.id, amount);
+                int totalPrice = itemData.price * amount;
+                
+                if (!EconomyManager.Instance.CanSpend(totalPrice))
+                {
+                    //UIManager.Instance.("돈이 부족합니다!");
+                    return;
+                }
+
+                bool success = shop.Buy(itemData.id, amount);
+
+                if (success)
+                {
+                    //UIManager.Instance.("구매 완료!");
+                }
             },
             () =>
             {

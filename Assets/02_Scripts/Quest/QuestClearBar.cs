@@ -51,8 +51,5 @@ public class QuestClearBar : MonoBehaviour
         
         // 완료 처리
         quest.Complete();
-        
-        if(quest.Data.questType == QuestType.Story)
-            StoryQuestController.Instance.StartNextQuest(inventory);
     }
 }
