@@ -38,6 +38,7 @@ public class UIManager : Singleton<UIManager>
         
         _questPopupCtr = FindFirstObjectByType<QuestPopupController>();
         _orderPopupCtr = FindFirstObjectByType<OrdersPopupController>();
+        GuestBase.OnGuestReadyToOrder += EnableGuestOrderUI;
         
         OpenDefaultUI();
         
@@ -139,13 +140,9 @@ public class UIManager : Singleton<UIManager>
             
     }
     
-    // 아직 쓸지 미정(Guest에서 구현시 삭제필요)
-    public void EnableGuestOrderUI(/*GuestBase guestBase*/)
+    public void EnableGuestOrderUI(GuestBase guestBase)
     {
-        // Instantiate 말고 enabled로 바꿀수도
-        var guestOrderUIObject = Instantiate(dialogPopupPrefab/* guestBase*/);
-        
-        guestOrderUIObject.GetComponent<OrderIconController>().Showt();
+        guestBase.gameObject.GetComponent<OrderIconController>().EnableOrderIcon();
     }
 
     // 갯수가 필요한 팝업

@@ -4,18 +4,26 @@ using UnityEngine.UI;
 
 public class OrderIconController : MonoBehaviour
 {
-    private Button _button;
+    [SerializeField] private Button _orderButton;
+    GuestBase _guestBase;
     public void Awake()
     {
-        _button = GetComponent<Button>();
-        _button.onClick.AddListener(OnOrderIconClicked);
+        _orderButton = GetComponent<Button>();
+        _guestBase = GetComponent<GuestBase>();
+        _orderButton.onClick.AddListener(OnOrderIconClicked);
+    }
+
+    public void EnableOrderIcon()
+    {
+        _orderButton.gameObject.SetActive(true);
     }
 
     private void OnOrderIconClicked()
     {
-        GameObject guestObj = transform.parent.gameObject;
-        GuestBase guestBase = guestObj.GetComponent<GuestBase>();
+        Debug.Log("<color=yellow>OrderClicked</color>");
+        _orderButton.gameObject.SetActive(false);
         
-        guestBase.TakeOrder();
+        
+        _guestBase.TakeOrder();
     }
 }
