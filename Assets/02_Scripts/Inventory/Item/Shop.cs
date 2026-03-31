@@ -34,15 +34,19 @@ public class Shop : MonoBehaviour
     [SerializeField]
     private ShopProductInfo infoPanel;
 
+    void Start()
+    {
+        Init();
+    }
     public void Init()
     {
-        playerMeatInventory = InventoryManager.Instance.GetInventory(InventoryType.IngredientsButMeatOnly);
-        playerOtherIngredientInventory = InventoryManager.Instance.GetInventory(InventoryType.Ingredients);
-        fridgeInventory = InventoryManager.Instance.GetInventory(InventoryType.Fridge);
+        //playerMeatInventory = InventoryManager.Instance.GetInventory(InventoryType.IngredientsButMeatOnly);
+        //playerOtherIngredientInventory = InventoryManager.Instance.GetInventory(InventoryType.Ingredients);
+        //fridgeInventory = InventoryManager.Instance.GetInventory(InventoryType.Fridge);
 
-        Buy(0, 1);
-        Buy(5, 2);
-        Buy(6, 1);
+        //Buy(0, 1);
+        //Buy(5, 2);
+        //Buy(6, 1);
 
         CreateCategory();
     }
@@ -99,7 +103,7 @@ public class Shop : MonoBehaviour
         for (int i = 0; i < length; i++)
         {
             var type = (IngredientType)i;
-            string s = (type).ToString();
+            string s = (type).ToKorean().ToString();
 
             ShopCategory category = Instantiate(this.objCategory, this.tsCategory).GetComponent<ShopCategory>();
             category.Init(s);
