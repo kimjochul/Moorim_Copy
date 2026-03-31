@@ -39,6 +39,7 @@ public class ItemCondition : QuestCondition
             return;
 
         currentCount = questEvent.currentCount;
+        NotifyUpdated();
     }
     
     /// <summary>
@@ -66,5 +67,17 @@ public class ItemCondition : QuestCondition
 
         
         return instance;
+    }
+
+    // 퀘스트 진행도 앞에 붙을 string
+    public override string GetDescription()
+    {
+        return $"아이템 {itemID} 납품"; 
+    }
+    
+    // 진행도 리턴 함수
+    public override string GetProgressText()
+    {
+        return $"{currentCount} / {requiredCount}";
     }
 }

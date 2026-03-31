@@ -39,6 +39,7 @@ public class FailLimitCondition : QuestCondition
 
 
         currentFailCount += questEvent.currentCount;
+        NotifyUpdated();
     }
 
     /// <summary>
@@ -70,5 +71,15 @@ public class FailLimitCondition : QuestCondition
         instance.maxFailCount = maxFailCount;
         
         return instance;
+    }
+
+    public override string GetDescription()
+    {
+        return $"{failType.ToString()} 만들지 말기"; 
+    }
+    
+    public override string GetProgressText()
+    {
+        return $"{currentFailCount} / {maxFailCount}";
     }
 }

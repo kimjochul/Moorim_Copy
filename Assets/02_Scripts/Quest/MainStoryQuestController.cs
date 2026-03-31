@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class StoryQuestController : Singleton<StoryQuestController>
+public class MainStoryQuestController : Singleton<MainStoryQuestController>
 {
     [SerializeField] private QuestData[] storyQuests;
 

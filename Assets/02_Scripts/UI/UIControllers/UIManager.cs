@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using NUnit.Framework.Interfaces;
+using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
+using UnityEngine.Splines;
 using UnityEngine.UI;
 public class UIManager : Singleton<UIManager>
 {
@@ -11,7 +13,7 @@ public class UIManager : Singleton<UIManager>
     [SerializeField] private GameObject dialogPopupPrefab;
     
     [SerializeField] private GameObject amountPopupObj;
-
+    [SerializeField] private GameObject okPopupObj;
     
     
     QuestPopupController _questPopupCtr;
@@ -153,6 +155,15 @@ public class UIManager : Singleton<UIManager>
         popup.Init(message, itemData, isPrice);
         popup.ButtonOk(onOk);
         popup.ButtonCancel(onCancel);
+
+        return popup;
+    }
+    // 설명을 띄워줄 팝업
+    public OkPopup CreateOkPopup(string message, UnityAction onOk)
+    {
+        var popup = Instantiate(okPopupObj, _canvas.transform).GetComponent<OkPopup>();
+        popup.Init(message);
+        popup.ButtonOk(onOk);
 
         return popup;
     }

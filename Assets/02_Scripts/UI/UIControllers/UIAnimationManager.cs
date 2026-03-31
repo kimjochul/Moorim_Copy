@@ -157,7 +157,8 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
 
     [Space(30)]
 
-    [Header("Stamp 연출 설정")]
+    [Header("=== Stamp 연출 ===")]
+    [Header("Show 설정")]
     [SerializeField] 
     private Vector2 stampStartScale = new Vector2(10f, 10f); 
     [SerializeField] 

@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class QuestGenerator : MonoBehaviour
 {
@@ -8,7 +10,12 @@ public class QuestGenerator : MonoBehaviour
     
     [SerializeField] private RecipeUnlockManager recipeUnlockManager;
     [SerializeField] private RecipeList allRecipes;
-    
+
+    private void Start()
+    {
+        inventory = InventoryManager.Instance.GetInventory(InventoryType.Fridge);
+    }
+
     /// <summary>
     /// 해금이 되어있는 아이템을 필요로 하는 퀘스트만 나오게 설정해야함
     /// 퀘스트 풀에 있는 데이터들 중 하나를 랜덤으로 골라서, 리턴

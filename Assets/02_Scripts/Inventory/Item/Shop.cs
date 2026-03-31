@@ -1,11 +1,8 @@
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.UIElements;
 using static Constants;
 
 /// <summary>
@@ -16,11 +13,13 @@ public class Shop : MonoBehaviour
     [SerializeField] private ItemFactory itemFactory;
     [SerializeField] private Inventory playerMeatInventory;
     [SerializeField] private Inventory playerOtherIngredientInventory;
+    [SerializeField] private Inventory fridgeInventory;
 
     [SerializeField] private GameObject objCategory;
     [SerializeField] private Transform tsCategory;
     [SerializeField] private GameObject objProduct;
     [SerializeField] private Transform tsProduct;
+    [SerializeField] private Button btnClose;
 
     // 카테고리
     private Dictionary<IngredientType, ShopCategory> dicCategory = new Dictionary<IngredientType, ShopCategory>();
@@ -30,25 +29,40 @@ public class Shop : MonoBehaviour
     // 상점 요소
     private List<GameObject> listProduct = new List<GameObject>();
 
+    public Action<ItemData> OnProductClicked;
 
-    private void Start()
+    [SerializeField]
+    private ShopProductInfo infoPanel;
+
+    public void Init()
     {
         playerMeatInventory = InventoryManager.Instance.GetInventory(InventoryType.IngredientsButMeatOnly);
         playerOtherIngredientInventory = InventoryManager.Instance.GetInventory(InventoryType.Ingredients);
-        
+        fridgeInventory = InventoryManager.Instance.GetInventory(InventoryType.Fridge);
+
         Buy(0, 1);
-        Buy(5,2);
-        Buy(6,1);
+        Buy(5, 2);
+        Buy(6, 1);
 
         CreateCategory();
     }
 
-    public void Buy(int itemID, int count)
+    public bool Buy(int itemID, int count)
     {
         Debug.Log("Buying " + itemID);
         // 돈 체크는 생략
         Item item = itemFactory.CreateItem(itemID);
 
+        int totalPrice = item.Data.price * count;
+        
+        if (!EconomyManager.Instance.CanSpend(totalPrice))
+        {
+            Debug.Log("돈 부족");
+            return false;
+        }
+        
+        EconomyManager.Instance.SpendMoney(totalPrice);
+        
         if (item.Data is IngredientData ingredientData)
         {
             if (ingredientData.type == Constants.IngredientType.Meats)
@@ -64,6 +78,7 @@ public class Shop : MonoBehaviour
         }
         else if (item.Data is FoodData foodData)
         {
+            fridgeInventory.GetItem(item, count);
             Debug.Log($"{foodData.name} is a food");
         }
         else if (item.Data is BondItemData bondItemData)
@@ -74,6 +89,8 @@ public class Shop : MonoBehaviour
         {
             Debug.Log("Not a valid item");
         }
+
+        return true;
     }
     // 카테고리 생성
     public void CreateCategory()
@@ -117,9 +134,13 @@ public class Shop : MonoBehaviour
     {
         List<IngredientData> targetDataList = DataManager.Instance.GetIngredientList(type);
 
-        if (this.listProduct.Count < targetDataList.Count)
+        int minSlotCount = 3;
+        int displayCount = Mathf.Max(targetDataList.Count, minSlotCount);
+
+        // 빈 슬롯이 부족하면 생성
+        if (this.listProduct.Count < displayCount)
         {
-            int needCount = targetDataList.Count - this.listProduct.Count;
+            int needCount = displayCount - this.listProduct.Count;
             for (int i = 0; i < needCount; i++)
             {
                 GameObject product = Instantiate(this.objProduct, this.tsProduct);
@@ -128,36 +149,39 @@ public class Shop : MonoBehaviour
             }
         }
 
+        // 상점 요소 띄우기
         for (int i = 0; i < this.listProduct.Count; i++)
         {
             this.listProduct[i].SetActive(false);
 
-            ShopProduct slotScript = this.listProduct[i].GetComponent<ShopProduct>();
-            slotScript.onClickBuy -= OnProductClicked;
+            ShopProduct product = this.listProduct[i].GetComponent<ShopProduct>();
+            product.Clear();
         }
 
-        for (int i = 0; i < targetDataList.Count; i++)
+        for (int i = 0; i < displayCount; i++)
         {
-            if (i < this.listProduct.Count)
-            {
-                this.listProduct[i].SetActive(true);
+            this.listProduct[i].SetActive(true);
+            ShopProduct product = this.listProduct[i].GetComponent<ShopProduct>();
 
-                ShopProduct slotScript = this.listProduct[i].GetComponent<ShopProduct>();
-                slotScript.Init(targetDataList[i]);
-                slotScript.onClickBuy += OnProductClicked;
+            // 데이터가 있는 정상 슬롯일 경우
+            if (i < targetDataList.Count)
+            {
+                product.Init(targetDataList[i]);
+
+                product.onClickBuy += (itemData) =>
+                {
+                    OnProductClicked?.Invoke(itemData);
+                };
+
+                product.onHoverEnter += (itemData) => {
+                    this.infoPanel.ShowInfo(itemData);
+                };
+
+                product.onHoverExit += () => {
+                    this.infoPanel.HideInfo();
+                };
             }
         }
     }
-    private void OnProductClicked(ItemData itemData)
-    {
-        UIManager.Instance.CreateAmountPopup("구매하시겠습니까?", itemData,
-        (amount) =>
-        {
-            Buy(itemData.id, amount);
-        },
-        () =>
-        {
-            Debug.Log("취소 버튼 눌림");
-        });
-    }
+    
 }
