@@ -36,7 +36,6 @@ public abstract class GuestBase : MonoBehaviour
     protected Constants.GuestMood currentMood = Constants.GuestMood.Neutral;
     // 결제 시 정산할 퀄리티 및 꼼수 방지용
     private Constants.FoodQuality FoodQuality = Constants.FoodQuality.Normal;
-    private int totalReceivedPlates = 0;
 
     public static event Action<GuestBase, Constants.GuestState> OnGuestStateChanged; // 상태 변경 알림용
     public static event Action<GuestBase> OnGuestReadyToOrder; // 메뉴를 골랐을 때용
@@ -137,7 +136,7 @@ public abstract class GuestBase : MonoBehaviour
     {
         stateTimer += Time.deltaTime;
 
-        if (stateTimer <= orderWaitLimit && myOrder.item.Count == 0)
+        if (stateTimer <= orderWaitLimit && !myOrder.HasOrdered)
         {
             Debug.Log($"[{individualId}]이 메뉴를 고르는 중입니다.");
             
@@ -145,7 +144,9 @@ public abstract class GuestBase : MonoBehaviour
             RecipeData choseRecipe = menuBoard.recipes[randomIndex];
             Debug.Log($"[{individualId}]가 {choseRecipe}를 골랐습니다.");
 
-            myOrder.item.Add(new OrderItem { recipe = choseRecipe, requredAmount = 1, servedAmount = 0});
+            myOrder.recipe = choseRecipe;
+            myOrder.isServed = false;
+
             OnGuestReadyToOrder?.Invoke(this); // UI에게 주문 대기 아이콘 띄우라 하기
         }
 
@@ -203,25 +204,16 @@ public abstract class GuestBase : MonoBehaviour
         if (currentState != Constants.GuestState.WaitFood)
             return;
 
-        totalReceivedPlates++; 
-        
-        // 내 주문서 검사
-        OrderItem matchingItem = myOrder.item.Find(x => x.recipe == deliveredFood && !x.IsComplete);
+        if (myOrder.recipe == deliveredFood && !myOrder.isServed)
+        {
+            myOrder.isServed = true;
+            FoodQuality = quality;
 
-        if (matchingItem != null)
-            matchingItem.servedAmount++;
+            ChangeState(Constants.GuestState.Eat);
+        }
         else
         {
-            matchingItem.servedAmount++;
             currentMood = Constants.GuestMood.VeryBad;
-        }
-
-        int totalRequiredPlates = myOrder.item.Sum(x => x.requredAmount);
-
-        // 주문한 수량만큼 음식을 전달 받았다면
-        if (totalReceivedPlates >= totalRequiredPlates)
-        {
-            FoodQuality = quality;
             ChangeState(Constants.GuestState.Eat);
         }
     }
@@ -263,13 +255,8 @@ public abstract class GuestBase : MonoBehaviour
     {
         basePrise = 0;
 
-        if (myOrder != null && myOrder.item != null)
-        {
-            foreach (var i in myOrder.item)
-            {
-                basePrise += i.recipe.price * i.requredAmount;
-            }
-        }
+        if (myOrder != null && myOrder.recipe != null)
+            basePrise = myOrder.recipe.price;
 
         float moodMultiplier = 1.0f;
 
