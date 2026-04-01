@@ -12,6 +12,12 @@ public class RuntimeOrder
 
     // 메뉴가 채워져 있으면 주문 완료 상태로 봄
     public bool HasOrdered => orderedFood != null;
+
+    public void Clear()
+    {
+        orderedFood = null;
+        isServed = false;
+    }
 }
 
 

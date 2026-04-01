@@ -489,8 +489,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 447102931d0e0874bbe7ef11f8584509, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CookingStation
-  resultObj: {fileID: 0}
-  resultFoodIcon: {fileID: 0}
   cookTime: 15
 --- !u!65 &123629998
 BoxCollider:
@@ -793,7 +791,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 423476028}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.9404317
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -965,7 +963,7 @@ MonoBehaviour:
   masterRecipeList: {fileID: 11400000, guid: 6d1d33b9b84924d419f1e13f1b6636fc, type: 2}
   mainCookingUICanvas: {fileID: 126829275}
   recipeListView: {fileID: 1164659234}
-  cookingview: {fileID: 1913704258}
+  cookingView: {fileID: 1913704258}
   IngredientSlotUI: {fileID: 8397129445429356927, guid: 926e3d9f36c20654b953ef469c87f2d5, type: 3}
 --- !u!4 &189582725
 Transform:
@@ -1015,7 +1013,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.000010196962}
+  m_AnchoredPosition: {x: 0, y: 0.00003324517}
   m_SizeDelta: {x: 0, y: 364}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &202638859
@@ -2699,7 +2697,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19662cc7b137aee4fb61c3ad3c45dba4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Sowol
-  objSelectionArrow: {fileID: 935360207}
+  myInventory: {fileID: 0}
+  cookingStation: {fileID: 0}
 --- !u!1 &981031769
 GameObject:
   m_ObjectHideFlags: 0
