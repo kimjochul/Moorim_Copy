@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 // 부모 클래스
-public abstract class GuestBase : MonoBehaviour 
+public abstract class GuestBase : MonoBehaviour, IInteractable
 {
     [Header("기본 대기 시간 (자식들이 변경 가능)")]
     [SerializeField] protected float orderWaitLimit = 20f;
@@ -33,6 +33,8 @@ public abstract class GuestBase : MonoBehaviour
     private bool isEnterPathSet = false;
     private bool isExitPathSet = false;
     private bool isOrderTaken = false;
+
+    private GameObject currentFoodModel;
     
     protected Constants.GuestState currentState = Constants.GuestState.Enter; 
     protected Constants.GuestMood currentMood = Constants.GuestMood.Neutral;
@@ -40,6 +42,7 @@ public abstract class GuestBase : MonoBehaviour
     private Constants.FoodQuality FoodQuality = Constants.FoodQuality.Normal;
 
     public static event Action<GuestBase, Constants.GuestState> OnGuestStateChanged; // 상태 변경 알림용
+    public static event Action<GuestBase, Constants.GuestMood> OnGuestMoodChanged; // 상태 변경 알림용
     public static event Action<GuestBase> OnGuestReadyToOrder; // 메뉴를 골랐을 때용
     public static event Action<GuestBase, RuntimeOrder> OnOrderPlaced; // UI 주문 리스트용
     public static event Action OnGuestServedAndPaid; // 스포너용
@@ -62,6 +65,53 @@ public abstract class GuestBase : MonoBehaviour
     void Update()
     {
         GuestFSM();
+    }
+
+    // 서빙 캐릭터만 상호작용가능
+    public bool CanInteract(Constants.PlayerType playerType)
+    {
+        return playerType == Constants.PlayerType.Myungwol;
+    }
+
+    // 명월이가 손님을 클릭했을 때 맵의 어디로 걸어와야 하는가?
+    public Vector3 GetInteractPosition()
+    {
+        // 현재 손님이 있는 위치(의자에 앉아있다면 의자 위치)로 걸어오게.
+        // (만약 너무 손님과 겹친다면 transform.position 대신 myChair.sitPoint.position 등을 활용해도 좋을듯함)
+        return transform.position;
+    }
+
+    // 명월이가 손님 근처에 도착해서 상호작용(F키 또는 클릭)을 완료했을 때 벌어질 일
+    public void Interact(Inventory inventory = null)
+    {
+        if (currentState == Constants.GuestState.WaitOrder)
+        {
+            TakeOrder(); 
+        }
+        else if (currentState == Constants.GuestState.WaitFood)
+        {
+            // 주의: 팀원의 PlayerInput 코드를 보면 현재 inventory에 아무것도 안 넣고(null) 호출하고 있음
+            // 나중에 인벤토리 시스템이 완성되면 아래처럼 조건문을 채워줘야함
+            
+            /*
+            if (inventory != null && inventory.HasItem(myOrder.recipe))
+            {
+                // 인벤토리에서 음식 빼기
+                inventory.RemoveItem(myOrder.recipe); 
+                
+                // 손님에게 음식 먹이기
+                ReceiveFood(myOrder.recipe, Constants.FoodQuality.Normal);
+            }
+            else
+            {
+                Debug.Log("명월이의 인벤토리에 이 손님이 시킨 음식이 없습니다!");
+            }
+            */
+        }
+        else
+        {
+            Debug.Log($"[{individualId}] 지금은 상호작용할 필요가 없는 상태입니다. (현재: {currentState})");
+        }
     }
 
     private void ChangeState(Constants.GuestState newState)
@@ -209,7 +259,6 @@ public abstract class GuestBase : MonoBehaviour
             Debug.Log("음식 대기 30초 경과! 손님의 기분이 나빠졌습니다!");
         }
     }
-
     
     // 플레이어 상호작용 클래스
     public void ReceiveFood(FoodData deliveredFood, Constants.FoodQuality quality)
@@ -221,6 +270,12 @@ public abstract class GuestBase : MonoBehaviour
         {
             myOrder.isServed = true;
             FoodQuality = quality;
+
+            if (myChair != null && myChair.myFoodSpot != null)
+            {
+                currentFoodModel = Instantiate(deliveredFood.foodPrefab, myChair.myFoodSpot.position, myChair.myFoodSpot.rotation);
+                currentFoodModel.transform.SetParent(myChair.myFoodSpot);
+            }
 
             ChangeState(Constants.GuestState.Eat);
         }
@@ -257,6 +312,11 @@ public abstract class GuestBase : MonoBehaviour
         OnGuestServedAndPaid?.Invoke(); 
         
         // TO DO : 애니메이션 변경?
+        if (currentFoodModel != null)
+        {
+            Destroy(currentFoodModel);
+            currentFoodModel = null;
+        }
         // TO DO : 아이콘 변경?
         // TO DO : 손님 기분 체크
         // TO DO : 손님 기분에 따라 보상 차등
@@ -323,4 +383,6 @@ public abstract class GuestBase : MonoBehaviour
         if (isExitPathSet && !agent.pathPending && agent.remainingDistance <= 2.0f)
             Destroy(gameObject);
     }
+
+
 }
