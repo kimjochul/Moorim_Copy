@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -15,21 +16,25 @@ public class RecipeListView : MonoBehaviour
     [SerializeField] private Button drinkBtn;
     [SerializeField] private Button dessertBtn;
 
-    // 기억해야 할 데이터
-    private CookingController controller;
+    public event Action<Recipe> OnRecipeClicked;
+    public event Action<Constants.FoodType> OnCategorySelected;
+
     private List<RecipeSlotUI> spawnedSlots = new List<RecipeSlotUI>(); // 내가 만든 슬롯들 목록 보관함
 
     // 메소드1 : 초기 세팅 함수
     // 매개 변수 : 컨트롤러 연락처
     // 1. 연락처 저장
-    public void Init(CookingController ctrl)
+    public void Init()
     {
-        controller = ctrl;
-
-        mainDishBtn.onClick.AddListener(() => controller.ShowRecipesByCategory(Constants.FoodType.MainDish));
-        sideDishBtn.onClick.AddListener(() => controller.ShowRecipesByCategory(Constants.FoodType.SideDish));
-        drinkBtn.onClick.AddListener(() => controller.ShowRecipesByCategory(Constants.FoodType.Drink));
-        dessertBtn.onClick.AddListener(() => controller.ShowRecipesByCategory(Constants.FoodType.Dessert));
+        mainDishBtn.onClick.RemoveAllListeners();
+        sideDishBtn.onClick.RemoveAllListeners();
+        drinkBtn.onClick.RemoveAllListeners();
+        dessertBtn.onClick.RemoveAllListeners();
+        
+        mainDishBtn.onClick.AddListener(() => OnCategorySelected?.Invoke(Constants.FoodType.MainDish));
+        sideDishBtn.onClick.AddListener(() => OnCategorySelected?.Invoke(Constants.FoodType.SideDish));
+        drinkBtn.onClick.AddListener(() => OnCategorySelected?.Invoke(Constants.FoodType.Drink));
+        dessertBtn.onClick.AddListener(() => OnCategorySelected?.Invoke(Constants.FoodType.Dessert));
     }
 
     // 메소드2. 리스트를 깔아주는 함수 // 중요@!!!!
@@ -61,7 +66,7 @@ public class RecipeListView : MonoBehaviour
             RecipeSlotUI slotUI = newPrefab.GetComponent<RecipeSlotUI>(); // 방금 만든 오브젝트에서 RecipeSlotUI 스크립트 가져옴 -> 이걸로 데이터를 넣기 위해
 
             // 슬롯에 레시피 데이터 전달 / 빈 버튼에 실제 레시피 정보 넣기
-            slotUI.Init(recipeWrap, controller);
+            slotUI.Init(recipeWrap, (recipe) => OnRecipeClicked?.Invoke(recipe));
 
             // 나중에 지우기 위해 list에 방금 만든 버튼 추가
             spawnedSlots.Add(slotUI);

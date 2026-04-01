@@ -16,17 +16,18 @@ public class CookingView : MonoBehaviour
     [SerializeField] private Button cookBtn;
     [SerializeField] private Button clostBtn;
 
-    // 기억해야할 데이터
-    private CookingController controller;
+    public event Action OnCookClicked;
+    public event Action OnCloseClicked;
 
     // 메소드1. 초기 세팅 함수
     // 매개변수 : 컨트롤러 연락처
-    public void Init(CookingController ctrl)
+    public void Init()
     {
-        controller = ctrl;
-
-        cookBtn.onClick.AddListener(() => controller.OnCookButtonClicked());
-        clostBtn.onClick.AddListener(() => controller.CloseCookingSystem());
+        cookBtn.onClick.RemoveAllListeners();  // 혹시 모를 중복 방지
+        clostBtn.onClick.RemoveAllListeners();
+        
+        cookBtn.onClick.AddListener(() => OnCookClicked?.Invoke());
+        clostBtn.onClick.AddListener(() => OnCloseClicked?.Invoke());
     }
 
     // 메소드2. 레시피가 선택됐을 때 ui에 연결
