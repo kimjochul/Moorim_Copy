@@ -13,7 +13,7 @@ public class SeatManager : Singleton<SeatManager>
         if (!allChairs.Contains(chair))
             allChairs.Add(chair);
 
-        Debug.Log($"[SeatManager] 🪑 {chair.gameObject.name} 등록 시도 중... / 의자설치됨:{chair.isBuilt} / 테이블찾음:{chair.table != null} / 테이블설치됨:{(chair.table != null ? chair.table.isBuilt.ToString() : "모름")} / 최종 IsEmpty: {chair.IsEmpty}");
+        Debug.Log($"[SeatManager] {chair.gameObject.name} 등록 시도 중... / 의자설치됨:{chair.isBuilt} / 테이블찾음:{chair.table != null} / 테이블설치됨:{(chair.table != null ? chair.table.isBuilt.ToString() : "모름")} / 최종 IsEmpty: {chair.IsEmpty}");
 
         if (chair.IsEmpty && !emptyChairs.Contains(chair))
             emptyChairs.Add(chair);
@@ -22,7 +22,7 @@ public class SeatManager : Singleton<SeatManager>
     // 손님이 빈자리 찾는 메소드
     public Chair FindEmptyChair()
     {
-        Debug.Log($"[SeatManager] 🚶‍♂️ 손님이 자리를 찾습니다! 현재 전체 의자: {allChairs.Count}개 / 빈자리 장부: {emptyChairs.Count}개");
+        Debug.Log($"[SeatManager] 손님이 자리를 찾습니다! 현재 전체 의자: {allChairs.Count}개 / 빈자리 장부: {emptyChairs.Count}개");
         
         if (emptyChairs.Count == 0) // 빈자리가 없으면 null 반환
             return null; 

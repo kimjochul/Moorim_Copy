@@ -46,12 +46,12 @@ public class CookingModel
             return 0;
 
         // 투입량 결정을 위한 변수
-        int actualAdd = 0;
+        int actualAdd = Mathf.Min(amount, spaceLeft);
 
-        if (amount > spaceLeft)
-            actualAdd = spaceLeft; // 넣으려는 갯수가 빈 공간보다 많으면 빈 공간만큼만 맞춰서 넣음
-        else    
-            actualAdd = amount; // 안 넘치면 넣으려는 갯수 그대로 넣음
+        // if (amount > spaceLeft)
+        //     actualAdd = spaceLeft; // 넣으려는 갯수가 빈 공간보다 많으면 빈 공간만큼만 맞춰서 넣음
+        // else    
+        //     actualAdd = amount; // 안 넘치면 넣으려는 갯수 그대로 넣음
 
         // 한도 제한해서 넣고 성공 보고
         InsertedIngredients[ingredientId] += actualAdd;

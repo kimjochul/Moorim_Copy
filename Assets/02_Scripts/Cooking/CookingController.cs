@@ -5,34 +5,47 @@ using UnityEngine;
 public class CookingController : MonoBehaviour
 {
     public static CookingController Instance { get; private set; }
-    public bool IsCookingUIOpne => mainCookingUICanvas.activeSelf;
+    public bool IsCookingUIOpen => mainCookingUICanvas.activeSelf;
 
     [Header("UI 컴포넌트")]
     [SerializeField] private RecipeList masterRecipeList;
     [SerializeField] private GameObject mainCookingUICanvas;
     [SerializeField] private RecipeListView recipeListView;
-    [SerializeField] private CookingView cookingview;
+    [SerializeField] private CookingView cookingView;
     [SerializeField] private CookingIngredientSlotUI IngredientSlotUI;
 
     // 내가 기억해야 할 데이터
     private CookingModel model = new CookingModel();
     private List<Recipe> runtimeRecipes = new List<Recipe>();
     private CookingStation currentStation; // 어떤 요리대인지 기억
-    private Inventory targetInventoryMeat; // 아이템 돌려줄 때 어느 인벤토리에서 온건지 기억
-    private Inventory targetInventoryOther;
+    private Inventory targetInventoryMeat; // 아이템 돌려줄 때 육류 인벤토리에서 온건지 기억
+    private Inventory targetInventoryOther; // 아이템 돌려줄 때 육류 외 인벤토리에서 온건지 기억
     
     private Dictionary<int, IItem> cachedItems = new Dictionary<int, IItem>(); // ID(int)를 넣으면 원본 아이템(IItem)을 뱉어내는 임시 기억 장치
 
     void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
         Instance = this;
     }
 
     void Start()
     {
         mainCookingUICanvas.SetActive(false);
-        cookingview.Init(this);
-        recipeListView.Init(this);
+
+        // View 초기화
+        cookingView.Init();
+        recipeListView.Init();
+
+        // View들의 방송을 구독
+        recipeListView.OnRecipeClicked += OnRecipeSelected;
+        recipeListView.OnCategorySelected += ShowRecipesByCategory;
+        cookingView.OnCookClicked += OnCookButtonClicked;
+        cookingView.OnCloseClicked += HandleClose;
 
         // 레시피리스트를 읽어서 게임용 리스트로 포장
         runtimeRecipes.Clear();
@@ -43,25 +56,48 @@ public class CookingController : MonoBehaviour
         recipeListView.PopulateList(runtimeRecipes);
     }
 
+    void OnDestroy()
+    {
+        if (recipeListView != null)
+        {
+            recipeListView.OnRecipeClicked -= OnRecipeSelected;
+            recipeListView.OnCategorySelected -= ShowRecipesByCategory;
+        }
+        if (cookingView != null)
+        {
+            cookingView.OnCookClicked -= OnCookButtonClicked;
+            cookingView.OnCloseClicked -= HandleClose;
+        }
+    }
+
+    private void HandleClose()
+    {
+        CloseCookingSystem();
+    }
+
     // 메소드2. 시스템 on/off
     public void OpenCookingSystem(CookingStation station)
     {
         currentStation = station;
         mainCookingUICanvas.SetActive(true);
-        cookingview.SetCookStartInteractable(false);
+        cookingView.SetCookStartInteractable(false);
         InventoryManager.Instance.OpenCommonInventory();
     }
 
-    public void CloseCookingSystem()
+    public void CloseCookingSystem(bool returnIngredients = true)
     {
-        ReturnIngredientsToInventory();
+        if (returnIngredients)
+            ReturnIngredientsToInventory();
         
-        cookingview.ClearView();
+        cookingView.ClearView();
         model.ClearTarget();
+        cachedItems.Clear();
 
         mainCookingUICanvas.SetActive(false);
         InventoryManager.Instance.CloseCommonInventory();
         currentStation = null;
+        targetInventoryMeat = null;
+        targetInventoryOther = null;
     }
 
     // 요리 시작 안 하고 창을 닫았을 때 인벤토리로 다시 재료를 돌려주는 메소드 
@@ -77,7 +113,9 @@ public class CookingController : MonoBehaviour
 
             if (amount > 0)
             {
-                IItem returnItem = cachedItems[ingredientId];
+                // TryGetValue로 ingredientId를 안전하게 꺼내기 (없으면 건너뜀)
+                if (!cachedItems.TryGetValue(ingredientId, out IItem returnItem))
+                    continue;
 
                 if (returnItem.Data is IngredientData ingredientData)
                 {
@@ -100,8 +138,8 @@ public class CookingController : MonoBehaviour
     {
         // 모델에게 타겟 설정, 조리뷰에게 화면 바꾸기 지시, 조리 버튼 잠금
         model.SetTargetRecipe(selectedRecipe);
-        cookingview.UpdateRecipe(selectedRecipe);
-        cookingview.SetCookStartInteractable(false);
+        cookingView.UpdateRecipe(selectedRecipe);
+        cookingView.SetCookStartInteractable(false);
     }
 
     // 메소드4. 인벤토리에서 재료가 드랍됐을 때
@@ -132,7 +170,7 @@ public class CookingController : MonoBehaviour
         if (consumedAmount > 0)
         {
             // 실제로 들어간 갯수 만큼 조리뷰 재료 슬롯에 숫자 올리기
-            cookingview.UpdateSlotUI(ingredientId, consumedAmount);
+            cookingView.UpdateSlotUI(ingredientId, consumedAmount);
 
             // Slot 클래스의 AddCount와 Clear를 그대로 사용해서 아이템 차감
             inventorySlot.AddCount(-consumedAmount);
@@ -141,7 +179,7 @@ public class CookingController : MonoBehaviour
             
             // 재료가 다 모이면 버튼 활성화
             if (model.IsReadyToCook())
-                cookingview.SetCookStartInteractable(true);
+                cookingView.SetCookStartInteractable(true);
         }
         else
         {
@@ -158,7 +196,8 @@ public class CookingController : MonoBehaviour
         {
             currentStation.StartCooking(model.CurrentRecipe);
             model.InsertedIngredients.Clear();
-            CloseCookingSystem();
+            cachedItems.Clear();
+            CloseCookingSystem(false);
         }
     }
 
