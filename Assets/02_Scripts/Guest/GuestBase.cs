@@ -13,6 +13,7 @@ public abstract class GuestBase : MonoBehaviour
     [SerializeField] protected float foodMidWaitLimit = 60f;
     [SerializeField] protected float foodMaxWaitLimit = 90f;
     [SerializeField] protected float foodEatLimit = 15f;
+    [SerializeField] protected float menuChooseTime = 3f;
 
     [Header("레시피 리스트")]
     [SerializeField] private RecipeList menuBoard;
@@ -25,7 +26,7 @@ public abstract class GuestBase : MonoBehaviour
     // 손님 런타임 정보
     public int individualId;
     public Constants.GuestAppearance myApperance;
-    public RuntimeOrder myOrder;
+    public RuntimeOrder myOrder = new RuntimeOrder();
 
     protected float stateTimer = 0f;
     protected int basePrise;
@@ -48,6 +49,11 @@ public abstract class GuestBase : MonoBehaviour
         individualId = id;
         myApperance = appearance;
         exitDoor = exit;
+        
+        if (myOrder == null)
+            myOrder = new RuntimeOrder();
+        else
+            myOrder.Clear();
         
         ChangeState(Constants.GuestState.Enter);
     }
@@ -136,18 +142,17 @@ public abstract class GuestBase : MonoBehaviour
     {
         stateTimer += Time.deltaTime;
 
-        if (stateTimer <= orderWaitLimit && !myOrder.HasOrdered)
+        if (stateTimer <= orderWaitLimit && !myOrder.HasOrdered && stateTimer <= menuChooseTime)
         {
             Debug.Log($"[{individualId}]이 메뉴를 고르는 중입니다.");
             
             int randomIndex = UnityEngine.Random.Range(0, menuBoard.recipes.Count);
             RecipeData choseRecipe = menuBoard.recipes[randomIndex];
 
-            FoodData choseFood = choseRecipe.result;
 
             Debug.Log($"[{individualId}]가 {choseRecipe}를 골랐습니다.");
 
-            myOrder.orderedFood = choseFood;
+            myOrder.orderedFood = choseRecipe.result;
             myOrder.isServed = false;
 
             OnGuestReadyToOrder?.Invoke(this); // UI에게 주문 대기 아이콘 띄우라 하기
@@ -202,7 +207,7 @@ public abstract class GuestBase : MonoBehaviour
 
     
     // 플레이어 상호작용 클래스
-    public void ReceiveFood(RecipeData deliveredFood, Constants.FoodQuality quality)
+    public void ReceiveFood(FoodData deliveredFood, Constants.FoodQuality quality)
     {
         if (currentState != Constants.GuestState.WaitFood)
             return;
