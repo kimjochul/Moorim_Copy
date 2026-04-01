@@ -34,19 +34,19 @@ public class Shop : MonoBehaviour
     [SerializeField]
     private ShopProductInfo infoPanel;
 
-    //void Start()
-    //{
-    //    Init();
-    //}
+    void Start()
+    {
+        Init();
+    }
     public void Init()
     {
-        playerMeatInventory = InventoryManager.Instance.GetInventory(InventoryType.IngredientsButMeatOnly);
-        playerOtherIngredientInventory = InventoryManager.Instance.GetInventory(InventoryType.Ingredients);
-        fridgeInventory = InventoryManager.Instance.GetInventory(InventoryType.Fridge);
+        //playerMeatInventory = InventoryManager.Instance.GetInventory(InventoryType.IngredientsButMeatOnly);
+        //playerOtherIngredientInventory = InventoryManager.Instance.GetInventory(InventoryType.Ingredients);
+        //fridgeInventory = InventoryManager.Instance.GetInventory(InventoryType.Fridge);
 
-        Buy(0, 1);
-        Buy(5, 2);
-        Buy(6, 1);
+        //Buy(0, 1);
+        //Buy(5, 2);
+        //Buy(6, 1);
 
         CreateCategory();
     }
@@ -177,15 +177,14 @@ public class Shop : MonoBehaviour
                     OnProductClicked?.Invoke(itemData);
                 };
 
-                product.onHoverEnter += (itemData) => {
+                product.onHoverEnter = (itemData) => {
                     this.infoPanel.ShowInfo(itemData);
                 };
 
-                product.onHoverExit += () => {
+                product.onHoverExit = () => {
                     this.infoPanel.HideInfo();
                 };
             }
         }
     }
-    
 }

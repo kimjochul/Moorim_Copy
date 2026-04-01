@@ -3,7 +3,7 @@ using UnityEngine.Events;
 
 public class Myungwol : PlayerController
 {
-    private UnityAction onPlaceFood;
+    public UnityAction onPlaceFood;
 
     public override void OnSelected()
     {
