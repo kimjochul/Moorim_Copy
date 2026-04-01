@@ -13,6 +13,7 @@ public abstract class GuestBase : MonoBehaviour
     [SerializeField] protected float foodMidWaitLimit = 60f;
     [SerializeField] protected float foodMaxWaitLimit = 90f;
     [SerializeField] protected float foodEatLimit = 15f;
+    [SerializeField] protected float menuChooseTime = 3f;
 
     [Header("레시피 리스트")]
     [SerializeField] private RecipeList menuBoard;
@@ -25,12 +26,13 @@ public abstract class GuestBase : MonoBehaviour
     // 손님 런타임 정보
     public int individualId;
     public Constants.GuestAppearance myApperance;
-    public RuntimeOrder myOrder;
+    public RuntimeOrder myOrder = new RuntimeOrder();
 
     protected float stateTimer = 0f;
     protected int basePrise;
     private bool isEnterPathSet = false;
     private bool isExitPathSet = false;
+    private bool isOrderTaken = false;
     
     protected Constants.GuestState currentState = Constants.GuestState.Enter; 
     protected Constants.GuestMood currentMood = Constants.GuestMood.Neutral;
@@ -48,6 +50,11 @@ public abstract class GuestBase : MonoBehaviour
         individualId = id;
         myApperance = appearance;
         exitDoor = exit;
+        
+        if (myOrder == null)
+            myOrder = new RuntimeOrder();
+        else
+            myOrder.Clear();
         
         ChangeState(Constants.GuestState.Enter);
     }
@@ -136,18 +143,16 @@ public abstract class GuestBase : MonoBehaviour
     {
         stateTimer += Time.deltaTime;
 
-        if (stateTimer <= orderWaitLimit && !myOrder.HasOrdered)
+        if (!myOrder.HasOrdered && stateTimer >= menuChooseTime)
         {
             Debug.Log($"[{individualId}]이 메뉴를 고르는 중입니다.");
             
             int randomIndex = UnityEngine.Random.Range(0, menuBoard.recipes.Count);
             RecipeData choseRecipe = menuBoard.recipes[randomIndex];
 
-            FoodData choseFood = choseRecipe.result;
-
             Debug.Log($"[{individualId}]가 {choseRecipe}를 골랐습니다.");
 
-            myOrder.orderedFood = choseFood;
+            myOrder.orderedFood = choseRecipe.result;
             myOrder.isServed = false;
 
             OnGuestReadyToOrder?.Invoke(this); // UI에게 주문 대기 아이콘 띄우라 하기
@@ -170,6 +175,11 @@ public abstract class GuestBase : MonoBehaviour
         if (currentState != Constants.GuestState.WaitOrder || myOrder == null)
             return;
 
+        // 이미 주문을 접수했으면 무시
+        if (currentState != Constants.GuestState.WaitOrder)
+            return;
+
+        isOrderTaken = true;
         OnOrderPlaced?.Invoke(this, myOrder); // 주문 리스트에 데이터 전송
         ChangeState(Constants.GuestState.WaitFood);
     }
@@ -202,7 +212,7 @@ public abstract class GuestBase : MonoBehaviour
 
     
     // 플레이어 상호작용 클래스
-    public void ReceiveFood(RecipeData deliveredFood, Constants.FoodQuality quality)
+    public void ReceiveFood(FoodData deliveredFood, Constants.FoodQuality quality)
     {
         if (currentState != Constants.GuestState.WaitFood)
             return;
@@ -290,10 +300,16 @@ public abstract class GuestBase : MonoBehaviour
         // 상태 진입 후 딱 한 번만 목적지 찾기
         if (!isExitPathSet && exitDoor != null)
         {
+            Debug.Log($"[{individualId}] Exit 상태 진입! myChair: {(myChair != null ? myChair.gameObject.name : "null")}");
             if (myChair != null)
             {
                 myChair.Empty();
                 myChair = null;
+                Debug.Log($"[{individualId}] 의자 반환 완료!");
+            }
+            else
+            {
+                Debug.Log($"[{individualId}] 반환할 의자가 없음!");
             }
             
             agent.enabled = true;

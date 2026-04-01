@@ -4,9 +4,22 @@ using UnityEngine;
 /// <summary>
 /// Customer 생성 및 관리 매니저
 /// </summary>
-public class CustomerManager : MonoBehaviour
+public class GuestManager : MonoBehaviour
 {
     [SerializeField] private DayManager dayManager;
+    [SerializeField] private Transform spawnPoint;
+    [SerializeField] private Transform exitPoint;
+
+    [Serializable]
+    public struct GuestPrefabEntry
+    {
+       public GameObject prefab;
+       public Constants.GuestAppearance appearance;
+    }
+
+    [SerializeField] private GuestPrefabEntry[] normalGuestPrefabs;
+    public GameObject richGuestPrefab;
+    public GameObject thiefGuestPrefab;
 
     public static event Action OnCustomerServed;
     private int customerCount = 0;
@@ -14,28 +27,24 @@ public class CustomerManager : MonoBehaviour
     // 손님 런타임 정보
     private int globalIDCounter = 0;
 
-    // 환경 및 데이터 세팅
-    [SerializeField] private Transform spawnPoint;
-    [SerializeField] private Transform exitPoint;
-
-
-    // 손님 프리팹
-    public GameObject[] normalGuestPrefabs;
-    public GameObject richGuestPrefab;
-    public GameObject thiefGuestPrefab;
-    
     void Awake()
     {
         dayManager.OnDayStart += StartSpawn;
         dayManager.OnDayEnd += StopSpawn;
     }
-    
-    private void StartSpawn()
+
+    void OnDisable()
     {
-        InvokeRepeating(nameof(SpawnCustomer), 1f, 5f); // 고객 생성, 랜덤 요소 추가 필요
+        dayManager.OnDayStart -= StartSpawn;
+        dayManager.OnDayEnd -= StopSpawn;
     }
 
-    private void SpawnCustomer()
+    private void StartSpawn()
+    {
+        InvokeRepeating(nameof(SpawnGuset), 1f, 5f); // 고객 생성, 랜덤 요소 추가 필요
+    }
+
+    private void SpawnGuset()
     {
         globalIDCounter++; // 스폰될 때마다 고유 id 1씩 증가
 
@@ -57,14 +66,8 @@ public class CustomerManager : MonoBehaviour
         else
         {
             int randomIndex = UnityEngine.Random.Range(0, normalGuestPrefabs.Length);
-            selectedPrefab = normalGuestPrefabs[randomIndex];
-
-            // 뽑힌 인덱스에 맞춰서 Appearance 열거형도 알맞게 짝지어줌
-            // (배열 0번은 NormalA, 1번은 NormalB, 2번은 NormalC)
-            if (randomIndex == 0) appearance = Constants.GuestAppearance.NormalMaleA;
-            else if (randomIndex == 1) appearance = Constants.GuestAppearance.NormalMaleB;
-            else if (randomIndex == 2) appearance = Constants.GuestAppearance.NormalFemaleA;
-            else appearance = Constants.GuestAppearance.NormalFemaleB;
+            selectedPrefab = normalGuestPrefabs[randomIndex].prefab;
+            appearance  = normalGuestPrefabs[randomIndex].appearance;
         }
 
         // 프리팹 생성 및 정보 주입
