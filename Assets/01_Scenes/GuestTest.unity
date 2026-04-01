@@ -145,17 +145,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 16238341}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0a9807d4fb77fa749b1aac8df0dbd28e, type: 3}
+  m_Script: {fileID: 11500000, guid: 3d17f35a3a34e564e9c40740f465b51e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CustomerManager
   dayManager: {fileID: 1606009150}
   spawnPoint: {fileID: 1582968801}
   exitPoint: {fileID: 1946667675}
   normalGuestPrefabs:
-  - {fileID: 7423301461799025111, guid: f8af00c12bd89d34fa2f887702d4a299, type: 3}
-  - {fileID: 6056675718057628770, guid: d14614e5f06e6bf4dbcd4527506eed41, type: 3}
-  - {fileID: 2118154576711725263, guid: f40352c3cd0431149ab837e9fab7423e, type: 3}
-  - {fileID: 3129124448995761554, guid: a1f9514c795932d4db85732081742f6f, type: 3}
+  - prefab: {fileID: 7423301461799025111, guid: f8af00c12bd89d34fa2f887702d4a299, type: 3}
+    appearance: 0
+  - prefab: {fileID: 6056675718057628770, guid: d14614e5f06e6bf4dbcd4527506eed41, type: 3}
+    appearance: 1
+  - prefab: {fileID: 2118154576711725263, guid: f40352c3cd0431149ab837e9fab7423e, type: 3}
+    appearance: 2
+  - prefab: {fileID: 3129124448995761554, guid: a1f9514c795932d4db85732081742f6f, type: 3}
+    appearance: 3
   richGuestPrefab: {fileID: 7259757810946285311, guid: ba2fc12dc1aca424aa3faa865e369811, type: 3}
   thiefGuestPrefab: {fileID: 3991690437284723275, guid: 45ddbcf3d8281f747b8119777c746224, type: 3}
 --- !u!4 &16238343
