@@ -31,16 +31,18 @@ public class GuestInteractable : MonoBehaviour, IInteractable
     public void Interact(Inventory inventory = null)
     {
         if (myBrain.currentState == Constants.GuestState.WaitOrder)
-        {
             myBrain.TakeOrder();
-        }
         else if (myBrain.currentState == Constants.GuestState.WaitFood)
-        {
             OnOpenServerInvenUI?.Invoke(myBrain);
+        else if (myBrain.currentState == Constants.GuestState.Exit)
+        {
+            // 도둑 손님인지 확인 (형변환)
+            ThiefGuyGuest thief = myBrain as ThiefGuyGuest;
+            
+            if (thief != null)
+                thief.CatchThief();
         }
         else
-        {
             Debug.Log($"상호작용 무시 (현재 상태: {myBrain.currentState})");
-        }
     }
 }

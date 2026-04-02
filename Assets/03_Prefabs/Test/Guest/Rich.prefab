@@ -15,9 +15,9 @@ GameObject:
   - component: {fileID: 4742590739379515862}
   - component: {fileID: 6378045409198293338}
   - component: {fileID: 5987066192353121874}
-  - component: {fileID: -2163139614180519918}
+  - component: {fileID: -4987277495496196096}
   - component: {fileID: -6606578056943004935}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Rich
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -189,7 +189,7 @@ NavMeshAgent:
   m_BaseOffset: 1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &-2163139614180519918
+--- !u!114 &-4987277495496196096
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -198,9 +198,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 7259757810946285311}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 357725c50b56b9142ab707d89b74f75f, type: 3}
+  m_Script: {fileID: 11500000, guid: 11981332155d6354eb1541d4182bbdec, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::NormalGuest
+  m_EditorClassIdentifier: Assembly-CSharp::RichManGuest
   orderWaitLimit: 20
   foodMinWaitLimit: 30
   foodMidWaitLimit: 60
@@ -212,7 +212,7 @@ MonoBehaviour:
   exitDoor: {fileID: 0}
   myChair: {fileID: 0}
   individualId: 0
-  myApperance: 4
+  myApperance: 0
   myOrder:
     orderedFood: {fileID: 0}
     isServed: 0
