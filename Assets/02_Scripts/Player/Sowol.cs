@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Sowol : PlayerController
 {
-    [SerializeField] private Inventory myInventory;
     [SerializeField] private CookingStation cookingStation;
     
     public override void OnSelected()
@@ -18,14 +17,12 @@ public class Sowol : PlayerController
     
     private void LateUpdate()
     {
-        GetFoodItem();
+        CheckInteractState();
     }
 
-    private void GetFoodItem()
+    private void CheckInteractState()
     {
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            cookingStation.Interact(myInventory);
-        }
+        if(CurrentState == PlayerState.Interact && cookingStation.CurrentState != CookingState.Cooking)
+            ChangeState(PlayerState.Idle);
     }
 }

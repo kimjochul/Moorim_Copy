@@ -22,7 +22,7 @@ public class Postman : MonoBehaviour, IInteractable
         return IsAvailableDay();
     }
 
-    public void Interact(Inventory inventory = null)
+    public void Interact()
     {
         if (!IsAvailableDay()) return;
         // UI 창 호출 눌렀을 때
