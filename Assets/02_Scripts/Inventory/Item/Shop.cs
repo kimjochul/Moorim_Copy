@@ -53,10 +53,28 @@ public class Shop : MonoBehaviour
 
     public bool Buy(int itemID, int count)
     {
+        if (itemFactory == null)
+        {
+            Debug.LogError("itemFactory is NULL");
+            return false;
+        }
+
+        if (EconomyManager.Instance == null)
+        {
+            Debug.LogError("EconomyManager is NULL");
+            return false;
+        }
+        
         Debug.Log("Buying " + itemID);
         // 돈 체크는 생략
         Item item = itemFactory.CreateItem(itemID);
 
+        if (item == null)
+        {
+            Debug.LogError("item is NULL");
+            return false;
+        }
+        
         int totalPrice = item.Data.price * count;
         
         if (!EconomyManager.Instance.CanSpend(totalPrice))
