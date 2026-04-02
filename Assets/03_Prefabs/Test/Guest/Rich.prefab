@@ -11,11 +11,13 @@ GameObject:
   - component: {fileID: 6500466612221041465}
   - component: {fileID: 5019009181336130031}
   - component: {fileID: 6446759806598321383}
-  - component: {fileID: 4433622028993016904}
+  - component: {fileID: 4392263155855948005}
+  - component: {fileID: 4742590739379515862}
   - component: {fileID: 6378045409198293338}
   - component: {fileID: 5987066192353121874}
-  - component: {fileID: -2163139614180519918}
-  m_Layer: 0
+  - component: {fileID: -4987277495496196096}
+  - component: {fileID: -6606578056943004935}
+  m_Layer: 7
   m_Name: Rich
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +96,7 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &4433622028993016904
+--- !u!136 &4392263155855948005
 CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -116,6 +118,27 @@ CapsuleCollider:
   m_Radius: 0.5
   m_Height: 2
   m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!65 &4742590739379515862
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7259757810946285311}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2, y: 2, z: 2}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &6378045409198293338
 Rigidbody:
@@ -142,7 +165,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 80
   m_CollisionDetection: 0
 --- !u!195 &5987066192353121874
 NavMeshAgent:
@@ -166,7 +189,7 @@ NavMeshAgent:
   m_BaseOffset: 1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &-2163139614180519918
+--- !u!114 &-4987277495496196096
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -175,19 +198,33 @@ MonoBehaviour:
   m_GameObject: {fileID: 7259757810946285311}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 357725c50b56b9142ab707d89b74f75f, type: 3}
+  m_Script: {fileID: 11500000, guid: 11981332155d6354eb1541d4182bbdec, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::NormalGuest
+  m_EditorClassIdentifier: Assembly-CSharp::RichManGuest
   orderWaitLimit: 20
   foodMinWaitLimit: 30
   foodMidWaitLimit: 60
   foodMaxWaitLimit: 90
   foodEatLimit: 15
+  menuChooseTime: 3
   menuBoard: {fileID: 11400000, guid: 6d1d33b9b84924d419f1e13f1b6636fc, type: 2}
   agent: {fileID: 5987066192353121874}
-  targetTable: {fileID: 0}
   exitDoor: {fileID: 0}
+  myChair: {fileID: 0}
   individualId: 0
   myApperance: 0
   myOrder:
-    item: []
+    orderedFood: {fileID: 0}
+    isServed: 0
+--- !u!114 &-6606578056943004935
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7259757810946285311}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2a5aa0b96cba0e4c8fd3892319ff256, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GuestInteractable

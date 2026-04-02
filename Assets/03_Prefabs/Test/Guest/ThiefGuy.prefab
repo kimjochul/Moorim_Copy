@@ -11,11 +11,13 @@ GameObject:
   - component: {fileID: 8066401920549634850}
   - component: {fileID: 4373335460058431249}
   - component: {fileID: 8582180523690893477}
-  - component: {fileID: 9074883633055895629}
+  - component: {fileID: 872045534241105878}
+  - component: {fileID: 743913890235419199}
   - component: {fileID: 8776675149864160792}
   - component: {fileID: 1558771322891863264}
-  - component: {fileID: 8536696221811272081}
-  m_Layer: 0
+  - component: {fileID: 6428930964874426346}
+  - component: {fileID: -2711912440146679687}
+  m_Layer: 7
   m_Name: ThiefGuy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +96,7 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &9074883633055895629
+--- !u!136 &872045534241105878
 CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -116,6 +118,27 @@ CapsuleCollider:
   m_Radius: 0.5
   m_Height: 2
   m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!65 &743913890235419199
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3991690437284723275}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2, y: 2, z: 2}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &8776675149864160792
 Rigidbody:
@@ -142,7 +165,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 80
   m_CollisionDetection: 0
 --- !u!195 &1558771322891863264
 NavMeshAgent:
@@ -166,7 +189,7 @@ NavMeshAgent:
   m_BaseOffset: 1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &8536696221811272081
+--- !u!114 &6428930964874426346
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -175,19 +198,33 @@ MonoBehaviour:
   m_GameObject: {fileID: 3991690437284723275}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 357725c50b56b9142ab707d89b74f75f, type: 3}
+  m_Script: {fileID: 11500000, guid: 5967b0e651a98a34193c2d906fed5aad, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::NormalGuest
+  m_EditorClassIdentifier: Assembly-CSharp::ThiefGuyGuest
   orderWaitLimit: 20
   foodMinWaitLimit: 30
   foodMidWaitLimit: 60
   foodMaxWaitLimit: 90
   foodEatLimit: 15
+  menuChooseTime: 3
   menuBoard: {fileID: 11400000, guid: 6d1d33b9b84924d419f1e13f1b6636fc, type: 2}
   agent: {fileID: 1558771322891863264}
-  targetTable: {fileID: 0}
   exitDoor: {fileID: 0}
+  myChair: {fileID: 0}
   individualId: 0
   myApperance: 0
   myOrder:
-    item: []
+    orderedFood: {fileID: 0}
+    isServed: 0
+--- !u!114 &-2711912440146679687
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3991690437284723275}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2a5aa0b96cba0e4c8fd3892319ff256, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GuestInteractable

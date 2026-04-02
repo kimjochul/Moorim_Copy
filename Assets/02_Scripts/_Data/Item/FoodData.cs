@@ -8,4 +8,5 @@ public class FoodData : ItemData
     public bool isLocked;
     public Constants.FoodType type;
     public Constants.RecipeClass recipeClass;
+    public GameObject foodPrefab;
 }

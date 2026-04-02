@@ -1,11 +1,8 @@
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.UIElements;
 using static Constants;
 
 /// <summary>
@@ -22,6 +19,7 @@ public class Shop : MonoBehaviour
     [SerializeField] private Transform tsCategory;
     [SerializeField] private GameObject objProduct;
     [SerializeField] private Transform tsProduct;
+    [SerializeField] private Button btnClose;
 
     // 카테고리
     private Dictionary<IngredientType, ShopCategory> dicCategory = new Dictionary<IngredientType, ShopCategory>();
@@ -32,17 +30,23 @@ public class Shop : MonoBehaviour
     private List<GameObject> listProduct = new List<GameObject>();
 
     public Action<ItemData> OnProductClicked;
-    
 
+    [SerializeField]
+    private ShopProductInfo infoPanel;
+
+    //void Start()
+    //{
+    //    Init();
+    //}
     public void Init()
     {
         playerMeatInventory = InventoryManager.Instance.GetInventory(InventoryType.IngredientsButMeatOnly);
         playerOtherIngredientInventory = InventoryManager.Instance.GetInventory(InventoryType.Ingredients);
         fridgeInventory = InventoryManager.Instance.GetInventory(InventoryType.Fridge);
-        
+
         Buy(0, 1);
-        Buy(5,2);
-        Buy(6,1);
+        Buy(5, 2);
+        Buy(6, 1);
 
         CreateCategory();
     }
@@ -99,7 +103,7 @@ public class Shop : MonoBehaviour
         for (int i = 0; i < length; i++)
         {
             var type = (IngredientType)i;
-            string s = (type).ToString();
+            string s = (type).ToKorean().ToString();
 
             ShopCategory category = Instantiate(this.objCategory, this.tsCategory).GetComponent<ShopCategory>();
             category.Init(s);
@@ -134,9 +138,13 @@ public class Shop : MonoBehaviour
     {
         List<IngredientData> targetDataList = DataManager.Instance.GetIngredientList(type);
 
-        if (this.listProduct.Count < targetDataList.Count)
+        int minSlotCount = 3;
+        int displayCount = Mathf.Max(targetDataList.Count, minSlotCount);
+
+        // 빈 슬롯이 부족하면 생성
+        if (this.listProduct.Count < displayCount)
         {
-            int needCount = targetDataList.Count - this.listProduct.Count;
+            int needCount = displayCount - this.listProduct.Count;
             for (int i = 0; i < needCount; i++)
             {
                 GameObject product = Instantiate(this.objProduct, this.tsProduct);
@@ -145,26 +153,36 @@ public class Shop : MonoBehaviour
             }
         }
 
+        // 상점 요소 띄우기
         for (int i = 0; i < this.listProduct.Count; i++)
         {
             this.listProduct[i].SetActive(false);
 
-            ShopProduct slotScript = this.listProduct[i].GetComponent<ShopProduct>();
-            slotScript.onClickBuy = null;
+            ShopProduct product = this.listProduct[i].GetComponent<ShopProduct>();
+            product.Clear();
         }
 
-        for (int i = 0; i < targetDataList.Count; i++)
+        for (int i = 0; i < displayCount; i++)
         {
-            if (i < this.listProduct.Count)
-            {
-                this.listProduct[i].SetActive(true);
+            this.listProduct[i].SetActive(true);
+            ShopProduct product = this.listProduct[i].GetComponent<ShopProduct>();
 
-                ShopProduct slotScript = this.listProduct[i].GetComponent<ShopProduct>();
-                slotScript.Init(targetDataList[i]);
-                
-                slotScript.onClickBuy += (itemData) =>
+            // 데이터가 있는 정상 슬롯일 경우
+            if (i < targetDataList.Count)
+            {
+                product.Init(targetDataList[i]);
+
+                product.onClickBuy += (itemData) =>
                 {
                     OnProductClicked?.Invoke(itemData);
+                };
+
+                product.onHoverEnter += (itemData) => {
+                    this.infoPanel.ShowInfo(itemData);
+                };
+
+                product.onHoverExit += () => {
+                    this.infoPanel.HideInfo();
                 };
             }
         }

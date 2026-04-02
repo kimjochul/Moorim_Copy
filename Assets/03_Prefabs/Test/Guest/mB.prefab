@@ -11,11 +11,13 @@ GameObject:
   - component: {fileID: 2276434851137673925}
   - component: {fileID: 1857236607388881284}
   - component: {fileID: 1466844163567157698}
-  - component: {fileID: 1620851912282834752}
+  - component: {fileID: 9102796555931556473}
+  - component: {fileID: 8542029689893958454}
   - component: {fileID: 5729525595667275151}
   - component: {fileID: 8688284625886686125}
   - component: {fileID: 4353806907107966518}
-  m_Layer: 0
+  - component: {fileID: -6782678001480324015}
+  m_Layer: 7
   m_Name: mB
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +96,7 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &1620851912282834752
+--- !u!136 &9102796555931556473
 CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -116,6 +118,27 @@ CapsuleCollider:
   m_Radius: 0.5
   m_Height: 2
   m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!65 &8542029689893958454
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6056675718057628770}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2, y: 2, z: 2}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &5729525595667275151
 Rigidbody:
@@ -142,7 +165,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 80
   m_CollisionDetection: 0
 --- !u!195 &8688284625886686125
 NavMeshAgent:
@@ -183,11 +206,25 @@ MonoBehaviour:
   foodMidWaitLimit: 60
   foodMaxWaitLimit: 90
   foodEatLimit: 15
+  menuChooseTime: 3
   menuBoard: {fileID: 11400000, guid: 6d1d33b9b84924d419f1e13f1b6636fc, type: 2}
   agent: {fileID: 8688284625886686125}
-  targetTable: {fileID: 0}
   exitDoor: {fileID: 0}
+  myChair: {fileID: 0}
   individualId: 0
-  myApperance: 0
+  myApperance: 1
   myOrder:
-    item: []
+    orderedFood: {fileID: 0}
+    isServed: 0
+--- !u!114 &-6782678001480324015
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6056675718057628770}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2a5aa0b96cba0e4c8fd3892319ff256, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GuestInteractable
