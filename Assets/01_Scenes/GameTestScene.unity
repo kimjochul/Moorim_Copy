@@ -4226,6 +4226,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 441079830}
   m_CullTransparentMesh: 1
+--- !u!1 &460937598
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 460937599}
+  m_Layer: 0
+  m_Name: ------------------------- (4)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &460937599
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 460937598}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 439.2761, y: 0, z: 6811.8267}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &476149980
 GameObject:
   m_ObjectHideFlags: 0
@@ -5085,9 +5116,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d17f35a3a34e564e9c40740f465b51e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CustomerManager
-  dayManager: {fileID: 0}
-  spawnPoint: {fileID: 0}
-  exitPoint: {fileID: 0}
+  dayManager: {fileID: 739405824}
+  spawnPoint: {fileID: 1686142876}
+  exitPoint: {fileID: 1194952203}
+  startSpawnTime: 1
+  spawnInterval: 5
   normalGuestPrefabs:
   - prefab: {fileID: 7423301461799025111, guid: f8af00c12bd89d34fa2f887702d4a299, type: 3}
     appearance: 0
@@ -7032,6 +7065,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 882920483}
   m_CullTransparentMesh: 1
+--- !u!1 &884881301
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 884881302}
+  m_Layer: 0
+  m_Name: GuestPool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &884881302
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 884881301}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &892405652
 GameObject:
   m_ObjectHideFlags: 0
@@ -11493,6 +11557,51 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1467852565}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1513989624
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1513989626}
+  - component: {fileID: 1513989625}
+  m_Layer: 0
+  m_Name: GuestPooliManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1513989625
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1513989624}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd97e5dc5ac56c549b1f0775591881df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GuestPoolManager
+  poolParent: {fileID: 884881302}
+--- !u!4 &1513989626
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1513989624}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1540253051
 GameObject:
   m_ObjectHideFlags: 0
@@ -13997,7 +14106,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1818192662
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15999,7 +16108,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2030521929
 RectTransform:
   m_ObjectHideFlags: 0
@@ -19060,7 +19169,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &7445532582616626868
 GameObject:
   m_ObjectHideFlags: 0
@@ -19522,15 +19631,21 @@ SceneRoots:
   - {fileID: 1194141845}
   - {fileID: 1580641302}
   - {fileID: 658756591}
+  - {fileID: 460937599}
   - {fileID: 298915272}
   - {fileID: 739405825}
   - {fileID: 1019874592}
   - {fileID: 180911694}
   - {fileID: 18285164}
+  - {fileID: 1746485323}
+  - {fileID: 2020581686}
+  - {fileID: 652007370}
+  - {fileID: 1820506568}
+  - {fileID: 1918122045}
+  - {fileID: 1513989626}
   - {fileID: 1845544285}
   - {fileID: 740029486}
   - {fileID: 1754079610}
-  - {fileID: 1918122045}
   - {fileID: 287099593}
   - {fileID: 1184813522}
   - {fileID: 1635059874}
@@ -19547,14 +19662,11 @@ SceneRoots:
   - {fileID: 1341249321}
   - {fileID: 911855606}
   - {fileID: 492047343}
-  - {fileID: 1820506568}
-  - {fileID: 652007370}
+  - {fileID: 884881302}
   - {fileID: 149159066}
   - {fileID: 680723363}
   - {fileID: 1818192665}
   - {fileID: 1836712514}
-  - {fileID: 1746485323}
-  - {fileID: 2020581686}
   - {fileID: 1291303179}
   - {fileID: 1284980185}
   - {fileID: 225578516}
