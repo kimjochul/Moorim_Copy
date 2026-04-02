@@ -33,6 +33,8 @@ public class UITest : MonoBehaviour
     private Button btnShowZigzag;
     [SerializeField]
     private Button btnHideZigzag;
+    [SerializeField]
+    private Button btnShowStamp;
 
     void Start()
     {
@@ -57,5 +59,7 @@ public class UITest : MonoBehaviour
 
         this.btnShowZigzag.onClick.AddListener(() => ui.ShowZigzag(this.rt));
         this.btnHideZigzag.onClick.AddListener(() => ui.HideZigzag(this.rt));
+
+        this.btnShowStamp.onClick.AddListener(() => ui.ShowStamp(this.rt));
     }
 }

@@ -45,7 +45,9 @@
 
     public enum FoodQuality 
     { Normal, Fine, Good }
-
+    public enum QuestCategory { Main, Sub, Repeat } // 메인, 서브, 반복
+    public enum QuestStatus { InProgress, Completed } // 진행 중, 완료
+    public enum BookTabType { Status, Affinity, Quest } // 인물, 인연, 퀘스트
 
     public const float SPOIL_TIME = 180f;
     public const int SERVINGSLOT_MAXCOUNT = 8;
