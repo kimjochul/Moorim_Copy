@@ -28,7 +28,7 @@ public class GuestInteractable : MonoBehaviour, IInteractable
     }
 
     // 명월이가 손님 근처에 도착해서 상호작용(F키 또는 클릭)을 완료했을 때 벌어질 일
-    public void Interact(Inventory inventory = null)
+    public void Interact()
     {
         if (myBrain.currentState == Constants.GuestState.WaitOrder)
             myBrain.TakeOrder();

@@ -11,10 +11,16 @@ public class Singleton<T> : MonoBehaviour where T: MonoBehaviour // where T: mon
         {
             if (isQuitting)
                 return null;
-            
+
             if (instance == null)
             {
                 instance = FindFirstObjectByType<T>();
+
+                if (instance == null)
+                {
+                    GameObject go = new GameObject(typeof(T).Name);
+                    instance = go.AddComponent<T>();
+                }
             }
             return instance;
         }
@@ -22,22 +28,29 @@ public class Singleton<T> : MonoBehaviour where T: MonoBehaviour // where T: mon
     
     protected virtual void Awake()
     {
-        if (instance == null)
+        if (instance != null && instance != this)
         {
-            instance = this as T; // 안전한 형변환
-            DontDestroyOnLoad(this.gameObject);
+            Destroy(gameObject);
+            return;
         }
-        else
-            Destroy(this.gameObject);
+
+        instance = this as T;
+        DontDestroyOnLoad(gameObject);
     }
     
     protected virtual void OnApplicationQuit()
     {
-        isQuitting = true;
+        if (instance == this)
+        {
+            isQuitting = true;
+        }
     }
 
     protected virtual void OnDestroy()
     {
-        isQuitting = true;
+        if (instance == this)
+        {
+            isQuitting = true;
+        }
     }
 }

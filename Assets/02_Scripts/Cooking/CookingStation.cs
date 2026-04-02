@@ -27,7 +27,7 @@ public class CookingStation : MonoBehaviour, IInteractable
     
     
     // 플레이어가 조리대에 상호작용했을 때 실행되어야할 기능
-    public void Interact(Inventory playerInventory)
+    public void Interact()
     {
         if (CurrentState == CookingState.Idle && CookingController.Instance != null)
         {
@@ -39,7 +39,8 @@ public class CookingStation : MonoBehaviour, IInteractable
         }
         else if (CurrentState == CookingState.Done)
         {
-            CollectFood(playerInventory);
+            Inventory sowolInven = InventoryManager.Instance.GetInventory(InventoryType.Chef);
+            CollectFood(sowolInven);
         }
     }
 

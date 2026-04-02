@@ -37,14 +37,14 @@ public class PlayerInput : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F) && currentUnit.CurrentState == PlayerState.Idle)
         {
             IInteractable target = PlayerManager.Instance.ActiveInteractable;
-
+            Debug.Log(target);
             if (target != null)
             {
                 PlayerType currentPlayer = PlayerManager.Instance.CurrentPlayer;
-
                 if (target.CanInteract(currentPlayer))
                 {
                     currentUnit.ChangeState(PlayerState.Interact);
+                    Debug.Log(currentPlayer + " : " + target);
                     target.Interact();
 
                     PlayerManager.Instance.ReservedInteractable = null;

@@ -77,7 +77,7 @@ public class ServingSlot : MonoBehaviour, IInteractable
     {
         return this.servingPoint.position;
     }
-    public void Interact(Inventory inventory = null) 
+    public void Interact() 
     {
         // 상호 작용
     }
