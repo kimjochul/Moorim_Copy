@@ -47,7 +47,58 @@ public abstract class GuestBase : MonoBehaviour
     public event Action<GuestBase, RuntimeOrder> OnOrderPlaced; // UI 주문 리스트용
     public event Action OnGuestServedAndPaid; // 스포너용
 
-    
+    // 풀에서 꺼낼 때 호출. 재사용 시 이전 생애의 모든 상태를 깨끗이 초기화해 버그 방지
+    public virtual void ResetState()
+    {
+        // 1) FSM 플래그 — 이게 안 되면 Enter/Exit에서 경로를 안 잡음
+        isEnterPathSet = false;
+        isExitPathSet = false;
+        isOrderTaken = false;
+
+        // 2) 타이머 & 상태값
+        stateTimer = 0f;
+        currentMood = Constants.GuestMood.Neutral;
+        FoodQuality = Constants.FoodQuality.Normal;
+        basePrise = 0;
+
+        // 3) 주문 데이터
+        if (myOrder == null)
+            myOrder = new RuntimeOrder();
+        else
+            myOrder.Clear();
+
+        // 4) 의자 반환 (이전 손님이 앉았던 의자가 점유 상태로 남는 것 방지)
+        if (myChair != null)
+         {
+            myChair.Empty();
+            myChair = null;
+         }
+
+        // 5) 음식 모델 제거
+        if (currentFoodModel != null)
+        {
+            Destroy(currentFoodModel);
+            currentFoodModel = null;
+         }
+
+        // 6) NavMeshAgent 정리 (이전 경로가 남으면 엉뚱한 곳으로 이동)
+        if (agent != null)
+        {
+            // agent.enabled = true;
+            // agent.ResetPath();
+            // agent.isStopped = false;
+            // agent.velocity = Vector3.zero;
+            agent.enabled = false;
+        }
+
+        // 7) 이벤트 구독 전부 해제
+        //    안 하면 이전 생애의 리스너가 남아서 이벤트가 중복 호출됨
+        OnGuestStateChanged = null;
+        OnGuestReadyToOrder = null;
+        OnOrderPlaced = null;
+        OnGuestServedAndPaid = null;
+        OnGuestMoodChanged = null;
+    }
     
     // 객체가 생성될 때 매니저에서 딱 한 번 호출해줄 초기화 메소드
     public virtual void Init(int id, Constants.GuestAppearance appearance, Transform exit)
@@ -60,6 +111,16 @@ public abstract class GuestBase : MonoBehaviour
             myOrder = new RuntimeOrder();
         else
             myOrder.Clear();
+
+        gameObject.SetActive(true);
+
+        if (agent != null)
+        {
+            agent.enabled = true;
+            agent.ResetPath();
+            agent.isStopped = false;
+            agent.velocity = Vector3.zero;
+        }
         
         ChangeState(Constants.GuestState.Enter);
     }
@@ -69,9 +130,8 @@ public abstract class GuestBase : MonoBehaviour
         GuestFSM();
     }
 
-    
 
-    private void ChangeState(Constants.GuestState newState)
+    protected void ChangeState(Constants.GuestState newState)
     {
         currentState = newState;
         stateTimer = 0f;
@@ -338,7 +398,7 @@ public abstract class GuestBase : MonoBehaviour
 
         // 목적지에 도착했는지 검사
         if (isExitPathSet && !agent.pathPending && agent.remainingDistance <= 2.0f)
-            Destroy(gameObject);
+            GuestPoolManager.Instance.Return(myApperance, gameObject);
     }
 
 
