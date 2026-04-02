@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 // 부모 클래스
-public abstract class GuestBase : MonoBehaviour, IInteractable
+public abstract class GuestBase : MonoBehaviour
 {
     [Header("기본 대기 시간 (자식들이 변경 가능)")]
     [SerializeField] protected float orderWaitLimit = 20f;
@@ -36,16 +36,69 @@ public abstract class GuestBase : MonoBehaviour, IInteractable
 
     private GameObject currentFoodModel;
     
-    protected Constants.GuestState currentState = Constants.GuestState.Enter; 
+    public Constants.GuestState currentState { get; private set; }
     protected Constants.GuestMood currentMood = Constants.GuestMood.Neutral;
     // 결제 시 정산할 퀄리티 및 꼼수 방지용
     private Constants.FoodQuality FoodQuality = Constants.FoodQuality.Normal;
 
-    public static event Action<GuestBase, Constants.GuestState> OnGuestStateChanged; // 상태 변경 알림용
-    public static event Action<GuestBase, Constants.GuestMood> OnGuestMoodChanged; // 상태 변경 알림용
-    public static event Action<GuestBase> OnGuestReadyToOrder; // 메뉴를 골랐을 때용
-    public static event Action<GuestBase, RuntimeOrder> OnOrderPlaced; // UI 주문 리스트용
-    public static event Action OnGuestServedAndPaid; // 스포너용
+    public event Action<GuestBase, Constants.GuestState> OnGuestStateChanged; // 상태 변경 알림용
+    public event Action<GuestBase, Constants.GuestMood> OnGuestMoodChanged; // 상태 변경 알림용
+    public event Action<GuestBase> OnGuestReadyToOrder; // 메뉴를 골랐을 때용
+    public event Action<GuestBase, RuntimeOrder> OnOrderPlaced; // UI 주문 리스트용
+    public event Action OnGuestServedAndPaid; // 스포너용
+
+    // 풀에서 꺼낼 때 호출. 재사용 시 이전 생애의 모든 상태를 깨끗이 초기화해 버그 방지
+    public virtual void ResetState()
+    {
+        // 1) FSM 플래그 — 이게 안 되면 Enter/Exit에서 경로를 안 잡음
+        isEnterPathSet = false;
+        isExitPathSet = false;
+        isOrderTaken = false;
+
+        // 2) 타이머 & 상태값
+        stateTimer = 0f;
+        currentMood = Constants.GuestMood.Neutral;
+        FoodQuality = Constants.FoodQuality.Normal;
+        basePrise = 0;
+
+        // 3) 주문 데이터
+        if (myOrder == null)
+            myOrder = new RuntimeOrder();
+        else
+            myOrder.Clear();
+
+        // 4) 의자 반환 (이전 손님이 앉았던 의자가 점유 상태로 남는 것 방지)
+        if (myChair != null)
+         {
+            myChair.Empty();
+            myChair = null;
+         }
+
+        // 5) 음식 모델 제거
+        if (currentFoodModel != null)
+        {
+            Destroy(currentFoodModel);
+            currentFoodModel = null;
+         }
+
+        // 6) NavMeshAgent 정리 (이전 경로가 남으면 엉뚱한 곳으로 이동)
+        if (agent != null)
+        {
+            // agent.enabled = true;
+            // agent.ResetPath();
+            // agent.isStopped = false;
+            // agent.velocity = Vector3.zero;
+            agent.enabled = false;
+        }
+
+        // 7) 이벤트 구독 전부 해제
+        //    안 하면 이전 생애의 리스너가 남아서 이벤트가 중복 호출됨
+        OnGuestStateChanged = null;
+        OnGuestReadyToOrder = null;
+        OnOrderPlaced = null;
+        OnGuestServedAndPaid = null;
+        OnGuestMoodChanged = null;
+    }
     
     // 객체가 생성될 때 매니저에서 딱 한 번 호출해줄 초기화 메소드
     public virtual void Init(int id, Constants.GuestAppearance appearance, Transform exit)
@@ -58,6 +111,16 @@ public abstract class GuestBase : MonoBehaviour, IInteractable
             myOrder = new RuntimeOrder();
         else
             myOrder.Clear();
+
+        gameObject.SetActive(true);
+
+        if (agent != null)
+        {
+            agent.enabled = true;
+            agent.ResetPath();
+            agent.isStopped = false;
+            agent.velocity = Vector3.zero;
+        }
         
         ChangeState(Constants.GuestState.Enter);
     }
@@ -67,54 +130,8 @@ public abstract class GuestBase : MonoBehaviour, IInteractable
         GuestFSM();
     }
 
-    // 서빙 캐릭터만 상호작용가능
-    public bool CanInteract(Constants.PlayerType playerType)
-    {
-        return playerType == Constants.PlayerType.Myungwol;
-    }
 
-    // 명월이가 손님을 클릭했을 때 맵의 어디로 걸어와야 하는가?
-    public Vector3 GetInteractPosition()
-    {
-        // 현재 손님이 있는 위치(의자에 앉아있다면 의자 위치)로 걸어오게.
-        // (만약 너무 손님과 겹친다면 transform.position 대신 myChair.sitPoint.position 등을 활용해도 좋을듯함)
-        return transform.position;
-    }
-
-    // 명월이가 손님 근처에 도착해서 상호작용(F키 또는 클릭)을 완료했을 때 벌어질 일
-    public void Interact(Inventory inventory = null)
-    {
-        if (currentState == Constants.GuestState.WaitOrder)
-        {
-            TakeOrder(); 
-        }
-        else if (currentState == Constants.GuestState.WaitFood)
-        {
-            // 주의: 팀원의 PlayerInput 코드를 보면 현재 inventory에 아무것도 안 넣고(null) 호출하고 있음
-            // 나중에 인벤토리 시스템이 완성되면 아래처럼 조건문을 채워줘야함
-            
-            /*
-            if (inventory != null && inventory.HasItem(myOrder.recipe))
-            {
-                // 인벤토리에서 음식 빼기
-                inventory.RemoveItem(myOrder.recipe); 
-                
-                // 손님에게 음식 먹이기
-                ReceiveFood(myOrder.recipe, Constants.FoodQuality.Normal);
-            }
-            else
-            {
-                Debug.Log("명월이의 인벤토리에 이 손님이 시킨 음식이 없습니다!");
-            }
-            */
-        }
-        else
-        {
-            Debug.Log($"[{individualId}] 지금은 상호작용할 필요가 없는 상태입니다. (현재: {currentState})");
-        }
-    }
-
-    private void ChangeState(Constants.GuestState newState)
+    protected void ChangeState(Constants.GuestState newState)
     {
         currentState = newState;
         stateTimer = 0f;
@@ -381,7 +398,7 @@ public abstract class GuestBase : MonoBehaviour, IInteractable
 
         // 목적지에 도착했는지 검사
         if (isExitPathSet && !agent.pathPending && agent.remainingDistance <= 2.0f)
-            Destroy(gameObject);
+            GuestPoolManager.Instance.Return(myApperance, gameObject);
     }
 
 
