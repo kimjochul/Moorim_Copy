@@ -7,7 +7,7 @@ public class PlayerController : MonoBehaviour, IControllable
 {
     // 상태
     private bool isInteracting;
-    public bool IsInteracting => this.IsInteracting;
+    public bool IsInteracting => isInteracting;
 
     public bool IsMoving
     {
@@ -94,6 +94,7 @@ public class PlayerController : MonoBehaviour, IControllable
     // 상호작용 종료 Interactable 완료 시 호출
     public void EndInteract()
     {
+        Debug.Log("EndInteract");
         isInteracting = false;
         IInteractable prev = currentInteractTarget;
         currentInteractTarget = null;
