@@ -6,19 +6,47 @@ public class PlayerInteractor : MonoBehaviour
     {
         IInteractable interactable = other.GetComponentInParent<IInteractable>();
 
-        if (interactable != null && interactable == PlayerManager.Instance.ReservedInteractable)
-        {
-            PlayerManager.Instance.ActiveInteractable = interactable;
-        }
+        if (interactable == null)
+            return;
+
+        PlayerManager pm = PlayerManager.Instance;
+
+        // 트리거 안에 있다는 사실 항상 기록
+        pm.ActiveInteractable = interactable;
+
+        // 예약된 대상이 아니면 무시
+        if (interactable != pm.ReservedInteractable)
+            return;
+
+        // 모드에 따라 분기
+        if (interactable.Mode == InteractMode.AutoOnEnter)
+            pm.ExecuteInteract(interactable); // 트리거 진입 즉시 자동 상호작용
+        else 
+            pm.ExecuteInteract(interactable); // 첫 클릭으로 이동해서 도착한 경우 → 자동 실행
     }
 
     private void OnTriggerExit(Collider other)
     {
         IInteractable interactable = other.GetComponentInParent<IInteractable>();
 
-        if (interactable != null && PlayerManager.Instance.ActiveInteractable == interactable)
+        if (interactable == null)
+            return;
+
+        PlayerManager pm = PlayerManager.Instance;
+
+        // AutoOnEnter 모드: 트리거 퇴장 시 자동으로 상호작용 종료
+        if (interactable.Mode == InteractMode.AutoOnEnter)
         {
-            PlayerManager.Instance.ActiveInteractable = null;
+            PlayerController unit = pm.SelectedUnit;
+            if (unit != null && unit.IsInteracting)
+            {
+                interactable.OnInteractEnd(unit);
+                unit.EndInteract();
+            }
         }
+ 
+        // ActiveInteractable 해제
+        if (pm.ActiveInteractable == interactable)
+            pm.ActiveInteractable = null;
     }
 }

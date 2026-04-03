@@ -20,6 +20,21 @@ public class ServingSlot : MonoBehaviour, IInteractable
 
     private Coroutine coroutineSpoil;
 
+    // 추가
+    public InteractMode Mode => InteractMode.AutoOnEnter;
+
+    // 시그니처 변경 (내용은 기존 로직 유지하시면서 player 활용)
+    public void Interact(PlayerController player)
+    {
+        // 상호작용 로직
+    }
+
+    // 추가
+    public void OnInteractEnd(PlayerController player)
+    {
+        // 종료 시 정리 로직
+    }
+    
     public void PlaceFood(GameObject food)
     {
         this.currentFood = food;

@@ -14441,9 +14441,9 @@ GameObject:
   - component: {fileID: 1836712517}
   - component: {fileID: 1836712516}
   - component: {fileID: 1836712515}
-  - component: {fileID: 1836712513}
   - component: {fileID: 1836712519}
   - component: {fileID: 1836712520}
+  - component: {fileID: 1836712521}
   m_Layer: 0
   m_Name: Sowol
   m_TagString: Untagged
@@ -14451,20 +14451,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1836712513
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1836712512}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 19662cc7b137aee4fb61c3ad3c45dba4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Sowol
-  myInventory: {fileID: 282554022}
-  cookingStation: {fileID: 82545915}
 --- !u!4 &1836712514
 Transform:
   m_ObjectHideFlags: 0
@@ -14622,6 +14608,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &1836712521
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1836712512}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19662cc7b137aee4fb61c3ad3c45dba4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Sowol
+  cookingStation: {fileID: 0}
 --- !u!1 &1845544284
 GameObject:
   m_ObjectHideFlags: 0
@@ -16192,7 +16191,7 @@ MonoBehaviour:
   accelerationSpeed: 100
   players:
   - {fileID: 1291303174}
-  - {fileID: 1836712513}
+  - {fileID: 0}
 --- !u!4 &2020581686
 Transform:
   m_ObjectHideFlags: 0
