@@ -4,9 +4,10 @@ using UnityEngine.Events;
 public interface IControllable
 {
     PlayerState CurrentState { get; }
-    void ChangeState(PlayerState state);    //»óÅÂ º¯°æ
-    void OnSelected();                  // ¼±ÅÃ µÇ¾úÀ»¶§
-    void OnDeselected();                // ¼±ÅÃ ÇØÁ¦µÇ¾úÀ»¶§
-    void MoveTo(Vector3 destination, UnityAction action = null);   // ¸ñÇ¥ ÁöÁ¡À¸·Î ÀÌµ¿
-    void SetSpeed(float move, float angular, float accel);  //¼Óµµ Á¶Á¤
+    void ChangeState(PlayerState state);    //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    void OnSelected();                  // ï¿½ï¿½ï¿½ï¿½ ï¿½Ç¾ï¿½ï¿½ï¿½ï¿½ï¿½
+    void OnDeselected();                // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ï¿½ï¿½ï¿½ï¿½
+    void MoveTo(Vector3 destination, UnityAction action = null);   // ï¿½ï¿½Ç¥ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½
+    void SetSpeed(float move, float angular, float accel);  //ï¿½Óµï¿½ ï¿½ï¿½ï¿½ï¿½
+    void OnSlotClicked(Slot slot);
 }
