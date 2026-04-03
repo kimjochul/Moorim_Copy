@@ -28,6 +28,8 @@ public class Slot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDropHandler
 
     public event Action<Slot, Slot> OnSlotDrop; // 드래그 중인 아이템을 슬롯에서 놓을 때 호출 용
     
+    public event Action<Slot> OnSlotClick;
+    
     // 디버그용
     [SerializeField] private ItemData debugItemData;
     [SerializeField] private int debugCount;
@@ -52,6 +54,7 @@ public class Slot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDropHandler
         
         slotButton.onClick.RemoveAllListeners();
         slotButton.onClick.AddListener(SetIngredientForCook);
+        slotButton.onClick.AddListener(OnClickSlotAction);
     }
 
     public void SetOwner(Inventory owner)
@@ -70,6 +73,11 @@ public class Slot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDropHandler
         slotIcon.gameObject.SetActive(true);
     }
 
+    private void OnClickSlotAction()
+    {
+        OnSlotClick?.Invoke(this);
+    }
+    
     private void SetIngredientForCook()
     {
         if (Item == null)

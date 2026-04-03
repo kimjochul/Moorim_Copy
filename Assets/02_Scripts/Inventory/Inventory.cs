@@ -42,6 +42,7 @@ public class Inventory : MonoBehaviour
             Slot slot = Instantiate(slotPrefab, transform).GetComponent<Slot>();
             slot.SetOwner(this);
             slot.OnSlotDrop += HandleSlotDrop;
+            slot.OnSlotClick += HandleSlotClick;
             slots.Add(slot);
         }
     }
@@ -96,6 +97,15 @@ public class Inventory : MonoBehaviour
         {
             MoveItem(target, source);
         }
+    }
+
+    /// <summary>
+    /// 인벤토리 슬롯 클릭시 호출
+    /// </summary>
+    /// <param name="slot"></param>
+    private void HandleSlotClick(Slot slot)
+    {
+        
     }
     
     /// <summary>

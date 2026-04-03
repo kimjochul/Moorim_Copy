@@ -42,8 +42,8 @@ public class PlayerController : MonoBehaviour, IControllable
         }
     }
 
-    public virtual void OnSelected() { Debug.Log(this.gameObject.name + " ¼±ÅÃµÊ"); }
-    public virtual void OnDeselected() { Debug.Log(this.gameObject.name + " ÇØÁ¦µÊ"); }
+    public virtual void OnSelected() { Debug.Log(this.gameObject.name + " ï¿½ï¿½ï¿½Ãµï¿½"); }
+    public virtual void OnDeselected() { Debug.Log(this.gameObject.name + " ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"); }
 
     public virtual void ChangeState(PlayerState state)
     {
@@ -78,5 +78,9 @@ public class PlayerController : MonoBehaviour, IControllable
         this.agent.speed = move;
         this.agent.angularSpeed = angular;
         this.agent.acceleration = accel;
+    }
+    
+    public virtual void OnSlotClicked(Slot slot)
+    {
     }
 }
