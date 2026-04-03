@@ -133,6 +133,7 @@ public class Quest : IObserver
         EconomyManager.Instance.AddMoney(RuntimeReward.gold);
         EconomyManager.Instance.AddFame(RuntimeReward.reputation);
         
+        QuestManager.Instance.CompletedQuests.Add(this);
         QuestManager.Instance.EraseQuestFromActive(this);
         QuestManager.Instance.RemoveObserver(this);
         
