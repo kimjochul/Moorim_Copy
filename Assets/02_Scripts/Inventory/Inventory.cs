@@ -105,7 +105,8 @@ public class Inventory : MonoBehaviour
     /// <param name="slot"></param>
     private void HandleSlotClick(Slot slot)
     {
-        
+        IControllable currentPlayer = PlayerManager.Instance.SelectedUnit;
+        currentPlayer?.OnSlotClicked(slot);
     }
     
     /// <summary>
