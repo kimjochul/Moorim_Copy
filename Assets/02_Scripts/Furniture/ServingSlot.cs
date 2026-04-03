@@ -18,9 +18,13 @@ public class ServingSlot : MonoBehaviour, IInteractable
     public float Timer { get; private set; } = 0f;
     public bool IsEmpty => this.currentFood == null;
 
+    private Inventory inventory;
+    
+    private FoodData currentItem;
+    private FoodData previousItem;
+    
     private Coroutine coroutineSpoil;
 
-    // 추가
     public InteractMode Mode => InteractMode.AutoOnEnter;
 
     // 시그니처 변경 (내용은 기존 로직 유지하시면서 player 활용)
@@ -35,21 +39,32 @@ public class ServingSlot : MonoBehaviour, IInteractable
         // 종료 시 정리 로직
     }
     
-    public void PlaceFood(GameObject food)
+    /// <summary>
+    /// 소월이가 배식대에 음식을 놓는 상황
+    /// </summary>
+    /// <param name="foodData"></param>
+    public FoodData PlaceFood(FoodData foodData)
     {
-        this.currentFood = food;
-        this.Timer = 0f;
+        currentItem = foodData;
+        currentFood = foodData.foodPrefab;
+        Timer = 0f;
 
-        if (this.currentFood != null)
+        if (currentFood != null) // 기존 배식대에 음식이 있으면 인벤토리에 되돌려주기 아니면 기능상 아예 버리는 선택지가 있을 수도
         {
-            //�丮 ������Ʈ ����
+            return previousItem;
         }
 
-        if (this.coroutineSpoil != null) 
+        if (coroutineSpoil != null) 
             StopCoroutine(this.coroutineSpoil);
 
         this.coroutineSpoil = StartCoroutine(SpoilTimerRoutine());
+        return null;
     }
+    
+    /// <summary>
+    /// 명월이가 배식대에서 음식을 꺼내는 상황
+    /// </summary>
+    /// <returns></returns>
     public GameObject TakeFood()
     {
         GameObject food = this.currentFood;
@@ -58,23 +73,23 @@ public class ServingSlot : MonoBehaviour, IInteractable
         {
             //GameObject�� �𵨸��� �����ϴ� ����� ����
             Destroy(this.objFoodPrefab);
-            this.objFoodPrefab = null;
+            objFoodPrefab = null;
         }
 
-        if (this.coroutineSpoil != null) StopCoroutine(this.coroutineSpoil);
-        this.coroutineSpoil = null;
+        if (coroutineSpoil != null) StopCoroutine(coroutineSpoil);
+        coroutineSpoil = null;
 
-        this.currentFood = null;
-        this.Timer = 0f;
+        currentFood = null;
+        Timer = 0f;
 
         return food;
     }
 
     private IEnumerator SpoilTimerRoutine()
     {
-        while (this.Timer < SPOIL_TIME)
+        while (Timer < SPOIL_TIME)
         {
-            this.Timer += Time.deltaTime;
+            Timer += Time.deltaTime;
             yield return null; 
         }
 
@@ -84,18 +99,15 @@ public class ServingSlot : MonoBehaviour, IInteractable
     {
         Debug.Log($"{this.currentFood.name} �丮 ���");
 
-        this.currentFood = null;
-        this.Timer = 0f;
-        this.coroutineSpoil = null;
+        currentFood = null;
+        Timer = 0f;
+        coroutineSpoil = null;
     }
     public Vector3 GetInteractPosition()
     {
-        return this.servingPoint.position;
+        return servingPoint.position;
     }
-    public void Interact() 
-    {
-        // 상호 작용
-    }
+    
     public bool CanInteract(PlayerType playerType)
     {
         return playerType == this.playerType;
