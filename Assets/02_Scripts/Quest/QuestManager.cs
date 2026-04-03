@@ -19,7 +19,11 @@ public class QuestManager : Singleton<QuestManager>, ISubject
     
     [SerializeField] private Inventory inventory;
     private List<Quest> activeQuests = new List<Quest>();
+    public List<Quest> ActiveQuests => activeQuests;
     private List<Quest> waitingQuests = new List<Quest>();
+    
+    private List<Quest> completedQuests = new List<Quest>();
+    public List<Quest> CompletedQuests => completedQuests;
     
     public event Action<Quest> OnActiveQuestAdded; // ActiveQuest 리스트에 새 퀘스트 추가 시 호출 (quest pop up controller에서 사용)
     public event Action<Quest> OnActiveQuestRemoved; // ActiveQuest 리스트에 퀘스트 제거 시 호출
