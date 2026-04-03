@@ -50,8 +50,8 @@ public class PlayerManager : Singleton<PlayerManager>
         if (this.selectedUnit == null)
             return;
 
-            this.selectedUnit.SetSpeed(this.moveSpeed, this.angularSpeed, this.accelerationSpeed);
-            this.selectedUnit.MoveTo(destination, onArrived);
+        this.selectedUnit.SetSpeed(this.moveSpeed, this.angularSpeed, this.accelerationSpeed);
+        this.selectedUnit.MoveTo(destination, onArrived);
     }
 
     public void StopCurrentPlayer()

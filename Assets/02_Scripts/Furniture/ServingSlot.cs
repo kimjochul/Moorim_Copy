@@ -6,8 +6,6 @@ using static Constants;
 public class ServingSlot : MonoBehaviour, IInteractable
 {
     [Header("��ȣ�ۿ� ĳ����")]
-    [SerializeField]
-    private PlayerType playerType;
     [SerializeField] 
     private Transform servingPoint;
 
@@ -31,6 +29,14 @@ public class ServingSlot : MonoBehaviour, IInteractable
     public void Interact(PlayerController player)
     {
         // 상호작용 로직
+        if (player.PlayerType == PlayerType.Sowol)
+        {
+            
+        }
+        else if (player.PlayerType == PlayerType.Myungwol)
+        {
+            
+        }
     }
 
     // 추가
@@ -45,19 +51,24 @@ public class ServingSlot : MonoBehaviour, IInteractable
     /// <param name="foodData"></param>
     public FoodData PlaceFood(FoodData foodData)
     {
+        if (currentItem != null)
+            previousItem = currentItem;
+        else
+            previousItem = null;
+        
         currentItem = foodData;
         currentFood = foodData.foodPrefab;
         Timer = 0f;
 
-        if (currentFood != null) // 기존 배식대에 음식이 있으면 인벤토리에 되돌려주기 아니면 기능상 아예 버리는 선택지가 있을 수도
+        if (currentItem != null) // 기존 배식대에 음식이 있으면 인벤토리에 되돌려주기 아니면 기능상 아예 버리는 선택지가 있을 수도
         {
             return previousItem;
         }
 
         if (coroutineSpoil != null) 
-            StopCoroutine(this.coroutineSpoil);
+            StopCoroutine(coroutineSpoil);
 
-        this.coroutineSpoil = StartCoroutine(SpoilTimerRoutine());
+        coroutineSpoil = StartCoroutine(SpoilTimerRoutine());
         return null;
     }
     
@@ -65,9 +76,9 @@ public class ServingSlot : MonoBehaviour, IInteractable
     /// 명월이가 배식대에서 음식을 꺼내는 상황
     /// </summary>
     /// <returns></returns>
-    public GameObject TakeFood()
+    public FoodData TakeFood()
     {
-        GameObject food = this.currentFood;
+        FoodData food = currentItem;
 
         if (this.objFoodPrefab != null)
         {
@@ -100,6 +111,7 @@ public class ServingSlot : MonoBehaviour, IInteractable
         Debug.Log($"{this.currentFood.name} �丮 ���");
 
         currentFood = null;
+        currentItem = null;
         Timer = 0f;
         coroutineSpoil = null;
     }
@@ -110,6 +122,6 @@ public class ServingSlot : MonoBehaviour, IInteractable
     
     public bool CanInteract(PlayerType playerType)
     {
-        return playerType == this.playerType;
+        return true;
     }
 }

@@ -834,6 +834,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 447102931d0e0874bbe7ef11f8584509, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CookingStation
+  interactPoint: {fileID: 0}
   cookTime: 15
 --- !u!65 &82545916
 BoxCollider:
@@ -10120,6 +10121,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e5ee8d98b438654fb423fdf4daa13c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Myungwol
+  playerType: 0
 --- !u!195 &1291303175
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -14620,7 +14622,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19662cc7b137aee4fb61c3ad3c45dba4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Sowol
-  cookingStation: {fileID: 0}
+  playerType: 1
+  cookingStation: {fileID: 82545915}
 --- !u!1 &1845544284
 GameObject:
   m_ObjectHideFlags: 0
@@ -16191,7 +16194,7 @@ MonoBehaviour:
   accelerationSpeed: 100
   players:
   - {fileID: 1291303174}
-  - {fileID: 0}
+  - {fileID: 1836712521}
 --- !u!4 &2020581686
 Transform:
   m_ObjectHideFlags: 0

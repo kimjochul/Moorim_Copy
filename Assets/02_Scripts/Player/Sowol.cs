@@ -35,7 +35,7 @@ public class Sowol : PlayerController
     
     public override void OnSlotClicked(Slot slot)
     {
-        if(slot.Owner.Type is InventoryType.IngredientsButMeatOnly or InventoryType.IngredientsButMeatOnly)
+        if(slot.Owner.Type is InventoryType.IngredientsButMeatOnly or InventoryType.Ingredients)
             ClickIngredientInvenSlot(slot);
         
         if(slot.Owner.Type is InventoryType.Chef)
