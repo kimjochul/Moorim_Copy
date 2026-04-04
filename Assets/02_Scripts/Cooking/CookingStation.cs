@@ -21,9 +21,6 @@ public class CookingStation : MonoBehaviour, IInteractable
 
     public CookingState CurrentState { get; private set; } = CookingState.Idle;
     private Recipe currentRecipe;
-
-    // 현재 이 조리대를 사용 중인 플레이어
-    private PlayerController currentUser;
     
     void Start()
     {
@@ -42,31 +39,23 @@ public class CookingStation : MonoBehaviour, IInteractable
     // 플레이어가 조리대에 상호작용했을 때 실행되어야할 기능
     public void Interact(PlayerController player)
     {
-        currentUser = player;
- 
         if (CurrentState == CookingState.Idle && CookingController.Instance != null)
             CookingController.Instance.OpenCookingSystem(this);
         else if (CurrentState == CookingState.Cooking)
         {
             Debug.Log("보글보글.. 현재 조리 중입니다!");
- 
-            // 조리 중이면 상호작용 상태를 바로 해제
-            // (조리는 백그라운드에서 진행되고, 소월은 자유롭게 움직일 수 있음)
-            player.EndInteract();
         }
         else if (CurrentState == CookingState.Done)
         {
             // 완성된 음식 수거
             Inventory sowolInven = InventoryManager.Instance.GetInventory(InventoryType.Chef);
             CollectFood(sowolInven);
-            player.EndInteract();
         }
     }
 
     public void OnInteractEnd(PlayerController player)
     {
         // ClickToInteract 모드이므로 트리거 퇴장으로는 호출되지 않음
-        // 조리대는 자체적으로 EndInteract를 관리
     }
 
     public Vector3 GetInteractPosition()

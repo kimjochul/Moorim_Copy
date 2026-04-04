@@ -34,59 +34,56 @@ public class PlayerManager : Singleton<PlayerManager>
     public void SelectPlayer(PlayerType playerType)
     {
         int index = (int)playerType;
-        if (index >= this.players.Length || this.players[index] == null) return;
+        if (index >= players.Length || players[index] == null) return;
 
         // 이전 유닛 해제
-        if (this.selectedUnit != null)
-            this.selectedUnit.OnDeselected();
+        if (selectedUnit != null)
+            selectedUnit.OnDeselected();
 
-        this.selectedUnit = this.players[index];
-        this.CurrentPlayer = playerType;
-        this.selectedUnit.OnSelected();
+        selectedUnit = players[index];
+        CurrentPlayer = playerType;
+        selectedUnit.OnSelected();
     }
 
     public void MoveSelectedUnitTo(Vector3 destination, UnityAction onArrived = null)
     {
-        if (this.selectedUnit == null)
+        if (selectedUnit == null)
             return;
 
-        this.selectedUnit.SetSpeed(this.moveSpeed, this.angularSpeed, this.accelerationSpeed);
-        this.selectedUnit.MoveTo(destination, onArrived);
+        selectedUnit.SetSpeed(moveSpeed, angularSpeed, accelerationSpeed);
+        selectedUnit.MoveTo(destination, onArrived);
     }
 
     public void StopCurrentPlayer()
     {
-        this.selectedUnit?.Stop();
+        selectedUnit?.Stop();
     }
 
     // 상호작용 실행
-    // PlayerInteractor 트리거 진입 시 호출 (첫 도착)
-    // PlayerInput에서 호출 (트리거 안에서 재클릭)
+    // 트리거 진입 시 or 트리거 안에서 재클릭 시 호출
+    // CanInteract 확인 후 Interact를 직접 호출
     public void ExecuteInteract(IInteractable target)
     {
-        if (this.selectedUnit == null) return;
-        if (this.selectedUnit.IsInteracting) return;
+        if (selectedUnit == null) return;
         if (target == null) return;
-
-        if (!target.CanInteract(this.CurrentPlayer)) return;
+        if (!target.CanInteract(CurrentPlayer)) return;
 
         // 이동 중이면 멈추고 상호작용
-        this.selectedUnit.Stop();
+        selectedUnit.Stop();
 
         // 상호작용 실행
-        this.selectedUnit.BeginInteract(target);
-        target.Interact(this.selectedUnit);
+        target.Interact(selectedUnit);
 
         // 예약만 초기화 - ActiveInteractable은 트리거 안에 있는 한 유지
-        this.ReservedInteractable = null;
+        ReservedInteractable = null;
     }
 
     // 특정 타입의 PlayerController를 반환 (외부에서 참조 필요 시)
     public PlayerController GetPlayer(PlayerType type)
     {
         int index = (int)type;
-        if (index < this.players.Length)
-            return this.players[index];
+        if (index < players.Length)
+            return players[index];
 
         return null;
     }

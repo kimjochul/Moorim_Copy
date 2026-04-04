@@ -5,32 +5,26 @@ using static Constants;
 
 public class PlayerController : MonoBehaviour, IControllable
 {
-    // 상태
-    private bool isInteracting;
-    public bool IsInteracting => isInteracting;
-
     public bool IsMoving
     {
         get
         {
-            if (this.agent == null) return false;
-            if (this.agent.pathPending) return true;
-            return this.agent.hasPath && this.agent.remainingDistance > this.agent.stoppingDistance;
+            if (agent == null) return false;
+            if (agent.pathPending) return true;
+            return agent.hasPath && agent.remainingDistance > agent.stoppingDistance;
         }
     }
 
     [SerializeField] private PlayerType playerType;
-    public PlayerType PlayerType => this.playerType;
+    public PlayerType PlayerType => playerType;
 
     private NavMeshAgent agent;
 
     private UnityAction onArrived; // 콜백
 
-    private IInteractable currentInteractTarget; // 현재 상호작용 대상
-
     void Awake()
     {
-        this.agent = GetComponent<NavMeshAgent>();
+        agent = GetComponent<NavMeshAgent>();
     }
 
     void Update()
@@ -59,9 +53,6 @@ public class PlayerController : MonoBehaviour, IControllable
 
     public virtual void MoveTo(Vector3 destination, UnityAction onArrived = null)
     {
-        // 상호작용 중이면 이동 불가
-        if (isInteracting) return;
-
         agent.ResetPath();
         agent.velocity = Vector3.zero;
         agent.SetDestination(destination);
@@ -82,28 +73,6 @@ public class PlayerController : MonoBehaviour, IControllable
         this.agent.angularSpeed = angular;
         this.agent.acceleration = accel;
     }
-
-    // 상호작용 시작 - PlayerManager 또는 Interactable에서 호출
-    public void BeginInteract(IInteractable target)
-    {
-        isInteracting = true;
-        currentInteractTarget = target;
-        OnInteractBegin(target);
-    }
-
-    // 상호작용 종료 Interactable 완료 시 호출
-    public void EndInteract()
-    {
-        Debug.Log("EndInteract");
-        isInteracting = false;
-        IInteractable prev = currentInteractTarget;
-        currentInteractTarget = null;
-        OnInteractEnd(prev);
-    }
-
-    // 서브클래스 오버라이드용 훅
-    protected virtual void OnInteractBegin(IInteractable target) { }
-    protected virtual void OnInteractEnd(IInteractable target) { }
 
     // 선택/해제
     public virtual void OnSelected()

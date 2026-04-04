@@ -36,14 +36,7 @@ public class PlayerInteractor : MonoBehaviour
 
         // AutoOnEnter 모드: 트리거 퇴장 시 자동으로 상호작용 종료
         if (interactable.Mode == InteractMode.AutoOnEnter)
-        {
-            PlayerController unit = pm.SelectedUnit;
-            if (unit != null && unit.IsInteracting)
-            {
-                interactable.OnInteractEnd(unit);
-                unit.EndInteract();
-            }
-        }
+            interactable.OnInteractEnd(pm.SelectedUnit);;
  
         // ActiveInteractable 해제
         if (pm.ActiveInteractable == interactable)
