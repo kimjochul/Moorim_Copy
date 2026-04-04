@@ -31,10 +31,7 @@ public class Postman : MonoBehaviour, IInteractable
     public void Interact(PlayerController player)
     {
         if (!IsAvailableDay())
-        {
-            player.EndInteract();
             return;
-        }
  
         // UI 창 호출
         // UI 호출 코드

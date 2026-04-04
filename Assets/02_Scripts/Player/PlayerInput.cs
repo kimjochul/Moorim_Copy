@@ -17,14 +17,11 @@ public class PlayerInput : MonoBehaviour
         // 글로벌 UI 입력 (어떤 상태에서든 항상 처리)
         GlobalUIInput();
  
-        // 캐릭터 전환 (상호작용 중이 아닐 때만)
+        // 캐릭터 전환
         PlayerSelection();
  
-        // 마우스 클릭 (상호작용 중이 아닐 때만)
-        if (!PlayerManager.Instance.SelectedUnit.IsInteracting)
-        {
-            MouseClick();
-        }
+        // 마우스 클릭
+        MouseClick();
     }
 
     private void GlobalUIInput()
@@ -40,11 +37,9 @@ public class PlayerInput : MonoBehaviour
         }
     }
 
+    // 캐릭터 전환
     private void PlayerSelection()
     {
-        if (PlayerManager.Instance.SelectedUnit != null && PlayerManager.Instance.SelectedUnit.IsInteracting)
-            return;
-        
         if (Input.GetKeyDown(KeyCode.Alpha1))
             PlayerManager.Instance.SelectPlayer(PlayerType.Myungwol);
         else if (Input.GetKeyDown(KeyCode.Alpha2))
