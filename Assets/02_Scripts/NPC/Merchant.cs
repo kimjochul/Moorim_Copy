@@ -1,4 +1,5 @@
 using UnityEngine;
+using static Constants;
 
 public class Merchant : MonoBehaviour, IInteractable
 {
@@ -6,7 +7,12 @@ public class Merchant : MonoBehaviour, IInteractable
     
     [SerializeField] private GameObject merchantView;
     [SerializeField] private MerchantUI merchantUI;
-
+ 
+    // ── IInteractable 구현 ──
+ 
+    // 상인은 클릭해서 상호작용
+    public InteractMode Mode => InteractMode.ClickToInteract;
+ 
     private void Start()
     {
         dayManager.OnDayEnd += DailyQuestCreate; 
@@ -19,18 +25,26 @@ public class Merchant : MonoBehaviour, IInteractable
         merchantView.SetActive(IsAvailableDay());
     }
     
-    public bool CanInteract(Constants.PlayerType playerType)
+    public bool CanInteract(PlayerType playerType)
     {
         return IsAvailableDay();
     }
-
-    public void Interact()
+ 
+    public void Interact(PlayerController player)
     {
-        if (!IsAvailableDay()) return;
-        // UI 창 호출 눌렀을 때
+        if (!IsAvailableDay())
+            return;
+ 
+        // UI 창 호출
         // UI 호출 코드
+        // UI 닫을 때 player.EndInteract() 호출 필요
     }
-    
+ 
+    public void OnInteractEnd(PlayerController player)
+    {
+        // ClickToInteract — 트리거 퇴장으로 호출되지 않음
+    }
+ 
     /// <summary>
     /// 랜덤 퀘스트 이전거 삭제 후 3개 재발행 (매주 월 수 금요일 마다 호출)
     /// </summary>
@@ -38,10 +52,8 @@ public class Merchant : MonoBehaviour, IInteractable
     {
         if (IsAvailableDay())
         {
-            // 기존 랜덤 퀘스트 제거 TODO: 이거 퀘스트 지우는 시점은 다시 정해야함
             QuestManager.Instance.ClearRandomQuests();
-
-            // 새 랜덤 퀘스트 3개 생성
+ 
             for (int i = 0; i < 3; i++)
             {
                 QuestManager.Instance.NotifyListener(new QuestEvent
@@ -51,7 +63,7 @@ public class Merchant : MonoBehaviour, IInteractable
             }
         }
     }
-
+ 
     private bool IsAvailableDay()
     {
         return dayManager.DayData.dayOfWeek == DayOfWeek.Monday ||

@@ -1,6 +1,6 @@
 using System;
 using System.Collections;
-using NUnit.Framework;
+using static Constants;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,6 +12,9 @@ public class CookingStation : MonoBehaviour, IInteractable
     // [Header("UI")]
     // [SerializeField] private GameObject resultObj;
     // [SerializeField] private Image resultFoodIcon;
+
+    [Header("상호작용 위치")]
+    [SerializeField] private Transform interactPoint;
 
     [Header("조리 설정")]
     [SerializeField] private float cookTime = 15f;
@@ -25,32 +28,41 @@ public class CookingStation : MonoBehaviour, IInteractable
         //     resultObj.SetActive(false);
     }
     
-    
+     // 조리대는 ClickToInteract — UI 닫고 재클릭 가능
+    public InteractMode Mode => InteractMode.ClickToInteract;
+ 
+    public bool CanInteract(PlayerType playerType)
+    {
+        return playerType == PlayerType.Sowol;
+    }
+
     // 플레이어가 조리대에 상호작용했을 때 실행되어야할 기능
-    public void Interact()
+    public void Interact(PlayerController player)
     {
         if (CurrentState == CookingState.Idle && CookingController.Instance != null)
-        {
             CookingController.Instance.OpenCookingSystem(this);
-        }
         else if (CurrentState == CookingState.Cooking)
         {
             Debug.Log("보글보글.. 현재 조리 중입니다!");
         }
         else if (CurrentState == CookingState.Done)
         {
+            // 완성된 음식 수거
             Inventory sowolInven = InventoryManager.Instance.GetInventory(InventoryType.Chef);
             CollectFood(sowolInven);
         }
     }
 
-    public bool CanInteract(Constants.PlayerType playerType)
+    public void OnInteractEnd(PlayerController player)
     {
-        if(playerType == Constants.PlayerType.Sowol)
-            return true;
-        
-        return false;
+        // ClickToInteract 모드이므로 트리거 퇴장으로는 호출되지 않음
     }
+
+    public Vector3 GetInteractPosition()
+    {
+        return interactPoint != null ? interactPoint.position : transform.position;
+    }
+
 
     // 조리 버튼이 눌렸을 때 실행되어야할 기능
     public void StartCooking(Recipe recipe)

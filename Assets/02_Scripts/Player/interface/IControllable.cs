@@ -1,12 +1,15 @@
 using UnityEngine;
 using UnityEngine.Events;
+using static Constants;
 
 public interface IControllable
 {
-    PlayerState CurrentState { get; }
-    void ChangeState(PlayerState state);    //»óÅÂ º¯°æ
-    void OnSelected();                  // ¼±ÅÃ µÇ¾úÀ»¶§
-    void OnDeselected();                // ¼±ÅÃ ÇØÁ¦µÇ¾úÀ»¶§
-    void MoveTo(Vector3 destination, UnityAction action = null);   // ¸ñÇ¥ ÁöÁ¡À¸·Î ÀÌµ¿
-    void SetSpeed(float move, float angular, float accel);  //¼Óµµ Á¶Á¤
+    bool IsMoving { get; } // ë„¤ë¸Œë©”ì‰¬ì—ì´ì „íŠ¸ ê¸°ë°˜ ì´ë™ ì¤‘ ì—¬ë¶€
+    PlayerType PlayerType { get; } // ì´ ìœ ë‹› íƒ€ì…
+
+    void OnSelected();   // ìºë¦­í„° ìƒíƒœ ì§„ì… (ìŠ¤ì™‘)
+    void OnDeselected(); // ìºë¦­í„° ìƒíƒœ í‡´ì¥? 
+    void MoveTo(Vector3 destination, UnityAction onArrived = null);  // ë„¤ë¸Œë©”ì‰¬ ì´ë™, ì—¬ë¶€
+    void Stop();
+    void SetSpeed(float move, float angular, float accel); // ì›€ì§ì„
 }

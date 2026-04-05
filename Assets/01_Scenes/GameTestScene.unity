@@ -834,6 +834,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 447102931d0e0874bbe7ef11f8584509, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CookingStation
+  interactPoint: {fileID: 82545920}
   cookTime: 15
 --- !u!65 &82545916
 BoxCollider:
@@ -854,8 +855,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 3.0838428, y: 1, z: 2.6732256}
-  m_Center: {x: -0.060248673, y: 0, z: 0.89161265}
+  m_Size: {x: 1, y: 1, z: 2}
+  m_Center: {x: 0, y: 0, z: 0.5}
 --- !u!65 &82545917
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3883,7 +3884,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 176b0ec001a653f4da7090d6f6f8cefe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ServingSlot
-  playerType: 0
   servingPoint: {fileID: 6184523}
 --- !u!1 &409618151
 GameObject:
@@ -4011,7 +4011,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 176b0ec001a653f4da7090d6f6f8cefe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ServingSlot
-  playerType: 0
   servingPoint: {fileID: 1230427125}
 --- !u!1 &417789460
 GameObject:
@@ -7839,7 +7838,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 176b0ec001a653f4da7090d6f6f8cefe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ServingSlot
-  playerType: 0
   servingPoint: {fileID: 1714558603}
 --- !u!1 &982743192
 GameObject:
@@ -8712,7 +8710,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 176b0ec001a653f4da7090d6f6f8cefe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ServingSlot
-  playerType: 0
   servingPoint: {fileID: 982743193}
 --- !u!1 &1184813518
 GameObject:
@@ -10083,7 +10080,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 176b0ec001a653f4da7090d6f6f8cefe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ServingSlot
-  playerType: 0
   servingPoint: {fileID: 1637735382}
 --- !u!1 &1291303173
 GameObject:
@@ -10120,6 +10116,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e5ee8d98b438654fb423fdf4daa13c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Myungwol
+  playerType: 0
 --- !u!195 &1291303175
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -11577,7 +11574,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 176b0ec001a653f4da7090d6f6f8cefe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ServingSlot
-  playerType: 0
   servingPoint: {fileID: 676010140}
 --- !u!4 &1467852567
 Transform:
@@ -13412,7 +13408,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 176b0ec001a653f4da7090d6f6f8cefe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ServingSlot
-  playerType: 0
   servingPoint: {fileID: 1423444143}
 --- !u!1 &1700913198
 GameObject:
@@ -14441,9 +14436,9 @@ GameObject:
   - component: {fileID: 1836712517}
   - component: {fileID: 1836712516}
   - component: {fileID: 1836712515}
-  - component: {fileID: 1836712513}
   - component: {fileID: 1836712519}
   - component: {fileID: 1836712520}
+  - component: {fileID: 1836712521}
   m_Layer: 0
   m_Name: Sowol
   m_TagString: Untagged
@@ -14451,20 +14446,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1836712513
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1836712512}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 19662cc7b137aee4fb61c3ad3c45dba4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Sowol
-  myInventory: {fileID: 282554022}
-  cookingStation: {fileID: 82545915}
 --- !u!4 &1836712514
 Transform:
   m_ObjectHideFlags: 0
@@ -14622,6 +14603,20 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &1836712521
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1836712512}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19662cc7b137aee4fb61c3ad3c45dba4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Sowol
+  playerType: 1
+  cookingStation: {fileID: 82545915}
 --- !u!1 &1845544284
 GameObject:
   m_ObjectHideFlags: 0
@@ -15608,7 +15603,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 176b0ec001a653f4da7090d6f6f8cefe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ServingSlot
-  playerType: 0
   servingPoint: {fileID: 381272193}
 --- !u!1 &1918122043
 GameObject:
@@ -16192,7 +16186,7 @@ MonoBehaviour:
   accelerationSpeed: 100
   players:
   - {fileID: 1291303174}
-  - {fileID: 1836712513}
+  - {fileID: 1836712521}
 --- !u!4 &2020581686
 Transform:
   m_ObjectHideFlags: 0
