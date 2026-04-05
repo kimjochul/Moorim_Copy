@@ -4,15 +4,16 @@ using UnityEngine.UI;
 using System;
 public class QuestSlot : MonoBehaviour
 {
-    private QuestData questData;
+    public QuestData questData { get; private set; }
     [SerializeField] private Button btnSlot;
     [SerializeField] private TextMeshProUGUI txtQuestName;
+    [SerializeField] private GameObject objSelectArrow;
 
 
 
-    public void Init(QuestData data, Action<QuestData> onClickAction)
+    public void Init(Quest quest, Action<QuestSlot> onClickAction)
     {
-        this.questData = data;
+        this.questData = quest.Data;
 
         this.txtQuestName.text = "";
 
@@ -22,8 +23,15 @@ public class QuestSlot : MonoBehaviour
         {
             if (this.questData != null)
             {
-                onClickAction?.Invoke(this.questData);
+                onClickAction?.Invoke(this);
             }
         });
+    }
+    public void SetSelect(bool isSelected)
+    {
+        if (this.objSelectArrow != null)
+        {
+            this.objSelectArrow.SetActive(isSelected);
+        }
     }
 }

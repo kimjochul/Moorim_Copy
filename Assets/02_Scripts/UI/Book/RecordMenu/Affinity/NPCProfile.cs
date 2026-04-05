@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using System;
 
-public class GuestProfile : MonoBehaviour
+public class NPCProfile : MonoBehaviour
 {
     [SerializeField] Image imgIcon;
     [SerializeField] TextMeshProUGUI txtName;

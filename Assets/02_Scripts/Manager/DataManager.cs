@@ -7,6 +7,7 @@ public class DataManager : Singleton<DataManager>
 {
     private IngredientList ingredientList;
     private RecipeList recipeList;
+    private QuestList questList;
 
     private Dictionary<IngredientType, List<IngredientData>> dicIngredient = new Dictionary<IngredientType, List<IngredientData>>();
 
@@ -18,6 +19,7 @@ public class DataManager : Singleton<DataManager>
     {
         IngredientDataLoad();
         RecipeDataLoad();
+        QuestDataLoad();
 
         IngredientCategorize();
     }
@@ -28,6 +30,10 @@ public class DataManager : Singleton<DataManager>
     private void RecipeDataLoad()
     {
         this.recipeList = Resources.Load<RecipeList>("Data/RecipeList");
+    }
+    private void QuestDataLoad()
+    {
+        this.questList = Resources.Load<QuestList>("Data/QuestList");
     }
 
     // ºÐ·ù
