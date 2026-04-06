@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -40,6 +41,8 @@ public class PlayerInput : MonoBehaviour
     // 캐릭터 전환
     private void PlayerSelection()
     {
+        if (PlayerManager.Instance.BlockSwap) return;
+        
         if (Input.GetKeyDown(KeyCode.Alpha1))
             PlayerManager.Instance.SelectPlayer(PlayerType.Myungwol);
         else if (Input.GetKeyDown(KeyCode.Alpha2))

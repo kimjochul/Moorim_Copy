@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using static Constants;
 
 /// <summary>
 /// Customer 생성 및 관리 매니저
@@ -42,14 +43,14 @@ public class GuestManager : MonoBehaviour
         // 풀 매니저에 프리팹 등록
         foreach (var entry in normalGuestPrefabs)
         {
-            GuestPoolManager.Instance.RegisterPrefab(entry.appearance, entry.prefab, 3);
+            PoolManager.Instance.Register(entry.appearance.ToString(), entry.prefab, 3);
         }
 
         if (richGuestPrefab != null)
-            GuestPoolManager.Instance.RegisterPrefab(Constants.GuestAppearance.RichMan, richGuestPrefab, 1);
+            PoolManager.Instance.Register(GuestAppearance.RichMan.ToString(), richGuestPrefab, 1);
 
         if (thiefGuestPrefab != null)
-            GuestPoolManager.Instance.RegisterPrefab(Constants.GuestAppearance.ThiefGuy, thiefGuestPrefab, 1);
+            PoolManager.Instance.Register(GuestAppearance.ThiefGuy.ToString(), thiefGuestPrefab, 1);
     }
 
     void OnDisable()
@@ -67,14 +68,14 @@ public class GuestManager : MonoBehaviour
     {
         globalIDCounter++; // 스폰될 때마다 고유 id 1씩 증가
 
-        Constants.GuestAppearance appearance = Constants.GuestAppearance.NormalMaleA;
+        GuestAppearance appearance = GuestAppearance.NormalMaleA;
 
         // 확률 돌려서 손님 타입과 외형 결정 (0~1사이 랜덤)
         float rand = UnityEngine.Random.value;
         if (rand < 0.05f)
-            appearance = Constants.GuestAppearance.ThiefGuy;
+            appearance = GuestAppearance.ThiefGuy;
         else if (rand < 0.1f)
-            appearance = Constants.GuestAppearance.RichMan;
+            appearance = GuestAppearance.RichMan;
         else
         {
             int randomIndex = UnityEngine.Random.Range(0, normalGuestPrefabs.Length);
@@ -82,7 +83,7 @@ public class GuestManager : MonoBehaviour
         }
 
         // 풀에서 타입에 맞는 오브젝트 꺼냄
-        GameObject guestObj = GuestPoolManager.Instance.Get(appearance);
+        GameObject guestObj = PoolManager.Instance.Get(appearance.ToString());
 
         if (guestObj != null)
         {

@@ -19,7 +19,7 @@ public abstract class GuestBase : MonoBehaviour
     [SerializeField] private RecipeList menuBoard;
 
     [Header("이동(A*) 설정")]
-    [SerializeField] private NavMeshAgent agent; // 실제로 움직이는 객체
+    private GuestMover mover;
     public Transform exitDoor;
     public Chair myChair;
 
@@ -50,49 +50,41 @@ public abstract class GuestBase : MonoBehaviour
     // 풀에서 꺼낼 때 호출. 재사용 시 이전 생애의 모든 상태를 깨끗이 초기화해 버그 방지
     public virtual void ResetState()
     {
-        // 1) FSM 플래그 — 이게 안 되면 Enter/Exit에서 경로를 안 잡음
+        // FSM 플래그 — 이게 안 되면 Enter/Exit에서 경로를 안 잡음
         isEnterPathSet = false;
         isExitPathSet = false;
         isOrderTaken = false;
 
-        // 2) 타이머 & 상태값
+        // 타이머 & 상태값
         stateTimer = 0f;
         currentMood = Constants.GuestMood.Neutral;
         FoodQuality = Constants.FoodQuality.Normal;
         basePrise = 0;
 
-        // 3) 주문 데이터
+        // 주문 데이터
         if (myOrder == null)
             myOrder = new RuntimeOrder();
         else
             myOrder.Clear();
 
-        // 4) 의자 반환 (이전 손님이 앉았던 의자가 점유 상태로 남는 것 방지)
+        // 의자 반환 (이전 손님이 앉았던 의자가 점유 상태로 남는 것 방지)
         if (myChair != null)
          {
             myChair.Empty();
             myChair = null;
          }
 
-        // 5) 음식 모델 제거
+        // 음식 모델 제거
         if (currentFoodModel != null)
         {
             Destroy(currentFoodModel);
             currentFoodModel = null;
          }
 
-        // 6) NavMeshAgent 정리 (이전 경로가 남으면 엉뚱한 곳으로 이동)
-        if (agent != null)
-        {
-            // agent.enabled = true;
-            // agent.ResetPath();
-            // agent.isStopped = false;
-            // agent.velocity = Vector3.zero;
-            agent.enabled = false;
-        }
+        mover.ResetAgent();
 
-        // 7) 이벤트 구독 전부 해제
-        //    안 하면 이전 생애의 리스너가 남아서 이벤트가 중복 호출됨
+        // 이벤트 구독 전부 해제
+        // 안 하면 이전 생애의 리스너가 남아서 이벤트가 중복 호출됨
         OnGuestStateChanged = null;
         OnGuestReadyToOrder = null;
         OnOrderPlaced = null;
@@ -114,22 +106,20 @@ public abstract class GuestBase : MonoBehaviour
 
         gameObject.SetActive(true);
 
-        if (agent != null)
-        {
-            agent.enabled = true;
-            agent.ResetPath();
-            agent.isStopped = false;
-            agent.velocity = Vector3.zero;
-        }
+        mover.EnableAgent();
         
         ChangeState(Constants.GuestState.Enter);
     }
-    
+
+    void Awake()
+    {
+        mover = GetComponent<GuestMover>();
+    }
+
     void Update()
     {
         GuestFSM();
     }
-
 
     protected void ChangeState(Constants.GuestState newState)
     {
@@ -177,7 +167,7 @@ public abstract class GuestBase : MonoBehaviour
             {
                 myChair.Reserve(this); // 자리 찜
                
-                agent.SetDestination(myChair.sitPoint.position);
+                mover.MoveTo(myChair.sitPoint.position);
                 isEnterPathSet = true;
                 Debug.Log($"[{individualId}] 빈 테이블로 이동 시작");
             }
@@ -187,22 +177,18 @@ public abstract class GuestBase : MonoBehaviour
                 ChangeState(Constants.GuestState.Exit);
                 return;
             }
-            
         }
 
-        // 목적지에 도착했는지 검사
-        // pathpending : 경로 계산 중인지 여부, remainingDistance : 목적지까지 남은 거리, stoppingDistance: 목표 지점에서 멈추는 거리
-        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
-        {
-            agent.isStopped = true;
-            agent.enabled = false; // 길찾기 종료
-            
-            transform.position = myChair.sitPoint.position;
-            transform.rotation = myChair.sitPoint.rotation;
+        if (mover.HasArrived())
+            {
+            mover.StopAndDisable();
 
-            //TO DO : 애니메이션 변경
-            ChangeState(Constants.GuestState.WaitOrder);
-        }
+               transform.position = myChair.sitPoint.position;
+               transform.rotation = myChair.sitPoint.rotation;
+
+               ChangeState(Constants.GuestState.WaitOrder);
+            }
+            
     }
 
     // 착석 후 주문 대기 (메뉴 고르고 플레이어 기다림)
@@ -377,28 +363,18 @@ public abstract class GuestBase : MonoBehaviour
         // 상태 진입 후 딱 한 번만 목적지 찾기
         if (!isExitPathSet && exitDoor != null)
         {
-            Debug.Log($"[{individualId}] Exit 상태 진입! myChair: {(myChair != null ? myChair.gameObject.name : "null")}");
             if (myChair != null)
             {
                 myChair.Empty();
                 myChair = null;
-                Debug.Log($"[{individualId}] 의자 반환 완료!");
-            }
-            else
-            {
-                Debug.Log($"[{individualId}] 반환할 의자가 없음!");
             }
             
-            agent.enabled = true;
-            agent.isStopped = false;
-
-            agent.SetDestination(exitDoor.position);
+            mover.MoveTo(exitDoor.position);
             isExitPathSet = true;
         }
 
-        // 목적지에 도착했는지 검사
-        if (isExitPathSet && !agent.pathPending && agent.remainingDistance <= 2.0f)
-            GuestPoolManager.Instance.Return(myApperance, gameObject);
+        if (isExitPathSet && mover.HasArrived(2.0f))
+            PoolManager.Instance.Return(myApperance.ToString(), gameObject);
     }
 
 
