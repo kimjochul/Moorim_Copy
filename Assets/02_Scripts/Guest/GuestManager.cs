@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using static Constants;
 
@@ -18,11 +19,15 @@ public class GuestManager : MonoBehaviour
     [SerializeField] private float startSpawnTime = 1f;
     [SerializeField] private float spawnInterval = 5f;
 
+    [Header("Watitng Point")]
+    [SerializeField] private int maxWaitingCount = 4;
+    [SerializeField] private Transform[] waitingPoint;
+
     [Serializable]
     public struct GuestPrefabEntry
     {
        public GameObject prefab;
-       public Constants.GuestAppearance appearance;
+       public GuestAppearance appearance;
     }
 
     [SerializeField] private GuestPrefabEntry[] normalGuestPrefabs;
@@ -34,6 +39,9 @@ public class GuestManager : MonoBehaviour
 
     // 손님 런타임 정보
     private int globalIDCounter = 0;
+
+    // 웨이팅 목록
+    private List<GuestBase> waitingGuests = new List<GuestBase>();
 
     void Awake()
     {
@@ -66,6 +74,11 @@ public class GuestManager : MonoBehaviour
 
     private void SpawnGuset()
     {
+        // 빈자리도 없고 웨이팅도 꽉 차면 스폰 중지
+        bool hasEmptyChair = SeatManager.Instance.FindEmptyChair() != null;
+
+        if (!hasEmptyChair && waitingGuests.Count >= maxWaitingCount) return;
+        
         globalIDCounter++; // 스폰될 때마다 고유 id 1씩 증가
 
         GuestAppearance appearance = GuestAppearance.NormalMaleA;
@@ -95,7 +108,7 @@ public class GuestManager : MonoBehaviour
             if (guest != null)
             {
                 guest.ResetState();
-                guest.Init(globalIDCounter, appearance, exitPoint);
+                guest.Init(globalIDCounter, appearance, exitPoint, this);
 
                 guest.OnGuestServedAndPaid += () =>
                 {
@@ -106,6 +119,46 @@ public class GuestManager : MonoBehaviour
         }
     }
 
+    public bool JoinWaiting(GuestBase guest, out Vector3 waitPosition)
+    {
+        waitPosition = Vector3.zero;
+
+        if (waitingGuests.Count >= maxWaitingCount)
+            return false;
+        
+        int pointIndex = waitingGuests.Count;
+        waitingGuests.Add(guest);
+
+        if (waitingPoint != null && pointIndex < waitingPoint.Length)
+            waitPosition = waitingPoint[pointIndex].position;
+        else
+            waitPosition = spawnPoint.position;
+
+        return true;
+    }
+
+    public void LeaveWaiting(GuestBase guest)
+    {
+        if (waitingGuests.Remove(guest))
+            RearrangeWaitingSpots();
+    }
+
+    private void RearrangeWaitingSpots()
+    {
+        for (int i = 0; i < waitingGuests.Count; i++)
+        {
+            if (waitingPoint != null && i < waitingPoint.Length)
+            {
+                GuestMover mover = waitingGuests[i].GetComponent<GuestMover>();
+
+                if (mover != null)
+                    mover.MoveTo(waitingPoint[i].position);
+                else
+                    waitingGuests[i].transform.position = waitingPoint[i].position;
+            }
+        }
+    }
+    
     public void ServeCustomer()
     {
         customerCount++;

@@ -32,7 +32,7 @@
     }
 
     public enum GuestState 
-    { Enter, WaitOrder, WaitFood, Eat, Pay, Exit }
+    { Enter, Waiting, WaitOrder, WaitFood, Eat, Pay, Exit }
 
     public enum GuestMood 
     { VeryBad, Bad, Neutral, Good, VeryGood }
