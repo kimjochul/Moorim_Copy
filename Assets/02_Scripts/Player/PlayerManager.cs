@@ -26,6 +26,9 @@ public class PlayerManager : Singleton<PlayerManager>
     public IInteractable ReservedInteractable { get; set; } // 마우스 클릭으로 예약된 대상
     public IInteractable ActiveInteractable { get; set; } // 트리거 진입한 대상
 
+    // UI 활성화 중 캐릭터 스왑을 막기 위한 프로퍼티
+    public bool BlockSwap { get; set; }
+
     void Start()
     {
         SelectPlayer(PlayerType.Myungwol);
