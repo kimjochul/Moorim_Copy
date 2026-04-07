@@ -621,7 +621,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5967b0e651a98a34193c2d906fed5aad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ThiefGuyGuest
-  orderWaitLimit: 20
+  orderMinWaitLimit: 15
+  orderMaxWaitLimit: 20
   foodMinWaitLimit: 30
   foodMidWaitLimit: 60
   foodMaxWaitLimit: 90
@@ -675,7 +676,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GuestBubbleUI
   moodBubble: {fileID: 4986798727802176518}
+  moodRect: {fileID: 7500791712683789317}
   statusBubble: {fileID: 7917436495127599726}
+  statusRect: {fileID: 3568072565626645618}
   moodIcon: {fileID: 8439582716508645474}
   statusIcon: {fileID: 8700573131793802114}
   veryBadSprite: {fileID: -1026134251, guid: 43e924b4cb29faf49b0036b867f8643d, type: 3}
