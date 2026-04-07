@@ -6,7 +6,7 @@ public class ThiefGuyGuest : GuestBase
 
     void Awake()
     {
-        orderWaitLimit = 40f;
+        orderMaxWaitLimit = 40f;
         foodMaxWaitLimit = 120f;
     }
 
@@ -40,11 +40,6 @@ public class ThiefGuyGuest : GuestBase
     protected override void HandlePayState()
     {
         base.HandlePayState();
-    }
-
-    protected override int CalculateFinalPrice()
-    {
-        return base.CalculateFinalPrice();
     }
 
     // 플레이어가 도망가는 도둑과 상호작용(F키/클릭)했을 때 호출할 메소드
