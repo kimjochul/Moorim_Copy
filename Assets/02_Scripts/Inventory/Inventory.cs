@@ -22,6 +22,7 @@ public class Inventory : MonoBehaviour
     [SerializeField] private GameObject slotPrefab;
     [SerializeField] private int slotCount = 10;
     [SerializeField] private List<Slot> slots  = new List<Slot>();
+    public List<Slot> Slots => slots;
     
     [SerializeField] private InventoryType type;
     public InventoryType Type => type;
@@ -41,6 +42,7 @@ public class Inventory : MonoBehaviour
         {
             Slot slot = Instantiate(slotPrefab, transform).GetComponent<Slot>();
             slot.SetOwner(this);
+            slot.SetIndex(i);
             slot.OnSlotDrop += HandleSlotDrop;
             slot.OnSlotClick += HandleSlotClick;
             slots.Add(slot);
