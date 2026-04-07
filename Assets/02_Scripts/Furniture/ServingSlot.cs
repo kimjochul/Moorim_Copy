@@ -8,19 +8,43 @@ public class ServingSlot : MonoBehaviour, IInteractable
     [Header("��ȣ�ۿ� ĳ����")]
     [SerializeField] 
     private Transform servingPoint;
+    [SerializeField]
+    private Transform foodPosition; 
 
     //�丮 ������Ʈ
     private GameObject objFoodPrefab;
     //�ϼ��� �丮 ��ũ��Ʈ �־��� ����
     private GameObject currentFood;
     public float Timer { get; private set; } = 0f;
-    public bool IsEmpty => this.currentFood == null;
 
     [SerializeField] private Inventory inventory;
-    
-    private Coroutine coroutineSpoil;
 
     public InteractMode Mode => InteractMode.AutoOnEnter;
+    
+    private void Start()
+    {
+        inventory.OnItemAdded += OnItemAddedToServing;
+    }
+    
+    private void Update()
+    {
+        foreach (var slot in inventory.Slots)
+        {
+            if (slot.Item == null)
+                continue;
+            
+            slot.SpoilTimer += Time.deltaTime;
+
+            if (slot.SpoilTimer >= SPOIL_TIME)
+            {
+                Debug.Log($"{slot.Item.ItemName} 상함");
+
+                inventory.RemoveItem(slot.Item.ID, 1);
+
+                slot.SpoilTimer = 0f;
+            }
+        }
+    }
 
     // 시그니처 변경 (내용은 기존 로직 유지하시면서 player 활용)
     public void Interact(PlayerController player)
@@ -59,26 +83,22 @@ public class ServingSlot : MonoBehaviour, IInteractable
     }
     
     /// <summary>
-    /// 소월이가 배식대에 음식을 놓는 상황
+    /// 배식대에 음식을 놓는 상황
     /// </summary>
     /// <param name="foodData"></param>
-    public void PlaceFood(IItem foodItem)
+    public void PlaceFood(IItem foodItem, Inventory sourceInven, Slot sourceSlot)
     {
-        inventory.GetItem(foodItem, 1);
-        
-        Timer = 0f;
-
-        if (coroutineSpoil != null) 
-            StopCoroutine(coroutineSpoil);
-
-        coroutineSpoil = StartCoroutine(SpoilTimerRoutine());
+        // inventory.GetItem(foodItem, 1);
+        // var slot = inventory.FindSlot(foodItem.ID);
+        // slot.SpoilTimer = 0f;
+        sourceInven.MoveSlotTo(inventory, sourceSlot, 1);
     }
     
     /// <summary>
-    /// 명월이가 배식대에서 음식을 꺼내는 상황
+    /// 배식대에서 음식을 꺼내는 상황
     /// </summary>
     /// <returns></returns>
-    public IItem TakeFood(int slotIndex)
+    public IItem TakeFood(int slotIndex, Inventory targetInven)
     {
         var slot = inventory.Slots[slotIndex];
         if (slot.Item == null)
@@ -89,6 +109,7 @@ public class ServingSlot : MonoBehaviour, IInteractable
 
         IItem item = slot.Item;
 
+        inventory.MoveSlotTo(targetInven, slot, 1);
         inventory.RemoveItem(item.ID, 1);
 
         if (objFoodPrefab != null)
@@ -96,33 +117,40 @@ public class ServingSlot : MonoBehaviour, IInteractable
             Destroy(this.objFoodPrefab);
             objFoodPrefab = null;
         }
-
-        if (coroutineSpoil != null) StopCoroutine(coroutineSpoil);
-        coroutineSpoil = null;
         currentFood = null;
         Timer = 0f;
         
         return item;
     }
-
-    private IEnumerator SpoilTimerRoutine()
+    
+    private void OnItemAddedToServing(Slot slot)
     {
-        while (Timer < SPOIL_TIME)
+        slot.SpoilTimer = 0f;
+        
+        // 기존 음식 제거 (중복 방지)
+        if (objFoodPrefab != null)
         {
-            Timer += Time.deltaTime;
-            yield return null; 
+            Destroy(objFoodPrefab);
         }
 
-        SpoilFood();
-    }
-    private void SpoilFood()
-    {
-        Debug.Log($"{this.currentFood.name} �丮 ���");
+        // 프리팹 가져오기
+        FoodData foodData = slot.Item.Data as FoodData;
 
-        currentFood = null;
-        Timer = 0f;
-        coroutineSpoil = null;
+        if (foodData == null || foodData.foodPrefab == null)
+        {
+            Debug.LogWarning("foodPrefab 없음");
+            return;
+        }
+
+        // 스폰
+        objFoodPrefab = Instantiate(
+            foodData.foodPrefab,
+            foodPosition.position,
+            Quaternion.identity,
+            this.transform // 선택: 배식대 자식으로
+        );
     }
+    
     public Vector3 GetInteractPosition()
     {
         return servingPoint.position;

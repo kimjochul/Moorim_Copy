@@ -25,6 +25,9 @@ public class Slot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDropHandler
     // dragSlot은 옮겨지는 슬롯을 참조한다. class, monobehavior, GameObject, Transform 등등은 참조타입
     
     public bool IsEmpty { get; private set; } = true;
+    public float SpoilTimer { get; set; } = 0f;
+    public int FridgeSpoilTimer { get; set; } = 0;
+    public bool IsSpoiling {get; set;} = false;
 
     public event Action<Slot, Slot> OnSlotDrop; // 드래그 중인 아이템을 슬롯에서 놓을 때 호출 용
     
@@ -141,6 +144,9 @@ public class Slot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDropHandler
     public void Clear()
     {
         SetItem(null, 0);
+        
+        SpoilTimer = 0f;
+        FridgeSpoilTimer = 0;
     }
     
     private void EndDrag()
