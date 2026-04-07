@@ -29,6 +29,8 @@ public class Slot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDropHandler
     public event Action<Slot, Slot> OnSlotDrop; // 드래그 중인 아이템을 슬롯에서 놓을 때 호출 용
     
     public event Action<Slot> OnSlotClick;
+
+    public int Index { get; private set; }
     
     // 디버그용
     [SerializeField] private ItemData debugItemData;
@@ -59,6 +61,11 @@ public class Slot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDropHandler
     public void SetOwner(Inventory owner)
     {
         Owner = owner;
+    }
+
+    public void SetIndex(int index)
+    {
+        Index = index;
     }
     
     public void AddItem(IItem item, int count)

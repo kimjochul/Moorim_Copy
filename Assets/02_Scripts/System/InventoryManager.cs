@@ -19,17 +19,21 @@ public class InventoryManager : Singleton<InventoryManager>
     //[SerializeField] private Inventory bondItemInventory; // 인연 아이템
 
     [SerializeField] private Inventory chefInventory; // 소월이용 인벤토리
-    //[SerializeField] private Inventory serverInventory; // 명월이용 인벤토리
+    [SerializeField] private Inventory serverInventory; // 명월이용 인벤토리
 
     //[SerializeField] private Inventory refridgeInventory; // 냉장고
-    //[SerializeField] private Inventory mealTableInventory; // 배식대
+    [SerializeField] private Inventory mealTableInventory; // 배식대
 
     private void Start()
     {
         OpenCommonInventory();
         CloseCommonInventory();
-        OpenInventory(InventoryType.Chef);
-        CloseInventory(InventoryType.Chef);
+        
+        OpenInventory(chefInventory);
+        CloseInventory(chefInventory);
+        
+        OpenInventory(serverInventory);
+        CloseInventory(serverInventory);
     }
 
     public Inventory GetInventory(InventoryType type)
@@ -40,9 +44,9 @@ public class InventoryManager : Singleton<InventoryManager>
             InventoryType.Ingredients => otherIngredientInventory,
             //InventoryType.BondItem => bondItemInventory,
             InventoryType.Chef => chefInventory,
-            //InventoryType.Server => serverInventory,
+            InventoryType.Server => serverInventory,
             //InventoryType.Fridge => refridgeInventory,
-            //InventoryType.MealTable => mealTableInventory,
+            InventoryType.MealTable => mealTableInventory,
             _ => null
         };
     }
@@ -67,16 +71,13 @@ public class InventoryManager : Singleton<InventoryManager>
     /// 특정 인벤토리 열기
     /// </summary>
     /// <param name="type"></param>
-    public void OpenInventory(InventoryType type)
+    public void OpenInventory(Inventory inventory)
     {
-        var inventory = GetInventory(type);
-
         if (inventory == null)
         {
             Debug.LogError("Inventory 없음");
             return;
         }
-
         UIManager.Instance.OpenInventoryPopup(inventory);
     }
 
@@ -84,16 +85,13 @@ public class InventoryManager : Singleton<InventoryManager>
     /// 특정 인벤토리 닫기
     /// </summary>
     /// <param name="type"></param>
-    public void CloseInventory(InventoryType type)
+    public void CloseInventory(Inventory inventory)
     {
-        var inventory = GetInventory(type);
-
         if (inventory == null)
         {
-            Debug.LogError($"{type} 인벤토리 없음");
+            Debug.LogError($"인벤토리 없음");
             return;
         }
-
         UIManager.Instance.CloseInventoryPopup(inventory);
     }
 }

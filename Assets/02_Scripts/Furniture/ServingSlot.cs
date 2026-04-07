@@ -16,10 +16,7 @@ public class ServingSlot : MonoBehaviour, IInteractable
     public float Timer { get; private set; } = 0f;
     public bool IsEmpty => this.currentFood == null;
 
-    private Inventory inventory;
-    
-    private FoodData currentItem;
-    private FoodData previousItem;
+    [SerializeField] private Inventory inventory;
     
     private Coroutine coroutineSpoil;
 
@@ -31,11 +28,15 @@ public class ServingSlot : MonoBehaviour, IInteractable
         // 상호작용 로직
         if (player.PlayerType == PlayerType.Sowol)
         {
-            
+            Inventory chefInventory = InventoryManager.Instance.GetInventory(InventoryType.Chef);
+            InventoryManager.Instance.OpenInventory(inventory);
+            InventoryManager.Instance.OpenInventory(chefInventory);
         }
         else if (player.PlayerType == PlayerType.Myungwol)
         {
-            
+            Inventory serverInventory = InventoryManager.Instance.GetInventory(InventoryType.Server);
+            InventoryManager.Instance.OpenInventory(inventory);
+            InventoryManager.Instance.OpenInventory(serverInventory);
         }
     }
 
@@ -43,57 +44,65 @@ public class ServingSlot : MonoBehaviour, IInteractable
     public void OnInteractEnd(PlayerController player)
     {
         // 종료 시 정리 로직
+        if (player.PlayerType == PlayerType.Sowol)
+        {
+            Inventory chefInventory = InventoryManager.Instance.GetInventory(InventoryType.Chef);
+            InventoryManager.Instance.CloseInventory(inventory);
+            InventoryManager.Instance.CloseInventory(chefInventory);
+        }
+        else if (player.PlayerType == PlayerType.Myungwol)
+        {
+            Inventory serverInventory = InventoryManager.Instance.GetInventory(InventoryType.Server);
+            InventoryManager.Instance.CloseInventory(inventory);
+            InventoryManager.Instance.CloseInventory(serverInventory);
+        }
     }
     
     /// <summary>
     /// 소월이가 배식대에 음식을 놓는 상황
     /// </summary>
     /// <param name="foodData"></param>
-    public FoodData PlaceFood(FoodData foodData)
+    public void PlaceFood(IItem foodItem)
     {
-        if (currentItem != null)
-            previousItem = currentItem;
-        else
-            previousItem = null;
+        inventory.GetItem(foodItem, 1);
         
-        currentItem = foodData;
-        currentFood = foodData.foodPrefab;
         Timer = 0f;
-
-        if (currentItem != null) // 기존 배식대에 음식이 있으면 인벤토리에 되돌려주기 아니면 기능상 아예 버리는 선택지가 있을 수도
-        {
-            return previousItem;
-        }
 
         if (coroutineSpoil != null) 
             StopCoroutine(coroutineSpoil);
 
         coroutineSpoil = StartCoroutine(SpoilTimerRoutine());
-        return null;
     }
     
     /// <summary>
     /// 명월이가 배식대에서 음식을 꺼내는 상황
     /// </summary>
     /// <returns></returns>
-    public FoodData TakeFood()
+    public IItem TakeFood(int slotIndex)
     {
-        FoodData food = currentItem;
-
-        if (this.objFoodPrefab != null)
+        var slot = inventory.Slots[slotIndex];
+        if (slot.Item == null)
         {
-            //GameObject�� �𵨸��� �����ϴ� ����� ����
+            Debug.Log("음식 없음");
+            return null;
+        }
+
+        IItem item = slot.Item;
+
+        inventory.RemoveItem(item.ID, 1);
+
+        if (objFoodPrefab != null)
+        {
             Destroy(this.objFoodPrefab);
             objFoodPrefab = null;
         }
 
         if (coroutineSpoil != null) StopCoroutine(coroutineSpoil);
         coroutineSpoil = null;
-
         currentFood = null;
         Timer = 0f;
-
-        return food;
+        
+        return item;
     }
 
     private IEnumerator SpoilTimerRoutine()
@@ -111,7 +120,6 @@ public class ServingSlot : MonoBehaviour, IInteractable
         Debug.Log($"{this.currentFood.name} �丮 ���");
 
         currentFood = null;
-        currentItem = null;
         Timer = 0f;
         coroutineSpoil = null;
     }
