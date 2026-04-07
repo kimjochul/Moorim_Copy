@@ -39,7 +39,7 @@ public class Myungwol : PlayerController
         }
         else if(slot.Owner.Type is InventoryType.Server)
         {
-            
+            ClickServerSlot(slot);
         }
     }
 
@@ -51,13 +51,29 @@ public class Myungwol : PlayerController
         var interactable = PlayerManager.Instance.ActiveInteractable;
         if (interactable is ServingSlot servingSlot)
         {
-            IItem foodItem = servingSlot.TakeFood(slot.Index);
+            IItem foodItem = servingSlot.TakeFood(slot.Index, inventory);
             if (foodItem == null)
             {
                 Debug.Log("가져올 음식 없음");
                 return;
             }
-            inventory.GetItem(foodItem, 1);
+            //inventory.GetItem(foodItem, 1);
+        }
+    }
+
+    private void ClickServerSlot(Slot slot)
+    {
+        if (slot.Item == null)
+            return;
+
+        var interactable = PlayerManager.Instance.ActiveInteractable;
+        if (interactable is ServingSlot servingSlot)
+        {
+            if (slot.Owner.Type is InventoryType.Server)
+            {
+                servingSlot.PlaceFood(slot.Item, inventory, slot);
+                inventory.RemoveItem(slot.Item.ID, 1);
+            }
         }
     }
 }

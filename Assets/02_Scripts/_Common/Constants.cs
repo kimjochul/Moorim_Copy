@@ -47,7 +47,7 @@
     { Normal, Fine, Good }
 
 
-    public const float SPOIL_TIME = 180f;
+    public const float SPOIL_TIME = 10f;
     public const int SERVINGSLOT_MAXCOUNT = 8;
     public const int FRIDGE_SIZE = 4;
 }
