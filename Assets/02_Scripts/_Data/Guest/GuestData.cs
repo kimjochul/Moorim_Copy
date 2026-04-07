@@ -6,7 +6,7 @@ using UnityEngine;
 [System.Serializable] // 손님이 쥐고 있을 전체 주문서
 public class RuntimeOrder
 {
-    // public RecipeData recipe; // 고른 메뉴
+    public RecipeData recipe; // 고른 메뉴
     public FoodData orderedFood; // 
     public bool isServed; // 음식을 받았는지 여부
 
@@ -15,6 +15,7 @@ public class RuntimeOrder
 
     public void Clear()
     {
+        recipe = null;
         orderedFood = null;
         isServed = false;
     }
