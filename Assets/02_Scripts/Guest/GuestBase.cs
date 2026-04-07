@@ -1,8 +1,6 @@
 using System;
-using System.Linq;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.AI;
+using static Constants;
 
 // 부모 클래스
 public abstract class GuestBase : MonoBehaviour
@@ -19,9 +17,11 @@ public abstract class GuestBase : MonoBehaviour
     [SerializeField] private RecipeList menuBoard;
 
     [Header("이동(A*) 설정")]
-    [SerializeField] private NavMeshAgent agent; // 실제로 움직이는 객체
+    private GuestMover mover;
     public Transform exitDoor;
     public Chair myChair;
+
+    private GuestManager guestManager;
 
     // 손님 런타임 정보
     public int individualId;
@@ -36,13 +36,14 @@ public abstract class GuestBase : MonoBehaviour
 
     private GameObject currentFoodModel;
     
-    public Constants.GuestState currentState { get; private set; }
-    protected Constants.GuestMood currentMood = Constants.GuestMood.Neutral;
+    public GuestState currentState { get; private set; }
+    protected GuestMood currentMood = GuestMood.Neutral;
     // 결제 시 정산할 퀄리티 및 꼼수 방지용
-    private Constants.FoodQuality FoodQuality = Constants.FoodQuality.Normal;
+    private FoodQuality FoodQuality = FoodQuality.Normal;
 
-    public event Action<GuestBase, Constants.GuestState> OnGuestStateChanged; // 상태 변경 알림용
-    public event Action<GuestBase, Constants.GuestMood> OnGuestMoodChanged; // 상태 변경 알림용
+    // Action
+    public event Action<GuestBase, GuestState> OnGuestStateChanged; // 상태 변경 알림용
+    public event Action<GuestBase, GuestMood> OnGuestMoodChanged; // 상태 변경 알림용
     public event Action<GuestBase> OnGuestReadyToOrder; // 메뉴를 골랐을 때용
     public event Action<GuestBase, RuntimeOrder> OnOrderPlaced; // UI 주문 리스트용
     public event Action OnGuestServedAndPaid; // 스포너용
@@ -50,49 +51,44 @@ public abstract class GuestBase : MonoBehaviour
     // 풀에서 꺼낼 때 호출. 재사용 시 이전 생애의 모든 상태를 깨끗이 초기화해 버그 방지
     public virtual void ResetState()
     {
-        // 1) FSM 플래그 — 이게 안 되면 Enter/Exit에서 경로를 안 잡음
+        if (guestManager != null)
+        guestManager.LeaveWaiting(this);
+        
+        // FSM 플래그 — 이게 안 되면 Enter/Exit에서 경로를 안 잡음
         isEnterPathSet = false;
         isExitPathSet = false;
         isOrderTaken = false;
 
-        // 2) 타이머 & 상태값
+        // 타이머 & 상태값
         stateTimer = 0f;
-        currentMood = Constants.GuestMood.Neutral;
-        FoodQuality = Constants.FoodQuality.Normal;
+        currentMood = GuestMood.Neutral;
+        FoodQuality = FoodQuality.Normal;
         basePrise = 0;
 
-        // 3) 주문 데이터
+        // 주문 데이터
         if (myOrder == null)
             myOrder = new RuntimeOrder();
         else
             myOrder.Clear();
 
-        // 4) 의자 반환 (이전 손님이 앉았던 의자가 점유 상태로 남는 것 방지)
+        // 의자 반환 (이전 손님이 앉았던 의자가 점유 상태로 남는 것 방지)
         if (myChair != null)
          {
             myChair.Empty();
             myChair = null;
          }
 
-        // 5) 음식 모델 제거
+        // 음식 모델 제거
         if (currentFoodModel != null)
         {
             Destroy(currentFoodModel);
             currentFoodModel = null;
          }
 
-        // 6) NavMeshAgent 정리 (이전 경로가 남으면 엉뚱한 곳으로 이동)
-        if (agent != null)
-        {
-            // agent.enabled = true;
-            // agent.ResetPath();
-            // agent.isStopped = false;
-            // agent.velocity = Vector3.zero;
-            agent.enabled = false;
-        }
+        mover.ResetAgent();
 
-        // 7) 이벤트 구독 전부 해제
-        //    안 하면 이전 생애의 리스너가 남아서 이벤트가 중복 호출됨
+        // 이벤트 구독 전부 해제
+        // 안 하면 이전 생애의 리스너가 남아서 이벤트가 중복 호출됨
         OnGuestStateChanged = null;
         OnGuestReadyToOrder = null;
         OnOrderPlaced = null;
@@ -101,11 +97,12 @@ public abstract class GuestBase : MonoBehaviour
     }
     
     // 객체가 생성될 때 매니저에서 딱 한 번 호출해줄 초기화 메소드
-    public virtual void Init(int id, Constants.GuestAppearance appearance, Transform exit)
+    public virtual void Init(int id, GuestAppearance appearance, Transform exit, GuestManager manager)
     {
         individualId = id;
         myApperance = appearance;
         exitDoor = exit;
+        guestManager = manager;
         
         if (myOrder == null)
             myOrder = new RuntimeOrder();
@@ -114,22 +111,20 @@ public abstract class GuestBase : MonoBehaviour
 
         gameObject.SetActive(true);
 
-        if (agent != null)
-        {
-            agent.enabled = true;
-            agent.ResetPath();
-            agent.isStopped = false;
-            agent.velocity = Vector3.zero;
-        }
+        mover.EnableAgent();
         
-        ChangeState(Constants.GuestState.Enter);
+        ChangeState(GuestState.Enter);
     }
-    
+
+    void Awake()
+    {
+        mover = GetComponent<GuestMover>();
+    }
+
     void Update()
     {
         GuestFSM();
     }
-
 
     protected void ChangeState(Constants.GuestState newState)
     {
@@ -143,22 +138,25 @@ public abstract class GuestBase : MonoBehaviour
     {
         switch(currentState)
         {
-            case Constants.GuestState.Enter:
+            case GuestState.Enter:
                 HandleEnterState();
                 break;
-            case Constants.GuestState.WaitOrder:
+            case GuestState.Waiting:
+                HandleWaitingState();
+                break;
+            case GuestState.WaitOrder:
                 HandleWaitOrderState();
                 break;
-            case Constants.GuestState.WaitFood:
+            case GuestState.WaitFood:
                 HandleWaitFoodState();
                 break;
-            case Constants.GuestState.Eat:
+            case GuestState.Eat:
                 HandleEatState();
                 break;
-            case Constants.GuestState.Pay:
+            case GuestState.Pay:
                 HandlePayState();
                 break;
-            case Constants.GuestState.Exit:
+            case GuestState.Exit:
                 HandleExitState();
                 break;
         }
@@ -177,34 +175,56 @@ public abstract class GuestBase : MonoBehaviour
             {
                 myChair.Reserve(this); // 자리 찜
                
-                agent.SetDestination(myChair.sitPoint.position);
+                mover.MoveTo(myChair.sitPoint.position);
                 isEnterPathSet = true;
-                Debug.Log($"[{individualId}] 빈 테이블로 이동 시작");
             }
             else
             {
-                // 빈자리가 없다면 나가기
-                ChangeState(Constants.GuestState.Exit);
+                // 빈자리가 없다면 웨이팅 시도
+                Vector3 waitPos;
+                if (guestManager.JoinWaiting(this, out waitPos))
+                {
+                    mover.MoveTo(waitPos);
+                    ChangeState(GuestState.Waiting);
+                }
+                else
+                    ChangeState(GuestState.Exit);
+
                 return;
             }
-            
         }
 
-        // 목적지에 도착했는지 검사
-        // pathpending : 경로 계산 중인지 여부, remainingDistance : 목적지까지 남은 거리, stoppingDistance: 목표 지점에서 멈추는 거리
-        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
-        {
-            agent.isStopped = true;
-            agent.enabled = false; // 길찾기 종료
-            
-            transform.position = myChair.sitPoint.position;
-            transform.rotation = myChair.sitPoint.rotation;
+        if (mover.HasArrived())
+            {
+            mover.StopAndDisable();
 
-            //TO DO : 애니메이션 변경
-            ChangeState(Constants.GuestState.WaitOrder);
-        }
+               transform.position = myChair.sitPoint.position;
+               transform.rotation = myChair.sitPoint.rotation;
+
+               ChangeState(GuestState.WaitOrder);
+            }
+            
     }
 
+    private void HandleWaitingState()
+    {
+        myChair = SeatManager.Instance.FindEmptyChair();
+
+        if (myChair != null)
+        {
+           myChair.Reserve(this);
+
+           // 웨이팅 목록에서 빠지기
+           guestManager.LeaveWaiting(this);
+
+           // 빈자리로 이동
+           mover.MoveTo(myChair.sitPoint.position);
+           isEnterPathSet = true;
+
+           ChangeState(GuestState.Enter);
+    }
+    }
+    
     // 착석 후 주문 대기 (메뉴 고르고 플레이어 기다림)
     protected virtual void HandleWaitOrderState()
     {
@@ -227,10 +247,10 @@ public abstract class GuestBase : MonoBehaviour
 
         if (stateTimer >= orderWaitLimit)
         {
-            currentMood = Constants.GuestMood.Bad;
+            currentMood = GuestMood.Bad;
             // TO DO : 아이콘 변화
             // TO DO : 명성도 하락 기능
-            ChangeState(Constants.GuestState.Exit);
+            ChangeState(GuestState.Exit);
             Debug.Log("주문 대기 시간 초과! 손님의 기분이 매우 나빠져 가게를 나갑니다!");
 
         }
@@ -239,16 +259,16 @@ public abstract class GuestBase : MonoBehaviour
     // 플레이어 상호작용 클래스
     public void TakeOrder()
     {
-        if (currentState != Constants.GuestState.WaitOrder || myOrder == null)
+        if (currentState != GuestState.WaitOrder || myOrder == null)
             return;
 
         // 이미 주문을 접수했으면 무시
-        if (currentState != Constants.GuestState.WaitOrder)
+        if (currentState != GuestState.WaitOrder)
             return;
 
         isOrderTaken = true;
         OnOrderPlaced?.Invoke(this, myOrder); // 주문 리스트에 데이터 전송
-        ChangeState(Constants.GuestState.WaitFood);
+        ChangeState(GuestState.WaitFood);
     }
 
     // 음식 대기
@@ -263,24 +283,24 @@ public abstract class GuestBase : MonoBehaviour
             Debug.Log("음식 대기 1분 30초 경과! 손님이 화를 내며 가게를 나갑니다!");
             
         }
-        else if (stateTimer >= foodMidWaitLimit && currentMood == Constants.GuestMood.Bad)
+        else if (stateTimer >= foodMidWaitLimit && currentMood == GuestMood.Bad)
         {
-            currentMood = Constants.GuestMood.VeryBad;
+            currentMood = GuestMood.VeryBad;
             // TO DO : 아이콘 변화
             Debug.Log("음식 대기 60초 경과! 손님의 기분이 매우 나빠졌습니다!");
         }
-        else if (stateTimer >= foodMinWaitLimit && currentMood == Constants.GuestMood.Neutral)
+        else if (stateTimer >= foodMinWaitLimit && currentMood == GuestMood.Neutral)
         {
-            currentMood = Constants.GuestMood.Bad;
+            currentMood = GuestMood.Bad;
             // TO DO : 아이콘 변화
             Debug.Log("음식 대기 30초 경과! 손님의 기분이 나빠졌습니다!");
         }
     }
     
     // 플레이어 상호작용 클래스
-    public void ReceiveFood(FoodData deliveredFood, Constants.FoodQuality quality)
+    public void ReceiveFood(FoodData deliveredFood, FoodQuality quality)
     {
-        if (currentState != Constants.GuestState.WaitFood)
+        if (currentState != GuestState.WaitFood)
             return;
 
         if (myOrder.orderedFood == deliveredFood && !myOrder.isServed)
@@ -294,12 +314,12 @@ public abstract class GuestBase : MonoBehaviour
                 currentFoodModel.transform.SetParent(myChair.myFoodSpot);
             }
 
-            ChangeState(Constants.GuestState.Eat);
+            ChangeState(GuestState.Eat);
         }
         else
         {
-            currentMood = Constants.GuestMood.VeryBad;
-            ChangeState(Constants.GuestState.Eat);
+            currentMood = GuestMood.VeryBad;
+            ChangeState(GuestState.Eat);
         }
     }
     
@@ -311,16 +331,16 @@ public abstract class GuestBase : MonoBehaviour
         if (stateTimer >= foodEatLimit)
         {
             // TO DO : 애니메이션 변경
-            ChangeState(Constants.GuestState.Pay);
+            ChangeState(GuestState.Pay);
         }
     }
 
     protected virtual void HandlePayState()
     {
-        if (FoodQuality == Constants.FoodQuality.Good && currentMood == Constants.GuestMood.Neutral) 
-            currentMood = Constants.GuestMood.VeryGood; 
-        else if (FoodQuality == Constants.FoodQuality.Fine && currentMood == Constants.GuestMood.Neutral) 
-            currentMood = Constants.GuestMood.Good; 
+        if (FoodQuality == FoodQuality.Good && currentMood == GuestMood.Neutral) 
+            currentMood = GuestMood.VeryGood; 
+        else if (FoodQuality == FoodQuality.Fine && currentMood == GuestMood.Neutral) 
+            currentMood = GuestMood.Good; 
 
         int finalPrice = CalculateFinalPrice();
         
@@ -377,28 +397,18 @@ public abstract class GuestBase : MonoBehaviour
         // 상태 진입 후 딱 한 번만 목적지 찾기
         if (!isExitPathSet && exitDoor != null)
         {
-            Debug.Log($"[{individualId}] Exit 상태 진입! myChair: {(myChair != null ? myChair.gameObject.name : "null")}");
             if (myChair != null)
             {
                 myChair.Empty();
                 myChair = null;
-                Debug.Log($"[{individualId}] 의자 반환 완료!");
-            }
-            else
-            {
-                Debug.Log($"[{individualId}] 반환할 의자가 없음!");
             }
             
-            agent.enabled = true;
-            agent.isStopped = false;
-
-            agent.SetDestination(exitDoor.position);
+            mover.MoveTo(exitDoor.position);
             isExitPathSet = true;
         }
 
-        // 목적지에 도착했는지 검사
-        if (isExitPathSet && !agent.pathPending && agent.remainingDistance <= 2.0f)
-            GuestPoolManager.Instance.Return(myApperance, gameObject);
+        if (isExitPathSet && mover.HasArrived(2.0f))
+            PoolManager.Instance.Return(myApperance.ToString(), gameObject);
     }
 
 

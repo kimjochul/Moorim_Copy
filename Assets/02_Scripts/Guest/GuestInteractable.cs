@@ -14,7 +14,7 @@ public class GuestInteractable : MonoBehaviour, IInteractable
         myBrain = GetComponent<GuestBase>();
     }
  
-    // ── IInteractable 구현 ──
+    // IInteractable 구현 
  
     // 손님은 클릭해서 상호작용 (ClickToInteract)
     public InteractMode Mode => InteractMode.ClickToInteract;
@@ -34,29 +34,20 @@ public class GuestInteractable : MonoBehaviour, IInteractable
     // 명월이가 손님 근처에 도착해서 상호작용을 완료했을 때 벌어질 일
     public void Interact(PlayerController player)
     {
-        if (myBrain.currentState == Constants.GuestState.WaitOrder)
-        {
+        if (myBrain.currentState == GuestState.WaitOrder)
             myBrain.TakeOrder();
-            player.EndInteract();
-        }
-        else if (myBrain.currentState == Constants.GuestState.WaitFood)
-        {
+        else if (myBrain.currentState == GuestState.WaitFood)
             OnOpenServerInvenUI?.Invoke(myBrain);
-            // UI에서 슬롯 클릭 or 닫기 시 player.EndInteract() 호출 필요
-        }
-        else if (myBrain.currentState == Constants.GuestState.Exit)
+        else if (myBrain.currentState == GuestState.Exit)
         {
             ThiefGuyGuest thief = myBrain as ThiefGuyGuest;
             
             if (thief != null)
                 thief.CatchThief();
- 
-            player.EndInteract();
         }
         else
         {
             Debug.Log($"상호작용 무시 (현재 상태: {myBrain.currentState})");
-            player.EndInteract();
         }
     }
  
