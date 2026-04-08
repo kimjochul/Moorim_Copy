@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class CookingView : MonoBehaviour
 {
-    // 필요한 UI 컴포넌트들
     [Header("UI")]
     [SerializeField] private Image recipeIcon;
     [SerializeField] private TMP_Text recipeName;
@@ -19,8 +18,6 @@ public class CookingView : MonoBehaviour
     public event Action OnCookClicked;
     public event Action OnCloseClicked;
 
-    // 메소드1. 초기 세팅 함수
-    // 매개변수 : 컨트롤러 연락처
     public void Init()
     {
         cookBtn.onClick.RemoveAllListeners();  // 혹시 모를 중복 방지
@@ -30,7 +27,7 @@ public class CookingView : MonoBehaviour
         clostBtn.onClick.AddListener(() => OnCloseClicked?.Invoke());
     }
 
-    // 메소드2. 레시피가 선택됐을 때 ui에 연결
+    // 레시피가 선택됐을 때 ui에 연결
     // 매개 변수 : 플에이어가 고른 레시피 데이터
     public void UpdateRecipe(Recipe recipe)
     {
@@ -44,28 +41,31 @@ public class CookingView : MonoBehaviour
         foreach (var slot in ingredientSlots)
             slot.ClearSlot();
 
-        // 요리에 필요한 재료 개수만큼 for문
+        // 요리에 필요한 재료 개수만큼 for문으로 슬롯 확장
         for (int i = 0; i <data.ingredients.Count; i++)
         {
             // UI 슬롯 개수보다 재료가 많으면 터짐 방지
-            if (i < ingredientSlots.Length)
-            {
-                //순서에 맞춰서 빈칸을 하나씩 켜고 데이터 넘겨줌
-                // 슬롯 켜짐, 목표 재료 설정, 필요한 갯수 설정
-                ingredientSlots[i].Init(data.ingredients[i].ingredient, data.ingredients[i].amount);
-            }
+            if (i >= ingredientSlots.Length)
+                break;
+
+            //순서에 맞춰서 빈칸을 하나씩 켜고 데이터 넘겨줌
+            // 슬롯 켜짐, 목표 재료 설정, 필요한 갯수 설정
+            ingredientSlots[i].Init(data.ingredients[i].ingredient, data.ingredients[i].amount);
         }
     }
 
-    // 메소드3. 인벤토리에서 재료가 들어왓을 때 숫자를 올리는 함수
+    // 인벤토리에서 재료가 들어왓을 때 숫자를 올리는 함수
     // 매개변수 : 들어오 ㄴ재료의 id, 갯수
     public void UpdateSlotUI(int ingredientId, int currentAmount)
     {
         // 켜져있는 재료 빈칸들을 확인 후 id가 일치하는 칸의 숫자를 올려줌
         foreach (var slot in ingredientSlots) // 재료슬롯전체탐색
         {
+            if (!slot.gameObject.activeSelf)
+                continue;
+
             // 현재 켜져 있는 슬롯만 & 이 슬롯이 찾는 재료인지 확인
-            if (slot.gameObject.activeSelf && slot.GetTargetIngredient().id == ingredientId)
+            if (slot.GetTargetIngredient().id == ingredientId)
             {
                 // 현재 보유 수량 반영
                 slot.AddIngredient(currentAmount);

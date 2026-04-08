@@ -22,6 +22,7 @@ public abstract class GuestBase : MonoBehaviour
     private GuestMover mover;
     private GuestManager guestManager;
     private GuestBubbleUI bubbleUI;
+    private GuestAnimation guestAnim;
 
     public Transform exitDoor;
     public Chair myChair;
@@ -69,7 +70,6 @@ public abstract class GuestBase : MonoBehaviour
             mover = GetComponent<GuestMover>();
         if (bubbleUI == null)
             bubbleUI = GetComponentInChildren<GuestBubbleUI>();
-        
         if (guestManager != null)
         guestManager.LeaveWaiting(this);
         
@@ -107,11 +107,11 @@ public abstract class GuestBase : MonoBehaviour
             currentFoodModel = null;
          }
 
-        if (mover == null)
-            mover = GetComponent<GuestMover>();
-
         if (mover != null)
             mover.ResetAgent();
+
+        if (guestAnim != null)
+            guestAnim.ResetAnimation();
 
         // 이벤트 구독 전부 해제
         // 안 하면 이전 생애의 리스너가 남아서 이벤트가 중복 호출됨
@@ -147,6 +147,15 @@ public abstract class GuestBase : MonoBehaviour
         {
             bubbleUI.HideAll();
            bubbleUI.Bind(this);
+        }
+
+        if (guestAnim == null)
+            guestAnim = GetComponentInChildren<GuestAnimation>();
+
+        if (guestAnim != null)
+        {
+            guestAnim.ResetAnimation();
+            guestAnim.Bind(this);
         }
         
         ChangeState(GuestState.Enter);
