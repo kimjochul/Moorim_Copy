@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.Loading;
 using UnityEngine;
 
 public enum InventoryType
@@ -26,6 +27,8 @@ public class Inventory : MonoBehaviour
     
     [SerializeField] private InventoryType type;
     public InventoryType Type => type;
+    
+    public Action<Slot> OnItemAdded;
 
     private void Awake()
     {
@@ -143,6 +146,7 @@ public class Inventory : MonoBehaviour
         if (target.IsEmpty)
         {
             target.SetItem(source.Item, source.Count);
+            target.FridgeSpoilTimer = 0;
             source.Clear();
         }
         // 2. 같은 아이템 → 합치기
@@ -172,6 +176,11 @@ public class Inventory : MonoBehaviour
             source.SetItem(tempItem, tempCount);
         }
 
+        if (source.Owner.Type == InventoryType.MealTable)
+        {
+            OnItemAdded?.Invoke(source);
+        }
+        
         NotifyItemChanged(itemID);
         if (!target.IsEmpty)
             NotifyItemChanged(target.Item.ID);
@@ -211,6 +220,8 @@ public class Inventory : MonoBehaviour
             slot.AddCount(add);
             count -= add;
             changed = true;
+            
+            OnItemAdded?.Invoke(slot);
         }
 
         // 2. 빈 슬롯에 넣기
@@ -228,10 +239,14 @@ public class Inventory : MonoBehaviour
             slot.AddItem(new Item(item.Data), add);
             count -= add;   
             changed = true;
+            
+            OnItemAdded?.Invoke(slot);
         }
-        
+
         if (changed)
+        {
             NotifyItemChanged(itemID);
+        }
     }
 
     /// <summary>
@@ -322,5 +337,42 @@ public class Inventory : MonoBehaviour
         }
 
         return true;
+    }
+
+    public Slot FindSlot(int foodItemID)
+    {
+        foreach (var slot in slots)
+        {
+            if (slot.Item.ID == foodItemID)
+                return slot;
+        }
+        return null;
+    }
+    
+    public int MoveSlotTo(Inventory target, Slot sourceSlot, int count)
+    {
+        if (sourceSlot.IsEmpty)
+            return -1;
+
+        // target에서 빈 슬롯 찾기
+        foreach (var targetSlot in target.Slots)
+        {
+            if (!targetSlot.IsEmpty)
+                continue;
+
+            targetSlot.SetItem(sourceSlot.Item, count);
+            targetSlot.FridgeSpoilTimer = sourceSlot.FridgeSpoilTimer;
+            targetSlot.SpoilTimer = sourceSlot.SpoilTimer;
+
+            sourceSlot.AddCount(-count);
+
+            if (sourceSlot.Count <= 0)
+                sourceSlot.Clear();
+
+            return targetSlot.Index;
+        }
+
+        Debug.Log("빈 슬롯 없음");
+        return -1;
     }
 }

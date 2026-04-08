@@ -30,9 +30,10 @@ public class Sowol : PlayerController
     {
         if(slot.Owner.Type is InventoryType.IngredientsButMeatOnly or InventoryType.Ingredients)
             ClickIngredientInvenSlot(slot);
-        
-        if(slot.Owner.Type is InventoryType.Chef)
+        else if(slot.Owner.Type is InventoryType.Chef)
             ClickChefInvenSlot(slot);
+        else if (slot.Owner.Type is InventoryType.MealTable)
+            ClickMealTableSlot(slot);
     }
 
     private void ClickIngredientInvenSlot(Slot slot)
@@ -61,9 +62,27 @@ public class Sowol : PlayerController
         {
             if (slot.Owner.Type is InventoryType.Chef)
             {
-                servingSlot.PlaceFood(slot.Item);
+                servingSlot.PlaceFood(slot.Item, inventory, slot);
                 inventory.RemoveItem(slot.Item.ID, 1);
             }
+        }
+    }
+    
+    private void ClickMealTableSlot(Slot slot)
+    {
+        if (slot.Item == null)
+            return;
+
+        var interactable = PlayerManager.Instance.ActiveInteractable;
+        if (interactable is ServingSlot servingSlot)
+        {
+            IItem foodItem = servingSlot.TakeFood(slot.Index, inventory);
+            if (foodItem == null)
+            {
+                Debug.Log("가져올 음식 없음");
+                return;
+            }
+            //inventory.GetItem(foodItem, 1);
         }
     }
 }

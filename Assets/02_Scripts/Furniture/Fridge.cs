@@ -1,24 +1,129 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
+using static Constants;
 
 [RequireComponent(typeof(Collider))]
 public class Fridge : MonoBehaviour, IInteractable
 {
-    public InteractMode Mode { get; }
-    public bool CanInteract(Constants.PlayerType playerType)
+    [SerializeField] private Transform servingPoint;
+    [SerializeField] private Inventory inventory;
+    
+    
+    public InteractMode Mode => InteractMode.AutoOnEnter;
+
+    private void Start()
     {
-        return true;
+        DayManager dayManager = FindFirstObjectByType<DayManager>();
+
+        dayManager.OnDayEnd += OnDayEnd;
+        dayManager.OnDayStart += OnDayStart;
     }
 
-    public void Interact(PlayerController Player)
+    public void Interact(PlayerController player)
     {
+        // 상호작용 로직
+        if (player.PlayerType == PlayerType.Sowol)
+        {
+            Inventory chefInventory = InventoryManager.Instance.GetInventory(InventoryType.Chef);
+            InventoryManager.Instance.OpenInventory(inventory);
+            InventoryManager.Instance.OpenInventory(chefInventory);
+        }
+        else if (player.PlayerType == PlayerType.Myungwol)
+        {
+            Inventory serverInventory = InventoryManager.Instance.GetInventory(InventoryType.Server);
+            InventoryManager.Instance.OpenInventory(inventory);
+            InventoryManager.Instance.OpenInventory(serverInventory);
+        }
     }
 
     public void OnInteractEnd(PlayerController player)
     {
+        // 종료 시 정리 로직
+        if (player.PlayerType == PlayerType.Sowol)
+        {
+            Inventory chefInventory = InventoryManager.Instance.GetInventory(InventoryType.Chef);
+            InventoryManager.Instance.CloseInventory(inventory);
+            InventoryManager.Instance.CloseInventory(chefInventory);
+        }
+        else if (player.PlayerType == PlayerType.Myungwol)
+        {
+            Inventory serverInventory = InventoryManager.Instance.GetInventory(InventoryType.Server);
+            InventoryManager.Instance.CloseInventory(inventory);
+            InventoryManager.Instance.CloseInventory(serverInventory);
+        }
+    }
+    
+    private void OnDayEnd()
+    {
+        foreach (var slot in inventory.Slots)
+        {
+            if (slot.Item == null)
+                continue;
+
+            slot.FridgeSpoilTimer++;
+            Debug.Log($"{slot.Item.ItemName} → {slot.FridgeSpoilTimer}");
+        }
+    }
+    
+    private void OnDayStart()
+    {
+        List<Slot> removeSlots = new List<Slot>();
+
+        foreach (var slot in inventory.Slots)
+        {
+            if (slot.Item == null)
+                continue;
+
+            if (slot.FridgeSpoilTimer >= 3)
+            {
+                removeSlots.Add(slot);
+            }
+        }
+
+        foreach (var slot in removeSlots)
+        {
+            Debug.Log($"{slot.Item.ItemName} 상함 → 제거");
+
+            inventory.RemoveItem(slot.Item.ID, slot.Count);
+        }
+    }
+    
+    /// <summary>
+    /// 냉장고에 음식을 놓는 상황
+    /// </summary>
+    /// <param name="foodData"></param>
+    public void PlaceFood(IItem foodItem)
+    {
+        inventory.GetItem(foodItem, 1);
+    }
+    
+    /// <summary>
+    /// 냉장고에서 음식을 꺼내는 상황
+    /// </summary>
+    /// <returns></returns>
+    public IItem TakeFood(int slotIndex)
+    {
+        var slot = inventory.Slots[slotIndex];
+        if (slot.Item == null)
+        {
+            Debug.Log("음식 없음");
+            return null;
+        }
+
+        IItem item = slot.Item;
+
+        inventory.RemoveItem(item.ID, 1);
+        
+        return item;
     }
 
     public Vector3 GetInteractPosition()
     {
         return transform.position;
+    }
+    public bool CanInteract(Constants.PlayerType playerType)
+    {
+        return true;
     }
 }
