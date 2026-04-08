@@ -9,6 +9,8 @@ public class ShopProduct : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 {
     private ItemData itemData;
     [SerializeField]
+    private Image iconBg;
+    [SerializeField]
     private Image icon;
     [SerializeField]
     private TextMeshProUGUI itemName;
@@ -66,12 +68,14 @@ public class ShopProduct : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         if (this.itemData)
         {
             this.imageBg.sprite = this.spriteFilled;
+            this.iconBg.gameObject.SetActive(true);
             this.icon.gameObject.SetActive(true);
             this.btnBuy.interactable = true;
         }
         else
         {
             this.imageBg.sprite = this.spriteEmpty;
+            this.iconBg.gameObject.SetActive(false);
             this.icon.gameObject.SetActive(false);
             this.btnBuy.interactable = false;
         }

@@ -45,7 +45,7 @@
 
     public enum FoodQuality 
     { Normal, Fine, Good }
-
+    public enum QuestCategory { Main, Sub, Repeat } // 메인, 서브, 반복
 
     public const float SPOIL_TIME = 10f;
     public const int SERVINGSLOT_MAXCOUNT = 8;
