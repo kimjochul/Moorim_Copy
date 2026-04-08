@@ -118,7 +118,7 @@ public class DataManager : Singleton<DataManager>
         return this.dicIngredient[type];
     }
     // id로 검색해서 재료 데이터 반환
-    public IngredientData GetIngredientDataById(int id)
+    public IngredientData GetIngredientData(int id)
     {
         IngredientData findData = this.dicIngredient.Values
             .SelectMany(list => list)
@@ -129,7 +129,7 @@ public class DataManager : Singleton<DataManager>
     // id로 검색해서 재료 데이터 이름 반환
     public string GetIngredientName(int id)
     {
-        return GetIngredientDataById(id).itemName;
+        return GetIngredientData(id).itemName;
     }
     // 인연 캐릭터 리스트 반환
     public List<AffinityNPCData> GetAffinityNPCList()
@@ -137,7 +137,7 @@ public class DataManager : Singleton<DataManager>
         return this.affinityList.listAffinityNPC;
     }
     // id로 검색해서 레시피 데이터 반환
-    public RecipeData GetRecipeMasteryById(int id)
+    public RecipeData GetRecipeMastery(int id)
     {
         RecipeData findData = this.dicRecipe.Values
             .SelectMany(list => list)
@@ -148,7 +148,7 @@ public class DataManager : Singleton<DataManager>
     // id로 검색해서 레시피 이름 반환
     public string GetRecipeName(int id)
     {
-        return GetRecipeMasteryById(id).recipeName;
+        return GetRecipeMastery(id).recipeName;
     }
     // 해당 레시피 숙련도 상승
     public void AddRecipeProficiency(RecipeData targetRecipe, int amount)
