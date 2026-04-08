@@ -136,6 +136,11 @@ public class DataManager : Singleton<DataManager>
     {
         return this.affinityList.listAffinityNPC;
     }
+    // 레시피 타입 리스트 반환
+    public List<RecipeMastery> GetRecipeList(FoodType type)
+    {
+        return this.dicRecipe[type];
+    }
     // id로 검색해서 레시피 데이터 반환
     public RecipeData GetRecipeData(int id)
     {
