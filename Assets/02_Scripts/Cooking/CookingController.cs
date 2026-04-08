@@ -145,6 +145,8 @@ public class CookingController : MonoBehaviour
     // 3. 조리 버튼 잠금
     public void OnRecipeSelected(Recipe selectedRecipe)
     {
+        ReturnIngredientsToInventory();
+        
         // 모델에게 타겟 설정, 조리뷰에게 화면 바꾸기 지시, 조리 버튼 잠금
         model.SetTargetRecipe(selectedRecipe);
         cookingView.UpdateRecipe(selectedRecipe);
