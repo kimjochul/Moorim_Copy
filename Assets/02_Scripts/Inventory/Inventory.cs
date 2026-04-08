@@ -158,6 +158,9 @@ public class Inventory : MonoBehaviour
         // 2. 같은 아이템 → 합치기
         else if (target.Item.ID == source.Item.ID)
         {
+            if (target.FridgeSpoilTimer != source.FridgeSpoilTimer) // 드래그로 음식 옮길 때 
+                return;
+            
             int max = target.Item.InventoryCapacity;
             int canAdd = max - target.Count;
 

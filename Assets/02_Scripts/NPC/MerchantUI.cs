@@ -13,7 +13,7 @@ public class MerchantUI : MonoBehaviour
     [SerializeField] private GameObject clearSlotPrefab;
     
     private Merchant merchant;
-    private Shop shop;
+    [SerializeField] private Shop shop;
     private Inventory inventory;
     private void OnEnable()
     {
@@ -36,7 +36,6 @@ public class MerchantUI : MonoBehaviour
     public void Init(Merchant merchant)
     {
         this.merchant = merchant;
-        shop = merchant.GetComponent<Shop>();
         shop.Init();
         
         shop.OnProductClicked += HandleProductClicked;
