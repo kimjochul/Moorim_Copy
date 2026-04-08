@@ -12,9 +12,7 @@ public class AffinityTab : BaseTab
     private Transform tsParent;
 
     private List<NPCProfile> listNPCProfiles = new List<NPCProfile>();
-    private List<GuestData> list = new List<GuestData>();
     // 왼쪽 페이지
-
 
 
     // 오른쪽 페이지
@@ -26,7 +24,7 @@ public class AffinityTab : BaseTab
 
     public override void SetupData()
     {
-        UpdateNPCList(new List<GuestData>());
+        //UpdateNPCList();
     }
     // GuestData는 임시
     private void UpdateNPCList(List<GuestData> guestList)
@@ -48,6 +46,8 @@ public class AffinityTab : BaseTab
             this.listNPCProfiles[i].gameObject.SetActive(false);
         }
     }
+
+    // GuestData 임시
     private void ShowGuestProfile(GuestData data)
     {
         this.imgPortrait.sprite = null;
@@ -56,4 +56,6 @@ public class AffinityTab : BaseTab
         this.txtLikes.text = "";
         this.txtDislikes.text = "";
     }
+
+    public override void ResetSetting() { }
 }

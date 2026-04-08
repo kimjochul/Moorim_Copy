@@ -56,4 +56,6 @@ public class StatusTab : BaseTab
         this.txtSowolDislike.text = data.dislike;
         this.txtSowolSkill.text = data.skill;
     }
+
+    public override void ResetSetting() { }
 }

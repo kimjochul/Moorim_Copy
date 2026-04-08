@@ -9,6 +9,7 @@ public class NPCProfile : MonoBehaviour
     [SerializeField] TextMeshProUGUI txtName;
     [SerializeField] Button btnSlot;
 
+    // GuestData´Â ÀÓ½Ã
     public void Init(GuestData data, Action<GuestData> onClickAction)
     {
         this.imgIcon.sprite = null;

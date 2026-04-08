@@ -26,13 +26,9 @@ public class Book : MonoBehaviour
             this.menus[i].toggle.onValueChanged.AddListener((isOn) =>
             {
                 if (isOn)
-                {
                     this.menus[index].menuScript.OpenMenu();
-                }
                 else
-                {
                     this.menus[index].menuScript.CloseMenu();
-                }
             });
         }
     }
@@ -45,7 +41,20 @@ public class Book : MonoBehaviour
     {
         if (this.menus != null && this.menus.Length > 0)
         {
+            for (int i = 0; i < this.menus.Length; i++)
+            {
+                this.menus[i].menuScript.SetupMenuData();
+            }
+
             this.menus[0].toggle.isOn = true;
         }
+    }
+    public void OpenBook()
+    {
+        this.gameObject.SetActive(true);
+    }
+    public void CloseBook()
+    {
+        this.gameObject.SetActive(false);
     }
 }

@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using TMPro;
 using static Constants;
 using System.Collections.Generic;
+using UnityEngine.Events;
 
 [Serializable]
 public class CategoryPair
@@ -14,6 +15,7 @@ public class CategoryPair
 
 public class QuestTab : BaseTab
 {
+    [SerializeField] private QuestGenerator test;
     [SerializeField] private CategoryPair[] categoryTabs;
 
     private Dictionary<QuestCategory, List<Quest>> dicActiveQuests = new Dictionary<QuestCategory, List<Quest>>();
@@ -36,43 +38,55 @@ public class QuestTab : BaseTab
 
     private QuestCategory currentCategory = QuestCategory.Main;
 
-    private void Awake()
-    {
-        this.dicActiveQuests[QuestCategory.Main] = new List<Quest>();
-        this.dicActiveQuests[QuestCategory.Sub] = new List<Quest>();
-        this.dicActiveQuests[QuestCategory.Repeat] = new List<Quest>();
-
-        this.dicCompletedQuests[QuestCategory.Main] = new List<Quest>();
-        this.dicCompletedQuests[QuestCategory.Sub] = new List<Quest>();
-        this.dicCompletedQuests[QuestCategory.Repeat] = new List<Quest>();
-    }
+    private bool isInitCategory = false;
 
     public override void SetupData()
     {
         if (this.currentSelectedSlot)
             this.currentSelectedSlot.SetSelect(false);
 
+        ListInit();
         QuestCache();
         CategoryTabInit();
         SetCategory(QuestCategory.Main);
-        QuestListUpdate(this.currentCategory);
     }
-    private void QuestListUpdate(QuestCategory targetCategory)
+    private void QuestListUpdate()
     {
-        List<Quest> displayActiveQuests = this.dicActiveQuests[targetCategory];
-        List<Quest> displayCompletedQuests = this.dicCompletedQuests[targetCategory];
+        Debug.Log("얍");
+        switch (this.currentCategory)
+        {
+            case QuestCategory.Main: 
+                this.txtCategoryName.text = "메인 퀘스트";
+                break;
+            case QuestCategory.Sub: 
+                this.txtCategoryName.text = "서브 퀘스트";
+                break;
+            case QuestCategory.Repeat: 
+                this.txtCategoryName.text = "반복 퀘스트"; 
+                break;
+        }
+
+        List<Quest> displayActiveQuests = this.dicActiveQuests[this.currentCategory];
+        List<Quest> displayCompletedQuests = this.dicCompletedQuests[this.currentCategory];
+
+        displayActiveQuests.Add(test.GenerateRandomQuest(QuestType.MainStory));
+        displayActiveQuests.Add(test.GenerateRandomQuest(QuestType.MainStory));
+        displayActiveQuests.Add(test.GenerateRandomQuest(QuestType.MainStory));
+        displayActiveQuests.Add(test.GenerateRandomQuest(QuestType.MainStory));
+
+        displayCompletedQuests.Add(test.GenerateRandomQuest(QuestType.MainStory));
+        displayCompletedQuests.Add(test.GenerateRandomQuest(QuestType.MainStory));
+        displayCompletedQuests.Add(test.GenerateRandomQuest(QuestType.MainStory));
+        displayCompletedQuests.Add(test.GenerateRandomQuest(QuestType.MainStory));
 
 
-        if (this.inProgressGroup != null)
-            this.inProgressGroup.UpdateList(displayActiveQuests, ShowQuest);
-
-        if (this.completedGroup != null)
-            this.completedGroup.UpdateList(displayCompletedQuests, ShowQuest);
+        RefreshQuestGroup(this.inProgressGroup, displayActiveQuests);
+        RefreshQuestGroup(this.completedGroup, displayCompletedQuests);
 
         ClearRightPanel();
     }
 
-    public void ShowQuest(QuestSlot clickedSlot)
+    private void ShowQuest(QuestSlot clickedSlot)
     {
         if (this.currentSelectedSlot != null)
             this.currentSelectedSlot.SetSelect(false);
@@ -89,9 +103,20 @@ public class QuestTab : BaseTab
             this.txtDescription.text = $"{v.GetDescription()}({v.GetProgressText()})";
         // 보상 추가해야함
     }
-
-    public void CategoryTabInit()
+    private void ListInit()
     {
+        this.dicActiveQuests[QuestCategory.Main] = new List<Quest>();
+        this.dicActiveQuests[QuestCategory.Sub] = new List<Quest>();
+        this.dicActiveQuests[QuestCategory.Repeat] = new List<Quest>();
+
+        this.dicCompletedQuests[QuestCategory.Main] = new List<Quest>();
+        this.dicCompletedQuests[QuestCategory.Sub] = new List<Quest>();
+        this.dicCompletedQuests[QuestCategory.Repeat] = new List<Quest>();
+    }
+    private void CategoryTabInit()
+    {
+        if (this.isInitCategory) return;
+
         for (int i = 0; i < this.categoryTabs.Length; i++)
         {
             int index = i;
@@ -100,25 +125,27 @@ public class QuestTab : BaseTab
                 if (isOn)
                 {
                     this.currentCategory = this.categoryTabs[index].category;
-                    QuestListUpdate(this.currentCategory);
+                    QuestListUpdate();
                 }
             });
         }
+        this.isInitCategory = true;
     }
 
-    public void SetCategory(QuestCategory targetCategory)
+    private void SetCategory(QuestCategory targetCategory)
     {
         foreach (var pair in this.categoryTabs)
         {
             if (pair.category == targetCategory)
             {
+                pair.toggleTab.SetIsOnWithoutNotify(false);
                 pair.toggleTab.isOn = true;
                 break;
             }
         }
     }
 
-
+    // 오른쪽 페이지 비우기
     private void ClearRightPanel()
     {
         if (this.currentSelectedSlot != null)
@@ -132,20 +159,21 @@ public class QuestTab : BaseTab
         this.txtDescription.text = "";
     }
 
-    public void QuestCache()
+    // 퀘스트 데이터 받아오기
+    private void QuestCache()
     {
-        foreach (var list in this.dicActiveQuests.Values)
+        foreach (List<Quest> list in this.dicActiveQuests.Values)
             list.Clear();
-        foreach (var list in this.dicCompletedQuests.Values)
+        foreach (List<Quest> list in this.dicCompletedQuests.Values)
             list.Clear();
 
-        foreach (var q in QuestManager.Instance.ActiveQuests)
+        foreach (Quest q in QuestManager.Instance.ActiveQuests)
             AddQuestList(q, this.dicActiveQuests);
 
-        foreach (var q in QuestManager.Instance.CompletedQuests)
+        foreach (Quest q in QuestManager.Instance.CompletedQuests)
             AddQuestList(q, this.dicCompletedQuests);
     }
-
+    // 카테고리에 맞게 리스트 추가
     private void AddQuestList(Quest q, Dictionary<QuestCategory, List<Quest>> targetDic)
     {
         switch (q.QuestType)
@@ -161,5 +189,18 @@ public class QuestTab : BaseTab
                 targetDic[QuestCategory.Repeat].Add(q);
                 break;
         }
+    }
+    private void RefreshQuestGroup(QuestAccordionGroup targetGroup, List<Quest> questList)
+    {
+        if (targetGroup != null)
+        {
+            targetGroup.UpdateList(questList, ShowQuest);
+            targetGroup.OnClickGroup(false);
+        }
+    }
+
+    public override void ResetSetting()
+    {
+        SetCategory(QuestCategory.Main);
     }
 }

@@ -14,34 +14,52 @@ public class BaseMenu : MonoBehaviour
     [Header("이 메뉴에 속한 탭들")]
     [SerializeField] protected TabInfo[] tabs;
 
-    protected virtual void Awake()
+    void Awake()
     {
-        for (int i = 0; i < tabs.Length; i++)
+        for (int i = 0; i < this.tabs.Length; i++)
         {
-            int index = i;
+            int index = i; 
+
             this.tabs[i].toggleTab.onValueChanged.AddListener((isOn) =>
             {
-                this.tabs[index].tabScript.gameObject.SetActive(isOn);
-
-                if (isOn)
+                if (this.tabs[index].tabScript != null)
                 {
-                    this.tabs[index].tabScript.SetupData();
+                    this.tabs[index].tabScript.gameObject.SetActive(isOn);
+                    if(isOn)
+                        this.tabs[index].tabScript.ResetSetting();
                 }
             });
         }
     }
-
-    // 책이 이 메뉴를 열 때 호출하는 함수
-    public virtual void OpenMenu()
+    public virtual void SetupMenuData()
     {
-        this.gameObject.SetActive(true);
-        // 첫번째 탭이 켜지게
-        if (this.tabs != null && this.tabs.Length > 0)
-            this.tabs[0].toggleTab.isOn = true;
+        for (int i = 0; i < this.tabs.Length; i++)
+        {
+            if (this.tabs[i].tabScript != null)
+            {
+                this.tabs[i].tabScript. SetupData();
+            }
+        }
     }
 
+    // 메뉴를 열 때 호출하는 함수
+    public virtual void OpenMenu()
+    {
+        if (this.tabs != null && this.tabs.Length > 0)
+        {
+            this.tabs[0].toggleTab.isOn = true;
+        }
+
+        this.gameObject.SetActive(true);
+    }
+    
     public virtual void CloseMenu()
     {
+        if (this.tabs != null && this.tabs.Length > 0)
+        {
+            this.tabs[0].toggleTab.isOn = true;
+        }
+
         this.gameObject.SetActive(false);
     }
 }
