@@ -6,6 +6,8 @@ public class Sowol : PlayerController
 {
     [SerializeField] private CookingStation cookingStation;
     
+    private Inventory inventory;
+    
     public override void OnSelected()
     {
         base.OnSelected();
@@ -18,14 +20,20 @@ public class Sowol : PlayerController
     // 빈 땅 클릭은 무시, IInteractable 클릭만 이동 허용
     // 조리대 완료 등의 상태 변화는 조리대가 EndInteract()를 콜백으로 호출
     //   → 소월이 CookingStation을 폴링할 필요 없음
+
+    private void Start()
+    {
+        inventory = InventoryManager.Instance.GetInventory(InventoryType.Chef);
+    }
     
     public override void OnSlotClicked(Slot slot)
     {
         if(slot.Owner.Type is InventoryType.IngredientsButMeatOnly or InventoryType.Ingredients)
             ClickIngredientInvenSlot(slot);
-        
-        if(slot.Owner.Type is InventoryType.Chef)
+        else if(slot.Owner.Type is InventoryType.Chef)
             ClickChefInvenSlot(slot);
+        else if (slot.Owner.Type is InventoryType.MealTable)
+            ClickMealTableSlot(slot);
     }
 
     private void ClickIngredientInvenSlot(Slot slot)
@@ -46,6 +54,35 @@ public class Sowol : PlayerController
     
     private void ClickChefInvenSlot(Slot slot)
     {
-        
+        if (slot.Item == null)
+            return;
+
+        var interactable = PlayerManager.Instance.ActiveInteractable;
+        if (interactable is ServingSlot servingSlot)
+        {
+            if (slot.Owner.Type is InventoryType.Chef)
+            {
+                servingSlot.PlaceFood(slot.Item, inventory, slot);
+                inventory.RemoveItem(slot.Item.ID, 1);
+            }
+        }
+    }
+    
+    private void ClickMealTableSlot(Slot slot)
+    {
+        if (slot.Item == null)
+            return;
+
+        var interactable = PlayerManager.Instance.ActiveInteractable;
+        if (interactable is ServingSlot servingSlot)
+        {
+            IItem foodItem = servingSlot.TakeFood(slot.Index, inventory);
+            if (foodItem == null)
+            {
+                Debug.Log("가져올 음식 없음");
+                return;
+            }
+            //inventory.GetItem(foodItem, 1);
+        }
     }
 }

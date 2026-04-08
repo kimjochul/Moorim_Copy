@@ -21,9 +21,4 @@ public class NormalGuest : GuestBase
     {
         base.HandlePayState();
     }
-
-    protected override int CalculateFinalPrice()
-    {
-        return base.CalculateFinalPrice();
-    }
 }
