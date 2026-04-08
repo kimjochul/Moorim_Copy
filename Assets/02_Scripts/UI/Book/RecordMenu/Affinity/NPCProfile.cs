@@ -9,11 +9,10 @@ public class NPCProfile : MonoBehaviour
     [SerializeField] TextMeshProUGUI txtName;
     [SerializeField] Button btnSlot;
 
-    // GuestData´Â ÀÓ½Ã
-    public void Init(GuestData data, Action<GuestData> onClickAction)
+    public void Init(AffinityNPCData data, Action<AffinityNPCData> onClickAction)
     {
-        this.imgIcon.sprite = null;
-        this.txtName.text = "";
+        this.imgIcon.sprite = data.icon;
+        this.txtName.text = data.myName;
 
         this.btnSlot.onClick.RemoveAllListeners();
 

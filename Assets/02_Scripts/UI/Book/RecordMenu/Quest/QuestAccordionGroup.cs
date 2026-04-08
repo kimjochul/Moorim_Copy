@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Threading.Tasks;
+using TMPro;
 using System.Collections;
 
 public class QuestAccordionGroup : MonoBehaviour
@@ -31,14 +31,6 @@ public class QuestAccordionGroup : MonoBehaviour
             OnClickGroup(!this.isOpen);
         });
     }
-    private IEnumerator RefreshGroupRoutine()
-    {
-        this.group.enabled = false;
-        
-        yield return new WaitForSeconds(0.001f);
-
-        this.group.enabled = true;
-    }
     public void UpdateList(List<Quest> questDataList, Action<QuestSlot> onClickAction)
     {
         this.currentDataCount = questDataList.Count;
@@ -51,7 +43,7 @@ public class QuestAccordionGroup : MonoBehaviour
                 this.slotPool.Add(slot);
             }
 
-            //this.slotPool[i].Init(questDataList[i], onClickAction);
+            this.slotPool[i].Init(questDataList[i], onClickAction);
 
             this.slotPool[i].gameObject.SetActive(this.isOpen);
         }
@@ -79,6 +71,9 @@ public class QuestAccordionGroup : MonoBehaviour
     }
     public void OnClickGroup(bool open)
     {
+        if (!this.gameObject.activeInHierarchy)
+            return;
+
         this.isOpen = open;
         UpdateToggleUI();
 
@@ -89,5 +84,13 @@ public class QuestAccordionGroup : MonoBehaviour
         }
 
         this.refreshCoroutine = StartCoroutine(RefreshGroupRoutine());
+    }
+    private IEnumerator RefreshGroupRoutine()
+    {
+        this.group.enabled = false;
+
+        yield return new WaitForSeconds(0.001f);
+
+        this.group.enabled = true;
     }
 }

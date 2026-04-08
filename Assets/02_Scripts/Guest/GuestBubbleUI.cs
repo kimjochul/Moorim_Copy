@@ -6,7 +6,10 @@ public class GuestBubbleUI : MonoBehaviour
 {
     [Header("Bubble")]
     [SerializeField] private GameObject moodBubble;
+    [SerializeField] private RectTransform moodRect;
     [SerializeField] private GameObject statusBubble;
+    [SerializeField] private RectTransform statusRect;
+    
 
     [Header("Bubble UI")]
     [SerializeField] private Image moodIcon;
@@ -26,14 +29,18 @@ public class GuestBubbleUI : MonoBehaviour
 
     private GuestBase guest;
 
+    void Awake()
+    {
+        moodRect = moodBubble.GetComponent<RectTransform>();
+        statusRect = statusBubble.GetComponent<RectTransform>();
+    }
+
     public void Bind(GuestBase target)
     {
-         Debug.Log($"[Bind] 호출됨! target: {target.individualId}, 이미 guest 있음: {guest != null}");
-        
         guest = target;
 
         // 상태 변경 이벤트 구독
-        guest.OnGuestStateChanged += StateChanged;
+        guest.OnGuestStateChanged += BubbleChanged;
 
         // 기분 변경 이벤트 구독
         guest.OnGuestMoodChanged += MoodChanged;
@@ -50,13 +57,13 @@ public class GuestBubbleUI : MonoBehaviour
         guest.OnGuestReadyToPay += ReadyToPay;
     }
 
-    private void StateChanged(GuestBase g, GuestState state)
+    private void BubbleChanged(GuestBase g, GuestState state)
     {
         switch (state)
         {
             case GuestState.WaitOrder:
                 // 착석 → 기분 말풍선 켜기
-                moodBubble.SetActive(true);
+                ShowBubble(moodBubble, moodRect);
                 moodIcon.sprite = GetMoodSprite(g.CurrentMood);
                 break;
             case GuestState.WaitFood:
@@ -64,7 +71,7 @@ public class GuestBubbleUI : MonoBehaviour
                 break;
             case GuestState.Eat:
                 // 기분 유지, 상태 말풍선 끄기 (음식 받았으니까)
-                statusBubble.SetActive(false);
+                HideBubble(statusBubble, statusRect);
                 break;
             case GuestState.Pay:
                 // 기분 말풍선 끄고 계산 아이콘으로 교체
@@ -73,7 +80,7 @@ public class GuestBubbleUI : MonoBehaviour
             case GuestState.Exit:
                 // 전부 끄기
                 // moodBubble.SetActive(false);
-                statusBubble.SetActive(false);
+                HideBubble(statusBubble, statusRect);
                 break;
         }
     }
@@ -95,7 +102,7 @@ public class GuestBubbleUI : MonoBehaviour
         // 주문 접수 → 음식 아이콘으로 변경
         if (order.recipe != null && order.recipe.icon != null)
         {
-            statusBubble.SetActive(true);
+            ShowBubble(statusBubble, moodRect);
             statusIcon.sprite = order.recipe.icon;
         }
     }
@@ -126,4 +133,18 @@ public class GuestBubbleUI : MonoBehaviour
             default:                 return neutralSprite;
         }
     }
+
+    
+    private void ShowBubble(GameObject bubble, RectTransform rect)
+    {
+        bubble.SetActive(true);
+        UIAnimationManager.Instance.ShowPop(rect);
+    }
+
+    private void HideBubble(GameObject bubble, RectTransform rect)
+    {
+        UIAnimationManager.Instance.HidePop(rect);
+        bubble.SetActive(false);
+    }
+
 }

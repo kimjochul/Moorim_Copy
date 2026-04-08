@@ -418,7 +418,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 357725c50b56b9142ab707d89b74f75f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NormalGuest
-  orderWaitLimit: 20
+  orderMinWaitLimit: 15
+  orderMaxWaitLimit: 20
   foodMinWaitLimit: 30
   foodMidWaitLimit: 60
   foodMaxWaitLimit: 90
@@ -472,7 +473,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GuestBubbleUI
   moodBubble: {fileID: 431573954755436245}
+  moodRect: {fileID: 2647037629585274340}
   statusBubble: {fileID: 762677725710560243}
+  statusRect: {fileID: 5256007293118744802}
   moodIcon: {fileID: 4059704342278287780}
   statusIcon: {fileID: 7434476153653903430}
   veryBadSprite: {fileID: -1026134251, guid: 43e924b4cb29faf49b0036b867f8643d, type: 3}
@@ -481,7 +484,6 @@ MonoBehaviour:
   goodSprite: {fileID: 603850432, guid: 43e924b4cb29faf49b0036b867f8643d, type: 3}
   veryGoodSprite: {fileID: -1304132704, guid: 43e924b4cb29faf49b0036b867f8643d, type: 3}
   orderSprite: {fileID: 21300000, guid: f2d5b8f8cee28734f8864752346517f3, type: 3}
-  foodSprite: {fileID: 0}
   paySprite: {fileID: 21300000, guid: 2565ba6fffca6e343b39856b24b0c0d0, type: 3}
 --- !u!1 &8132417780352393928
 GameObject:

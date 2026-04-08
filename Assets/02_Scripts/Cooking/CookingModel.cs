@@ -6,10 +6,14 @@ public class CookingModel
     // 기억해야할 데이터
     // 현재 목표로 삼은 레시피(지금 만들고있는 요리)
     public Recipe CurrentRecipe { get; private set; }
-    // 재료 ID, 진행 상태를 추적하는 딕셔너리
-    public Dictionary<int, int> InsertedIngredients { get; private set; } = new Dictionary<int, int>();
 
-    // 메소드1. 새로운 요리 시작을 준비하는 함수
+    // 재료 ID → 현재 투입된 개수
+    public Dictionary<int, int> InsertedIngredients { get; private set; } = new Dictionary<int, int>();
+ 
+    // 재료 ID → 원본 IItem (인벤토리 반환 시 사용)
+    private Dictionary<int, IItem> cachedItems = new Dictionary<int, IItem>();
+
+    // 새로운 요리 시작을 준비하는 함수
     // 매개변수 : 선택된 레시피
     public void SetTargetRecipe(Recipe recipe)
     {
@@ -18,12 +22,10 @@ public class CookingModel
 
         // 레시피에 필요한 재료 목록을 가져오고 각 재료를 0개 상태로 등록
         foreach (var req in recipe.Data.ingredients)
-        {
             InsertedIngredients[req.ingredient.id] = 0;
-        }
     }
 
-    // 메소드2. 인베토리에서 온 재료가 맞는지 검사하는 함수
+    // 인베토리에서 온 재료가 맞는지 검사하는 함수
     // 매개변수 : 투입된 재료 id, 갯수
     public int TryAddIngredient(int ingredientId, int amount)
     {
@@ -42,23 +44,29 @@ public class CookingModel
         int spaceLeft = required - current;
 
         // 이미 갯수 충족이 된 경우 0개 투입
-        if (spaceLeft <= 0)
-            return 0;
+        if (spaceLeft <= 0) return 0;
 
         // 투입량 결정을 위한 변수
         int actualAdd = Mathf.Min(amount, spaceLeft);
-
-        // if (amount > spaceLeft)
-        //     actualAdd = spaceLeft; // 넣으려는 갯수가 빈 공간보다 많으면 빈 공간만큼만 맞춰서 넣음
-        // else    
-        //     actualAdd = amount; // 안 넘치면 넣으려는 갯수 그대로 넣음
 
         // 한도 제한해서 넣고 성공 보고
         InsertedIngredients[ingredientId] += actualAdd;
         return actualAdd;
     }
 
-    // 메소드3. 조리 가능 여부 체크 / 재료가 다 모였는지
+    // 아이템 캐싱 (반환용)
+    public void CacheItem(int ingredientId, IItem item)
+    {
+        if (!cachedItems.ContainsKey(ingredientId))
+            cachedItems.Add(ingredientId, item);
+    }
+ 
+    public bool TryGetCachedItem(int ingredientId, out IItem item)
+    {
+        return cachedItems.TryGetValue(ingredientId, out item);
+    }
+
+    // 조리 가능 여부 체크 / 재료가 다 모였는지
     public bool IsReadyToCook()
     {
         if (CurrentRecipe == null)
@@ -80,5 +88,6 @@ public class CookingModel
     {
         CurrentRecipe = null;
         InsertedIngredients.Clear();
+        cachedItems.Clear();
     }
 }

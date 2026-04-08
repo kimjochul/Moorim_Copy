@@ -21,9 +21,6 @@ public class RecipeListView : MonoBehaviour
 
     private List<RecipeSlotUI> spawnedSlots = new List<RecipeSlotUI>(); // 내가 만든 슬롯들 목록 보관함
 
-    // 메소드1 : 초기 세팅 함수
-    // 매개 변수 : 컨트롤러 연락처
-    // 1. 연락처 저장
     public void Init()
     {
         mainDishBtn.onClick.RemoveAllListeners();
@@ -37,19 +34,12 @@ public class RecipeListView : MonoBehaviour
         dessertBtn.onClick.AddListener(() => OnCategorySelected?.Invoke(Constants.FoodType.Dessert));
     }
 
-    // 메소드2. 리스트를 깔아주는 함수 // 중요@!!!!
+    // 리스트를 깔아주는 함수
     //List<Recipe> runtimeRecipes -> 현재 사용 가능한 레시피 목록
     public void PopulateList(List<Recipe> runtimeRecipes)
     {
-        // 리스트에 있는 기존 리스트 데이터 제거 (중복방지)
-        // List<RecipeSlotUI> 안에 있는 슬롯 하나씩 꺼낸 후 실제 게임 오브젝트 삭제 -> 리스트도 비움
-        foreach (var slot in spawnedSlots)
-        {
-            if (slot != null)
-                Destroy(slot.gameObject);
-        }
-        spawnedSlots.Clear();
-
+        ClearSpawnedSlots();
+        
         // 넘겨받은 레시피 리스트를 고유 id 순서대로 정렬
         var sortedRecipes = runtimeRecipes.OrderBy(r => r.Data.id).ToList();
 
@@ -71,5 +61,17 @@ public class RecipeListView : MonoBehaviour
             // 나중에 지우기 위해 list에 방금 만든 버튼 추가
             spawnedSlots.Add(slotUI);
         }
+    }
+
+    private void ClearSpawnedSlots()
+    {
+        // 리스트에 있는 기존 리스트 데이터 제거 (중복방지)
+        // List<RecipeSlotUI> 안에 있는 슬롯 하나씩 꺼낸 후 실제 게임 오브젝트 삭제 -> 리스트도 비움
+        foreach (var slot in spawnedSlots)
+        {
+            if (slot != null)
+                Destroy(slot.gameObject);
+        }
+        spawnedSlots.Clear();
     }
 }

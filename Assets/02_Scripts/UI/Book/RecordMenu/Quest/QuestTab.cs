@@ -52,7 +52,6 @@ public class QuestTab : BaseTab
     }
     private void QuestListUpdate()
     {
-        Debug.Log("얍");
         switch (this.currentCategory)
         {
             case QuestCategory.Main: 
@@ -69,21 +68,12 @@ public class QuestTab : BaseTab
         List<Quest> displayActiveQuests = this.dicActiveQuests[this.currentCategory];
         List<Quest> displayCompletedQuests = this.dicCompletedQuests[this.currentCategory];
 
-        displayActiveQuests.Add(test.GenerateRandomQuest(QuestType.MainStory));
-        displayActiveQuests.Add(test.GenerateRandomQuest(QuestType.MainStory));
-        displayActiveQuests.Add(test.GenerateRandomQuest(QuestType.MainStory));
-        displayActiveQuests.Add(test.GenerateRandomQuest(QuestType.MainStory));
-
-        displayCompletedQuests.Add(test.GenerateRandomQuest(QuestType.MainStory));
-        displayCompletedQuests.Add(test.GenerateRandomQuest(QuestType.MainStory));
-        displayCompletedQuests.Add(test.GenerateRandomQuest(QuestType.MainStory));
-        displayCompletedQuests.Add(test.GenerateRandomQuest(QuestType.MainStory));
-
+        
 
         RefreshQuestGroup(this.inProgressGroup, displayActiveQuests);
         RefreshQuestGroup(this.completedGroup, displayCompletedQuests);
 
-        ClearRightPanel();
+        ClearRightPage();
     }
 
     private void ShowQuest(QuestSlot clickedSlot)
@@ -94,7 +84,7 @@ public class QuestTab : BaseTab
         this.currentSelectedSlot = clickedSlot;
         this.currentSelectedSlot.SetSelect(true);
 
-        QuestData data = clickedSlot.questData;
+        QuestData data = this.currentSelectedSlot.questData;
 
         // 오른쪽 페이지에 띄울 데이터
         this.txtQuestName.text = data.questName;
@@ -146,7 +136,7 @@ public class QuestTab : BaseTab
     }
 
     // 오른쪽 페이지 비우기
-    private void ClearRightPanel()
+    private void ClearRightPage()
     {
         if (this.currentSelectedSlot != null)
         {
@@ -176,6 +166,8 @@ public class QuestTab : BaseTab
     // 카테고리에 맞게 리스트 추가
     private void AddQuestList(Quest q, Dictionary<QuestCategory, List<Quest>> targetDic)
     {
+        if (q == null)
+            return;
         switch (q.QuestType)
         {
             case QuestType.MainStory:
