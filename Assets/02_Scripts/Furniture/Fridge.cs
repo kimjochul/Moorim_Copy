@@ -6,7 +6,7 @@ using static Constants;
 [RequireComponent(typeof(Collider))]
 public class Fridge : MonoBehaviour, IInteractable
 {
-    [SerializeField] private Transform servingPoint;
+    [SerializeField] private Transform movePoint;
     [SerializeField] private Inventory inventory;
     
     
@@ -93,16 +93,16 @@ public class Fridge : MonoBehaviour, IInteractable
     /// 냉장고에 음식을 놓는 상황
     /// </summary>
     /// <param name="foodData"></param>
-    public void PlaceFood(IItem foodItem)
+    public void PlaceFood(Inventory sourceInven, Slot sourceSlot)
     {
-        inventory.GetItem(foodItem, 1);
+        sourceInven.MoveSlotTo(inventory, sourceSlot, 1);
     }
     
     /// <summary>
     /// 냉장고에서 음식을 꺼내는 상황
     /// </summary>
     /// <returns></returns>
-    public IItem TakeFood(int slotIndex)
+    public IItem TakeFood(int slotIndex, Inventory targetInven)
     {
         var slot = inventory.Slots[slotIndex];
         if (slot.Item == null)
@@ -113,6 +113,7 @@ public class Fridge : MonoBehaviour, IInteractable
 
         IItem item = slot.Item;
 
+        inventory.MoveSlotTo(targetInven, slot, 1);
         inventory.RemoveItem(item.ID, 1);
         
         return item;
@@ -120,10 +121,10 @@ public class Fridge : MonoBehaviour, IInteractable
 
     public Vector3 GetInteractPosition()
     {
-        return transform.position;
+        return movePoint.position;
     }
     public bool CanInteract(Constants.PlayerType playerType)
     {
-        return true;
+        return playerType == PlayerType.Myungwol;
     }
 }
