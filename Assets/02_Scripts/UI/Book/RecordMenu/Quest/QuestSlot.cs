@@ -15,7 +15,7 @@ public class QuestSlot : MonoBehaviour
     {
         this.questData = quest.Data;
 
-        this.txtQuestName.text = "";
+        this.txtQuestName.text = quest.QuestName;
 
         this.btnSlot.onClick.RemoveAllListeners();
 
