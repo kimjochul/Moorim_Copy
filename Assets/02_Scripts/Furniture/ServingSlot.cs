@@ -5,17 +5,15 @@ using static Constants;
 
 public class ServingSlot : MonoBehaviour, IInteractable
 {
-    [Header("��ȣ�ۿ� ĳ����")]
+    [Header("위치 관련 변수")]
     [SerializeField] 
     private Transform servingPoint;
     [SerializeField]
     private Transform foodPosition; 
 
-    //�丮 ������Ʈ
+    // 음식 오브젝트 소환용
     private GameObject objFoodPrefab;
-    //�ϼ��� �丮 ��ũ��Ʈ �־��� ����
     private GameObject currentFood;
-    public float Timer { get; private set; } = 0f;
 
     [SerializeField] private Inventory inventory;
 
@@ -43,6 +41,7 @@ public class ServingSlot : MonoBehaviour, IInteractable
 
                 slot.SpoilTimer = 0f;
             }
+            //Debug.Log($"{slot.Index}번 슬롯 Spoil Timer : {slot.SpoilTimer}");
         }
     }
 
@@ -86,12 +85,10 @@ public class ServingSlot : MonoBehaviour, IInteractable
     /// 배식대에 음식을 놓는 상황
     /// </summary>
     /// <param name="foodData"></param>
-    public void PlaceFood(IItem foodItem, Inventory sourceInven, Slot sourceSlot)
+    public void PlaceFood(Inventory sourceInven, Slot sourceSlot)
     {
-        // inventory.GetItem(foodItem, 1);
-        // var slot = inventory.FindSlot(foodItem.ID);
-        // slot.SpoilTimer = 0f;
-        sourceInven.MoveSlotTo(inventory, sourceSlot, 1);
+        int index = sourceInven.MoveSlotTo(inventory, sourceSlot, 1);
+        OnItemAddedToServing(inventory.Slots[index]);
     }
     
     /// <summary>
@@ -118,15 +115,12 @@ public class ServingSlot : MonoBehaviour, IInteractable
             objFoodPrefab = null;
         }
         currentFood = null;
-        Timer = 0f;
         
         return item;
     }
     
     private void OnItemAddedToServing(Slot slot)
     {
-        slot.SpoilTimer = 0f;
-        
         // 기존 음식 제거 (중복 방지)
         if (objFoodPrefab != null)
         {

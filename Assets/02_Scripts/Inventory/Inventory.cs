@@ -135,6 +135,9 @@ public class Inventory : MonoBehaviour
                 target.SetItem(source.Item, half);
                 source.AddCount(-half);
                 
+                target.FridgeSpoilTimer = source.FridgeSpoilTimer;
+                target.SpoilTimer = source.SpoilTimer;
+                
                 if (source.Count <= 0)
                     source.Clear();
             }
@@ -146,7 +149,10 @@ public class Inventory : MonoBehaviour
         if (target.IsEmpty)
         {
             target.SetItem(source.Item, source.Count);
-            target.FridgeSpoilTimer = 0;
+            
+            target.FridgeSpoilTimer = source.FridgeSpoilTimer;
+            target.SpoilTimer = source.SpoilTimer;
+            
             source.Clear();
         }
         // 2. 같은 아이템 → 합치기
@@ -172,6 +178,16 @@ public class Inventory : MonoBehaviour
             int tempCount = target.Count;
             // dragslot은 원래 슬롯을 참조하는 것이기 때문에 원래 슬롯이 변경됨
             //“dragSlot은 A 슬롯 객체를 참조하고 있고, dragSlot을 통해 호출한 메서드는 A 슬롯 인스턴스의 상태를 직접 변경한다.”
+
+            int tempFridgeSpoil = target.FridgeSpoilTimer;
+            float tempSpoilTimer = target.SpoilTimer;
+            
+            target.FridgeSpoilTimer = source.FridgeSpoilTimer;
+            target.SpoilTimer = source.SpoilTimer;
+
+            source.FridgeSpoilTimer = tempFridgeSpoil;
+            source.SpoilTimer = tempSpoilTimer;
+            
             target.SetItem(source.Item, source.Count);
             source.SetItem(tempItem, tempCount);
         }
@@ -337,16 +353,6 @@ public class Inventory : MonoBehaviour
         }
 
         return true;
-    }
-
-    public Slot FindSlot(int foodItemID)
-    {
-        foreach (var slot in slots)
-        {
-            if (slot.Item.ID == foodItemID)
-                return slot;
-        }
-        return null;
     }
     
     public int MoveSlotTo(Inventory target, Slot sourceSlot, int count)

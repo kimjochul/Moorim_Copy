@@ -21,7 +21,7 @@ public class InventoryManager : Singleton<InventoryManager>
     [SerializeField] private Inventory chefInventory; // 소월이용 인벤토리
     [SerializeField] private Inventory serverInventory; // 명월이용 인벤토리
 
-    //[SerializeField] private Inventory refridgeInventory; // 냉장고
+    [SerializeField] private Inventory fridgeInventory; // 냉장고
     [SerializeField] private Inventory mealTableInventory; // 배식대
 
     private void Start()
@@ -45,7 +45,7 @@ public class InventoryManager : Singleton<InventoryManager>
             //InventoryType.BondItem => bondItemInventory,
             InventoryType.Chef => chefInventory,
             InventoryType.Server => serverInventory,
-            //InventoryType.Fridge => refridgeInventory,
+            InventoryType.Fridge => fridgeInventory,
             InventoryType.MealTable => mealTableInventory,
             _ => null
         };
