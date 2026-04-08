@@ -52,7 +52,6 @@ public class QuestTab : BaseTab
     }
     private void QuestListUpdate()
     {
-        Debug.Log("¾å");
         switch (this.currentCategory)
         {
             case QuestCategory.Main: 
@@ -68,17 +67,6 @@ public class QuestTab : BaseTab
 
         List<Quest> displayActiveQuests = this.dicActiveQuests[this.currentCategory];
         List<Quest> displayCompletedQuests = this.dicCompletedQuests[this.currentCategory];
-
-        displayActiveQuests.Add(test.GenerateRandomQuest(QuestType.MainStory));
-        displayActiveQuests.Add(test.GenerateRandomQuest(QuestType.MainStory));
-        displayActiveQuests.Add(test.GenerateRandomQuest(QuestType.MainStory));
-        displayActiveQuests.Add(test.GenerateRandomQuest(QuestType.MainStory));
-
-        displayCompletedQuests.Add(test.GenerateRandomQuest(QuestType.MainStory));
-        displayCompletedQuests.Add(test.GenerateRandomQuest(QuestType.MainStory));
-        displayCompletedQuests.Add(test.GenerateRandomQuest(QuestType.MainStory));
-        displayCompletedQuests.Add(test.GenerateRandomQuest(QuestType.MainStory));
-
 
         RefreshQuestGroup(this.inProgressGroup, displayActiveQuests);
         RefreshQuestGroup(this.completedGroup, displayCompletedQuests);
