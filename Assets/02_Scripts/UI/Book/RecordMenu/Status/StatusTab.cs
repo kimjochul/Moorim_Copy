@@ -30,8 +30,8 @@ public class StatusTab : BaseTab
     }
     private void ProfileSetting()
     {
-        this.txtTotalRevenue.text = "";
-        this.txtTotalFame.text = "";
+        this.txtTotalRevenue.text = EconomyManager.Instance.RestaurantEconomy.Money.ToString();
+        this.txtTotalFame.text = EconomyManager.Instance.RestaurantEconomy.Fame.ToString();
         this.txtTotalHappyGuests.text = "";
         this.txtTotalAngryGuests.text = "";
 
