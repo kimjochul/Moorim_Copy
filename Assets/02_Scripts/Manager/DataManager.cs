@@ -18,24 +18,33 @@ public class RecipeMastery
 }
 public class DataManager : Singleton<DataManager>
 {
+    // ªÛ¡°
     private IngredientList ingredientList;
+
+    // Book
+    private AffinityNPCList affinityList;
     private RecipeList recipeList;
-    private QuestList questList;
 
     private Dictionary<IngredientType, List<IngredientData>> dicIngredient = new Dictionary<IngredientType, List<IngredientData>>();
     private Dictionary<FoodType, List<RecipeMastery>> dicRecipe = new Dictionary<FoodType, List<RecipeMastery>>();
 
-    void Start()
+    protected override void Awake()
     {
+        base.Awake();
         DataLoad();
     }
     public void DataLoad()
     {
-        RecipeDataLoad();
         IngredientDataLoad();
+        AffinityDataLoad();
+        RecipeDataLoad();
 
         RecipeCategorize();
         IngredientCategorize();
+    }
+    private void AffinityDataLoad()
+    {
+        this.affinityList = Resources.Load<AffinityNPCList>("Data/AffinityNPCList");
     }
     private void IngredientDataLoad()
     {
@@ -87,6 +96,10 @@ public class DataManager : Singleton<DataManager>
     public List<IngredientData> GetIngredientList(IngredientType type)
     {
         return this.dicIngredient[type];
+    }
+    public List<AffinityNPCData> GetAffinityNPCList()
+    {
+        return this.affinityList.listAffinityNPC;
     }
     public List<RecipeMastery> GetRecipeList(FoodType type)
     {
