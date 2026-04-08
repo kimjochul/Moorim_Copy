@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using static Constants;
 
 public class Merchant : MonoBehaviour, IInteractable
@@ -8,6 +9,12 @@ public class Merchant : MonoBehaviour, IInteractable
     [SerializeField] private GameObject merchantView;
     [SerializeField] private MerchantUI merchantUI;
  
+    [SerializeField] private Button merchantButton;
+    [SerializeField] private Button shopButton;
+    [SerializeField] private Button questButton;
+    [SerializeField] private Button talkButton;
+    [SerializeField] private Button exitButton;
+    
     // ── IInteractable 구현 ──
  
     // 상인은 클릭해서 상호작용
@@ -15,14 +22,31 @@ public class Merchant : MonoBehaviour, IInteractable
  
     private void Start()
     {
-        dayManager.OnDayEnd += DailyQuestCreate; 
+        dayManager.OnDayEnd += MerchantViewActive;
+        dayManager.OnDayEnd += DailyQuestCreate;
         merchantUI.Init(this);
-        gameObject.SetActive(false);
+        merchantView.SetActive(false);
+        
+        merchantButton.onClick.AddListener(OnClickMerchantInteract);
+        shopButton.onClick.AddListener(merchantUI.OpenShop);
+        questButton.onClick.AddListener(merchantUI.OpenQuest);
+        talkButton.onClick.AddListener(merchantUI.OpenTalk);
+        exitButton.onClick.AddListener(merchantUI.Close);
     }
     
-    private void Update()
+    private void MerchantViewActive()
     {
         merchantView.SetActive(IsAvailableDay());
+        merchantButton.gameObject.SetActive(IsAvailableDay());
+        shopButton.gameObject.SetActive(IsAvailableDay());
+        questButton.gameObject.SetActive(IsAvailableDay());
+        talkButton.gameObject.SetActive(IsAvailableDay());
+        exitButton.gameObject.SetActive(IsAvailableDay());
+    }
+
+    private void OnClickMerchantInteract()
+    {
+        Interact(null);
     }
     
     public bool CanInteract(PlayerType playerType)
@@ -35,6 +59,7 @@ public class Merchant : MonoBehaviour, IInteractable
         if (!IsAvailableDay())
             return;
  
+        merchantUI.OpenShop();
         // UI 창 호출
         // UI 호출 코드
         // UI 닫을 때 player.EndInteract() 호출 필요
@@ -66,7 +91,7 @@ public class Merchant : MonoBehaviour, IInteractable
  
     private bool IsAvailableDay()
     {
-        return dayManager.DayData.dayOfWeek == DayOfWeek.Monday ||
+        return dayManager.DayData.dayOfWeek == DayOfWeek.Tuesday || // 디버그 용으로 화요일로 바꿔둠
                dayManager.DayData.dayOfWeek == DayOfWeek.Wednesday || 
                dayManager.DayData.dayOfWeek == DayOfWeek.Friday;
     }
