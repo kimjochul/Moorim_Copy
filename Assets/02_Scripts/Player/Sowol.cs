@@ -62,8 +62,7 @@ public class Sowol : PlayerController
         {
             if (slot.Owner.Type is InventoryType.Chef)
             {
-                servingSlot.PlaceFood(slot.Item, inventory, slot);
-                inventory.RemoveItem(slot.Item.ID, 1);
+                servingSlot.PlaceFood(inventory, slot);
             }
         }
     }
@@ -82,7 +81,6 @@ public class Sowol : PlayerController
                 Debug.Log("가져올 음식 없음");
                 return;
             }
-            //inventory.GetItem(foodItem, 1);
         }
     }
 }

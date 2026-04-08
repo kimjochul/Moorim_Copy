@@ -34,13 +34,11 @@ public class Myungwol : PlayerController
         // 명월: 손님에게 음식 전달 등
 
         if (slot.Owner.Type is InventoryType.MealTable)
-        {
             ClickMealTableSlot(slot);
-        }
+        else if (slot.Owner.Type is InventoryType.Fridge)
+            ClickFridgeSlot(slot);
         else if(slot.Owner.Type is InventoryType.Server)
-        {
             ClickServerSlot(slot);
-        }
     }
 
     private void ClickMealTableSlot(Slot slot)
@@ -57,7 +55,22 @@ public class Myungwol : PlayerController
                 Debug.Log("가져올 음식 없음");
                 return;
             }
-            //inventory.GetItem(foodItem, 1);
+        }
+    }
+    
+    private void ClickFridgeSlot(Slot slot)
+    {
+        if (slot.Item == null)
+            return;
+        
+        var interactable = PlayerManager.Instance.ActiveInteractable;
+        if (interactable is Fridge fridge)
+        {
+            IItem foodItem = fridge.TakeFood(slot.Index, inventory);
+            if (foodItem == null)
+            {
+                Debug.Log("가져올 음식 없음");
+            }
         }
     }
 
@@ -71,8 +84,14 @@ public class Myungwol : PlayerController
         {
             if (slot.Owner.Type is InventoryType.Server)
             {
-                servingSlot.PlaceFood(slot.Item, inventory, slot);
-                inventory.RemoveItem(slot.Item.ID, 1);
+                servingSlot.PlaceFood(inventory, slot);
+            }
+        }
+        else if (interactable is Fridge fridge)
+        {
+            if (slot.Owner.Type is InventoryType.Server)
+            {
+                fridge.PlaceFood(inventory, slot);
             }
         }
     }
