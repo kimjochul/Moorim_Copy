@@ -38,5 +38,9 @@ public class QuestData : ScriptableObject
     public QuestReward reward;
 
     public QuestData nextQuest; // 다음 퀘스트
+
+    // 퀘스트 내용
+    [TextArea(3, 10)]
+    public string questDetail;
 }
 
