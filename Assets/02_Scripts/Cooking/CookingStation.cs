@@ -61,7 +61,8 @@ public class CookingStation : MonoBehaviour, IInteractable
  
     public Vector3 GetInteractPosition()
     {
-        return interactPoint != null ? interactPoint.position : transform.position;
+        // return interactPoint != null ? interactPoint.position : transform.position;
+        return default;
     }
  
     // 조리 흐름
