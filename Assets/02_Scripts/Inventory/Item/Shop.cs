@@ -40,13 +40,13 @@ public class Shop : MonoBehaviour
     }
     public void Init()
     {
-        playerMeatInventory = InventoryManager.Instance.GetInventory(InventoryType.IngredientsButMeatOnly);
-        playerOtherIngredientInventory = InventoryManager.Instance.GetInventory(InventoryType.Ingredients);
-        fridgeInventory = InventoryManager.Instance.GetInventory(InventoryType.Fridge);
+        //playerMeatInventory = InventoryManager.Instance.GetInventory(InventoryType.IngredientsButMeatOnly);
+        //playerOtherIngredientInventory = InventoryManager.Instance.GetInventory(InventoryType.Ingredients);
+        //fridgeInventory = InventoryManager.Instance.GetInventory(InventoryType.Fridge);
 
-        Buy(0, 1);
-        Buy(5, 2);
-        Buy(6, 1);
+        //Buy(0, 1);
+        //Buy(5, 2);
+        //Buy(6, 1);
 
         CreateCategory();
     }
@@ -156,54 +156,49 @@ public class Shop : MonoBehaviour
     {
         List<IngredientData> targetDataList = DataManager.Instance.GetIngredientList(type);
 
-        int minSlotCount = 3;
+        int minSlotCount = 3; // 3개의 슬롯 유지
         int displayCount = Mathf.Max(targetDataList.Count, minSlotCount);
-
-        // 빈 슬롯이 부족하면 생성
-        if (this.listProduct.Count < displayCount)
-        {
-            int needCount = displayCount - this.listProduct.Count;
-            for (int i = 0; i < needCount; i++)
-            {
-                GameObject product = Instantiate(this.objProduct, this.tsProduct);
-                product.SetActive(false);
-                this.listProduct.Add(product);
-            }
-        }
-
-        // 상점 요소 띄우기
-        for (int i = 0; i < this.listProduct.Count; i++)
-        {
-            this.listProduct[i].SetActive(false);
-
-            ShopProduct product = this.listProduct[i].GetComponent<ShopProduct>();
-            product.Clear();
-        }
 
         for (int i = 0; i < displayCount; i++)
         {
+            if (i >= this.listProduct.Count)
+            {
+                GameObject newGo = Instantiate(this.objProduct, this.tsProduct);
+                this.listProduct.Add(newGo);
+            }
+
             this.listProduct[i].SetActive(true);
+
             ShopProduct product = this.listProduct[i].GetComponent<ShopProduct>();
 
-            // 데이터가 있는 정상 슬롯일 경우
             if (i < targetDataList.Count)
             {
                 product.Init(targetDataList[i]);
 
+                product.onClickBuy = null;
                 product.onClickBuy += (itemData) =>
                 {
                     OnProductClicked?.Invoke(itemData);
                 };
 
-                product.onHoverEnter += (itemData) => {
+                product.onHoverEnter = (itemData) => {
                     this.infoPanel.ShowInfo(itemData);
                 };
-
-                product.onHoverExit += () => {
+                product.onHoverExit = () => {
                     this.infoPanel.HideInfo();
                 };
             }
+            else
+            {
+                product.Clear(); 
+                product.onClickBuy = null; 
+                product.onHoverEnter = null;
+            }
+        }
+
+        for (int i = displayCount; i < this.listProduct.Count; i++)
+        {
+            this.listProduct[i].SetActive(false);
         }
     }
-    
 }
