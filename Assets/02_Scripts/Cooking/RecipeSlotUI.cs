@@ -17,7 +17,6 @@ public class RecipeSlotUI : MonoBehaviour
     private Recipe myRecipe; // 내 주머니에 넣을 레시피 데이터
     private event Action<Recipe> onSlotClicked;
 
-    // 메소드1 : 초기화할 함수
     // 매개변수 : 나에게 부여된 레시피 데이터, 보고할 컨트롤러의 연락처
     public void Init(Recipe recipe, Action<Recipe> onClicked)
     {
@@ -26,12 +25,10 @@ public class RecipeSlotUI : MonoBehaviour
         onSlotClicked = onClicked;
 
         RecipeData data = myRecipe.Data; // 알맹이 꺼내기
-
-        // 데이터에서 받은 레시피 이름으로 변경
         recipeIcon.sprite = data.icon;
         recipeName.text = data.recipeName;
 
-        // 버튼 클릭 시 메소드 2를 연결
+        slotBtn.onClick.RemoveAllListeners();
         slotBtn.onClick.AddListener(OnSlotClicked);
     }
 
@@ -39,6 +36,5 @@ public class RecipeSlotUI : MonoBehaviour
     private void OnSlotClicked()
     {
         onSlotClicked?.Invoke(myRecipe);
-        Debug.Log($"{myRecipe.Data.recipeName} 선택됨");
     }
 }

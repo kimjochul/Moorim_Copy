@@ -14,7 +14,6 @@ public class CookingIngredientSlotUI : MonoBehaviour
     private int requiredAmount; // 목표 필요 개수
     private int currentAmount; // 현재 들어온 개수
 
-    // 메소드1 : 초기 세팅 함수
     // 매개변수: 내가 담당할 재료 데이터, 필요 개수
     public void Init (IngredientData ingredient, int amount)
     {
@@ -31,7 +30,7 @@ public class CookingIngredientSlotUI : MonoBehaviour
         gameObject.SetActive(true);
     }
 
-    // 메소드2 : 재료가 들어왔을 때 불리는 함수
+    // 재료가 들어왔을 때 불리는 함수
     // 매개변수: 들어온 개수
     public void AddIngredient(int amount)
     {
@@ -40,9 +39,7 @@ public class CookingIngredientSlotUI : MonoBehaviour
         ingredientcount.text = $"{currentAmount} / {requiredAmount}";
 
         if (currentAmount >= requiredAmount)
-        {
             ingredientIcon.color = new Color(1, 1, 1, 1);
-        }
     }
 
     // 슬롯이 가지고 있는 목표 재료를 외부에서 꺼내는 용도
