@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static Constants;
 using System;
+using System.Linq;
 
 [Serializable]
 public class RecipeMastery
@@ -18,6 +19,9 @@ public class RecipeMastery
 }
 public class DataManager : Singleton<DataManager>
 {
+    // 모든 아이템
+    private ItemDatabase itemDatabase;
+
     // 상점
     private IngredientList ingredientList;
 
@@ -35,12 +39,17 @@ public class DataManager : Singleton<DataManager>
     }
     public void DataLoad()
     {
+        ItemDatabaseDataLoad();
         IngredientDataLoad();
         AffinityDataLoad();
         RecipeDataLoad();
 
         RecipeCategorize();
         IngredientCategorize();
+    }
+    private void ItemDatabaseDataLoad()
+    {
+        this.itemDatabase = Resources.Load<ItemDatabase>("Data/ItemDatabase");
     }
     private void AffinityDataLoad()
     {
@@ -56,7 +65,7 @@ public class DataManager : Singleton<DataManager>
     }
 
 
-    // 분류
+    // 재료 분류
     private void IngredientCategorize()
     {
         foreach (IngredientType type in System.Enum.GetValues(typeof(IngredientType)))
@@ -74,6 +83,7 @@ public class DataManager : Singleton<DataManager>
             }
         }
     }
+    // 레시피 분류
     private void RecipeCategorize()
     {
         foreach (FoodType type in System.Enum.GetValues(typeof(FoodType)))
@@ -92,19 +102,55 @@ public class DataManager : Singleton<DataManager>
             }
         }
     }
-
+    // ItemDatabase에서 검색(ItemData 추출)
+    public ItemData GetItemData(int id)
+    {
+        return this.itemDatabase.Get(id);
+    }
+    // ItemDatabase에서 검색(이름 추출)
+    public string GetItemName(int id)
+    {
+        return this.itemDatabase.Get(id).itemName;
+    }
+    // 재료 타입 리스트 반환
     public List<IngredientData> GetIngredientList(IngredientType type)
     {
         return this.dicIngredient[type];
     }
+    // id로 검색해서 재료 데이터 반환
+    public IngredientData GetIngredientDataById(int id)
+    {
+        IngredientData findData = this.dicIngredient.Values
+            .SelectMany(list => list)
+            .FirstOrDefault(data => data.id == id);
+
+        return findData;
+    }
+    // id로 검색해서 재료 데이터 이름 반환
+    public string GetIngredientName(int id)
+    {
+        return GetIngredientDataById(id).itemName;
+    }
+    // 인연 캐릭터 리스트 반환
     public List<AffinityNPCData> GetAffinityNPCList()
     {
         return this.affinityList.listAffinityNPC;
     }
-    public List<RecipeMastery> GetRecipeList(FoodType type)
+    // id로 검색해서 레시피 데이터 반환
+    public RecipeData GetRecipeMasteryById(int id)
     {
-        return this.dicRecipe[type];
+        RecipeData findData = this.dicRecipe.Values
+            .SelectMany(list => list)
+            .FirstOrDefault(mastery => mastery.data.id == id).data;
+
+        return findData;
     }
+    // id로 검색해서 레시피 이름 반환
+    public string GetRecipeName(int id)
+    {
+        return GetRecipeMasteryById(id).recipeName;
+    }
+    // 해당 레시피 숙련도 상승
     public void AddRecipeProficiency(RecipeData targetRecipe, int amount)
     {
         FoodType targetType = targetRecipe.foodType;
