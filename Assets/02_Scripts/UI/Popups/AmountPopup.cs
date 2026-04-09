@@ -68,8 +68,10 @@ public class AmountPopup : PopupController
     }
     public void ButtonCancel(UnityAction action)
     {
-        this.btnCancel.onClick.AddListener(action);
-
-        Destroy(this.gameObject);
+        this.btnCancel.onClick.AddListener(()=>
+        {
+            action?.Invoke();
+            Destroy(this.gameObject);
+        });
     }
 }
