@@ -3,8 +3,9 @@ using static Constants;
 
 public enum InteractMode
 {
-    ClickToInteract,
-    AutoOnEnter
+    ClickToInteract, // 자동 실행 이후 직접 실행
+    AutoOnEnter, // 자동 실행
+    Immediate // 즉시 실행
 }
 
 public interface IInteractable
