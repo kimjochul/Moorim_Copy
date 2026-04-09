@@ -34,20 +34,11 @@ public class Shop : MonoBehaviour
     [SerializeField]
     private ShopProductInfo infoPanel;
 
-    void Start()
-    {
-        Init();
-    }
     public void Init()
     {
-        //playerMeatInventory = InventoryManager.Instance.GetInventory(InventoryType.IngredientsButMeatOnly);
-        //playerOtherIngredientInventory = InventoryManager.Instance.GetInventory(InventoryType.Ingredients);
-        //fridgeInventory = InventoryManager.Instance.GetInventory(InventoryType.Fridge);
-
-        //Buy(0, 1);
-        //Buy(5, 2);
-        //Buy(6, 1);
-
+        playerMeatInventory = InventoryManager.Instance.GetInventory(InventoryType.IngredientsButMeatOnly);
+        playerOtherIngredientInventory = InventoryManager.Instance.GetInventory(InventoryType.Ingredients);
+        fridgeInventory = InventoryManager.Instance.GetInventory(InventoryType.Fridge);
         CreateCategory();
     }
 

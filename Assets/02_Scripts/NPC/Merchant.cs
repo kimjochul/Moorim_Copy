@@ -8,12 +8,6 @@ public class Merchant : MonoBehaviour, IInteractable
     
     [SerializeField] private GameObject merchantView;
     [SerializeField] private MerchantUI merchantUI;
- 
-    [SerializeField] private Button merchantButton;
-    [SerializeField] private Button shopButton;
-    [SerializeField] private Button questButton;
-    [SerializeField] private Button talkButton;
-    [SerializeField] private Button exitButton;
     
     // ── IInteractable 구현 ──
  
@@ -26,27 +20,12 @@ public class Merchant : MonoBehaviour, IInteractable
         dayManager.OnDayEnd += DailyQuestCreate;
         merchantUI.Init(this);
         merchantView.SetActive(false);
-        
-        merchantButton.onClick.AddListener(OnClickMerchantInteract);
-        shopButton.onClick.AddListener(merchantUI.OpenShop);
-        questButton.onClick.AddListener(merchantUI.OpenQuest);
-        talkButton.onClick.AddListener(merchantUI.OpenTalk);
-        exitButton.onClick.AddListener(merchantUI.Close);
     }
     
     private void MerchantViewActive()
     {
         merchantView.SetActive(IsAvailableDay());
-        merchantButton.gameObject.SetActive(IsAvailableDay());
-        shopButton.gameObject.SetActive(IsAvailableDay());
-        questButton.gameObject.SetActive(IsAvailableDay());
-        talkButton.gameObject.SetActive(IsAvailableDay());
-        exitButton.gameObject.SetActive(IsAvailableDay());
-    }
-
-    private void OnClickMerchantInteract()
-    {
-        Interact(null);
+        merchantUI.gameObject.SetActive(IsAvailableDay());
     }
     
     public bool CanInteract(PlayerType playerType)
@@ -59,7 +38,6 @@ public class Merchant : MonoBehaviour, IInteractable
         if (!IsAvailableDay())
             return;
  
-        merchantUI.OpenShop();
         // UI 창 호출
         // UI 호출 코드
         // UI 닫을 때 player.EndInteract() 호출 필요

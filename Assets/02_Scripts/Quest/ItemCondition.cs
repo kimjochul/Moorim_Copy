@@ -72,7 +72,8 @@ public class ItemCondition : QuestCondition
     // 퀘스트 진행도 앞에 붙을 string
     public override string GetDescription()
     {
-        return $"아이템 {itemID} 납품"; 
+        string itemName = DataManager.Instance.GetItemName(itemID);
+        return $"{itemName}를 {requiredCount}개 주세요"; 
     }
     
     // 진행도 리턴 함수

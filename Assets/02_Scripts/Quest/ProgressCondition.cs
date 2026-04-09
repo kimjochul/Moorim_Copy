@@ -13,8 +13,10 @@ public class ProgressCondition : QuestCondition
     public int requiredMoney;
     public int requiredFame;
     public int requiredDayCount;
+    public QuestData Prerequisite_Quest; // 선행퀘스트는 퀘스트 매니저에서 완료된 퀘스트에서 id기반으로 찾아서 있으면 완료가능
     
     private DayManager dayManager;
+
     
     public override void Init(Inventory inventory)
     {
@@ -52,8 +54,13 @@ public class ProgressCondition : QuestCondition
         if (dayCount < requiredDayCount)
         {
             Debug.Log("Not enough day");
+            return false;
         }
-        
+        if (Prerequisite_Quest != null)
+        {
+            if (!QuestManager.Instance.PrerequisiteQuestIsDone(Prerequisite_Quest.id))
+                return false;
+        }
         return true;
     }
 
@@ -63,6 +70,7 @@ public class ProgressCondition : QuestCondition
         instance.requiredMoney = requiredMoney;
         instance.requiredFame = requiredFame;
         instance.requiredDayCount = requiredDayCount;
+        instance.Prerequisite_Quest = Prerequisite_Quest;
         
         return instance;
     }
@@ -78,7 +86,10 @@ public class ProgressCondition : QuestCondition
             description += $"요구 명성치 : {requiredFame}\n";
 
         if (requiredDayCount != 0)
-            description += $"{requiredDayCount}일 까지 진행";
+            description += $"{requiredDayCount}일 까지 진행\n";
+
+        if (Prerequisite_Quest != null)
+            description += $"선행퀘스트{Prerequisite_Quest.questName}";
         
         return description;
     }
@@ -95,6 +106,9 @@ public class ProgressCondition : QuestCondition
 
         if (requiredDayCount != 0)
             description += $"현재 {dayCount}/{requiredDayCount}일 까지 진행";
+        
+        if (Prerequisite_Quest != null)
+            description += $"선행퀘스트 : {Prerequisite_Quest.questName}";
         
         return description;
     }

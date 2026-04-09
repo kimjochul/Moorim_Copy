@@ -128,4 +128,19 @@ public class EconomyManager : Singleton<EconomyManager>
         RestaurantEconomyChanged?.Invoke();
         return true;
     }
+
+    /// <summary>
+    /// 빚 상환 시 호출 함수
+    /// </summary>
+    /// <param name="amount"></param>
+    /// <returns></returns>
+    public bool RepayDebt(int amount)
+    {
+        if (!CanSpend(amount))
+            return false;
+        
+        restaurantEconomy.Debt -= amount;
+
+        return true;
+    }
 }
