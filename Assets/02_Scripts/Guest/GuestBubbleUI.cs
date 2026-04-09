@@ -97,7 +97,7 @@ public class GuestBubbleUI : MonoBehaviour
         statusIcon.sprite = orderSprite;
     }
 
-    private void OrderPlaced(GuestBase g, RuntimeOrder order)
+    private void OrderPlaced(GuestBase g, GuestOrderData order)
     {
         // 주문 접수 → 음식 아이콘으로 변경
         if (order.recipe != null && order.recipe.icon != null)

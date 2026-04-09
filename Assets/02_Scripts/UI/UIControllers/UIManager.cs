@@ -27,7 +27,6 @@ public class UIManager : Singleton<UIManager>
     
     // temp 
     private Dictionary<Recipe, int> tempRecipes;
-    [SerializeField] private GuestData tempGuestData;
     [SerializeField] private List<RecipeData> recipes;
     List<Order> tempOrders = new List<Order>();
     
@@ -48,7 +47,7 @@ public class UIManager : Singleton<UIManager>
             Recipe newRecipe = new Recipe(recipe);
             Dictionary<Recipe, int> order = new  Dictionary<Recipe, int>();
             order.Add(newRecipe, Random.Range(0, 3));
-            tempOrders.Add(new Order(order, tempGuestData));
+            tempOrders.Add(new Order(order));
         }
     }
 

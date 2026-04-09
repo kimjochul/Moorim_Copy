@@ -29,7 +29,7 @@ public class EconomyManager : Singleton<EconomyManager>
         dayManager.OnDayEnd += TotalEarningToday;
         dayManager.OnDayEnd += TodayResult;
 
-        GuestManager.OnCustomerServed += OnCustomerServed;
+        GuestManager.OnGuestServed += OnCustomerServed;
     }
 
     void OnDisable()
@@ -39,7 +39,7 @@ public class EconomyManager : Singleton<EconomyManager>
         dayManager.OnDayEnd -= TotalEarningToday;
         dayManager.OnDayEnd -= TodayResult;
 
-        GuestManager.OnCustomerServed -= OnCustomerServed;
+        GuestManager.OnGuestServed -= OnCustomerServed;
     }
     
     /// <summary>
