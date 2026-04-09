@@ -15,7 +15,7 @@ public class OrderPopup : MonoBehaviour
 
     public void Init(Order order)
     {
-        _ordererIcon.sprite = order.orderer.icon;
+        // _ordererIcon.sprite = order.orderer.icon;
         string descriptionText = "";
         bool isFirst = true;
         foreach (var recipe in order.recipes)
