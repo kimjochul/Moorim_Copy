@@ -5,4 +5,6 @@ public class RestaurantEconomy : ScriptableObject
 {
     public int Money;
     public int Fame;
+
+    public int Debt;
 }

@@ -201,4 +201,19 @@ public class QuestManager : Singleton<QuestManager>, ISubject
         return activeQuests.Exists(q => q.QuestID == questID)
                || waitingQuests.Exists(q => q.QuestID == questID);
     }
+
+    /// <summary>
+    /// 선행퀘스트 완료됐는지 확인
+    /// </summary>
+    /// <param name="questID"></param>
+    /// <returns></returns>
+    public bool PrerequisiteQuestIsDone(int questID)
+    {
+        foreach (var completedQuest in completedQuests)
+        {
+            if (completedQuest.Data.id == questID)
+                return true;
+        }
+        return false;
+    }
 }

@@ -1,10 +1,14 @@
+using System;
 using UnityEngine;
+using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class MerchantUI : MonoBehaviour
 {
     [SerializeField] private GameObject shopPanel;
     [SerializeField] private GameObject questPanel;
-    [SerializeField] private GameObject talkPanel;
+    [SerializeField] private NPCTalkPanel talkPanel;
+    [SerializeField] private DebtPanel debtPanel;
 
     [SerializeField] private Transform questContent;
     [SerializeField] private GameObject questSlotPrefab;
@@ -12,22 +16,58 @@ public class MerchantUI : MonoBehaviour
     [SerializeField] private Transform clearContent;
     [SerializeField] private GameObject clearSlotPrefab;
     
-    private Merchant merchant;
     [SerializeField] private Shop shop;
     private Inventory inventory;
+    
+    [SerializeField] private Button shopButton;
+    [SerializeField] private Button questButton;
+    [SerializeField] private Button talkButton;
+    [SerializeField] private Button debtButton;
+    [SerializeField] private Button exitButton;
+    
+    private bool isInitialized = false;
+    
+    [SerializeField] private string[] greetingDialogues;
+    [SerializeField] private string[] idleDialogues; 
+    
+    private int lastDialogIndex = -1;
+    
+    public bool RepayDebtFinished { get; private set; } = false;
+    
+    public enum MerchantState
+    {
+        Shop,
+        Quest,
+        Talk,
+        Debt,
+    }
+    private MerchantState currentState;
+    private void SetState(MerchantState state)
+    {
+        currentState = state;
+        UpdateDialogue();
+    }
+    
     private void OnEnable()
     {
         QuestManager.Instance.OnWaitingQuestChanged += RefreshAccept;
         QuestManager.Instance.OnActiveQuestChanged += RefreshClear;
+        debtPanel.FullPayDebt += FullyRepayDebt;
 
         RefreshAccept();
         RefreshClear();
+    }
+
+    private void Start()
+    {
+        OpenTalk();
     }
 
     private void OnDisable()
     {
         QuestManager.Instance.OnWaitingQuestChanged -= RefreshAccept;
         QuestManager.Instance.OnActiveQuestChanged -= RefreshClear;
+        debtPanel.FullPayDebt -= FullyRepayDebt;
         
         if (shop != null)
             shop.OnProductClicked -= HandleProductClicked;
@@ -35,14 +75,25 @@ public class MerchantUI : MonoBehaviour
 
     public void Init(Merchant merchant)
     {
-        this.merchant = merchant;
+        if (isInitialized) return;
+        isInitialized = true;   
+        
         shop.Init();
+        shop.Buy(0, 1);
+        shop.Buy(5, 2);
+        shop.Buy(6, 1);
         
         shop.OnProductClicked += HandleProductClicked;
         
         inventory = InventoryManager.Instance.GetInventory(InventoryType.Fridge);
         
-        OpenTalk(); // 기본 탭
+        shopButton.onClick.AddListener(OpenShop);
+        questButton.onClick.AddListener(OpenQuest);
+        talkButton.onClick.AddListener(OpenTalk);
+        debtButton.onClick.AddListener(OpenDebt);
+        exitButton.onClick.AddListener(Close);
+        
+        currentState = MerchantState.Talk;
     }
 
     private void RefreshAccept()
@@ -80,13 +131,15 @@ public class MerchantUI : MonoBehaviour
     {
         shopPanel.SetActive(true);
         questPanel.SetActive(false);
-        talkPanel.SetActive(false);
+        talkPanel.gameObject.SetActive(true);
+        debtPanel.gameObject.SetActive(false);
         
-        shop.CreateCategory();
+        SetState(MerchantState.Shop);
     }
     
     private void HandleProductClicked(ItemData itemData)
     {
+        talkPanel.ChangeText($"{itemData.itemName}을 구매하시려고요?");
         UIManager.Instance.CreateAmountPopup($"{itemData.itemName}을 구매하시겠습니까?", itemData,
             (amount) =>
             {
@@ -94,6 +147,7 @@ public class MerchantUI : MonoBehaviour
                 
                 if (!EconomyManager.Instance.CanSpend(totalPrice))
                 {
+                    talkPanel.ChangeText("돈이 부족한 것 같은데요...");
                     UIManager.Instance.CreateOkPopup("돈이 부족합니다!", () => {});
                     return;
                 }
@@ -102,11 +156,13 @@ public class MerchantUI : MonoBehaviour
 
                 if (success)
                 {
+                    talkPanel.ChangeText("좋은 선택이에요!");
                     UIManager.Instance.CreateOkPopup("구매 완료!", () => {});
                 }
             },
             () =>
             {
+                talkPanel.ChangeText("천천히 둘러보세요~");
                 Debug.Log("취소 버튼 눌림");
             });
     }
@@ -115,16 +171,99 @@ public class MerchantUI : MonoBehaviour
     {
         shopPanel.SetActive(false);
         questPanel.SetActive(true);
-        talkPanel.SetActive(false);
+        talkPanel.gameObject.SetActive(true);
+        debtPanel.gameObject.SetActive(false);
+        
+        SetState(MerchantState.Quest);
     }
 
     public void OpenTalk()
     {
         shopPanel.SetActive(false);
         questPanel.SetActive(false);
-        talkPanel.SetActive(true);
+        talkPanel.gameObject.SetActive(true);
+        debtPanel.gameObject.SetActive(false);
+
+        SetState(MerchantState.Talk);
+    }
+    
+    public void OpenDebt()
+    {
+        shopPanel.SetActive(false);
+        questPanel.SetActive(false);
+        talkPanel.gameObject.SetActive(true);
+        debtPanel.gameObject.SetActive(true);
+
+        SetState(MerchantState.Debt);
+    }
+    
+    private void UpdateDialogue()
+    {
+        string dialogue = "";
+
+        switch (currentState)
+        {
+            case MerchantState.Shop:
+                dialogue = "좋은 물건 많아요~ 구경하고 가세요!";
+                break;
+
+            case MerchantState.Quest:
+                dialogue = "일 좀 부탁드려도 될까요? 보상은 해드릴게요";
+                break;
+
+            case MerchantState.Talk:
+                dialogue = GetTalkDialogue();
+                break;
+            
+            case MerchantState.Debt:
+                dialogue = "돈을 갚으시고 싶으신가요?";
+                break;
+
+            default:
+                dialogue = "";
+                break;
+        }
+        //Debug.Log($"대사 출력: {dialogue}");
+        talkPanel.ChangeText(dialogue);
     }
 
+    private string GetRandomDialogue(string[] dialogues)
+    {
+        if (dialogues == null || dialogues.Length == 0)
+            return "";
+
+        int index;
+
+        do
+        {
+            index = Random.Range(0, dialogues.Length);
+        }
+        while (dialogues.Length > 1 && index == lastDialogIndex);
+
+        lastDialogIndex = index;
+        return dialogues[index];
+    }
+    
+    private string GetTalkDialogue()
+    {
+        // 30% 확률로 인사, 70% 잡담
+        if (Random.value < 0.3f)
+        {
+            return GetRandomDialogue(greetingDialogues);
+        }
+        else
+        {
+            return GetRandomDialogue(idleDialogues);
+        }
+    }
+
+    private void FullyRepayDebt()
+    {
+        RepayDebtFinished = true;
+        debtPanel.gameObject.SetActive(false);
+        debtButton.gameObject.SetActive(false);
+    }
+    
     public void Close()
     {
         gameObject.SetActive(false);
