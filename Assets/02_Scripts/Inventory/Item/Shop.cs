@@ -66,7 +66,6 @@ public class Shop : MonoBehaviour
         }
         
         Debug.Log("Buying " + itemID);
-        // 돈 체크는 생략
         Item item = itemFactory.CreateItem(itemID);
 
         if (item == null)

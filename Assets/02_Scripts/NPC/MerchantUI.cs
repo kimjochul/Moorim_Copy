@@ -87,14 +87,14 @@ public class MerchantUI : MonoBehaviour
     
     private void HandleProductClicked(ItemData itemData)
     {
-        UIManager.Instance.CreateAmountPopup("구매하시겠습니까?", itemData,
+        UIManager.Instance.CreateAmountPopup($"{itemData.itemName}을 구매하시겠습니까?", itemData,
             (amount) =>
             {
                 int totalPrice = itemData.price * amount;
                 
                 if (!EconomyManager.Instance.CanSpend(totalPrice))
                 {
-                    //UIManager.Instance.("돈이 부족합니다!");
+                    UIManager.Instance.CreateOkPopup("돈이 부족합니다!", () => {});
                     return;
                 }
 
@@ -102,7 +102,7 @@ public class MerchantUI : MonoBehaviour
 
                 if (success)
                 {
-                    //UIManager.Instance.("구매 완료!");
+                    UIManager.Instance.CreateOkPopup("구매 완료!", () => {});
                 }
             },
             () =>
