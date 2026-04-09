@@ -81,6 +81,12 @@ public class PlayerInput : MonoBehaviour
         if (!interactable.CanInteract(currentPlayer))
             return;
         
+        if (interactable.Mode == InteractMode.Immediate)
+        {
+            interactable.Interact(PlayerManager.Instance.SelectedUnit);
+            return;
+        }
+        
         // 이미 해당 대상의 트리거 안에 있으면 이동 없이 바로 상호작용
         if (PlayerManager.Instance.ActiveInteractable == interactable)
         {
