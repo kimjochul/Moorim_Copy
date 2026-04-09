@@ -152,7 +152,7 @@ public class UIManager : Singleton<UIManager>
     public AmountPopup CreateAmountPopup(string message, ItemData itemData, UnityAction<int> onOk, UnityAction onCancel)
     {
         var popup = Instantiate(amountPopupObj, _canvas.transform).GetComponent<AmountPopup>();
-        popup.Init(message, itemData);
+        popup.Init(itemData);
         popup.ButtonOk(onOk);
         popup.ButtonCancel(onCancel);
 

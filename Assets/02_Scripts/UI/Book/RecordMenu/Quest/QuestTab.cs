@@ -68,7 +68,8 @@ public class QuestTab : BaseTab
         List<Quest> displayActiveQuests = this.dicActiveQuests[this.currentCategory];
         List<Quest> displayCompletedQuests = this.dicCompletedQuests[this.currentCategory];
 
-        
+        Debug.Log(displayActiveQuests.Count);
+        Debug.Log(displayCompletedQuests.Count);
 
         RefreshQuestGroup(this.inProgressGroup, displayActiveQuests);
         RefreshQuestGroup(this.completedGroup, displayCompletedQuests);

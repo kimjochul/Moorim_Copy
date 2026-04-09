@@ -5,8 +5,7 @@ using UnityEngine.Events;
 
 public class AmountPopup : PopupController
 {
-    [SerializeField]
-    private TextMeshProUGUI message;
+    private ItemData itemData;
 
     [SerializeField]
     private TextMeshProUGUI amount;
@@ -28,9 +27,9 @@ public class AmountPopup : PopupController
         this.btnPlus.onClick.AddListener(OnClickPlus);
         this.btnMinus.onClick.AddListener(OnClickMinus);
     }
-    public void Init(string message, ItemData itemData)
+    public void Init(ItemData itemData)
     {
-        this.message.text = message;
+        this.itemData = itemData;
         this.maxAmount = itemData.maxCapacity;
         this.currentAmount = 1;
 
