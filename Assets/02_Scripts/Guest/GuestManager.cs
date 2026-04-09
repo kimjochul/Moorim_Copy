@@ -10,6 +10,7 @@ public class GuestManager : MonoBehaviour
 {
     [Header("연결해야할 외부 정보")]
     [SerializeField] private DayManager dayManager;
+    [SerializeField] private GuestResultTracker resultTracker;
 
     [Header("Target Point")]
     [SerializeField] private Transform spawnPoint;
@@ -34,8 +35,8 @@ public class GuestManager : MonoBehaviour
     public GameObject richGuestPrefab;
     public GameObject thiefGuestPrefab;
 
-    public static event Action OnCustomerServed;
-    private int customerCount = 0;
+    public static event Action OnGuestServed;
+    private int GuestCount = 0;
 
     // 손님 런타임 정보
     private int globalIDCounter = 0;
@@ -112,8 +113,9 @@ public class GuestManager : MonoBehaviour
 
                 guest.OnGuestServedAndPaid += () =>
                 {
-                    customerCount++;
-                    OnCustomerServed?.Invoke();
+                    GuestCount++; // 서빙 완료된 손님 수 +1
+                    OnGuestServed?.Invoke(); // 외부에 손님 한 명 끝났다고 알림
+                    resultTracker.RecordGuest(guest.CurrentMood); // 기분별 집계
                 };
             }
         }
@@ -158,17 +160,12 @@ public class GuestManager : MonoBehaviour
             }
         }
     }
-    
-    public void ServeCustomer()
-    {
-        customerCount++;
-        OnCustomerServed?.Invoke();
-    }
 
     public void StopSpawn()
     {
         CancelInvoke();
     }
+
 }
 
 

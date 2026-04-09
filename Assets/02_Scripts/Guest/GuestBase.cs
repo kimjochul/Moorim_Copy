@@ -30,7 +30,7 @@ public abstract class GuestBase : MonoBehaviour
     // 손님 런타임 정보
     public int individualId;
     public GuestAppearance myApperance;
-    public RuntimeOrder myOrder = new RuntimeOrder();
+    public GuestOrderData myOrder = new GuestOrderData();
 
     protected float stateTimer = 0f;
 
@@ -51,7 +51,7 @@ public abstract class GuestBase : MonoBehaviour
     public event Action<GuestBase, GuestState> OnGuestStateChanged; // 상태 변경 알림용
     public event Action<GuestBase, GuestMood> OnGuestMoodChanged; // 기분 변경 알림용
     public event Action<GuestBase> OnGuestReadyToOrder; // 주문 대기 중일 때
-    public event Action<GuestBase, RuntimeOrder> OnOrderPlaced; // UI 주문 리스트용
+    public event Action<GuestBase, GuestOrderData> OnOrderPlaced; // UI 주문 리스트용
     public event Action<GuestBase> OnGuestReadyToPay; // 계산 중일 때
     public event Action OnGuestServedAndPaid; // 스포너용
     public event Action<int> OnMoneyEarned; // 손님이 결제한 비용을 알림
@@ -89,7 +89,7 @@ public abstract class GuestBase : MonoBehaviour
 
         // 주문 데이터
         if (myOrder == null)
-            myOrder = new RuntimeOrder();
+            myOrder = new GuestOrderData();
         else
             myOrder.Clear();
 
@@ -134,7 +134,7 @@ public abstract class GuestBase : MonoBehaviour
         guestManager = manager;
         
         if (myOrder == null)
-            myOrder = new RuntimeOrder();
+            myOrder = new GuestOrderData();
         else
             myOrder.Clear();
 

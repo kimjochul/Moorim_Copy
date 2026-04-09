@@ -2,9 +2,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-
 [System.Serializable] // 손님이 쥐고 있을 전체 주문서
-public class RuntimeOrder
+public class GuestOrderData
 {
     public RecipeData recipe; // 고른 메뉴
     public FoodData orderedFood; // 
@@ -19,19 +18,4 @@ public class RuntimeOrder
         orderedFood = null;
         isServed = false;
     }
-}
-
-
-[CreateAssetMenu(fileName = "GuestData", menuName = "Scriptable Objects/GuestData")]
-public class GuestData : ScriptableObject
-{
-    public int id;
-    public string guestName;
-    public GameObject guestPrefab;
-    public Sprite icon;
-    public Order order;
-    
-    // 대사 등
-    [TextArea(3, 10)]
-    public string description;
 }
