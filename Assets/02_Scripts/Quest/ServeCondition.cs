@@ -1,38 +1,74 @@
 using UnityEngine;
+using static Constants;
 
 [CreateAssetMenu(menuName = "Quest/Condition/ServeGuest")]
 public class ServeCondition : QuestCondition
 {
+    public GuestMood requiredGuestMood;
+    public int requireCount;
+    private int currentServeCount;
     
-    
-    
-    public override void Init(Inventory inventory)
+    public override void Init(Inventory inventory = null, GuestMood mood = GuestMood.Neutral)
     {
-        
+        currentServeCount = 0;
+        requiredGuestMood = mood;
     }
 
-    public override void Notify(QuestEvent questEvent)
+    public override void Notify(QuestEvent questEvent, GuestMood mood = GuestMood.Neutral)
     {
+        if (questEvent.type != QuestEventType.ServeCustomer)
+            return;
+
+        if ((int)mood < (int)requiredGuestMood)
+            return;
         
+        currentServeCount++;
+        NotifyUpdated();
     }
 
     public override bool IsComplete()
     {
-        return true;
+        return currentServeCount >= requireCount;
     }
 
     public override QuestCondition Clone()
     {
-        throw new System.NotImplementedException();
+        var instance = CreateInstance<ServeCondition>();
+        instance.requiredGuestMood = requiredGuestMood;
+        instance.requireCount = requireCount;
+        
+        return instance;
     }
 
     public override string GetDescription()
     {
-        throw new System.NotImplementedException();
+        string description = "";
+        string mood = "";
+        switch (requiredGuestMood)
+        {
+            case GuestMood.VeryBad:
+                mood = "매우 나쁨";
+                break;
+            case GuestMood.Bad:
+                mood = "나쁨";
+                break;
+            case GuestMood.Neutral:
+                mood = "보통";
+                break;
+            case GuestMood.Good:
+                mood = "좋음";
+                break;
+            case GuestMood.VeryGood:
+                mood = "매우 좋음";
+                break;
+        }
+
+        description = $"기분이 {mood} 이상인 손님 {requireCount}명 접객하기";
+        return description;
     }
 
     public override string GetProgressText()
     {
-        throw new System.NotImplementedException();
+        return $"{currentServeCount}/{requireCount}";
     }
 }

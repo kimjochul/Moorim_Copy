@@ -57,14 +57,14 @@ public class Quest : IObserver
     /// 관찰자로 부터 퀘스트 진행상황에 대한 업데이트 공지(QuestEvent의 정보)가 왔을 때 본인의 퀘스트가 진행된 건지 확인하는 함수
     /// </summary>
     /// <param name="questEvent"></param>
-    public void Notify(QuestEvent questEvent)
+    public void Notify(QuestEvent questEvent, Constants.GuestMood mood = Constants.GuestMood.Neutral)
     {
         if (IsCompleted || IsFailed)
             return;
-
+        
         foreach (var condition in conditions)
         {
-            condition.Notify(questEvent);
+            condition.Notify(questEvent, mood);
             
             if (condition is FailLimitCondition failCondition && failCondition.IsFailed())
             {
