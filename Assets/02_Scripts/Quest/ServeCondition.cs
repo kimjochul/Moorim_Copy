@@ -8,10 +8,9 @@ public class ServeCondition : QuestCondition
     public int requireCount;
     private int currentServeCount;
     
-    public override void Init(Inventory inventory = null, GuestMood mood = GuestMood.Neutral)
+    public override void Init(Inventory inventory = null)
     {
         currentServeCount = 0;
-        requiredGuestMood = mood;
     }
 
     public override void Notify(QuestEvent questEvent, GuestMood mood = GuestMood.Neutral)
@@ -19,10 +18,10 @@ public class ServeCondition : QuestCondition
         if (questEvent.type != QuestEventType.ServeCustomer)
             return;
 
-        if ((int)mood < (int)requiredGuestMood)
+        if (mood < requiredGuestMood)
             return;
         
-        currentServeCount++;
+        currentServeCount += questEvent.currentCount;
         NotifyUpdated();
     }
 

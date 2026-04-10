@@ -62,6 +62,8 @@ public class Quest : IObserver
         if (IsCompleted || IsFailed)
             return;
         
+        Debug.Log(questEvent.ToString());
+        
         foreach (var condition in conditions)
         {
             condition.Notify(questEvent, mood);
@@ -153,6 +155,7 @@ public class Quest : IObserver
     {
         IsFailed = true;
         Debug.Log($"퀘스트 실패: {QuestName}");
+        QuestManager.Instance.EraseQuestFromActive(this);
         QuestManager.Instance.RemoveObserver(this);
     }
     

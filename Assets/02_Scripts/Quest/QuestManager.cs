@@ -36,6 +36,7 @@ public class QuestManager : Singleton<QuestManager>, ISubject
     private void Start()
     {
         inventory = InventoryManager.Instance.GetInventory(InventoryType.Chef);
+        guestResultTracker.OnGuestRecorded += DetectGuestMood;
     }
 
     /// <summary>
@@ -128,12 +129,28 @@ public class QuestManager : Singleton<QuestManager>, ISubject
 
             return;
         }
-        
-        Constants.GuestMood guestMood = Constants.GuestMood.Neutral;
-        guestResultTracker.OnGuestRecorded += (mood) => { guestMood = mood; };
+
+        Constants.GuestMood guestMood = (Constants.GuestMood)questEvent.ID;
         
         for (int i = observers.Count - 1; i >= 0; i--)
             observers[i].Notify(questEvent, guestMood);
+    }
+
+    private void DetectGuestMood(Constants.GuestMood guestMood)
+    {
+        Debug.Log(guestMood.ToString());
+        int moodID = (int)guestMood; 
+        
+        QuestManager.Instance.NotifyListener(new QuestEvent{
+            type = QuestEventType.Fail,
+            ID = moodID,
+            currentCount = 1
+        });
+        QuestManager.Instance.NotifyListener(new QuestEvent{
+            type = QuestEventType.ServeCustomer,
+            ID = moodID,
+            currentCount = 1
+        });
     }
     
     /// <summary>
@@ -149,9 +166,7 @@ public class QuestManager : Singleton<QuestManager>, ISubject
             if (quest.QuestType == QuestType.MainStory || quest.QuestType == QuestType.SubStory)
                 continue;
 
-            quest.Fail(); // 내부에서 RemoveObserver 호출됨
-
-            activeQuests.RemoveAt(i);
+            //quest.Fail(); // 내부에서 RemoveObserver 호출됨
             OnActiveQuestRemoved?.Invoke(quest); // 퀘스트 UI 창 업데이트 함수 연결해야함
             
             isChanged = true;
