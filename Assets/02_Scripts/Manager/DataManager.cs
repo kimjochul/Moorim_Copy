@@ -142,18 +142,18 @@ public class DataManager : Singleton<DataManager>
         return this.dicRecipe[type];
     }
     // id로 검색해서 레시피 데이터 반환
-    public RecipeData GetRecipeData(int id)
+    public RecipeMastery GetRecipeData(int id)
     {
-        RecipeData findData = this.dicRecipe.Values
+        RecipeMastery findData = this.dicRecipe.Values
             .SelectMany(list => list)
-            .FirstOrDefault(mastery => mastery.data.id == id).data;
+            .FirstOrDefault(mastery => mastery.data.id == id);
 
         return findData;
     }
     // id로 검색해서 레시피 이름 반환
     public string GetRecipeName(int id)
     {
-        return GetRecipeData(id).recipeName;
+        return GetRecipeData(id).data.recipeName;
     }
     // 해당 레시피 숙련도 상승
     public void AddRecipeProficiency(RecipeData targetRecipe, int amount)
