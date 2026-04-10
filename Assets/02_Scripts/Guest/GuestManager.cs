@@ -111,22 +111,15 @@ public class GuestManager : MonoBehaviour
                 guest.ResetState();
                 guest.Init(globalIDCounter, appearance, exitPoint, this);
 
-                guest.OnGuestServedAndPaid += () =>
+                guest.OnGuestPaid += () =>
                 {
                     GuestCount++; // 서빙 완료된 손님 수 +1
                     OnGuestServed?.Invoke(); // 외부에 손님 한 명 끝났다고 알림
+                };
+                
+                guest.OnGuestExited += () =>
+                {
                     resultTracker.RecordGuest(guest.CurrentMood); // 기분별 집계
-                    
-                    QuestManager.Instance.NotifyListener(new QuestEvent{
-                        type = QuestEventType.Fail,
-                        ID = 0,
-                        currentCount = 0
-                    });
-                    QuestManager.Instance.NotifyListener(new QuestEvent{
-                        type = QuestEventType.ServeCustomer,
-                        ID = 0,
-                        currentCount = 0
-                    });
                 };
             }
         }

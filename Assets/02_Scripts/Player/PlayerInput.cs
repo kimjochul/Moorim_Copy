@@ -53,9 +53,6 @@ public class PlayerInput : MonoBehaviour
     // 마우스 클릭
     private void MouseClick()
     {
-        if (!Input.GetMouseButtonDown(0))
-            return;
-        
         // UI 위를 클릭했으면 게임, 월드 클릭 무시
         if (EventSystem.current.IsPointerOverGameObject())
             return;
