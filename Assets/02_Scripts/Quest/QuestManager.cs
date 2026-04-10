@@ -16,8 +16,9 @@ public class QuestManager : Singleton<QuestManager>, ISubject
     private List<IObserver> observers = new List<IObserver>();
     
     [SerializeField] private QuestGenerator generator;
-    
     [SerializeField] private Inventory inventory;
+    [SerializeField] private GuestResultTracker guestResultTracker;
+    
     private List<Quest> activeQuests = new List<Quest>();
     public List<Quest> ActiveQuests => activeQuests;
     private List<Quest> waitingQuests = new List<Quest>();
@@ -128,8 +129,11 @@ public class QuestManager : Singleton<QuestManager>, ISubject
             return;
         }
         
+        Constants.GuestMood guestMood = Constants.GuestMood.Neutral;
+        guestResultTracker.OnGuestRecorded += (mood) => { guestMood = mood; };
+        
         for (int i = observers.Count - 1; i >= 0; i--)
-            observers[i].Notify(questEvent);
+            observers[i].Notify(questEvent, guestMood);
     }
     
     /// <summary>

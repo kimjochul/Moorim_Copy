@@ -8,7 +8,7 @@ public interface IObserver
     int QuestID { get; }
     string QuestName { get; }
     bool IsCompleted { get; }
-    void Notify(QuestEvent questEvent);
+    void Notify(QuestEvent questEvent, Constants.GuestMood mood = Constants.GuestMood.Neutral);
     bool CanClear();
     void Complete();
 }

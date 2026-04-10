@@ -267,5 +267,7 @@ public class MerchantUI : MonoBehaviour
     public void Close()
     {
         gameObject.SetActive(false);
+        DayManager dayManager = FindFirstObjectByType<DayManager>();
+        dayManager.DayStart();
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using static Constants;
 
 /// <summary>
 /// 아이템 제출을 필요로 하는 퀘스트 조건에 대한 클래스
@@ -21,7 +22,7 @@ public class ItemCondition : QuestCondition
     /// 아이템 제출 퀘스트는 인벤토리가 필요하니 init
     /// </summary>
     /// <param name="inventory"></param>
-    public override void Init(Inventory inventory)
+    public override void Init(Inventory inventory = null, GuestMood mood = GuestMood.Neutral)
     {
         currentCount = inventory.GetItemCount(itemID);
     }
@@ -30,7 +31,7 @@ public class ItemCondition : QuestCondition
     /// 만약 questevent가 왔을 때 questeventtype이 itemchanged일 경우, 본인의 퀘스트가 필요로 하는 아이템인지 확인 후 값 갱신.   
     /// </summary>
     /// <param name="questEvent"></param>
-    public override void Notify(QuestEvent questEvent)
+    public override void Notify(QuestEvent questEvent, GuestMood mood = GuestMood.Neutral)
     {
         if (questEvent.type != QuestEventType.ItemChanged)
             return;

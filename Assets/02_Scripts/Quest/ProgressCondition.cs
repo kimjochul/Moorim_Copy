@@ -1,4 +1,5 @@
 using UnityEngine;
+using static Constants;
 
 /// <summary>
 /// 게임 진행도에 따라 완료되는 퀘스트
@@ -18,7 +19,7 @@ public class ProgressCondition : QuestCondition
     private DayManager dayManager;
 
     
-    public override void Init(Inventory inventory)
+    public override void Init(Inventory inventory = null, GuestMood mood = GuestMood.Neutral)
     {
         dayManager = FindFirstObjectByType<DayManager>();
         
@@ -27,7 +28,7 @@ public class ProgressCondition : QuestCondition
         dayCount = dayManager.DayData.day;
     }
 
-    public override void Notify(QuestEvent questEvent)
+    public override void Notify(QuestEvent questEvent, GuestMood mood = GuestMood.Neutral)
     {
         if(questEvent.type != QuestEventType.ProgressCheck)
             return;

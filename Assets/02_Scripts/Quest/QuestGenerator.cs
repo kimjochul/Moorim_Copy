@@ -221,7 +221,7 @@ public class QuestGenerator : MonoBehaviour
                 else
                     recipe = GetRecipeByID(itemCondition.itemID);
                 
-                itemCondition.requiredCount = Random.Range(1, 1);
+                itemCondition.requiredCount = Random.Range(1, 1); // 테스트 용으로 무조건 1만 나오게 설정
                 
                 if (recipe != null)
                     Debug.Log($"{recipe.recipeName} / require count: {itemCondition.requiredCount}");

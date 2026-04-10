@@ -5678,16 +5678,16 @@ MonoBehaviour:
   - {fileID: 1152602016}
   - {fileID: 1943007224}
   normalGuestPrefabs:
-  - prefab: {fileID: 7423301461799025111, guid: f8af00c12bd89d34fa2f887702d4a299, type: 3}
+  - prefab: {fileID: 5443521807713908842, guid: f8af00c12bd89d34fa2f887702d4a299, type: 3}
     appearance: 0
-  - prefab: {fileID: 6056675718057628770, guid: d14614e5f06e6bf4dbcd4527506eed41, type: 3}
+  - prefab: {fileID: 8066127323468396255, guid: d14614e5f06e6bf4dbcd4527506eed41, type: 3}
     appearance: 1
-  - prefab: {fileID: 2118154576711725263, guid: f40352c3cd0431149ab837e9fab7423e, type: 3}
+  - prefab: {fileID: 5018964394972211030, guid: f40352c3cd0431149ab837e9fab7423e, type: 3}
     appearance: 2
-  - prefab: {fileID: 3129124448995761554, guid: a1f9514c795932d4db85732081742f6f, type: 3}
+  - prefab: {fileID: 862774373496910678, guid: a1f9514c795932d4db85732081742f6f, type: 3}
     appearance: 3
-  richGuestPrefab: {fileID: 7259757810946285311, guid: ba2fc12dc1aca424aa3faa865e369811, type: 3}
-  thiefGuestPrefab: {fileID: 3991690437284723275, guid: 45ddbcf3d8281f747b8119777c746224, type: 3}
+  richGuestPrefab: {fileID: 3473648972625490534, guid: ba2fc12dc1aca424aa3faa865e369811, type: 3}
+  thiefGuestPrefab: {fileID: 8193163201105834148, guid: 45ddbcf3d8281f747b8119777c746224, type: 3}
 --- !u!4 &652007370
 Transform:
   m_ObjectHideFlags: 0
@@ -6468,7 +6468,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a82595332a77724fa76919641ab8fd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DayManager
-  dayLength: 1
+  dayLength: 60
   gameStartHour: 9
   gameEndHour: 21
 --- !u!4 &739405825
@@ -7978,6 +7978,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 892558109}
   m_CullTransparentMesh: 1
+--- !u!1 &903597694
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 903597696}
+  - component: {fileID: 903597695}
+  m_Layer: 0
+  m_Name: GuestResultTracker
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &903597695
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 903597694}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3adfae4a32134a141a759be5f5d362ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GuestResultTracker
+--- !u!4 &903597696
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 903597694}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 963.1964, y: 501.21524, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &911855606
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16880,6 +16924,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::QuestManager
   generator: {fileID: 2020098910}
   inventory: {fileID: 0}
+  guestResultTracker: {fileID: 0}
 --- !u!4 &1918122045
 Transform:
   m_ObjectHideFlags: 0
@@ -41661,6 +41706,7 @@ SceneRoots:
   - {fileID: 1580641302}
   - {fileID: 658756591}
   - {fileID: 460937599}
+  - {fileID: 903597696}
   - {fileID: 298915272}
   - {fileID: 739405825}
   - {fileID: 1019874592}
