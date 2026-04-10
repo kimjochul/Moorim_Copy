@@ -341,7 +341,7 @@ public abstract class GuestBase : MonoBehaviour
         if (!isExitPathSet && exitDoor != null)
         {
             OnGuestExited?.Invoke();
-            
+
             if (myChair != null)
             {
                 myChair.Empty();
