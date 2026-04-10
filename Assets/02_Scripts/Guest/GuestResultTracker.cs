@@ -13,10 +13,14 @@ public class GuestResultTracker : MonoBehaviour
     // 하루 마감 시 외부에 알림
     public event Action<GuestResultData, GuestResultData> OnDayResultReady;
 
+    // 손님 퇴장시 마다 외부에 알림
+    public event Action<GuestMood> OnGuestRecorded;
+
     public void RecordGuest(GuestMood mood)
     {
         dailyResult.AddResult(mood);
         totalResult.AddResult(mood);
+        OnGuestRecorded?.Invoke(mood);
     }
 
     public void EndDay()
