@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 public class StatusTab : BaseTab
 {
+    [SerializeField] private GuestResultTracker guestTracker;
     // 왼쪽 페이지
     [SerializeField] private TextMeshProUGUI txtTotalRevenue;
     [SerializeField] private TextMeshProUGUI txtTotalFame;
@@ -32,9 +33,12 @@ public class StatusTab : BaseTab
     {
         this.txtTotalRevenue.text = EconomyManager.Instance.RestaurantEconomy.Money.ToString();
         this.txtTotalFame.text = EconomyManager.Instance.RestaurantEconomy.Fame.ToString();
-        this.txtTotalHappyGuests.text = "";
-        this.txtTotalAngryGuests.text = "";
 
+        int happyGuests = this.guestTracker.GetTotalResult().goodCount + this.guestTracker.GetTotalResult().veryGoodCount;
+        int angryGuests = this.guestTracker.GetTotalResult().badCount + this.guestTracker.GetTotalResult().veryBadCount;
+
+        this.txtTotalHappyGuests.text = happyGuests.ToString();
+        this.txtTotalAngryGuests.text = angryGuests.ToString();
 
         PlayerData data = new PlayerData();
 
