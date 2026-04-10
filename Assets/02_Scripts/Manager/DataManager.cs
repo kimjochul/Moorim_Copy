@@ -19,10 +19,10 @@ public class RecipeMastery
 }
 public class DataManager : Singleton<DataManager>
 {
-    // ¸ðµç ¾ÆÀÌÅÛ
+    // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     private ItemDatabase itemDatabase;
 
-    // »óÁ¡
+    // ï¿½ï¿½ï¿½ï¿½
     private IngredientList ingredientList;
 
     // Book
@@ -65,7 +65,7 @@ public class DataManager : Singleton<DataManager>
     }
 
 
-    // Àç·á ºÐ·ù
+    // ï¿½ï¿½ï¿½ ï¿½Ð·ï¿½
     private void IngredientCategorize()
     {
         foreach (IngredientType type in System.Enum.GetValues(typeof(IngredientType)))
@@ -83,7 +83,7 @@ public class DataManager : Singleton<DataManager>
             }
         }
     }
-    // ·¹½ÃÇÇ ºÐ·ù
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ð·ï¿½
     private void RecipeCategorize()
     {
         foreach (FoodType type in System.Enum.GetValues(typeof(FoodType)))
@@ -102,22 +102,22 @@ public class DataManager : Singleton<DataManager>
             }
         }
     }
-    // ItemDatabase¿¡¼­ °Ë»ö(ItemData ÃßÃâ)
+    // ItemDatabaseï¿½ï¿½ï¿½ï¿½ ï¿½Ë»ï¿½(ItemData ï¿½ï¿½ï¿½ï¿½)
     public ItemData GetItemData(int id)
     {
         return this.itemDatabase.Get(id);
     }
-    // ItemDatabase¿¡¼­ °Ë»ö(ÀÌ¸§ ÃßÃâ)
+    // ItemDatabaseï¿½ï¿½ï¿½ï¿½ ï¿½Ë»ï¿½(ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½)
     public string GetItemName(int id)
     {
         return this.itemDatabase.Get(id).itemName;
     }
-    // Àç·á Å¸ÀÔ ¸®½ºÆ® ¹ÝÈ¯
+    // ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½È¯
     public List<IngredientData> GetIngredientList(IngredientType type)
     {
         return this.dicIngredient[type];
     }
-    // id·Î °Ë»öÇØ¼­ Àç·á µ¥ÀÌÅÍ ¹ÝÈ¯
+    // idï¿½ï¿½ ï¿½Ë»ï¿½ï¿½Ø¼ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
     public IngredientData GetIngredientData(int id)
     {
         IngredientData findData = this.dicIngredient.Values
@@ -126,22 +126,22 @@ public class DataManager : Singleton<DataManager>
 
         return findData;
     }
-    // id·Î °Ë»öÇØ¼­ Àç·á µ¥ÀÌÅÍ ÀÌ¸§ ¹ÝÈ¯
+    // idï¿½ï¿½ ï¿½Ë»ï¿½ï¿½Ø¼ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ ï¿½ï¿½È¯
     public string GetIngredientName(int id)
     {
         return GetIngredientData(id).itemName;
     }
-    // ÀÎ¿¬ Ä³¸¯ÅÍ ¸®½ºÆ® ¹ÝÈ¯
+    // ï¿½Î¿ï¿½ Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½È¯
     public List<AffinityNPCData> GetAffinityNPCList()
     {
         return this.affinityList.listAffinityNPC;
     }
-    // ·¹½ÃÇÇ Å¸ÀÔ ¸®½ºÆ® ¹ÝÈ¯
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½È¯
     public List<RecipeMastery> GetRecipeList(FoodType type)
     {
         return this.dicRecipe[type];
     }
-    // id·Î °Ë»öÇØ¼­ ·¹½ÃÇÇ µ¥ÀÌÅÍ ¹ÝÈ¯
+    // idï¿½ï¿½ ï¿½Ë»ï¿½ï¿½Ø¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
     public RecipeMastery GetRecipeMasteryData(int id)
     {
         RecipeMastery findData = this.dicRecipe.Values
@@ -150,12 +150,27 @@ public class DataManager : Singleton<DataManager>
 
         return findData;
     }
-    // id·Î °Ë»öÇØ¼­ ·¹½ÃÇÇ ÀÌ¸§ ¹ÝÈ¯
+    // idï¿½ï¿½ ï¿½Ë»ï¿½ï¿½Ø¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ ï¿½ï¿½È¯
     public string GetRecipeName(int id)
     {
         return GetRecipeMasteryData(id).data.recipeName;
     }
-    // ÇØ´ç ·¹½ÃÇÇ ¼÷·Ãµµ »ó½Â
+    
+    public bool HasAnyRecipeProficiency(int value)
+    {
+        foreach (var list in dicRecipe.Values)
+        {
+            foreach (var mastery in list)
+            {
+                if (mastery.proficiency >= value)
+                    return true;
+            }
+        }
+
+        return false;
+    }
+    
+    // ï¿½Ø´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ãµï¿½ ï¿½ï¿½ï¿½
     public void AddRecipeProficiency(RecipeData targetRecipe, int amount)
     {
         FoodType targetType = targetRecipe.foodType;

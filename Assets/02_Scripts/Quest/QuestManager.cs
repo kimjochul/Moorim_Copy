@@ -138,7 +138,6 @@ public class QuestManager : Singleton<QuestManager>, ISubject
 
     private void DetectGuestMood(Constants.GuestMood guestMood)
     {
-        Debug.Log(guestMood.ToString());
         int moodID = (int)guestMood; 
         
         QuestManager.Instance.NotifyListener(new QuestEvent{
