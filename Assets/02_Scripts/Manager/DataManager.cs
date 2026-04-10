@@ -11,9 +11,9 @@ public class RecipeMastery
     public RecipeData data; 
     public int proficiency;
 
-    public RecipeMastery(RecipeData originalData)
+    public RecipeMastery(RecipeData data)
     {
-        this.data = originalData;
+        this.data = data;
         this.proficiency = 0;
     }
 }
@@ -142,7 +142,7 @@ public class DataManager : Singleton<DataManager>
         return this.dicRecipe[type];
     }
     // id로 검색해서 레시피 데이터 반환
-    public RecipeMastery GetRecipeData(int id)
+    public RecipeMastery GetRecipeMasteryData(int id)
     {
         RecipeMastery findData = this.dicRecipe.Values
             .SelectMany(list => list)
@@ -153,7 +153,7 @@ public class DataManager : Singleton<DataManager>
     // id로 검색해서 레시피 이름 반환
     public string GetRecipeName(int id)
     {
-        return GetRecipeData(id).data.recipeName;
+        return GetRecipeMasteryData(id).data.recipeName;
     }
     // 해당 레시피 숙련도 상승
     public void AddRecipeProficiency(RecipeData targetRecipe, int amount)
