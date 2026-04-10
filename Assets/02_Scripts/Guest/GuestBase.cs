@@ -53,9 +53,7 @@ public abstract class GuestBase : MonoBehaviour
     public event Action<GuestBase> OnGuestReadyToOrder; // 주문 대기 중일 때
     public event Action<GuestBase, GuestOrderData> OnOrderPlaced; // UI 주문 리스트용
     public event Action<GuestBase> OnGuestReadyToPay; // 계산 중일 때
-    // public event Action OnGuestServedAndPaid; // 스포너용
-    public event Action OnGuestPaid; // 계산 완료 시 (Pay 상태에서만)
-    public event Action OnGuestExited;  // 퇴장 시 (모든 Exit에서)
+    public event Action OnGuestServedAndPaid; // 스포너용
     public event Action<int> OnMoneyEarned; // 손님이 결제한 비용을 알림
     public event Action<float> OnReputationChanged; // 손님이 준 명성치를 알림
 
@@ -122,9 +120,7 @@ public abstract class GuestBase : MonoBehaviour
         OnGuestReadyToOrder = null;
         OnOrderPlaced = null;
         OnGuestReadyToPay = null;
-        // OnGuestServedAndPaid = null;
-        OnGuestPaid = null;
-        OnGuestExited = null;
+        OnGuestServedAndPaid = null;
         OnMoneyEarned = null;
         OnReputationChanged = null;
     }
@@ -323,7 +319,7 @@ public abstract class GuestBase : MonoBehaviour
             var result = GuestRewardCalculator.Calculate(basePrice, CurrentMood, rewardData);
             SendReward(result);
 
-            OnGuestPaid?.Invoke();
+            OnGuestServedAndPaid?.Invoke();
 
             if (currentFoodModel != null)
             {
@@ -340,8 +336,6 @@ public abstract class GuestBase : MonoBehaviour
         // 상태 진입 후 딱 한 번만 목적지 찾기
         if (!isExitPathSet && exitDoor != null)
         {
-            OnGuestExited?.Invoke();
-            
             if (myChair != null)
             {
                 myChair.Empty();
