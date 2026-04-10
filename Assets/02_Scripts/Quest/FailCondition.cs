@@ -12,15 +12,17 @@ public class FailLimitCondition : QuestCondition
     public GuestMood requiredGuestMood;
     public int maxFailCount;
     private int currentFailCount;
+    
+    private bool hasStarted;
 
     /// <summary>
     /// 실패 횟수를 0에서 시작하면서 카운팅
     /// </summary>
     /// <param name="inventory"></param>
-    public override void Init(Inventory inventory = null, GuestMood mood = GuestMood.Neutral)
+    public override void Init(Inventory inventory = null)
     {
         currentFailCount = 0;
-        requiredGuestMood = mood;
+        hasStarted = false;
     }
 
     /// <summary>
@@ -32,9 +34,10 @@ public class FailLimitCondition : QuestCondition
         if (questEvent.type != QuestEventType.Fail)
             return;
 
-        if ((int)mood > (int)requiredGuestMood)
+        if (mood > requiredGuestMood)
             return;
         
+        hasStarted = true;
         currentFailCount += questEvent.currentCount;
         NotifyUpdated();
     }
@@ -45,7 +48,7 @@ public class FailLimitCondition : QuestCondition
     /// <returns></returns>
     public override bool IsComplete()
     {
-        return currentFailCount <= maxFailCount;
+        return hasStarted && currentFailCount <= maxFailCount;
     }
 
     /// <summary>

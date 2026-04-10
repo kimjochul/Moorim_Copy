@@ -19,7 +19,7 @@ public class ProgressCondition : QuestCondition
     private DayManager dayManager;
 
     
-    public override void Init(Inventory inventory = null, GuestMood mood = GuestMood.Neutral)
+    public override void Init(Inventory inventory = null)
     {
         dayManager = FindFirstObjectByType<DayManager>();
         

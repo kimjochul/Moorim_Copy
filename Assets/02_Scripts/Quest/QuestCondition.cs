@@ -33,7 +33,7 @@ public struct QuestEvent
 /// </summary>
 public abstract class QuestCondition : ScriptableObject
 {
-    public abstract void Init(Inventory inventory = null, GuestMood mood = GuestMood.Neutral);
+    public abstract void Init(Inventory inventory = null);
     public abstract void Notify(QuestEvent questEvent, GuestMood mood = GuestMood.Neutral);
     public abstract bool IsComplete();
     public abstract QuestCondition Clone();

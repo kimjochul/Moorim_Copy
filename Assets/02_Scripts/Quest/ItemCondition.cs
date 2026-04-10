@@ -22,7 +22,7 @@ public class ItemCondition : QuestCondition
     /// 아이템 제출 퀘스트는 인벤토리가 필요하니 init
     /// </summary>
     /// <param name="inventory"></param>
-    public override void Init(Inventory inventory = null, GuestMood mood = GuestMood.Neutral)
+    public override void Init(Inventory inventory = null)
     {
         currentCount = inventory.GetItemCount(itemID);
     }
