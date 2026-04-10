@@ -1,10 +1,7 @@
 using System;
 using UnityEngine;
+using static Constants;
 
-public enum FailType
-{
-    CustomerAngry = 1,
-}
 
 /// <summary>
 /// 실패 횟수를 체크하는 퀘스트 조건을 만들기 위한 클래스(ex. 기분나쁜 손님을 3명 이상 만들지 마시오)
@@ -12,7 +9,7 @@ public enum FailType
 [CreateAssetMenu(menuName = "Quest/Condition/Fail")]
 public class FailLimitCondition : QuestCondition
 {
-    public FailType failType;
+    public GuestMood requiredGuestMood;
     public int maxFailCount;
     private int currentFailCount;
 
@@ -20,24 +17,24 @@ public class FailLimitCondition : QuestCondition
     /// 실패 횟수를 0에서 시작하면서 카운팅
     /// </summary>
     /// <param name="inventory"></param>
-    public override void Init(Inventory inventory)
+    public override void Init(Inventory inventory = null, GuestMood mood = GuestMood.Neutral)
     {
         currentFailCount = 0;
+        requiredGuestMood = mood;
     }
 
     /// <summary>
     /// 만약 들어온 questevent의 type이 fail이면 업데이트(조건 구분하기 위한 id 추가 필요)
     /// </summary>
     /// <param name="questEvent"></param>
-    public override void Notify(QuestEvent questEvent)
+    public override void Notify(QuestEvent questEvent, GuestMood mood = GuestMood.Neutral)
     {
         if (questEvent.type != QuestEventType.Fail)
             return;
-        
-        if (questEvent.ID != (int)failType)
+
+        if ((int)mood > (int)requiredGuestMood)
             return;
-
-
+        
         currentFailCount += questEvent.currentCount;
         NotifyUpdated();
     }
@@ -67,7 +64,7 @@ public class FailLimitCondition : QuestCondition
     public override QuestCondition Clone()
     {
         var instance = CreateInstance<FailLimitCondition>();
-        instance.failType = failType;
+        instance.requiredGuestMood = requiredGuestMood;
         instance.maxFailCount = maxFailCount;
         
         return instance;
@@ -75,7 +72,29 @@ public class FailLimitCondition : QuestCondition
 
     public override string GetDescription()
     {
-        return $"{failType.ToString()} 만들지 말기"; 
+        string description = "";
+        string mood = "";
+        switch (requiredGuestMood)
+        {
+            case GuestMood.VeryBad:
+                mood = "매우 나쁨";
+                break;
+            case GuestMood.Bad:
+                mood = "나쁨";
+                break;
+            case GuestMood.Neutral:
+                mood = "보통";
+                break;
+            case GuestMood.Good:
+                mood = "좋음";
+                break;
+            case GuestMood.VeryGood:
+                mood = "매우 좋음";
+                break;
+        }
+
+        description = $"기분이 {mood} 이하인 손님 {maxFailCount}명 이하로 접객하기";
+        return description;
     }
     
     public override string GetProgressText()

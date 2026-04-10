@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using static Constants;
 
 /// <summary>
 /// 퀘스트 종류 enum
@@ -32,8 +33,8 @@ public struct QuestEvent
 /// </summary>
 public abstract class QuestCondition : ScriptableObject
 {
-    public abstract void Init(Inventory inventory);
-    public abstract void Notify(QuestEvent questEvent);
+    public abstract void Init(Inventory inventory = null, GuestMood mood = GuestMood.Neutral);
+    public abstract void Notify(QuestEvent questEvent, GuestMood mood = GuestMood.Neutral);
     public abstract bool IsComplete();
     public abstract QuestCondition Clone();
     
