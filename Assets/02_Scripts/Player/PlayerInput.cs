@@ -10,7 +10,7 @@ public class PlayerInput : MonoBehaviour
 
     void Start()
     {
-        this.mainCamera = Camera.main;
+        mainCamera = Camera.main;
     }
 
     void Update()
@@ -22,7 +22,8 @@ public class PlayerInput : MonoBehaviour
         PlayerSelection();
  
         // 마우스 클릭
-        MouseClick();
+        if (Input.GetMouseButtonDown(0))
+            MouseClick();
     }
 
     private void GlobalUIInput()
@@ -52,9 +53,6 @@ public class PlayerInput : MonoBehaviour
     // 마우스 클릭
     private void MouseClick()
     {
-        if (!Input.GetMouseButtonDown(0))
-            return;
-        
         // UI 위를 클릭했으면 게임, 월드 클릭 무시
         if (EventSystem.current.IsPointerOverGameObject())
             return;
