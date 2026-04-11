@@ -6,6 +6,10 @@ using static Constants;
 
 public class RecipePage : MonoBehaviour
 {
+    private const float MIN_FILL_AMOUNT = 0f;
+    private const float MID_FILL_AMOUNT = 0.52f;
+    private const float MAX_FILL_AMOUNT = 1f;
+
     [SerializeField] private TextMeshProUGUI recipeName;
     [SerializeField] private Image imgIcon;
     [SerializeField] private Transform ingredientParent;
@@ -51,8 +55,8 @@ public class RecipePage : MonoBehaviour
     private float GetCustomFillAmount(int proficiency)
     {
         if (proficiency <= 50)
-            return Mathf.Lerp(0f, 0.52f, proficiency / 50f);
+            return Mathf.Lerp(MIN_FILL_AMOUNT, MID_FILL_AMOUNT, proficiency / MAX_FILL_AMOUNT);
         else
-            return Mathf.Lerp(0.52f, 1f, (proficiency - 50f) / 50f);
+            return Mathf.Lerp(MID_FILL_AMOUNT, MAX_FILL_AMOUNT, (proficiency - 50f) / 50f);
     }
 }
