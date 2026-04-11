@@ -17665,6 +17665,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c7d3e4b9e8a7fd44a6bf306885ef5f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Receipt
+  dayManager: {fileID: 0}
+  guestTracker: {fileID: 0}
   txtDay: {fileID: 1941100096}
   totalRevenue: {fileID: 1117130118}
   fame: {fileID: 668891839}
@@ -28943,7 +28945,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5264972481634839449}
-  - component: {fileID: 7646267859645259848}
+  - component: {fileID: 5264972481634839451}
+  - component: {fileID: 5264972481634839450}
   m_Layer: 5
   m_Name: Book
   m_TagString: Untagged
@@ -31145,6 +31148,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d524c4698d3633948bba00e110e380f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StatusTab
+  guestTracker: {fileID: 903597695}
   txtTotalRevenue: {fileID: 2649190704659886497}
   txtTotalFame: {fileID: 917433983625687966}
   txtTotalHappyGuests: {fileID: 5407772716265638132}
@@ -31933,6 +31937,38 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &5264972481634839450
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4300334021127542389}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f6f41643fa61c940af2e3a5ac5469d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BookView
+  menus:
+  - toggle: {fileID: 4059951783274238675}
+    menuView: {fileID: 5550659218286807643}
+  - toggle: {fileID: 5048988636104032075}
+    menuView: {fileID: 8461589176882423560}
+  - toggle: {fileID: 5581921078385687315}
+    menuView: {fileID: 0}
+--- !u!114 &5264972481634839451
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4300334021127542389}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3bdec3434c315f844b40a2c93b03ce02, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BookController
+  bookView: {fileID: 5264972481634839450}
 --- !u!1 &5274630062694891794
 GameObject:
   m_ObjectHideFlags: 0
@@ -37421,23 +37457,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &7646267859645259848
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4300334021127542389}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 50a86b44df3d9a941af5dc1ea5caa999, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BookMenu
-  menus:
-  - toggle: {fileID: 4059951783274238675}
-    menuScript: {fileID: 5550659218286807643}
-  - toggle: {fileID: 5048988636104032075}
-    menuScript: {fileID: 8461589176882423560}
 --- !u!222 &7649320375778587566
 CanvasRenderer:
   m_ObjectHideFlags: 0
