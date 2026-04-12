@@ -10,12 +10,20 @@ public class CharacterName
     public string name;
 }
 
+[Serializable]
+public class TriggerGroup
+{
+    // public int storytriggerID; // 만약 한 스토리를 접근하는 방향이 여러 방향(트리거)에서 접근 가능한 구조이면 id 필요
+    public StoryTriggerSO so;
+    public bool isActive;
+}
+
 public class StoryManager : MonoBehaviour
 {
     [SerializeField] private DayManager dayManager;
     [SerializeField] private StorySO storySO;
 
-    [SerializeField] private List<StoryTrigger> triggers;
+    [SerializeField] private List<TriggerGroup> triggerGroups;
 
     [SerializeField] private RestaurantEconomy economy;
     
@@ -30,6 +38,8 @@ public class StoryManager : MonoBehaviour
     /// </summary>
     private Story currentStory; // 스토리 뭉치 어느건지
     private int currentIndex; // 한 스토리 뭉치 내에서 대사 인덱스
+    private int currentSceneIndex;
+    private StoryScene currentScene;
     private StoryTrigger currentTrigger; // 현재 트리거
 
 
@@ -61,8 +71,17 @@ public class StoryManager : MonoBehaviour
 
     private void CheckTriggers()
     {
-        var sorted = triggers.OrderByDescending(t => t.priority);
-        
+        var allTriggers = new List<StoryTrigger>();
+
+        foreach (var group in triggerGroups)
+        {
+            if (!group.isActive) continue;
+
+            allTriggers.AddRange(group.so.triggers);
+        }
+
+        var sorted = allTriggers.OrderByDescending(t => t.priority);
+
         foreach (var trigger in sorted)
         {
             if (trigger.playOnce && playedStories.Contains(trigger.storyId))
@@ -72,9 +91,11 @@ public class StoryManager : MonoBehaviour
                 continue;
 
             PlayStory(trigger.storyId);
+
             playedStories.Add(trigger.storyId);
             currentTrigger = trigger;
-            return; // 한 번에 하나만 실행
+
+            return;
         }
     }
     
@@ -98,7 +119,7 @@ public class StoryManager : MonoBehaviour
         if (economy.Debt < t.requiredDebt)
             return false;
         
-        if (!CheckRecipeCondition(t.recipeCondition))
+        if (t.recipeCondition != null && !CheckRecipeCondition(t.recipeCondition))
             return false;
 
         if (!CheckFlagCondition(t))
@@ -160,35 +181,61 @@ public class StoryManager : MonoBehaviour
         isPlaying = true;
 
         storyUI.Show();
+        StartScene();
+    }
+    
+    private void StartScene()
+    {
+        if (currentStory == null || currentSceneIndex >= currentStory.scenes.Count)
+            return;
+
+        currentScene = currentStory.scenes[currentSceneIndex];
+        currentIndex = 0;
+
+        characterUI.SetupScene(currentScene.characters);
+        storyUI.ChangeBackground(currentScene.background);
+
         ShowNextLine();
     }
 
     public void ShowNextLine()
     {
-        if (!isPlaying) return;
-
-        if (currentIndex >= currentStory.lines.Count)
+        if (!isPlaying || currentScene == null)
+            return;
+        
+        // 🔥 씬 끝났을 때
+        if (currentIndex >= currentScene.lines.Count)
         {
-            EndStory();
+            currentSceneIndex++;
+
+            if (currentSceneIndex >= currentStory.scenes.Count)
+            {
+                EndStory();
+                return;
+            }
+
+            StartScene();
             return;
         }
 
-        var line = currentStory.lines[currentIndex++];
-        
-        // 캐릭터 처리
-        characterUI.SetExpression(line.characterID, line.emotion);
-        characterUI.Move(line.characterID, line.movingInStoryUI);
+        var line = currentScene.lines[currentIndex++];
 
-        // UI 출력
+        characterUI.SetExpression(line.characterID, line.emotion);
+        characterUI.Focus(line.characterID);
+        
+        characterUI.PlayMotion(line.characterID, line.motion);
+        characterUI.ShowEmotionIcon(line.characterID, line.emotion);
+        
         storyUI.ShowLine(line);
     }
 
     private void EndStory(int storyId = -1)
     {
-        if (!string.IsNullOrEmpty(currentTrigger.addFlagOnComplete))
+        if (currentTrigger != null && !string.IsNullOrEmpty(currentTrigger.addFlagOnComplete))
         {
             flags.Add(currentTrigger.addFlagOnComplete);
         }
+
         
         isPlaying = false;
         storyUI.Hide();
