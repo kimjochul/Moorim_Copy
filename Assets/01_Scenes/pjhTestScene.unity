@@ -1301,6 +1301,7 @@ GameObject:
   - component: {fileID: 922967641}
   - component: {fileID: 922967643}
   - component: {fileID: 922967642}
+  - component: {fileID: 922967644}
   m_Layer: 0
   m_Name: DataManager
   m_TagString: Untagged
@@ -1416,6 +1417,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3adfae4a32134a141a759be5f5d362ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GuestResultTracker
+--- !u!114 &922967644
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 922967636}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 119203ab65ede2146b42581c41d2a0ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoundManager
+  bgmSource: {fileID: 0}
+  sfxSource: {fileID: 0}
+  masterVolume: 1
+  bgmVolume: 1
+  sfxVolume: 1
 --- !u!1 &936781085
 GameObject:
   m_ObjectHideFlags: 0
