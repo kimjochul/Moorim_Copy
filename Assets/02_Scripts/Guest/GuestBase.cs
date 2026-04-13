@@ -56,8 +56,6 @@ public abstract class GuestBase : MonoBehaviour
     // public event Action OnGuestServedAndPaid; // 스포너용
     public event Action OnGuestPaid; // 계산 완료 시 (Pay 상태에서만)
     public event Action OnGuestExited;  // 퇴장 시 (모든 Exit에서)
-    public event Action<int> OnMoneyEarned; // 손님이 결제한 비용을 알림
-    public event Action<float> OnReputationChanged; // 손님이 준 명성치를 알림
 
     void Awake()
     {
@@ -125,8 +123,6 @@ public abstract class GuestBase : MonoBehaviour
         // OnGuestServedAndPaid = null;
         OnGuestPaid = null;
         OnGuestExited = null;
-        OnMoneyEarned = null;
-        OnReputationChanged = null;
     }
     
     // 객체가 생성될 때 매니저에서 딱 한 번 호출해줄 초기화 메소드
@@ -271,7 +267,7 @@ public abstract class GuestBase : MonoBehaviour
         if (stateTimer >= orderMaxWaitLimit && CurrentMood == GuestMood.Bad)
         {
             SetMood(GuestMood.VeryBad);
-            SendReward(GuestRewardCalculator.Penalty(-0.5f));
+            SendReward(GuestRewardCalculator.Penalty(-1));
             ChangeState(GuestState.Exit);
         }
         else if (stateTimer >= orderMinWaitLimit && CurrentMood == GuestMood.Neutral)
@@ -286,7 +282,7 @@ public abstract class GuestBase : MonoBehaviour
 
         if (stateTimer >= foodMaxWaitLimit)
         {
-            SendReward(GuestRewardCalculator.Penalty(-1f));
+            SendReward(GuestRewardCalculator.Penalty(-2));
             ChangeState(GuestState.Exit);
         }
         else if (stateTimer >= foodMidWaitLimit && CurrentMood == GuestMood.Bad)
@@ -397,7 +393,7 @@ public abstract class GuestBase : MonoBehaviour
         {
             if (CurrentMood == GuestMood.VeryBad)
             {
-                SendReward(GuestRewardCalculator.Penalty(-1f));
+                SendReward(GuestRewardCalculator.Penalty(-2));
                 ChangeState(GuestState.Exit);
                 return;
             }
@@ -422,10 +418,10 @@ public abstract class GuestBase : MonoBehaviour
     protected void SendReward(GuestRewardCalculator.RewardResult result)
     {
         if (result.money > 0)
-            OnMoneyEarned?.Invoke(result.money);
+            EconomyManager.Instance.AddMoney(result.money);
 
-        if (result.reputation != 0f)
-            OnReputationChanged?.Invoke(result.reputation);
+        if (result.reputation != 0)
+            EconomyManager.Instance.AddFame(result.reputation);;
     }
 
 }

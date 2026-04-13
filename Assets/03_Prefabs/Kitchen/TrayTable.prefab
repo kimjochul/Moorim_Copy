@@ -102,6 +102,8 @@ GameObject:
   - component: {fileID: 106374099496973396}
   - component: {fileID: 2946386727771062544}
   - component: {fileID: 674132376110598584}
+  - component: {fileID: 2879313025530088630}
+  - component: {fileID: 2699006466413213004}
   m_Layer: 0
   m_Name: TrayTable
   m_TagString: Untagged
@@ -122,6 +124,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 159088204332075455}
   - {fileID: 7451427732661562135}
   - {fileID: 8137539842240220258}
   m_Father: {fileID: 0}
@@ -204,6 +207,42 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.6171353, y: 0.73494464, z: 0.7710837}
   m_Center: {x: 0, y: 0.36747232, z: -0.014457986}
+--- !u!65 &2879313025530088630
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2211443019473060399}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.32, y: 0.73494464, z: 2.05}
+  m_Center: {x: 0, y: 0.36747232, z: -0.0144579895}
+--- !u!114 &2699006466413213004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2211443019473060399}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 176b0ec001a653f4da7090d6f6f8cefe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ServingSlot
+  servingPoint: {fileID: 5160071263618499417}
+  foodPosition: {fileID: 159088204332075455}
+  inventory: {fileID: 0}
 --- !u!1 &4370577172554976909
 GameObject:
   m_ObjectHideFlags: 0
@@ -294,3 +333,56 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &8541877001351002809
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 159088204332075455}
+  - component: {fileID: 2539726646388888065}
+  m_Layer: 0
+  m_Name: FoodPostion
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &159088204332075455
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8541877001351002809}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.786, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5160071263618499417}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &2539726646388888065
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8541877001351002809}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.15, y: 0.1, z: 0.15}
+  m_Center: {x: 0, y: 0, z: 0}
