@@ -11,7 +11,8 @@ public enum InventoryType
     MealTable,
     Ingredients,
     IngredientsButMeatOnly,
-    BondItem
+    BondItem,
+    Guest
 }
 
 /// <summary>

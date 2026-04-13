@@ -39,6 +39,8 @@ public class Myungwol : PlayerController
             ClickFridgeSlot(slot);
         else if(slot.Owner.Type is InventoryType.Server)
             ClickServerSlot(slot);
+        else if(slot.Owner.Type is InventoryType.Guest)
+            ClickGuestSlot(slot);
     }
 
     private void ClickMealTableSlot(Slot slot)
@@ -73,6 +75,22 @@ public class Myungwol : PlayerController
             }
         }
     }
+    
+    private void ClickGuestSlot(Slot slot)
+    {
+        if (slot.Item == null)
+            return;
+        
+        var interactable = PlayerManager.Instance.ActiveInteractable;
+        if (interactable is GuestInteractable guest)
+        {
+            IItem foodItem = guest.TakeFood(slot.Index, inventory);
+            if (foodItem == null)
+            {
+                Debug.Log("가져올 음식 없음");
+            }
+        }
+    }
 
     private void ClickServerSlot(Slot slot)
     {
@@ -98,8 +116,7 @@ public class Myungwol : PlayerController
         {
             if (slot.Owner.Type is InventoryType.Server)
             {
-                FoodData data = slot.Item.Data as FoodData;
-                guest.MyBrain.ReceiveFood(data, Constants.FoodQuality.Normal);
+                guest.PlaceFood(inventory, slot);
             }
         }
     }
