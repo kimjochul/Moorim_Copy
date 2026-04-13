@@ -5,7 +5,6 @@ using static Constants;
 public class Merchant : MonoBehaviour, IInteractable
 {
     [SerializeField] private DayManager dayManager;
-    [SerializeField] private StoryManager storyManager;
     
     [SerializeField] private GameObject merchantView;
     [SerializeField] private MerchantUI merchantUI;
@@ -17,15 +16,14 @@ public class Merchant : MonoBehaviour, IInteractable
  
     private void Start()
     {
-        storyManager.OnEndStory += MerchantViewActive;
-        storyManager.OnEndStory += DailyQuestCreate;
+        dayManager.OnDayEnd += MerchantViewActive;
+        dayManager.OnDayEnd += DailyQuestCreate;
         merchantUI.Init(this);
         merchantView.SetActive(false);
     }
     
     private void MerchantViewActive()
     {
-        Debug.Log("MerchantViewActive");
         merchantView.SetActive(IsAvailableDay());
         merchantUI.gameObject.SetActive(IsAvailableDay());
     }

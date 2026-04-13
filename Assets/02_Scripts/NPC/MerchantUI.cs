@@ -56,8 +56,6 @@ public class MerchantUI : MonoBehaviour
 
         RefreshAccept();
         RefreshClear();
-        
-        OpenTalk();
     }
 
     private void Start()
@@ -67,14 +65,9 @@ public class MerchantUI : MonoBehaviour
 
     private void OnDisable()
     {
-        if (QuestManager.Instance != null)
-        {
-            QuestManager.Instance.OnWaitingQuestChanged -= RefreshAccept;
-            QuestManager.Instance.OnActiveQuestChanged -= RefreshClear;
-        }
-
-        if (debtPanel != null)
-            debtPanel.FullPayDebt -= FullyRepayDebt;
+        QuestManager.Instance.OnWaitingQuestChanged -= RefreshAccept;
+        QuestManager.Instance.OnActiveQuestChanged -= RefreshClear;
+        debtPanel.FullPayDebt -= FullyRepayDebt;
         
         if (shop != null)
             shop.OnProductClicked -= HandleProductClicked;

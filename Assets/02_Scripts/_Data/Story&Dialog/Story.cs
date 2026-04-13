@@ -2,26 +2,12 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "StoryScenes", menuName = "Story/StoryScenes")]
-public class Story:ScriptableObject
+[Serializable]
+public class Story
 {
     public int id;
     public string storyName;
-    
-    public List<StoryScene> scenes;
-}
 
-[Serializable]
-public class StoryScene
-{
-    public List<CharacterInScene> characters;
+    [TextArea(3, 10)]
     public List<StoryLine> lines;
-    public Sprite background; 
-}
-
-[Serializable]
-public class CharacterInScene
-{
-    public int characterID;
-    public int slotIndex;
 }
