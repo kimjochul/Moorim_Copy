@@ -10,15 +10,13 @@ public class StoryLine
     public LineType lineType;
     
     public int characterID;
-    public Emotion emotion;
-    public MotionData motion;
+    public Emotion emotion; 
+    public MovingInStoryUI movingInStoryUI;
     
     [TextArea(3, 10)]
     public string line;
     
     public bool isInnerThought;
-    
-    public bool showEmotionIcon;
 }
 
 public enum LineType
@@ -34,23 +32,10 @@ public enum Emotion
     Anger,
 }
 
-[Serializable]
-public class MotionData
+public enum MovingInStoryUI
 {
-    public MotionType type;
-    public float duration = 0.5f;
-    public float value = 1f; // 이동 거리 or 점프 높이
-}
-
-public enum MotionType
-{
-    None,
-    MoveLeft,
-    MoveRight,
-    MoveUp,
-    MoveDown,
-    ExitLeft,
-    ExitRight,
-    Jump,
-    Shake
+    right,
+    left,
+    up,
+    down,
 }

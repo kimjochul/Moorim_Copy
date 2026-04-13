@@ -17,6 +17,7 @@ public class Door : MonoBehaviour, IInteractable
 
     private Camera mainCamera;
     private Quaternion targetRotation;
+
     public InteractMode Mode => InteractMode.ClickToInteract;
 
     void Start()
