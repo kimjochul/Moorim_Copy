@@ -374,14 +374,14 @@ public abstract class GuestBase : MonoBehaviour
         if (currentState != GuestState.WaitFood)
             return;
 
-        if (myChair != null && myChair.myFoodSpot != null)
+        if (myChair != null && myChair.myFoodSpot != null && deliveredFood.foodPrefab != null)
         {
             currentFoodModel = Instantiate(deliveredFood.foodPrefab, myChair.myFoodSpot.position, myChair.myFoodSpot.rotation);
             currentFoodModel.transform.SetParent(myChair.myFoodSpot);
         }
 
         foodQuality = quality;
-
+        Debug.Log(deliveredFood.name);
         if (myOrder.orderedFood == deliveredFood && !myOrder.isServed)
         {
             myOrder.isServed = true;

@@ -6,6 +6,7 @@ using static Constants;
 public class GuestInteractable : MonoBehaviour, IInteractable
 {
     private GuestBase myBrain;
+    public GuestBase MyBrain => myBrain;
  
     public event Action<GuestBase> OnOpenServerInvenUI;
  
@@ -37,7 +38,9 @@ public class GuestInteractable : MonoBehaviour, IInteractable
         if (myBrain.currentState == GuestState.WaitOrder)
             myBrain.TakeOrder();
         else if (myBrain.currentState == GuestState.WaitFood)
+        {
             OnOpenServerInvenUI?.Invoke(myBrain);
+        }
         else if (myBrain.currentState == GuestState.Exit)
         {
             ThiefGuyGuest thief = myBrain as ThiefGuyGuest;
