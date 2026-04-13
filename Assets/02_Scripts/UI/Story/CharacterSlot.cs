@@ -29,9 +29,24 @@ public class CharacterSlot : MonoBehaviour
     {
         currentCharacterID = -1;
         renderer.sprite = null;
-        gameObject.SetActive(false);
         
         HideEmotionIcon();
+    }
+    
+    public void Appear(int characterID, Sprite sprite)
+    {
+        SetCharacter(characterID, sprite);
+
+        StopAllCoroutines();
+        StartCoroutine(AppearRoutine());
+    }
+
+    public void Disappear()
+    {
+        Clear();
+        
+        StopAllCoroutines();
+        StartCoroutine(DisappearRoutine());
     }
     
     public void PlayEmotionIcon(Sprite icon)
@@ -49,14 +64,14 @@ public class CharacterSlot : MonoBehaviour
 
         Transform t = emotionIcon.transform;
 
-        // ⭐ 시작 상태
+        // 시작 상태
         t.localScale = Vector3.zero;
         Vector3 startPos = t.localPosition;
         Vector3 targetPos = startPos + Vector3.up * 50f;
 
         float time = 0;
 
-        // ⭐ 1. 팝업 + 상승
+        // 1. 팝업 + 상승
         while (time < 0.25f)
         {
             time += Time.deltaTime;
@@ -71,13 +86,13 @@ public class CharacterSlot : MonoBehaviour
             yield return null;
         }
 
-        // ⭐ 살짝 줄어들면서 안정화
+        // 살짝 줄어들면서 안정화
         t.localScale = Vector3.one;
 
-        // ⭐ 유지
+        // 유지
         yield return new WaitForSeconds(0.7f);
 
-        // ⭐ 2. 사라지기
+        // 2. 사라지기
         time = 0;
         while (time < 0.2f)
         {
@@ -92,7 +107,7 @@ public class CharacterSlot : MonoBehaviour
         t.localPosition = startPos; // 원위치
     }
 
-    // 🔥 흔들기 (캐릭터)
+    // 흔들기 (캐릭터)
     public IEnumerator Shake(float duration = 0.3f, float power = 0.1f)
     {
         Vector3 origin = transform.localPosition;
@@ -121,5 +136,55 @@ public class CharacterSlot : MonoBehaviour
     public void SetColor(Color color)
     {
         renderer.color = color;
+    }
+    
+    IEnumerator AppearRoutine()
+    {
+        Vector3 origin = transform.localPosition;
+        Vector3 start = origin + Vector3.left * 200f; // 왼쪽에서 등장
+
+        transform.localPosition = start;
+
+        float time = 0;
+
+        while (time < 0.3f)
+        {
+            time += Time.deltaTime;
+            float t = time / 0.3f;
+
+            transform.localPosition = Vector3.Lerp(start, origin, t);
+            yield return null;
+        }
+
+        transform.localPosition = origin;
+    }
+    
+    IEnumerator DisappearRoutine()
+    {
+        Vector3 origin = transform.localPosition;
+        Vector3 end = origin + Vector3.right * 200f;
+
+        float time = 0;
+
+        while (time < 0.3f)
+        {
+            time += Time.deltaTime;
+            float t = time / 0.3f;
+
+            transform.localPosition = Vector3.Lerp(origin, end, t);
+            yield return null;
+        }
+
+        gameObject.SetActive(false);
+    }
+    
+    public void ClearImmediate()
+    {
+        StopAllCoroutines();
+        gameObject.SetActive(false);
+        currentCharacterID = -1;
+        renderer.sprite = null;
+
+        HideEmotionIcon();
     }
 }

@@ -94,5 +94,13 @@ public class Myungwol : PlayerController
                 fridge.PlaceFood(inventory, slot);
             }
         }
+        else if (interactable is GuestInteractable guest)
+        {
+            if (slot.Owner.Type is InventoryType.Server)
+            {
+                FoodData data = slot.Item.Data as FoodData;
+                guest.MyBrain.ReceiveFood(data, Constants.FoodQuality.Normal);
+            }
+        }
     }
 }

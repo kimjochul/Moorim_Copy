@@ -11,8 +11,10 @@ public class CharacterUI : MonoBehaviour
     [Header("캐릭터 데이터")]
     [SerializeField] private List<Character> characterDatas;
 
-    private Dictionary<int, Character> dataDict;
+    private Dictionary<int, Character> dataDict; // 캐릭터 id -> 객체
 
+    private Dictionary<int, int> currentSlotMap = new(); // characterID → slotIndex
+    
     private void Awake()
     {
         dataDict = new Dictionary<int, Character>();
@@ -23,25 +25,93 @@ public class CharacterUI : MonoBehaviour
         }
     }
     
-    public void SetupScene(List<CharacterInScene> characters)
+    public void Show()
     {
-        // 1. 전부 비우기
+        gameObject.SetActive(true);
+    }
+
+    public void Hide()
+    {
+        gameObject.SetActive(false);
+
+        // 혹시 남아있는 상태 초기화
         foreach (var slot in slots)
         {
-            slot.Clear();
+            slot.ClearImmediate();
         }
 
-        // 2. 순서대로 슬롯에 배치
-        for (int i = 0; i < characters.Count && i < slots.Count; i++)
+        currentSlotMap.Clear();
+    }
+    
+    public void SetupScene(List<CharacterInScene> newChars)
+    {
+        if (newChars == null)
         {
-            var info = characters[i];
+            // 유지
+            return;
+        }
 
-            if (!dataDict.TryGetValue(info.characterID, out var data))
+        if (newChars.Count == 0)
+        {
+            // 명시적 초기화
+            foreach (var slot in slots)
+            {
+                if(slot.isActiveAndEnabled)
+                    slot.Disappear();
+            }
+
+            currentSlotMap.Clear();
+            return;
+        }
+        
+        HashSet<int> newIDs = new();
+
+        // 1. 새로 등장 or 유지
+        foreach (var info in newChars)
+        {
+            if (info.slotIndex < 0 || info.slotIndex >= slots.Count)
+            {
+                Debug.LogError($"slotIndex 오류: {info.slotIndex}"); 
                 continue;
+            }
+            
+            newIDs.Add(info.characterID);
 
-            var defaultSprite = data.emotions[0].sprite;
+            var slot = slots[info.slotIndex];
 
-            slots[i].SetCharacter(info.characterID, defaultSprite);
+            // 이미 같은 슬롯에 있으면 유지
+            if (currentSlotMap.TryGetValue(info.characterID, out int prevSlot))
+            {
+                if (prevSlot == info.slotIndex)
+                    continue;
+            }
+
+            // 새로 등장
+            if (dataDict.TryGetValue(info.characterID, out var data))
+            {
+                slot.Appear(info.characterID, data.emotions[0].sprite);
+                currentSlotMap[info.characterID] = info.slotIndex;
+            }
+        }
+
+        // 2. 사라진 캐릭터 처리
+        var toRemove = new List<int>();
+
+        foreach (var pair in currentSlotMap)
+        {
+            if (!newIDs.Contains(pair.Key))
+            {
+                int slotIndex = pair.Value;
+                slots[slotIndex].Disappear();
+
+                toRemove.Add(pair.Key);
+            }
+        }
+
+        // 3. 딕셔너리 정리
+        foreach (var id in toRemove)
+        {
+            currentSlotMap.Remove(id);
         }
     }
     

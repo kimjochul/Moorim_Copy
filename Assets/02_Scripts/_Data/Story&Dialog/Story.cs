@@ -2,13 +2,12 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-[Serializable]
-public class Story
+[CreateAssetMenu(fileName = "StoryScenes", menuName = "Story/StoryScenes")]
+public class Story:ScriptableObject
 {
     public int id;
     public string storyName;
-
-    [TextArea(3, 10)]
+    
     public List<StoryScene> scenes;
 }
 
@@ -24,5 +23,5 @@ public class StoryScene
 public class CharacterInScene
 {
     public int characterID;
-    public Vector2 position;
+    public int slotIndex;
 }

@@ -32,6 +32,8 @@ public class StoryManager : MonoBehaviour
 
     [SerializeField] private List<CharacterName> characterNames;
     private Dictionary<int, string> nameDict;
+
+    public event Action OnEndStory;
     
     /// <summary>
     /// flag 내용들을 저장데이터로 넣어놓으면 스토리 이어서
@@ -45,7 +47,9 @@ public class StoryManager : MonoBehaviour
 
     private bool isPlaying;
 
-    private HashSet<int> playedStories = new();
+    private Queue<StoryTrigger> triggerQueue = new();
+    
+    private HashSet<int> playedStoryIds = new();
     private HashSet<string> flags = new();
     
     private void Awake()
@@ -84,19 +88,161 @@ public class StoryManager : MonoBehaviour
 
         foreach (var trigger in sorted)
         {
-            if (trigger.playOnce && playedStories.Contains(trigger.storyId))
+            if (trigger.playOnce && playedStoryIds.Contains(trigger.storyId))
                 continue;
 
             if (!CheckCondition(trigger))
                 continue;
 
-            PlayStory(trigger.storyId);
+            triggerQueue.Enqueue(trigger);
+            if (trigger.playOnce)
+                playedStoryIds.Add(trigger.storyId);
+        }
 
-            playedStories.Add(trigger.storyId);
-            currentTrigger = trigger;
-
+        PlayNextQueuedStory();
+    }
+    
+    private void PlayNextQueuedStory()
+    {
+        if (triggerQueue.Count == 0)
+        {
+            OnEndStory?.Invoke();
             return;
         }
+
+        currentTrigger = triggerQueue.Dequeue();
+        PlayStory(currentTrigger.storyId);
+    }
+    
+    public void PlayStory(int id)
+    {
+        currentStory = storySO.stories.Find(s => s.id == id);
+
+        if (currentStory == null)
+        {
+            Debug.LogError("스토리 없음");
+            return;
+        }
+
+        currentSceneIndex = 0;
+        currentIndex = 0;
+        isPlaying = true;
+
+        storyUI.Show();
+        
+        if (HasAnyCharacter(currentStory))
+            characterUI.Show();
+        else
+            characterUI.Hide();
+        
+        StartScene();
+    }
+
+    private void StartScene()
+    {
+        if (currentStory == null || currentSceneIndex >= currentStory.scenes.Count)
+            return;
+
+        currentScene = currentStory.scenes[currentSceneIndex];
+        currentIndex = 0;
+
+        if (currentScene.characters == null || currentScene.characters.Count == 0)
+            characterUI.Hide();
+        else
+            characterUI.Show();
+        
+        // Debug.Log($"{currentStory.id}");
+        // foreach(var currentCharacter in currentScene.characters)
+        //     Debug.Log(currentCharacter.characterID);
+        
+        characterUI.SetupScene(currentScene.characters);
+        storyUI.ChangeBackground(currentScene.background);
+
+        ShowNextLine();
+    }
+
+    public void ShowNextLine()
+    {
+        if (!isPlaying || currentScene == null)
+            return;
+        
+        // 🔥 씬 끝났을 때
+        if (currentIndex >= currentScene.lines.Count)
+        {
+            currentSceneIndex++;
+
+            if (currentSceneIndex >= currentStory.scenes.Count)
+            {
+                EndStory();
+                return;
+            }
+
+            StartScene();
+            return;
+        }
+        
+        var line = currentScene.lines[currentIndex++];
+
+        if (line.lineType == LineType.Dialogue)
+        {
+            storyUI.ShowCharacterName();
+            characterUI.SetExpression(line.characterID, line.emotion);
+            characterUI.Focus(line.characterID);
+            characterUI.PlayMotion(line.characterID, line.motion);
+            characterUI.ShowEmotionIcon(line.characterID, line.emotion);
+        }
+        else // ⭐ 나레이션
+        {
+            storyUI.HideCharacterName();
+            characterUI.Focus(-1); // 아무도 강조 안함
+        }
+
+        storyUI.ShowLine(line);
+    }
+
+    private void EndStory(int storyId = -1)
+    {
+        if (currentTrigger != null && !string.IsNullOrEmpty(currentTrigger.addFlagOnComplete))
+        {
+            flags.Add(currentTrigger.addFlagOnComplete);
+        }
+        
+        isPlaying = false;
+        storyUI.Hide();
+        characterUI.Hide();
+        
+        PlayNextQueuedStory();
+    }
+    
+    public void SkipCurrentScene()
+    {
+        if (!isPlaying || currentScene == null)
+            return;
+
+        // 현재 씬 끝으로 이동
+        currentIndex = currentScene.lines.Count;
+
+        // 다음 ShowNextLine 호출 시 씬 종료 처리됨
+        ShowNextLine();
+    }
+    
+    public string GetCharacterName(int id)
+    {
+        if (nameDict.TryGetValue(id, out var name))
+            return name;
+
+        return "???";
+    }
+    
+    private bool HasAnyCharacter(Story story)
+    {
+        foreach (var scene in story.scenes)
+        {
+            if (scene.characters != null && scene.characters.Count > 0)
+                return true;
+        }
+
+        return false;
     }
     
     private bool CheckCondition(StoryTrigger t)
@@ -165,87 +311,5 @@ public class StoryManager : MonoBehaviour
         }
 
         return true;
-    }
-    
-    public void PlayStory(int id)
-    {
-        currentStory = storySO.stories.Find(s => s.id == id);
-
-        if (currentStory == null)
-        {
-            Debug.LogError("스토리 없음");
-            return;
-        }
-
-        currentIndex = 0;
-        isPlaying = true;
-
-        storyUI.Show();
-        StartScene();
-    }
-    
-    private void StartScene()
-    {
-        if (currentStory == null || currentSceneIndex >= currentStory.scenes.Count)
-            return;
-
-        currentScene = currentStory.scenes[currentSceneIndex];
-        currentIndex = 0;
-
-        characterUI.SetupScene(currentScene.characters);
-        storyUI.ChangeBackground(currentScene.background);
-
-        ShowNextLine();
-    }
-
-    public void ShowNextLine()
-    {
-        if (!isPlaying || currentScene == null)
-            return;
-        
-        // 🔥 씬 끝났을 때
-        if (currentIndex >= currentScene.lines.Count)
-        {
-            currentSceneIndex++;
-
-            if (currentSceneIndex >= currentStory.scenes.Count)
-            {
-                EndStory();
-                return;
-            }
-
-            StartScene();
-            return;
-        }
-
-        var line = currentScene.lines[currentIndex++];
-
-        characterUI.SetExpression(line.characterID, line.emotion);
-        characterUI.Focus(line.characterID);
-        
-        characterUI.PlayMotion(line.characterID, line.motion);
-        characterUI.ShowEmotionIcon(line.characterID, line.emotion);
-        
-        storyUI.ShowLine(line);
-    }
-
-    private void EndStory(int storyId = -1)
-    {
-        if (currentTrigger != null && !string.IsNullOrEmpty(currentTrigger.addFlagOnComplete))
-        {
-            flags.Add(currentTrigger.addFlagOnComplete);
-        }
-
-        
-        isPlaying = false;
-        storyUI.Hide();
-    }
-    
-    public string GetCharacterName(int id)
-    {
-        if (nameDict.TryGetValue(id, out var name))
-            return name;
-
-        return "???";
     }
 }
