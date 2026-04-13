@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class StoryUI : MonoBehaviour
 {
@@ -10,10 +9,7 @@ public class StoryUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI contentText;
 
     [SerializeField] private GameObject root;
-    [SerializeField] private Image bgImage;
     [SerializeField] private GameObject darkBackGround;
-    
-    [SerializeField] private float fadeDuration = 0.3f;
 
     private Coroutine typingCoroutine;
 
@@ -26,8 +22,6 @@ public class StoryUI : MonoBehaviour
     private int historyIndex = -1;
     
     private string currentFullText;
-    
-    private Coroutine bgCoroutine;
 
     public void Init(StoryManager manager)
     {
@@ -109,7 +103,6 @@ public class StoryUI : MonoBehaviour
         if (typingCoroutine != null)
             StopCoroutine(typingCoroutine);
 
-        contentText.text = currentFullText; // ⭐ 핵심
         isTyping = false;
     }
 
@@ -132,37 +125,6 @@ public class StoryUI : MonoBehaviour
         {
             contentText.color = Color.white;
             darkBackGround.SetActive(false);
-        }
-    }
-    
-    public void ChangeBackground(Sprite bg)
-    {
-        if (bgCoroutine != null)
-            StopCoroutine(bgCoroutine);
-
-        bgCoroutine = StartCoroutine(FadeBackground(bg));
-    }
-    
-    public IEnumerator FadeBackground(Sprite newBg)
-    {
-        float time = 0;
-
-        while (time < fadeDuration)
-        {
-            time += Time.deltaTime;
-            bgImage.color = new Color(1,1,1,1 - time / fadeDuration);
-            yield return null;
-        }
-
-        bgImage.sprite = newBg;
-
-        time = 0;
-
-        while (time < fadeDuration)
-        {
-            time += Time.deltaTime;
-            bgImage.color = new Color(1,1,1,time / fadeDuration);
-            yield return null;
         }
     }
 }
