@@ -22,23 +22,13 @@ public class SoundManager : Singleton<SoundManager>
 
     private Dictionary<string, SoundData> dicBGM = new Dictionary<string, SoundData>();
     private Dictionary<string, SoundData> dicSFX = new Dictionary<string, SoundData>();
-    public Button BGMBtn;
-    public Button SFXBtn;
+
 
     protected override void Awake()
     {
         base.Awake();
         Setting();
         Init();
-
-        this.BGMBtn.onClick.AddListener(() =>
-        {
-            PlayBGM("테스트배경음");
-        });
-        this.SFXBtn.onClick.AddListener(() =>
-        {
-            PlaySFX("테스트효과음");
-        });
     }
 
     private void Init()
