@@ -1,9 +1,11 @@
+using System;
 using UnityEngine;
 using static Constants;
 
 public class Postman : MonoBehaviour, IInteractable
 {
     [SerializeField] private DayManager dayManager;
+    public DayManager DayManager => dayManager;
     [SerializeField] private StoryManager storyManager;
     
     [SerializeField] private GameObject postmanView;
@@ -17,6 +19,7 @@ public class Postman : MonoBehaviour, IInteractable
     {
         storyManager.OnEndStory += postmanViewActive;
         storyManager.OnEndStory += DailyQuestCreate;
+        
         postmanUI.Init(this);
         postmanView.SetActive(false);
     }
@@ -67,7 +70,7 @@ public class Postman : MonoBehaviour, IInteractable
         }
     }
     
-    private bool IsAvailableDay()
+    public bool IsAvailableDay()
     {
         return dayManager.DayData.dayOfWeek == DayOfWeek.Tuesday ||
                dayManager.DayData.dayOfWeek == DayOfWeek.Thursday;

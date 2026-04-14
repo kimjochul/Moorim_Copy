@@ -14,8 +14,8 @@ public class NPCTalkPanel : MonoBehaviour
         if (!this.isActiveAndEnabled)
             return;
         
-        this.text.text = "";
         StopAllCoroutines();
+        this.text.text = "";
         StartCoroutine(TempTextCoroutine(text));
     }
 
@@ -26,5 +26,11 @@ public class NPCTalkPanel : MonoBehaviour
             this.text.text += c;
             yield return new WaitForSeconds(textSpeed);
         }
+    }
+    
+    public void Clear()
+    {
+        StopAllCoroutines();
+        text.text = "";
     }
 }
