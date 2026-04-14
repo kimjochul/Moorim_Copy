@@ -4,9 +4,10 @@ using static Constants;
 public class Postman : MonoBehaviour, IInteractable
 {
     [SerializeField] private DayManager dayManager;
+    [SerializeField] private StoryManager storyManager;
     
     [SerializeField] private GameObject postmanView;
- 
+    [SerializeField] private PostManUI postmanUI;
     // ── IInteractable 구현 ──
  
     // 우편배달부는 클릭해서 상호작용
@@ -14,13 +15,17 @@ public class Postman : MonoBehaviour, IInteractable
  
     private void Start()
     {
-        dayManager.OnDayEnd += DailyQuestCreate; 
-        gameObject.SetActive(false);
+        storyManager.OnEndStory += postmanViewActive;
+        storyManager.OnEndStory += DailyQuestCreate;
+        postmanUI.Init(this);
+        postmanView.SetActive(false);
     }
     
-    private void Update()
+    private void postmanViewActive()
     {
+        Debug.Log("postmanViewActive");
         postmanView.SetActive(IsAvailableDay());
+        postmanUI.gameObject.SetActive(IsAvailableDay());
     }
     
     public bool CanInteract(PlayerType playerType)

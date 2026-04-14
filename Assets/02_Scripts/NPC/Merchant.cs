@@ -71,7 +71,7 @@ public class Merchant : MonoBehaviour, IInteractable
  
     private bool IsAvailableDay()
     {
-        return dayManager.DayData.dayOfWeek == DayOfWeek.Tuesday || // 디버그 용으로 화요일로 바꿔둠
+        return dayManager.DayData.dayOfWeek == DayOfWeek.Monday || // 디버그 용으로 화요일로 바꿔둠
                dayManager.DayData.dayOfWeek == DayOfWeek.Wednesday || 
                dayManager.DayData.dayOfWeek == DayOfWeek.Friday;
     }
