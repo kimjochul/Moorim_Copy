@@ -2,55 +2,92 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
+
+public enum DoorSide
+{
+    LeftDoor,
+    RightDoor
+}
+
 public class Door : MonoBehaviour, IInteractable
 {
-    [SerializeField] private Transform hinge;        // 회전 기준
-    [SerializeField] private float openAngle = 90f;  // 문이 열렸을 때의 Y축 각도
-    [SerializeField] private float closeAngle = 0f;  // 문이 닫혔을 때의 Y축 각도
-    [SerializeField] private float smooth = 5f;      // 문이 열리고 닫히는 속도
+    [SerializeField] private DoorSide mySide;
+    [SerializeField] private Transform leftDoorPart;   // 왼쪽 문 오브젝트
+    [SerializeField] private Transform rightDoorPart;  // 오른쪽 문 오브젝트
+    [SerializeField] private float smooth = 5f;
 
-    public UnityAction onDoorOpened; 
+    public UnityAction onDoorOpened;
     public UnityAction onDoorClosed;
+
+    private Transform movingPart;
+    private Transform otherDoorPart;
 
     private bool isOpen = false;
     private bool isMoving = false;
 
-    private Camera mainCamera;
-    private Quaternion targetRotation;
-
-    public InteractMode Mode => InteractMode.ClickToInteract;
+    private Vector3 closePosition;
+    private Vector3 openPosition;
+    private Vector3 targetPosition;
+    public InteractMode Mode => InteractMode.Immediate;
 
     void Start()
     {
         Init();
     }
+
     void Update()
     {
-        HandleRotation();
+        HandleMovement();
     }
     public void Init()
     {
-        this.mainCamera = Camera.main;
+        if (this.mySide == DoorSide.LeftDoor)
+        {
+            this.movingPart = this.leftDoorPart;
+            this.otherDoorPart = this.rightDoorPart;
+        }
+        else
+        {
+            this.movingPart = this.rightDoorPart;
+            this.otherDoorPart = this.leftDoorPart;
+        }
 
-        this.targetRotation = Quaternion.Euler(0, this.closeAngle, 0);
+        this.closePosition = this.movingPart.localPosition;
 
-        this.hinge.localRotation = this.targetRotation;
+        this.openPosition = new Vector3(
+            this.otherDoorPart.localPosition.x,
+            this.closePosition.y,
+            this.closePosition.z
+        );
+
+        this.targetPosition = this.isOpen ? this.openPosition : this.closePosition;
     }
 
-    private void HandleRotation()
+    /// <summary>
+    /// 외부에서 문의 열리는 방향을 실시간으로 바꿀 때 호출하는 함수
+    /// </summary>
+    public void ChangeDoorSide(DoorSide newSide)
+    {
+        if (this.isMoving || this.isOpen) return;
+
+        this.mySide = newSide;
+        Init();
+    }
+
+    private void HandleMovement()
     {
         if (!this.isMoving) return;
 
-        this.hinge.localRotation = Quaternion.Slerp(
-            this.hinge.localRotation,
-            this.targetRotation,
+        this.movingPart.localPosition = Vector3.Lerp(
+            this.movingPart.localPosition,
+            this.targetPosition,
             Time.deltaTime * this.smooth
         );
 
-        if (Quaternion.Angle(this.hinge.localRotation, this.targetRotation) < 0.1f)
+        if (Vector3.Distance(this.movingPart.localPosition, this.targetPosition) < 0.01f)
         {
-            this.hinge.localRotation = this.targetRotation;
-            this.isMoving = false; 
+            this.movingPart.localPosition = this.targetPosition;
+            this.isMoving = false;
         }
     }
 
@@ -61,13 +98,12 @@ public class Door : MonoBehaviour, IInteractable
 
     public void Interact(PlayerController Player)
     {
-        if (this.isMoving) { return; };
+        if (this.isMoving) return;
 
         this.isOpen = !this.isOpen;
         this.isMoving = true;
 
-        float targetY = this.isOpen ? this.openAngle : this.closeAngle;
-        this.targetRotation = Quaternion.Euler(0, targetY, 0);
+        this.targetPosition = this.isOpen ? this.openPosition : this.closePosition;
 
         if (this.isOpen)
         {
