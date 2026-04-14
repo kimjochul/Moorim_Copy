@@ -59,12 +59,12 @@ public class MoneyRepuTextController : MonoBehaviour
     
     public void OnMoneyChanged()
     {
-        moneyText.text = economyManager.TodayMoneyIncome.ToString();
+        moneyText.text = EconomyManager.Instance.TodayMoneyIncome.ToString();;
     }
 
     public void OnFameChanged()
     {
-        fameText.text = economyManager.TodayFameIncome.ToString();
+        fameText.text = EconomyManager.Instance.TodayFameIncome.ToString();;
     }
 
     void OnDestroy()

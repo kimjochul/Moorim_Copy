@@ -77,7 +77,7 @@ public class InventoryManager : Singleton<InventoryManager>
     {
         if (inventory == null)
         {
-            Debug.LogError("Inventory 없음");
+            Debug.LogError($"{inventory.Type.ToString()} Inventory 없음");
             return;
         }
         UIManager.Instance.OpenInventoryPopup(inventory);

@@ -92,7 +92,7 @@ public class Myungwol : PlayerController
         }
     }
 
-    private void ClickServerSlot(Slot slot)
+    public void ClickServerSlot(Slot slot)
     {
         if (slot.Item == null)
             return;
@@ -118,6 +118,15 @@ public class Myungwol : PlayerController
             {
                 guest.PlaceFood(inventory, slot);
             }
+        }
+    }
+
+    public void OnClickSubmitGuest()
+    {
+        var interactable = PlayerManager.Instance.ActiveInteractable;
+        if (interactable is GuestInteractable guest)
+        {
+            guest.CallReceiveFood();
         }
     }
 }
