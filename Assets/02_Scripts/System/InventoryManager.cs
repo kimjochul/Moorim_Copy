@@ -24,6 +24,7 @@ public class InventoryManager : Singleton<InventoryManager>
     [SerializeField] private Inventory fridgeInventory; // 냉장고
     [SerializeField] private Inventory mealTableInventory; // 배식대
 
+    [SerializeField] private Inventory guestInventory;
     private void Start()
     {
         OpenCommonInventory();
@@ -47,6 +48,7 @@ public class InventoryManager : Singleton<InventoryManager>
             InventoryType.Server => serverInventory,
             InventoryType.Fridge => fridgeInventory,
             InventoryType.MealTable => mealTableInventory,
+            InventoryType.Guest => guestInventory,
             _ => null
         };
     }
@@ -75,7 +77,7 @@ public class InventoryManager : Singleton<InventoryManager>
     {
         if (inventory == null)
         {
-            Debug.LogError("Inventory 없음");
+            Debug.LogError($"{inventory.Type.ToString()} Inventory 없음");
             return;
         }
         UIManager.Instance.OpenInventoryPopup(inventory);

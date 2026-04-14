@@ -41,12 +41,14 @@ public class StoryUI : MonoBehaviour
     public void Show()
     {
         root.SetActive(true);
+        bgImage.gameObject.SetActive(true);
         ResetBackgroundState();
     }
 
     public void Hide()
     {
         root.SetActive(false);
+        bgImage.gameObject.SetActive(false);
     }
 
     public void ShowCharacterName()
