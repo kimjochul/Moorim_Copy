@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2477582745232158571
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3557236840420559815}
+  - component: {fileID: 2071976251443580904}
+  m_Layer: 0
+  m_Name: StoryManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3557236840420559815
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2477582745232158571}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 439.2761, y: 0, z: 6811.8267}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2071976251443580904
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2477582745232158571}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7e0b97493f02e7429c5fb24a40e6020, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StoryManager
+  dayManager: {fileID: 0}
+  storySO: {fileID: 11400000, guid: 7778616fbf7c89a4680ab7bdfd5ab792, type: 2}
+  triggerGroups:
+  - so: {fileID: 11400000, guid: 04bb069dbee32284689b87ebfb9cda7a, type: 2}
+    isActive: 1
+  economy: {fileID: 11400000, guid: 6e01e380d3117bf41af394a1b93ef6ac, type: 2}
+  storyUI: {fileID: 0}
+  characterUI: {fileID: 0}
+  characterNames:
+  - id: 0
+    name: Myungwol
+  - id: 1
+    name: Sowol

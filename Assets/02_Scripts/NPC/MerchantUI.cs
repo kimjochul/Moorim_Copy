@@ -34,6 +34,8 @@ public class MerchantUI : MonoBehaviour
     
     public bool RepayDebtFinished { get; private set; } = false;
     
+    private Merchant merchant;
+    
     public enum MerchantState
     {
         Shop,
@@ -50,10 +52,15 @@ public class MerchantUI : MonoBehaviour
     
     private void OnEnable()
     {
+        lastDialogIndex = -1;
+        
         QuestManager.Instance.OnWaitingQuestChanged += RefreshAccept;
         QuestManager.Instance.OnActiveQuestChanged += RefreshClear;
         debtPanel.FullPayDebt += FullyRepayDebt;
 
+        if (merchant.IsAvailableDay())
+            merchant.DayManager.OnDayStart += ResetDialogue;
+        
         RefreshAccept();
         RefreshClear();
         
@@ -72,6 +79,8 @@ public class MerchantUI : MonoBehaviour
             QuestManager.Instance.OnWaitingQuestChanged -= RefreshAccept;
             QuestManager.Instance.OnActiveQuestChanged -= RefreshClear;
         }
+        if (merchant.DayManager != null)
+            merchant.DayManager.OnDayStart -= ResetDialogue;
 
         if (debtPanel != null)
             debtPanel.FullPayDebt -= FullyRepayDebt;
@@ -84,6 +93,8 @@ public class MerchantUI : MonoBehaviour
     {
         if (isInitialized) return;
         isInitialized = true;   
+        
+        this.merchant = merchant;
         
         shop.Init();
         shop.Buy(0, 1);
@@ -186,11 +197,14 @@ public class MerchantUI : MonoBehaviour
 
     public void OpenTalk()
     {
+        talkPanel.gameObject.SetActive(false);
         shopPanel.SetActive(false);
         questPanel.SetActive(false);
         talkPanel.gameObject.SetActive(true);
         debtPanel.gameObject.SetActive(false);
 
+        talkPanel.Clear();
+        
         SetState(MerchantState.Talk);
     }
     
@@ -276,5 +290,10 @@ public class MerchantUI : MonoBehaviour
         gameObject.SetActive(false);
         DayManager dayManager = FindFirstObjectByType<DayManager>();
         dayManager.DayStart();
+    }
+    
+    public void ResetDialogue()
+    {
+        lastDialogIndex = -1;
     }
 }

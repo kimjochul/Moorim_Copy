@@ -25,6 +25,8 @@ public class PostManUI : MonoBehaviour
     
     private int lastDialogIndex = -1;
 
+    private Postman postman;
+    
     public enum PostmanState
     {
         Quest,
@@ -42,9 +44,17 @@ public class PostManUI : MonoBehaviour
         QuestManager.Instance.OnWaitingQuestChanged += RefreshAccept;
         QuestManager.Instance.OnActiveQuestChanged += RefreshClear;
 
+        if (postman.IsAvailableDay())
+            postman.DayManager.OnDayStart += ResetDialogue;
+        
         RefreshAccept();
         RefreshClear();
         
+        OpenTalk();
+    }
+
+    private void Start()
+    {
         OpenTalk();
     }
     
@@ -55,12 +65,16 @@ public class PostManUI : MonoBehaviour
             QuestManager.Instance.OnWaitingQuestChanged -= RefreshAccept;
             QuestManager.Instance.OnActiveQuestChanged -= RefreshClear;
         }
+        if (postman.DayManager != null)
+            postman.DayManager.OnDayStart -= ResetDialogue;
     }
 
     public void Init(Postman postman)
     {
         if (isInitialized) return;
         isInitialized = true;   
+        
+        this.postman = postman;
         
         inventory = InventoryManager.Instance.GetInventory(InventoryType.Fridge);
         
@@ -71,6 +85,11 @@ public class PostManUI : MonoBehaviour
         currentState = PostmanState.Talk;
     }
 
+    public void ResetDialogue()
+    {
+        lastDialogIndex = -1;
+    }
+    
     private void RefreshAccept()
     {
         var quests = QuestManager.Instance.GetWaitingQuests(QuestType.PostMan);
@@ -112,9 +131,12 @@ public class PostManUI : MonoBehaviour
 
     public void OpenTalk()
     {
+        talkPanel.gameObject.SetActive(false);
         talkPanel.gameObject.SetActive(true);
         questPanel.SetActive(false);
 
+        talkPanel.Clear();
+        
         SetState(PostmanState.Talk);
     }
     
