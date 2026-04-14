@@ -47,11 +47,6 @@ public class PostManUI : MonoBehaviour
         
         OpenTalk();
     }
-
-    private void Start()
-    {
-        OpenTalk();
-    }
     
     private void OnDisable()
     {
@@ -78,7 +73,7 @@ public class PostManUI : MonoBehaviour
 
     private void RefreshAccept()
     {
-        var quests = QuestManager.Instance.GetWaitingQuests(QuestType.Merchant);
+        var quests = QuestManager.Instance.GetWaitingQuests(QuestType.PostMan);
 
         // 기존 UI 삭제 (여기의 경우 acceptbar)
         foreach (Transform child in questContent)
@@ -94,7 +89,7 @@ public class PostManUI : MonoBehaviour
     
     private void RefreshClear()
     {
-        var quests = QuestManager.Instance.GetQuests(QuestType.Merchant);
+        var quests = QuestManager.Instance.GetQuests(QuestType.PostMan);
 
         // 기존 UI 삭제 (여기의 경우 clearbar)
         foreach (Transform child in clearContent)
@@ -109,16 +104,16 @@ public class PostManUI : MonoBehaviour
     
     public void OpenQuest()
     {
-        questPanel.SetActive(true);
         talkPanel.gameObject.SetActive(true);
+        questPanel.SetActive(true);
         
         SetState(PostmanState.Quest);
     }
 
     public void OpenTalk()
     {
-        questPanel.SetActive(false);
         talkPanel.gameObject.SetActive(true);
+        questPanel.SetActive(false);
 
         SetState(PostmanState.Talk);
     }
