@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using UnityEngine;
 
 [Serializable]
@@ -48,10 +49,17 @@ public class DayManager : MonoBehaviour
     private int _prevHour = -1;
     private int _minute;
     private int _prevMinute = -1;
+    
+    private bool _isFirstDayStart = true;
 
     public void Awake()
     {
         _totalGameMinutes = (gameEndHour - gameStartHour) * 60f;
+        InitDay();
+    }
+    
+    private void InitDay()
+    {
         DayData = new DayData
         {
             day = 1,
@@ -72,7 +80,15 @@ public class DayManager : MonoBehaviour
         _minute = 0;
         _prevHour = -1;
         _prevMinute = -1;
-        
+
+        if (_isFirstDayStart)
+        {
+            _isFirstDayStart = false;
+        }
+        else
+        {
+            UpdateDayData();
+        }
         OnDayStart?.Invoke();
     }
 
@@ -112,7 +128,6 @@ public class DayManager : MonoBehaviour
     {
         Debug.Log("Day End");
         IsRunning = false;
-        UpdateDayData();
         OnDayEnd?.Invoke();
     }
 
