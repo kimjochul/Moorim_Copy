@@ -5,6 +5,7 @@ using static Constants;
 public class Merchant : MonoBehaviour, IInteractable
 {
     [SerializeField] private DayManager dayManager;
+    public DayManager DayManager =>  dayManager;
     [SerializeField] private StoryManager storyManager;
     
     [SerializeField] private GameObject merchantView;
@@ -69,7 +70,7 @@ public class Merchant : MonoBehaviour, IInteractable
         }
     }
  
-    private bool IsAvailableDay()
+    public bool IsAvailableDay()
     {
         return dayManager.DayData.dayOfWeek == DayOfWeek.Monday || // 디버그 용으로 화요일로 바꿔둠
                dayManager.DayData.dayOfWeek == DayOfWeek.Wednesday || 
