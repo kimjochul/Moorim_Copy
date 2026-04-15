@@ -7,47 +7,46 @@ public class PlayerAnimation : MonoBehaviour
     [SerializeField] private Animator animator;
 
     private readonly int hashSpeed = Animator.StringToHash("Speed");
-    private readonly int hashPickup = Animator.StringToHash("Pickup");
+    private readonly int hashPickup = Animator.StringToHash("PickUp");
     private readonly int hashGive = Animator.StringToHash("Give");
-    private readonly int hashIsInteracting = Animator.StringToHash("IsInteracting");
+    private readonly int hashInteract = Animator.StringToHash("Interact");
 
     private void Awake()
     {
         if (this.animator == null)
         {
             this.animator = GetComponent<Animator>();
+            this.player.OnStateChanged += HandleStateChanged;
+        }
+    }
+    private void HandleStateChanged(PlayerState newState)
+    {
+        switch (newState)
+        {
+            case PlayerState.Idle:
+                this.animator.SetFloat(this.hashSpeed, 0f);
+                break;
+
+            case PlayerState.Walk:
+                this.animator.SetFloat(this.hashSpeed, 0.5f);
+                break;
+
+            case PlayerState.Run:
+                this.animator.SetFloat(this.hashSpeed, 1f);
+                break;
+
+            case PlayerState.PickUp:
+                this.animator.SetTrigger(this.hashPickup);
+                break;
+
+            case PlayerState.Give:
+                this.animator.SetTrigger(this.hashGive);
+                break;
+
+            case PlayerState.Interact:
+                this.animator.SetTrigger(this.hashInteract);
+                break;
         }
     }
 
-    /// <summary>
-    /// 플레이어의 이동 속도를 전달하여 걷기/뛰기
-    /// </summary>
-    public void SetMoveSpeed(float speed)
-    {
-        this.animator.SetFloat(this.hashSpeed, speed);
-    }
-
-    /// <summary>
-    /// 아이템을 줍기
-    /// </summary>
-    public void PlayPickup()
-    {
-        this.animator.SetTrigger(this.hashPickup);
-    }
-
-    /// <summary>
-    /// 아이템을 건네주기
-    /// </summary>
-    public void PlayGive()
-    {
-        this.animator.SetTrigger(this.hashGive);
-    }
-
-    /// <summary>
-    /// 상호작용
-    /// </summary>
-    public void SetInteracting(bool isInteracting)
-    {
-        this.animator.SetBool(this.hashIsInteracting, isInteracting);
-    }
 }

@@ -6,6 +6,7 @@ using UnityEngine.Events;
 using UnityEngine.UI;
 public class Receipt : MonoBehaviour
 {
+    [SerializeField] private GameObject objReceipt;
     private ReceiptData data;
 
     [SerializeField] private DayManager dayManager;
@@ -40,7 +41,7 @@ public class Receipt : MonoBehaviour
     void Awake()
     {
         EventInit();
-        Hide();
+        SetReceiptActive(false);
     }
 
     void OnEnable()
@@ -63,6 +64,7 @@ public class Receipt : MonoBehaviour
         this.btnConfirm.onClick.AddListener(() =>
         {
             this.onButtonConfirm?.Invoke();
+            SetReceiptActive(false);
         });
     }
     private void HandleDayResult(GuestResultData dailyData, GuestResultData totalData)
@@ -80,7 +82,7 @@ public class Receipt : MonoBehaviour
             netIncome = 1 // 나중에 순 수익 데이터로 변경
         };
 
-        Show();
+        SetReceiptActive(true);
         StartAnimationText();
     }
 
@@ -100,8 +102,10 @@ public class Receipt : MonoBehaviour
         ClearSlotText();
     }
 
-    public void StartAnimationText(UnityAction onComplete = null)
+    public void StartAnimationText()
     {
+        ClearSequence();
+
         this.txtDay.text = data.week.day + "일째";
 
         this.receiptSequence = DOTween.Sequence();
@@ -138,12 +142,19 @@ public class Receipt : MonoBehaviour
                 {
                     if (this.btnConfirm != null)
                         this.btnConfirm.gameObject.SetActive(true);
-                    onComplete?.Invoke();
                 }
             );
         });
     }
+    public void SetReceiptActive(bool isActive)
+    {
+        this.objReceipt.SetActive(isActive);
 
+        if (!isActive)
+            Hide();
+        else
+            Show();
+    }
     private void ClearSequence()
     {
         if (this.receiptSequence != null)
