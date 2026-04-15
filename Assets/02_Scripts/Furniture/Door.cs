@@ -12,8 +12,8 @@ public enum DoorSide
 public class Door : MonoBehaviour, IInteractable
 {
     [SerializeField] private DoorSide mySide;
-    [SerializeField] private Transform leftDoorPart;   // 왼쪽 문 오브젝트
-    [SerializeField] private Transform rightDoorPart;  // 오른쪽 문 오브젝트
+    [SerializeField] private Transform leftDoorPart;
+    [SerializeField] private Transform rightDoorPart;
     [SerializeField] private float smooth = 5f;
 
     public UnityAction onDoorOpened;
@@ -22,6 +22,7 @@ public class Door : MonoBehaviour, IInteractable
     private Transform movingPart;
     private Transform otherDoorPart;
 
+    private bool isLocked = false;
     private bool isOpen = false;
     private bool isMoving = false;
 
@@ -39,6 +40,7 @@ public class Door : MonoBehaviour, IInteractable
     {
         HandleMovement();
     }
+
     public void Init()
     {
         if (this.mySide == DoorSide.LeftDoor)
@@ -61,17 +63,6 @@ public class Door : MonoBehaviour, IInteractable
         );
 
         this.targetPosition = this.isOpen ? this.openPosition : this.closePosition;
-    }
-
-    /// <summary>
-    /// 외부에서 문의 열리는 방향을 실시간으로 바꿀 때 호출하는 함수
-    /// </summary>
-    public void ChangeDoorSide(DoorSide newSide)
-    {
-        if (this.isMoving || this.isOpen) return;
-
-        this.mySide = newSide;
-        Init();
     }
 
     private void HandleMovement()
@@ -98,21 +89,51 @@ public class Door : MonoBehaviour, IInteractable
 
     public void Interact(PlayerController Player)
     {
+        if (this.isLocked) return;
+
         if (this.isMoving) return;
-
-        this.isOpen = !this.isOpen;
-        this.isMoving = true;
-
-        this.targetPosition = this.isOpen ? this.openPosition : this.closePosition;
 
         if (this.isOpen)
         {
-            this.onDoorOpened?.Invoke();
+            CloseDoor();
         }
         else
         {
-            this.onDoorClosed?.Invoke();
+            OpenDoor();
         }
+    }
+    /// <summary>
+    /// 문 열기
+    /// </summary>
+    public void OpenDoor()
+    {
+        if (this.isLocked || this.isOpen || this.isMoving) return;
+
+        this.isOpen = true;
+        this.isMoving = true;
+        this.targetPosition = this.openPosition;
+
+        this.onDoorOpened?.Invoke();
+    }
+    /// <summary>
+    /// 문 닫기
+    /// </summary>
+    public void CloseDoor()
+    {
+        if (this.isLocked || !this.isOpen || this.isMoving) return;
+
+        this.isOpen = false;
+        this.isMoving = true;
+        this.targetPosition = this.closePosition;
+
+        this.onDoorClosed?.Invoke();
+    }
+    /// <summary>
+    /// 문의 잠금 상태를 변경
+    /// </summary>
+    public void SetLock(bool locked)
+    {
+        this.isLocked = locked;
     }
 
     public void OnInteractEnd(PlayerController player) { }
