@@ -14,7 +14,7 @@ public class Receipt : MonoBehaviour
 
     [SerializeField] private TextMeshProUGUI txtDay;
 
-    [Header("¸í¼¼Ç¥ Ç×¸ñµé")]
+    [Header("ï¿½ï¿½Ç¥ ï¿½×¸ï¿½ï¿½")]
     [SerializeField] private ReceiptSlot totalRevenue;
     [SerializeField] private ReceiptSlot fame;
     [SerializeField] private ReceiptSlot debt;
@@ -27,7 +27,7 @@ public class Receipt : MonoBehaviour
 
     public event UnityAction onButtonConfirm;
 
-    [Header("¾Ö´Ï¸ÞÀÌ¼Ç ¿¬Ãâ ½Ã°£")]
+    [Header("ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½")]
     [Range(0f, 3f)][SerializeField] private float labelDelay;
     [Range(0f, 3f)][SerializeField] private float valueDuration;
     [Range(0f, 3f)][SerializeField] private float netIncomeDelay;
@@ -35,7 +35,7 @@ public class Receipt : MonoBehaviour
     [Range(0f, 3f)][SerializeField] private float appendInterval;
     [Range(0f, 3f)][SerializeField] private float lastAppendInterval;
 
-    // ¸í¼¼Ç¥ ¿¬Ãâ
+    // ï¿½ï¿½Ç¥ ï¿½ï¿½ï¿½ï¿½
     private Sequence receiptSequence;
 
     void Awake()
@@ -74,12 +74,12 @@ public class Receipt : MonoBehaviour
             week = this.dayManager.DayData,
             totalRevenue = EconomyManager.Instance.TodayMoneyIncome,
             fame = EconomyManager.Instance.TodayFameIncome,
-            debt = 456, // ³ªÁß¿¡ ºú µ¥ÀÌÅÍ·Î º¯°æ
+            debt = 456, // ï¿½ï¿½ï¿½ß¿ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í·ï¿½ ï¿½ï¿½ï¿½ï¿½
 
             happyGuests = dailyData.goodCount + dailyData.veryGoodCount,
             angryGuests = dailyData.badCount + dailyData.veryBadCount,
 
-            netIncome = 1 // ³ªÁß¿¡ ¼ø ¼öÀÍ µ¥ÀÌÅÍ·Î º¯°æ
+            netIncome = 1 // ï¿½ï¿½ï¿½ß¿ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í·ï¿½ ï¿½ï¿½ï¿½ï¿½
         };
 
         SetReceiptActive(true);
@@ -106,7 +106,7 @@ public class Receipt : MonoBehaviour
     {
         ClearSequence();
 
-        this.txtDay.text = data.week.day + "ÀÏÂ°";
+        this.txtDay.text = data.week.day + "ï¿½ï¿½Â°";
 
         this.receiptSequence = DOTween.Sequence();
         this.receiptSequence.AppendInterval(0.5f);
@@ -148,12 +148,12 @@ public class Receipt : MonoBehaviour
     }
     public void SetReceiptActive(bool isActive)
     {
-        this.objReceipt.SetActive(isActive);
-
         if (!isActive)
             Hide();
         else
             Show();
+        
+        this.objReceipt.SetActive(isActive);
     }
     private void ClearSequence()
     {

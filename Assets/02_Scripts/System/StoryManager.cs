@@ -23,6 +23,7 @@ public class TriggerGroup
 public class StoryManager : MonoBehaviour
 {
     [SerializeField] private DayManager dayManager;
+    [SerializeField] private Receipt receipt;
     [SerializeField] private StorySO storySO;
 
     [SerializeField] private List<TriggerGroup> triggerGroups;
@@ -75,7 +76,7 @@ public class StoryManager : MonoBehaviour
     
     private void Start()
     {
-        dayManager.OnDayEnd += HandleDayEnd;
+        receipt.onButtonConfirm += HandleDayEnd;
     }
     
     private void HandleDayEnd()

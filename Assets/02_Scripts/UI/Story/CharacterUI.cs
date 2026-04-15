@@ -125,7 +125,7 @@ public class CharacterUI : MonoBehaviour
         var emo = data.emotions.Find(e => e.emotion == emotion);
         if (emo != null)
         {
-            slot.renderer.sprite = emo.sprite;
+            slot.GetComponent<SpriteRenderer>().sprite = emo.sprite;
         }
     }
 
