@@ -24,6 +24,8 @@ public class Receipt : MonoBehaviour
     [SerializeField] private GameObject objStamp;
     [SerializeField] private Button btnConfirm;
 
+    public event UnityAction onButtonConfirm;
+
     [Header("애니메이션 연출 시간")]
     [Range(0f, 3f)][SerializeField] private float labelDelay;
     [Range(0f, 3f)][SerializeField] private float valueDuration;
@@ -37,6 +39,7 @@ public class Receipt : MonoBehaviour
 
     void Awake()
     {
+        EventInit();
         Hide();
     }
 
@@ -55,7 +58,13 @@ public class Receipt : MonoBehaviour
             this.guestTracker.OnDayResultReady -= HandleDayResult;
         }
     }
-
+    private void EventInit()
+    {
+        this.btnConfirm.onClick.AddListener(() =>
+        {
+            this.onButtonConfirm?.Invoke();
+        });
+    }
     private void HandleDayResult(GuestResultData dailyData, GuestResultData totalData)
     {
         this.data = new ReceiptData
