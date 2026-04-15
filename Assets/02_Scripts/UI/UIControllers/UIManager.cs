@@ -14,8 +14,7 @@ public class UIManager : Singleton<UIManager>
     
     [SerializeField] private GameObject amountPopupObj;
     [SerializeField] private GameObject okPopupObj;
-    
-    
+
     QuestPopupController _questPopupCtr;
     OrdersPopupController _orderPopupCtr;
     [SerializeField] private GameObject defaultUI;
@@ -133,7 +132,7 @@ public class UIManager : Singleton<UIManager>
                 Debug.LogError("OrdersPopupCtrl is null");
                 return;
             }
-            _orderPopupCtr.Showt();
+            _orderPopupCtr.Show();
         }
             
     }

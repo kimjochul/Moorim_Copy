@@ -1,10 +1,24 @@
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
+using UnityEngine.Playables;
 using static Constants;
+
+public enum PlayerState
+{
+    Idle,
+    Walk,
+    Run,
+    Interact,
+    PickUp,
+    Give
+}
 
 public class PlayerController : MonoBehaviour, IControllable
 {
+    public PlayerState CurrentState { get; private set; } = PlayerState.Idle;
+    public event UnityAction<PlayerState> OnStateChanged;
+
     public bool IsMoving
     {
         get
@@ -72,6 +86,14 @@ public class PlayerController : MonoBehaviour, IControllable
         this.agent.speed = move;
         this.agent.angularSpeed = angular;
         this.agent.acceleration = accel;
+    }
+    public void ChangeState(PlayerState state)
+    {
+        if (this.CurrentState == state) return;
+
+        this.CurrentState = state;
+
+        this.OnStateChanged?.Invoke(this.CurrentState);
     }
 
     // 선택/해제
