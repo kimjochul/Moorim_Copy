@@ -20,7 +20,6 @@ public class OrdersPopupController : PopupController
     
     public new void Show()
     {
-       Debug.Log("[OrdersPopup] Show 호출됨!");
        base.Show();
        UpdateNotification(false);
     }
