@@ -9,6 +9,7 @@ public class EconomyManager : Singleton<EconomyManager>
     // 가게의 재정 관련 행동을 할 클래스
     [SerializeField] private DayManager dayManager;
     [SerializeField] private RestaurantEconomy restaurantEconomy;
+    [SerializeField] private GuestResultTracker guestResultTracker;
     public RestaurantEconomy RestaurantEconomy => restaurantEconomy;
 
     private int _todayMoneyIncome;
@@ -21,25 +22,35 @@ public class EconomyManager : Singleton<EconomyManager>
     public event Action RestaurantEconomyChanged;
     public event Action TodayEconomyChanged;
     
+    protected override void Awake()
+    {
+        base.Awake();
+        if (dayManager == null)
+            dayManager = DayManager.Instance;
+    }
     
     void OnEnable()
     {
         Debug.Log("Eco Enable");
         dayManager.OnDayStart += ResetDay;
+        
         dayManager.OnDayEnd += TotalEarningToday;
         dayManager.OnDayEnd += TodayResult;
 
         GuestManager.OnGuestServed += OnCustomerServed;
+        dayManager.OnDayEnd += guestResultTracker.EndDay;
     }
 
     void OnDisable()
     {
         Debug.Log("Eco Disable");
         dayManager.OnDayStart -= ResetDay;
+        
         dayManager.OnDayEnd -= TotalEarningToday;
         dayManager.OnDayEnd -= TodayResult;
 
         GuestManager.OnGuestServed -= OnCustomerServed;
+        dayManager.OnDayEnd -= guestResultTracker.EndDay;
     }
     
     /// <summary>
@@ -49,7 +60,10 @@ public class EconomyManager : Singleton<EconomyManager>
     public void AddMoney(int amount)
     {
         _todayMoneyIncome += amount;
+        RestaurantEconomy.Money += amount;
+        
         TodayEconomyChanged?.Invoke();
+        RestaurantEconomyChanged?.Invoke();
     }
     
     /// <summary>
@@ -59,7 +73,10 @@ public class EconomyManager : Singleton<EconomyManager>
     public void AddFame(int amount)
     {
         _todayFameIncome += amount;
+        RestaurantEconomy.Fame += amount;
+        
         TodayEconomyChanged?.Invoke();
+        RestaurantEconomyChanged?.Invoke();
     }
     
     /// <summary>
@@ -87,9 +104,6 @@ public class EconomyManager : Singleton<EconomyManager>
     /// </summary>
     public void TotalEarningToday()
     {
-        RestaurantEconomy.Money += _todayMoneyIncome;
-        RestaurantEconomy.Fame += _todayFameIncome;
-        
         RestaurantEconomyChanged?.Invoke();
     }
 
@@ -141,6 +155,7 @@ public class EconomyManager : Singleton<EconomyManager>
         
         restaurantEconomy.Debt -= amount;
 
+        RestaurantEconomyChanged?.Invoke();
         return true;
     }
 }

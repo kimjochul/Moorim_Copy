@@ -58,9 +58,19 @@ public class DayManager : Singleton<DayManager>
     
     private bool _isFirstDayStart = true;
 
-    public void Awake()
+    protected override void Awake()
     {
-        npcs = npcList.OfType<INPCSchedule>().ToList();
+        base.Awake();
+        
+        npcs = new List<INPCSchedule>();
+        foreach (var npc in npcList)
+        {
+            if (npc is INPCSchedule schedule)
+                npcs.Add(schedule);
+            else
+                Debug.LogWarning($"{npc.name} does not implement INPCSchedule");
+        }
+        
         _totalGameMinutes = (gameEndHour - gameStartHour) * 60f;
         InitDay();
     }
@@ -83,7 +93,7 @@ public class DayManager : Singleton<DayManager>
         _timer = 0f;
         IsRunning = true;
         
-        _hour = 0;
+        _hour = (int)gameStartHour;
         _minute = 0;
         _prevHour = -1;
         _prevMinute = -1;
