@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
@@ -97,9 +99,23 @@ public class MerchantUI : MonoBehaviour
         this.merchant = merchant;
         
         shop.Init();
-        shop.Buy(0, 1);
-        shop.Buy(5, 2);
-        shop.Buy(6, 1);
+        
+        List<Constants.IngredientType> ingredientTypes = new List<Constants.IngredientType>();
+        ingredientTypes.Add(Constants.IngredientType.Meats);
+        ingredientTypes.Add(Constants.IngredientType.Vegetable);
+        ingredientTypes.Add(Constants.IngredientType.Processed);
+        ingredientTypes.Add(Constants.IngredientType.Spices);
+        foreach(var a in ingredientTypes)
+        {
+            var ingredientList = DataManager.Instance.GetIngredientList(a);
+            foreach (var ingredientData in ingredientList)
+            {
+                if(ingredientData.type == Constants.IngredientType.Meats)
+                    shop.Buy(ingredientData.id, 10);
+                else
+                    shop.Buy(ingredientData.id, 20);
+            }
+        }
         
         shop.OnProductClicked += HandleProductClicked;
         
