@@ -6,25 +6,23 @@ using UnityEngine.UI;
 
 public class OrdersPopupController : PopupController
 {
-    [SerializeField] private Button _closeButton;
-    [SerializeField] private GameObject _orderPopupPrefab;
-    [SerializeField] private Transform _contentTransform;
+    [SerializeField] private Button closeBtn;
+    [SerializeField] private GameObject orderPopupPrefab;
+    [SerializeField] private Transform contentTransform;
+    [SerializeField] private GameObject orderNotificationObj;
     
-    [SerializeField] private GameObject _orderNotificationObj;
-    
-    Dictionary<OrderPopup, Order>  _activeOrders = new Dictionary<OrderPopup, Order>();
+    private Dictionary<GuestBase, OrderPopup> activeOrders = new Dictionary<GuestBase, OrderPopup>();
 
     void Start()
     {
-        // 주문 리스트 받아오기
-        MakeAllOrderPopups(new  List<Order>());
+        closeBtn.onClick.AddListener(OnClickCancelButton);
     }
     
-    public void Showt()
+    public new void Show()
     {
-        base.Show();
-        _closeButton.onClick.AddListener(OnClickCancelButton);
-        UpdateNotification(false);
+       Debug.Log("[OrdersPopup] Show 호출됨!");
+       base.Show();
+       UpdateNotification(false);
     }
 
     public void OnClickConfirmButton()
@@ -37,32 +35,38 @@ public class OrdersPopupController : PopupController
         Hide();
     }
 
-    // 퀘스트 추가될 때마다 QuestManager의 activeQuests 리스트 받아오기
-    public void MakeAllOrderPopups(List<Order> activeOrders)
+    public void AddOrder(GuestBase guest, GuestOrderData order)
     {
-        foreach (var order in activeOrders)
-        {
-            AddOrder(order);
-        }
-    }
-    public void AddOrder(Order order)
-    {
-        if (_activeOrders.ContainsValue(order))
+        if (activeOrders.ContainsKey(guest))
             return;
-        var newOrderPopup = Instantiate(_orderPopupPrefab, _contentTransform);
-        Transform pos =  newOrderPopup.transform;
-        newOrderPopup.transform.localPosition = new Vector3(pos.position.x, pos.position.y, 0);
-        var orderPopup =  newOrderPopup.GetComponent<OrderPopup>();
-        orderPopup.Init(order);
-        _activeOrders[orderPopup] = order;
+
+        GameObject newPopupObj = Instantiate(orderPopupPrefab, contentTransform);
+
+        // 먼저 들어온 주문이 맨 위에 오도록 맨 앞에 배치
+        newPopupObj.transform.SetAsFirstSibling();
+
+        OrderPopup popup = newPopupObj.GetComponent<OrderPopup>();
+        popup.Init(guest, order);
+
+        activeOrders[guest] = popup;
 
         // 창이 켜져 있지 않으면 알림 켜기
         UpdateNotification(!gameObject.activeSelf);
     }
 
+    // 손님 퇴장 또는 서빙 완료 시 호출
+    public void RemoveOrder(GuestBase guest)
+    {
+        if (activeOrders.TryGetValue(guest, out OrderPopup popup))
+        {
+            Destroy(popup.gameObject);
+            activeOrders.Remove(guest);
+        }
+    }
+
     void UpdateNotification(bool isActive)
     {
-        _orderNotificationObj.SetActive(isActive);
+        orderNotificationObj.SetActive(isActive);
     }
 }
 
