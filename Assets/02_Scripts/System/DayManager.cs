@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using UnityEngine;
 
@@ -25,13 +27,17 @@ public class DayData
 /// <summary>
 /// 주간 운영에서 시간, 날짜를 관리하는 클래스
 /// </summary>
-public class DayManager : MonoBehaviour
+public class DayManager : Singleton<DayManager>
 {
     // 날짜 계산 관련 매니저
     
     [SerializeField] private float dayLength = 600f;
     [SerializeField] private float gameStartHour = 9f;
     [SerializeField] private float gameEndHour = 18f;
+    
+    [SerializeField] private List<MonoBehaviour> npcList;
+    
+    private List<INPCSchedule> npcs;
 
     private float _totalGameMinutes;
     private float _timer = 0f;
@@ -54,6 +60,7 @@ public class DayManager : MonoBehaviour
 
     public void Awake()
     {
+        npcs = npcList.OfType<INPCSchedule>().ToList();
         _totalGameMinutes = (gameEndHour - gameStartHour) * 60f;
         InitDay();
     }
@@ -139,5 +146,15 @@ public class DayManager : MonoBehaviour
         dayData.day++;
         dayData.dayOfWeek = (DayOfWeek)(((int)dayData.dayOfWeek + 1) % 7);
         Debug.Log($"오늘 날짜 {dayData.day}일, {dayData.dayOfWeek}");
+    }
+    
+    public bool HasAnyAvailableNPC()
+    {
+        foreach (var npc in npcs)
+        {
+            if (npc.IsAvailableDay())
+                return true;
+        }
+        return false;
     }
 }

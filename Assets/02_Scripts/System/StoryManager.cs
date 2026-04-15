@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DG.Tweening;
 using UnityEngine;
+using UnityEngine.Events;
 
 [Serializable]
 public class CharacterName
@@ -33,6 +35,9 @@ public class StoryManager : MonoBehaviour
     [SerializeField] private List<CharacterName> characterNames;
     private Dictionary<int, string> nameDict;
 
+    [SerializeField] private CanvasGroup fadePanel;
+    [SerializeField] private float fadeDuration;
+    
     public event Action OnEndStory;
     
     /// <summary>
@@ -46,6 +51,7 @@ public class StoryManager : MonoBehaviour
 
 
     private bool isPlaying;
+    private bool isTransitioning;
 
     private Queue<StoryTrigger> triggerQueue = new();
     
@@ -61,6 +67,10 @@ public class StoryManager : MonoBehaviour
         {
             nameDict[c.id] = c.name;
         }
+        
+        fadePanel.alpha = 0f;
+        fadePanel.gameObject.SetActive(false);
+        fadePanel.blocksRaycasts = false;
     }
     
     private void Start()
@@ -71,6 +81,11 @@ public class StoryManager : MonoBehaviour
     private void HandleDayEnd()
     {
         CheckTriggers();
+        
+        if (!dayManager.HasAnyAvailableNPC())
+        {
+            dayManager.DayStart();
+        }
     }
 
     private void CheckTriggers()
@@ -123,6 +138,10 @@ public class StoryManager : MonoBehaviour
             Debug.LogError("스토리 없음");
             return;
         }
+        
+        fadePanel.gameObject.SetActive(true);
+        fadePanel.alpha = 1f;
+        fadePanel.blocksRaycasts = true;
 
         currentSceneIndex = 0;
         currentIndex = 0;
@@ -143,27 +162,36 @@ public class StoryManager : MonoBehaviour
         if (currentStory == null || currentSceneIndex >= currentStory.scenes.Count)
             return;
 
+        DOVirtual.DelayedCall(0f, () =>
+        {
+            PlaySceneTransition(SetupSceneInternal);
+        });
+    }
+    
+    private void SetupSceneInternal()
+    {
         currentScene = currentStory.scenes[currentSceneIndex];
         currentIndex = 0;
-
+            
         if (currentScene.characters == null || currentScene.characters.Count == 0)
             characterUI.Hide();
         else
             characterUI.Show();
-        
+            
         // Debug.Log($"{currentStory.id}");
         // foreach(var currentCharacter in currentScene.characters)
         //     Debug.Log(currentCharacter.characterID);
-        
+            
         characterUI.SetupScene(currentScene.characters);
         storyUI.ChangeBackground(currentScene.background);
-
-        ShowNextLine();
     }
 
     public void ShowNextLine()
     {
         if (!isPlaying || currentScene == null)
+            return;
+        
+        if (isTransitioning) 
             return;
         
         // 🔥 씬 끝났을 때
@@ -202,21 +230,29 @@ public class StoryManager : MonoBehaviour
 
     private void EndStory(int storyId = -1)
     {
-        if (currentTrigger != null && !string.IsNullOrEmpty(currentTrigger.addFlagOnComplete))
+        PlaySceneTransition(() =>
         {
-            flags.Add(currentTrigger.addFlagOnComplete);
-        }
-        
-        isPlaying = false;
-        storyUI.Hide();
-        characterUI.Hide();
-        
-        PlayNextQueuedStory();
+            if (currentTrigger != null && !string.IsNullOrEmpty(currentTrigger.addFlagOnComplete))
+            {
+                flags.Add(currentTrigger.addFlagOnComplete);
+            }
+
+            isPlaying = false;
+            storyUI.Hide();
+            characterUI.Hide();
+            
+            currentScene = null;
+
+            PlayNextQueuedStory();
+        });
     }
     
     public void SkipCurrentScene()
     {
         if (!isPlaying || currentScene == null)
+            return;
+        
+        if (isTransitioning)
             return;
 
         // 현재 씬 끝으로 이동
@@ -311,5 +347,43 @@ public class StoryManager : MonoBehaviour
         }
 
         return true;
+    }
+    
+    public void PlaySceneTransition(Action onMid)
+    {
+        isTransitioning = true; // ⭐ 잠금
+        
+        fadePanel.gameObject.SetActive(true);
+        fadePanel.blocksRaycasts = true;
+
+        Sequence seq = DOTween.Sequence();
+
+        if (fadePanel.alpha < 1f)
+        {
+            seq.Append(fadePanel.DOFade(1f, fadeDuration).SetEase(Ease.InOutQuad));
+        }
+        
+        seq.AppendInterval(0.2f);
+
+        seq.AppendCallback(() =>
+        {
+            onMid?.Invoke();
+        });
+
+        seq.AppendInterval(0.05f);
+        
+        seq.AppendCallback(() =>
+        {
+            isTransitioning = false;
+            ShowNextLine();
+        });
+        
+        seq.Append(fadePanel.DOFade(0f, fadeDuration).SetEase(Ease.InOutQuad));
+
+        seq.OnComplete(() =>
+        {
+            fadePanel.blocksRaycasts = false;
+            fadePanel.gameObject.SetActive(false);
+        });
     }
 }
