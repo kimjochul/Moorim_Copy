@@ -14842,7 +14842,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5129004690186568250}
-  - component: {fileID: 8093166343612168225}
+  - component: {fileID: 5129004690186568252}
+  - component: {fileID: 5129004690186568251}
   m_Layer: 5
   m_Name: Book
   m_TagString: Untagged
@@ -20852,6 +20853,36 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &5129004690186568251
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3112585278698035586}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb5c39f3163ddc34490b3bd9f30ee76a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BookController
+  bookView: {fileID: 5129004690186568252}
+--- !u!114 &5129004690186568252
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3112585278698035586}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b45c765ec978e84a9fbc602a2ddb375, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BookView
+  menus:
+  - toggle: {fileID: 6089478995460014666}
+    menuView: {fileID: 2593533212218737477}
+  - toggle: {fileID: 7854477155341993882}
+    menuView: {fileID: 89939463061696244}
 --- !u!224 &5129703005385568012
 RectTransform:
   m_ObjectHideFlags: 0
@@ -29973,23 +30004,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &8093166343612168225
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3112585278698035586}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 50a86b44df3d9a941af5dc1ea5caa999, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BookMenu
-  menus:
-  - toggle: {fileID: 6089478995460014666}
-    menuScript: {fileID: 2593533212218737477}
-  - toggle: {fileID: 7854477155341993882}
-    menuScript: {fileID: 89939463061696244}
 --- !u!224 &8094326267737412775
 RectTransform:
   m_ObjectHideFlags: 0
