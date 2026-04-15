@@ -1,5 +1,6 @@
 ﻿using DG.Tweening;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class CameraController : MonoBehaviour
 {
@@ -43,6 +44,8 @@ public class CameraController : MonoBehaviour
 
     private float currentOrbitRotationY = 0f;
     private float currentOrbitRotationX = 0f;
+
+    private bool isOrbiting = false;
 
     void Start()
     {
@@ -88,6 +91,9 @@ public class CameraController : MonoBehaviour
     }
     private void ZoomCamera()
     {
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+            return;
+
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         if (scroll != 0f)
         {
@@ -99,11 +105,24 @@ public class CameraController : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(1))
         {
+            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+            {
+                this.isOrbiting = false;
+                return;
+            }
+
+            this.isOrbiting = true;
             Vector3 rot = this.transform.localRotation.eulerAngles;
             this.currentOrbitRotationY = rot.x;
             this.currentOrbitRotationX = rot.y;
         }
-        if (Input.GetMouseButton(1))
+
+        if (Input.GetMouseButtonUp(1))
+        {
+            this.isOrbiting = false;
+        }
+
+        if (Input.GetMouseButton(1) && this.isOrbiting)
         {
             float mouseX = Input.GetAxis("Mouse X") * this.orbitSpeed;
             float mouseY = Input.GetAxis("Mouse Y") * this.orbitSpeed;
