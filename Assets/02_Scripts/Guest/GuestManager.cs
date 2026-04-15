@@ -11,6 +11,7 @@ public class GuestManager : MonoBehaviour
     [Header("연결해야할 외부 정보")]
     [SerializeField] private DayManager dayManager;
     [SerializeField] private GuestResultTracker resultTracker;
+    [SerializeField] private OrdersPopupController orderPopup;
 
     [Header("Target Point")]
     [SerializeField] private Transform spawnPoint;
@@ -120,6 +121,11 @@ public class GuestManager : MonoBehaviour
                 guest.OnGuestExited += () =>
                 {
                     resultTracker.RecordGuest(guest.CurrentMood); // 기분별 집계
+                };
+
+                guest.OnOrderPlaced += (g, order) =>
+                {
+                    orderPopup.AddOrder(g, order);
                 };
             }
         }

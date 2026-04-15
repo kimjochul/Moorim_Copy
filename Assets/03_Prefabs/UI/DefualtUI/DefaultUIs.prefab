@@ -163,7 +163,7 @@ RectTransform:
   - {fileID: 5121707732116570354}
   - {fileID: 3333446503817226685}
   - {fileID: 9133916750147264122}
-  - {fileID: 2897115153596967638}
+  - {fileID: 1175276560393765458}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -185,7 +185,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DefaultUI
   _questButton: {fileID: 4373399929420428143}
   _orderButton: {fileID: 2756212377857708971}
-  _orderPopupObj: {fileID: 1263870530201194961}
+  _orderPopupObj: {fileID: 0}
   _questPopupObj: {fileID: 7622694927374564243}
 --- !u!225 &8937385054585455570
 CanvasGroup:
@@ -227,11 +227,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2772569e8295cc24c88649b908ad7154, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OrdersPopupController
-  panelTransform: {fileID: 2897115153596967638}
-  _closeButton: {fileID: 4696069214281672160}
-  _orderPopupPrefab: {fileID: 517293383872934121, guid: f721a631d81bf97488b97452c7e08d73, type: 3}
-  _contentTransform: {fileID: 782119343803437615}
-  _orderNotificationObj: {fileID: 71295601533019431}
+  panelTransform: {fileID: 0}
+  closeBtn: {fileID: 0}
+  orderPopupPrefab: {fileID: 0}
+  contentTransform: {fileID: 0}
+  orderNotificationObj: {fileID: 0}
 --- !u!1 &303103338387691166
 GameObject:
   m_ObjectHideFlags: 0
@@ -2321,32 +2321,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 86ff5f958d8902245a24d278ed963242, type: 3}
---- !u!224 &782119343803437615 stripped
+--- !u!224 &1175276560393765458 stripped
 RectTransform:
-  m_CorrespondingSourceObject: {fileID: 639925181775517305, guid: 86ff5f958d8902245a24d278ed963242, type: 3}
+  m_CorrespondingSourceObject: {fileID: 1329888072003618308, guid: 86ff5f958d8902245a24d278ed963242, type: 3}
   m_PrefabInstance: {fileID: 160966207952061526}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1263870530201194961 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1419186270301132167, guid: 86ff5f958d8902245a24d278ed963242, type: 3}
-  m_PrefabInstance: {fileID: 160966207952061526}
-  m_PrefabAsset: {fileID: 0}
---- !u!224 &2897115153596967638 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 3030714776928874112, guid: 86ff5f958d8902245a24d278ed963242, type: 3}
-  m_PrefabInstance: {fileID: 160966207952061526}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &4696069214281672160 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4832388754091745718, guid: 86ff5f958d8902245a24d278ed963242, type: 3}
-  m_PrefabInstance: {fileID: 160966207952061526}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
 --- !u!1001 &3741787716816625145
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -6,30 +6,21 @@ using UnityEngine.UI;
 
 public class OrderPopup : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI _recipeDescriptionText;
-    [SerializeField] private Image _recipeIcon;
-    [SerializeField] private Image _ordererIcon;
+    [SerializeField] private Image foodIcon;
+    [SerializeField] private TMP_Text foodNameText;
     
-    private bool isShown = false;
-    public bool IsShown => isShown;
+    private GuestBase guest;
+    public GuestBase Gest => guest;
 
-    public void Init(Order order)
+    public void Init(GuestBase _guest, GuestOrderData order)
     {
-        // _ordererIcon.sprite = order.orderer.icon;
-        string descriptionText = "";
-        bool isFirst = true;
-        foreach (var recipe in order.recipes)
+        guest = _guest;
+
+        if (order.orderedFood != null)
         {
-            if (isFirst)
-            {
-                _recipeIcon.sprite = recipe.Key.Data.icon;
-                isFirst = false;
-            }
-            string recipeCountText = recipe.Value >= 2 ? $" {recipe.Value}개" : "";
-            
-            descriptionText += $"{recipe.Key.Data.name}{recipeCountText}\n";
-            descriptionText += $"- {recipe.Key.Data.description}\n";
+            foodIcon.sprite = order.orderedFood.icon;
+            foodNameText.text = order.orderedFood.name;
         }
-        _recipeDescriptionText.text = descriptionText;
+        
     }
 }
