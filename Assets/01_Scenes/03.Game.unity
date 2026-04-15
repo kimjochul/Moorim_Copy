@@ -2964,7 +2964,7 @@ MonoBehaviour:
   slotCount: 4
   slots: []
   type: 0
-  closeButton: {fileID: 0}
+  closeButton: {fileID: 2041159994}
 --- !u!114 &146500701
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9960,7 +9960,7 @@ MonoBehaviour:
   slotCount: 2
   slots: []
   type: 7
-  closeButton: {fileID: 0}
+  closeButton: {fileID: 1291305471}
 --- !u!114 &528328078
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13777,6 +13777,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 724831886}
   m_CullTransparentMesh: 1
+--- !u!114 &727418814 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6761013244220776754, guid: 8f005d084b677ea429857033cdde8fa9, type: 3}
+  m_PrefabInstance: {fileID: 1747238843}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d7784485bda6de4193aae40e04e543d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StoryUI
 --- !u!1 &735600685
 GameObject:
   m_ObjectHideFlags: 0
@@ -18938,7 +18949,7 @@ MonoBehaviour:
   slotCount: 2
   slots: []
   type: 1
-  closeButton: {fileID: 0}
+  closeButton: {fileID: 225899622}
 --- !u!114 &961697662
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20862,7 +20873,7 @@ MonoBehaviour:
   slotCount: 2
   slots: []
   type: 3
-  closeButton: {fileID: 0}
+  closeButton: {fileID: 1288985604}
 --- !u!114 &1054774350
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -28975,13 +28986,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StoryManager
   dayManager: {fileID: 1185838698}
+  receipt: {fileID: 0}
   storySO: {fileID: 11400000, guid: 7778616fbf7c89a4680ab7bdfd5ab792, type: 2}
   triggerGroups:
   - so: {fileID: 11400000, guid: 04bb069dbee32284689b87ebfb9cda7a, type: 2}
     isActive: 1
   economy: {fileID: 11400000, guid: 6e01e380d3117bf41af394a1b93ef6ac, type: 2}
-  storyUI: {fileID: 0}
-  characterUI: {fileID: 0}
+  storyUI: {fileID: 727418814}
+  characterUI: {fileID: 2028854114}
   characterNames:
   - id: 0
     name: Myungwol
@@ -34322,7 +34334,7 @@ MonoBehaviour:
   slotCount: 2
   slots: []
   type: 2
-  closeButton: {fileID: 0}
+  closeButton: {fileID: 820572091}
 --- !u!114 &1588761068
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -35676,7 +35688,7 @@ MonoBehaviour:
   spawnPoint: {fileID: 808904804}
   exitPoint: {fileID: 1132518772}
   startSpawnTime: 1
-  spawnInterval: 10
+  spawnInterval: 20
   maxWaitingCount: 4
   waitingPoint:
   - {fileID: 199337818}
@@ -42898,6 +42910,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2027393009}
   m_CullTransparentMesh: 1
+--- !u!114 &2028854114 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3777080234107094751, guid: 8f005d084b677ea429857033cdde8fa9, type: 3}
+  m_PrefabInstance: {fileID: 1747238843}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d03f91bbfd241e4f854cd61ab58d2dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterUI
 --- !u!1 &2029170563
 GameObject:
   m_ObjectHideFlags: 0
@@ -47306,6 +47329,10 @@ PrefabInstance:
     - target: {fileID: 3366009045225874051, guid: 4c10cfba300b8774a9e83f5bc8d8c02f, type: 3}
       propertyPath: m_Name
       value: Fridge
+      objectReference: {fileID: 0}
+    - target: {fileID: 7478329986031423376, guid: 4c10cfba300b8774a9e83f5bc8d8c02f, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7785141689976033341, guid: 4c10cfba300b8774a9e83f5bc8d8c02f, type: 3}
       propertyPath: inventory
