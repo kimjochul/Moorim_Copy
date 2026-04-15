@@ -2690,19 +2690,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 172612327}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1093460192}
-        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
-        m_MethodName: CloseInventoryPopup
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 1278910506}
-          m_ObjectArgumentAssemblyTypeName: Inventory, Assembly-CSharp
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &172612327
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2872,6 +2860,7 @@ MonoBehaviour:
   slotCount: 4
   slots: []
   type: 5
+  closeButton: {fileID: 0}
 --- !u!114 &225833801
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3419,6 +3408,7 @@ MonoBehaviour:
   slotCount: 2
   slots: []
   type: 1
+  closeButton: {fileID: 1772519508}
 --- !u!114 &282554023
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4336,19 +4326,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 382063011}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1093460192}
-        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
-        m_MethodName: CloseInventoryPopup
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 1360274194}
-          m_ObjectArgumentAssemblyTypeName: Inventory, Assembly-CSharp
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &382063011
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7369,19 +7347,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 665418384}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1093460192}
-        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
-        m_MethodName: CloseInventoryPopup
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 1248328228}
-          m_ObjectArgumentAssemblyTypeName: Inventory, Assembly-CSharp
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &665418384
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7912,6 +7878,9 @@ MonoBehaviour:
   dayLength: 1
   gameStartHour: 9
   gameEndHour: 21
+  npcList:
+  - {fileID: 1314978098}
+  - {fileID: 2299766333974468964}
 --- !u!4 &739405825
 Transform:
   m_ObjectHideFlags: 0
@@ -9763,6 +9732,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!225 &927027079 stripped
+CanvasGroup:
+  m_CorrespondingSourceObject: {fileID: 5382491367636796389, guid: 8f005d084b677ea429857033cdde8fa9, type: 3}
+  m_PrefabInstance: {fileID: 5141291832019094223}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &935328674
 GameObject:
   m_ObjectHideFlags: 0
@@ -10392,7 +10366,7 @@ RectTransform:
   m_Father: {fileID: 589462931}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 0.99999696}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -11500,17 +11474,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1090877953}
   m_Mesh: {fileID: 4300076, guid: db32225acfe85b1448199fe298e5c756, type: 3}
---- !u!114 &1093460192 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6031629939594915773, guid: 1c6d1568aa6d671408e2deee7b1bb4ef, type: 3}
-  m_PrefabInstance: {fileID: 1284980185}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1186694315}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b38d0376e58414c84432c07352e7bf5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UIManager
 --- !u!1 &1117130116
 GameObject:
   m_ObjectHideFlags: 0
@@ -12644,6 +12607,7 @@ MonoBehaviour:
   slotCount: 2
   slots: []
   type: 3
+  closeButton: {fileID: 665418383}
 --- !u!114 &1248328229
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13126,6 +13090,7 @@ MonoBehaviour:
   slotCount: 2
   slots: []
   type: 7
+  closeButton: {fileID: 172612326}
 --- !u!114 &1278910507
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14018,6 +13983,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1302265358}
   m_CullTransparentMesh: 1
+--- !u!114 &1314978098 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8521334511701149561, guid: 0a158a6c6f449b746b60a97d0445b1e8, type: 3}
+  m_PrefabInstance: {fileID: 415300950}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba438e46c8f38454395555069ef0342e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Merchant
 --- !u!1 &1327073344
 GameObject:
   m_ObjectHideFlags: 0
@@ -14477,6 +14453,7 @@ MonoBehaviour:
   slotCount: 4
   slots: []
   type: 0
+  closeButton: {fileID: 1888748775}
 --- !u!114 &1357923756
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14554,6 +14531,7 @@ MonoBehaviour:
   slotCount: 2
   slots: []
   type: 2
+  closeButton: {fileID: 382063010}
 --- !u!114 &1360274195
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17589,6 +17567,7 @@ MonoBehaviour:
   slotCount: 16
   slots: []
   type: 4
+  closeButton: {fileID: 0}
 --- !u!114 &1679356173
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18299,19 +18278,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1772519509}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1093460192}
-        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
-        m_MethodName: CloseInventoryPopup
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 282554022}
-          m_ObjectArgumentAssemblyTypeName: Inventory, Assembly-CSharp
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1772519509
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19757,19 +19724,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1888748776}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1093460192}
-        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
-        m_MethodName: CloseInventoryPopup
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 1357923755}
-          m_ObjectArgumentAssemblyTypeName: Inventory, Assembly-CSharp
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1888748776
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22003,7 +21958,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 966726344}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.99999696
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -29295,6 +29250,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 6373802906167732494, guid: 5b4c7f9373a099842b880b7fa526e80f, type: 3}
   m_PrefabInstance: {fileID: 2015250042416375228}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2299766333974468964 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4378338631335711241, guid: 5b4c7f9373a099842b880b7fa526e80f, type: 3}
+  m_PrefabInstance: {fileID: 2015250042416375228}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08a2c76d236938a40973ad81a2f7cf7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Postman
 --- !u!1 &2301549932876857624
 GameObject:
   m_ObjectHideFlags: 0
@@ -44034,6 +44000,10 @@ PrefabInstance:
       propertyPath: storyUI
       value: 
       objectReference: {fileID: 1284366069}
+    - target: {fileID: 2071976251443580904, guid: 199a876833927c249bdef5751fc4b950, type: 3}
+      propertyPath: fadePanel
+      value: 
+      objectReference: {fileID: 927027079}
     - target: {fileID: 2071976251443580904, guid: 199a876833927c249bdef5751fc4b950, type: 3}
       propertyPath: dayManager
       value: 

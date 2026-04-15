@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using Unity.Loading;
+using UnityEditor.UI;
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum InventoryType
 {
@@ -27,6 +29,8 @@ public class Inventory : MonoBehaviour
     public List<Slot> Slots => slots;
     
     [SerializeField] private InventoryType type;
+    [SerializeField] private Button closeButton;
+    
     public InventoryType Type => type;
     
     public Action<Slot> OnItemAdded;
@@ -34,6 +38,8 @@ public class Inventory : MonoBehaviour
     private void Awake()
     {
         CreateSlots(slotCount);
+        if(closeButton != null)
+            closeButton.onClick.AddListener(()=>UIManager.Instance.CloseInventoryPopup(this));
     }
 
     /// <summary>

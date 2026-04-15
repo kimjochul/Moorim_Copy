@@ -13,7 +13,7 @@ public class FailLimitCondition : QuestCondition
     public int maxFailCount;
     private int currentFailCount;
     
-    private bool hasStarted;
+    private int acceptedDay;
 
     /// <summary>
     /// 실패 횟수를 0에서 시작하면서 카운팅
@@ -22,7 +22,7 @@ public class FailLimitCondition : QuestCondition
     public override void Init(Inventory inventory = null)
     {
         currentFailCount = 0;
-        hasStarted = false;
+        acceptedDay = DayManager.Instance.DayData.day;
     }
 
     /// <summary>
@@ -37,7 +37,6 @@ public class FailLimitCondition : QuestCondition
         if (mood > requiredGuestMood)
             return;
         
-        hasStarted = true;
         currentFailCount += questEvent.currentCount;
         NotifyUpdated();
     }
@@ -48,7 +47,8 @@ public class FailLimitCondition : QuestCondition
     /// <returns></returns>
     public override bool IsComplete()
     {
-        return hasStarted && currentFailCount <= maxFailCount;
+        bool isNextDay = DayManager.Instance.DayData.day > acceptedDay;
+        return isNextDay && currentFailCount <= maxFailCount;
     }
 
     /// <summary>

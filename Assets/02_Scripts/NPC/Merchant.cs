@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using static Constants;
 
-public class Merchant : MonoBehaviour, IInteractable
+public class Merchant : MonoBehaviour, IInteractable, INPCSchedule
 {
     [SerializeField] private DayManager dayManager;
     public DayManager DayManager =>  dayManager;
@@ -58,7 +58,7 @@ public class Merchant : MonoBehaviour, IInteractable
     {
         if (IsAvailableDay())
         {
-            QuestManager.Instance.ClearRandomQuests();
+            QuestManager.Instance.ClearRandomQuests(QuestType.Merchant);
  
             for (int i = 0; i < 3; i++)
             {
