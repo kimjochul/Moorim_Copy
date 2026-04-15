@@ -19,7 +19,7 @@ public class OrderPopup : MonoBehaviour
         if (order.orderedFood != null)
         {
             foodIcon.sprite = order.orderedFood.icon;
-            foodNameText.text = order.orderedFood.name;
+            foodNameText.text = order.orderedFood.itemName;
         }
         
     }
