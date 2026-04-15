@@ -6,7 +6,7 @@ public class CharacterSlot : MonoBehaviour
 {
     public int slotIndex; // 0: 왼쪽, 1: 중앙, 2: 오른쪽
 
-    public SpriteRenderer renderer;
+    [SerializeField] private SpriteRenderer renderer;
 
     [Header("감정 아이콘")]
     [SerializeField] private Image emotionIcon;
