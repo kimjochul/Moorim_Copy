@@ -144,8 +144,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshModifier
   m_SerializedVersion: 0
-  m_OverrideArea: 0
-  m_Area: 0
+  m_OverrideArea: 1
+  m_Area: 1
   m_OverrideGenerateLinks: 0
   m_GenerateLinks: 0
   m_IgnoreFromBuild: 0
@@ -162,10 +162,10 @@ GameObject:
   - component: {fileID: 3160751698317596295}
   - component: {fileID: 3491564849708046925}
   - component: {fileID: 1404811772640875227}
-  - component: {fileID: 2906725762905661467}
   - component: {fileID: 3011709016439308172}
   - component: {fileID: 6188331709875096440}
   - component: {fileID: 6030516085451013960}
+  - component: {fileID: 7319166970195349473}
   m_Layer: 0
   m_Name: Chair_1
   m_TagString: Untagged
@@ -245,28 +245,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &2906725762905661467
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4484152806831560928}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -1434011637881021500, guid: 8720de75470c5854e88542a45ece1605, type: 3}
 --- !u!65 &3011709016439308172
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -303,11 +281,11 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 0.5, z: 1}
+  m_Size: {x: 2, y: 0.5, z: 1}
   m_Center: {x: -0.00000001490116, y: 0.5, z: 0.0000001862645}
 --- !u!114 &6030516085451013960
 MonoBehaviour:
@@ -325,6 +303,26 @@ MonoBehaviour:
   table: {fileID: 2541318914467096753}
   myFoodSpot: {fileID: 6231729306800122327}
   isBuilt: 1
+--- !u!114 &7319166970195349473
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4484152806831560928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshModifier
+  m_SerializedVersion: 0
+  m_OverrideArea: 1
+  m_Area: 1
+  m_OverrideGenerateLinks: 0
+  m_GenerateLinks: 0
+  m_IgnoreFromBuild: 0
+  m_ApplyToChildren: 1
+  m_AffectedAgents: ffffffff
 --- !u!1 &6281088848482355940
 GameObject:
   m_ObjectHideFlags: 0
@@ -387,7 +385,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3315043306738201593}
-  - component: {fileID: -7306238934979012638}
   m_Layer: 0
   m_Name: Table Set
   m_TagString: Untagged
@@ -415,22 +412,6 @@ Transform:
   - {fileID: 3680097957902958797}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!208 &-7306238934979012638
-NavMeshObstacle:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6788121761685609984}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Shape: 1
-  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
-  m_MoveThreshold: 0.1
-  m_Carve: 0
-  m_CarveOnlyStationary: 1
-  m_Center: {x: 0, y: 0, z: 0}
-  m_TimeToStationary: 0.5
 --- !u!1 &7088481625509961859
 GameObject:
   m_ObjectHideFlags: 0
@@ -442,10 +423,10 @@ GameObject:
   - component: {fileID: 3680097957902958797}
   - component: {fileID: 2843561202285384717}
   - component: {fileID: 6796671714329360326}
-  - component: {fileID: 7365314984085608387}
   - component: {fileID: 4527916886399091120}
   - component: {fileID: 4827322751867627812}
   - component: {fileID: 8990291326024000125}
+  - component: {fileID: 5711402746389040094}
   m_Layer: 0
   m_Name: Chair_2
   m_TagString: Untagged
@@ -525,28 +506,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &7365314984085608387
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7088481625509961859}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -1434011637881021500, guid: 8720de75470c5854e88542a45ece1605, type: 3}
 --- !u!65 &4527916886399091120
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -583,11 +542,11 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 0.5, z: 1}
+  m_Size: {x: 2, y: 0.5, z: 1}
   m_Center: {x: -0.00000001490116, y: 0.5, z: 0.0000001862645}
 --- !u!114 &8990291326024000125
 MonoBehaviour:
@@ -605,6 +564,26 @@ MonoBehaviour:
   table: {fileID: 2541318914467096753}
   myFoodSpot: {fileID: 4245209838121789432}
   isBuilt: 1
+--- !u!114 &5711402746389040094
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7088481625509961859}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshModifier
+  m_SerializedVersion: 0
+  m_OverrideArea: 1
+  m_Area: 1
+  m_OverrideGenerateLinks: 0
+  m_GenerateLinks: 0
+  m_IgnoreFromBuild: 0
+  m_ApplyToChildren: 1
+  m_AffectedAgents: ffffffff
 --- !u!1 &7298053987450242760
 GameObject:
   m_ObjectHideFlags: 0
