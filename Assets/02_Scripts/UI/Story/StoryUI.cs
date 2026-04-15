@@ -208,7 +208,7 @@ public class StoryUI : MonoBehaviour
         }
         else
         {
-            contentText.color = Color.white;
+            contentText.color = Color.black;
             darkBackGround.SetActive(false);
         }
     }
@@ -217,7 +217,7 @@ public class StoryUI : MonoBehaviour
     {
         if (isFirstBackground)
         {
-            bgCoroutine = StartCoroutine(FirstFadeIn(bg));
+            bgImage.sprite = bg;
             isFirstBackground = false;
             return;
         }
@@ -226,21 +226,6 @@ public class StoryUI : MonoBehaviour
             StopCoroutine(bgCoroutine);
 
         bgCoroutine = StartCoroutine(FadeBackground(bg));
-    }
-    
-    IEnumerator FirstFadeIn(Sprite bg)
-    {
-        bgImage.sprite = bg;
-        bgImage.color = new Color(1,1,1,0);
-
-        float time = 0;
-
-        while (time < fadeDuration)
-        {
-            time += Time.deltaTime;
-            bgImage.color = new Color(1,1,1,time / fadeDuration);
-            yield return null;
-        }
     }
     
     public IEnumerator FadeBackground(Sprite newBg)

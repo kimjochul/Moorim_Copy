@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using static Constants;
 
-public class Postman : MonoBehaviour, IInteractable
+public class Postman : MonoBehaviour, IInteractable, INPCSchedule
 {
     [SerializeField] private DayManager dayManager;
     public DayManager DayManager => dayManager;
@@ -58,7 +58,7 @@ public class Postman : MonoBehaviour, IInteractable
     {
         if (IsAvailableDay())
         {
-            QuestManager.Instance.ClearRandomQuests();
+            QuestManager.Instance.ClearRandomQuests(QuestType.PostMan);
  
             for (int i = 0; i < 3; i++)
             {

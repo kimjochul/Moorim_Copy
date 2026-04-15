@@ -32,7 +32,13 @@ public class QuestPopup : MonoBehaviour
     public void Init(Quest quest)
     {
         _questNameText.text = quest.QuestName;
-        // TODO: Descriptoin 추가
+        _questDescriptionText.text = "";
+        
+        foreach (var condition in quest.Conditions)
+        {
+            _questDescriptionText.text += condition.GetDescription();
+            _questDescriptionText.text += $"\n{condition.GetProgressText()}\n";
+        }
     }
 
     private void Close()

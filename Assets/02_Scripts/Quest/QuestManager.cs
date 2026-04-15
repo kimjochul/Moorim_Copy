@@ -155,18 +155,25 @@ public class QuestManager : Singleton<QuestManager>, ISubject
     /// <summary>
     /// 하루가 종료 됐을 때 그 날 생성된 랜덤 퀘스트들은 전부 삭제
     /// </summary>
-    public void ClearRandomQuests()
+    public void ClearRandomQuests(QuestType questType = QuestType.None)
     {
         bool isChanged = false;
         for (int i = activeQuests.Count - 1; i >= 0; i--)
         {
             var quest = activeQuests[i];
 
+            if (quest.QuestType != questType)
+                continue;
+                
             if (quest.QuestType == QuestType.MainStory || quest.QuestType == QuestType.SubStory)
                 continue;
 
-            //quest.Fail(); // 내부에서 RemoveObserver 호출됨
-            OnActiveQuestRemoved?.Invoke(quest); // 퀘스트 UI 창 업데이트 함수 연결해야함
+            Debug.Log(quest.CanClear());
+            
+            if(!quest.CanClear())
+                quest.Fail(); // 내부에서 RemoveObserver 호출됨
+            
+            //OnActiveQuestRemoved?.Invoke(quest); // 퀘스트 UI 창 업데이트 함수 연결해야함
             
             isChanged = true;
         }
