@@ -12233,7 +12233,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de2a8ec35c1013d47b9cde99fd3aa902, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::QuestTab
-  test: {fileID: 0}
   categoryTabs:
   - category: 0
     toggleTab: {fileID: 950424266}
@@ -20040,7 +20039,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d524c4698d3633948bba00e110e380f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StatusTab
-  guestTracker: {fileID: 0}
+  guestTracker: {fileID: 392299073}
   txtTotalRevenue: {fileID: 64743637}
   txtTotalFame: {fileID: 740323078}
   txtTotalHappyGuests: {fileID: 2076290752}
@@ -26869,9 +26868,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1313401320}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0f6f41643fa61c940af2e3a5ac5469d1, type: 3}
+  m_Script: {fileID: 11500000, guid: bb5c39f3163ddc34490b3bd9f30ee76a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BookView
+  bookView: {fileID: 1313401323}
 --- !u!114 &1313401323
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26881,9 +26881,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 1313401320}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3bdec3434c315f844b40a2c93b03ce02, type: 3}
+  m_Script: {fileID: 11500000, guid: 6b45c765ec978e84a9fbc602a2ddb375, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BookController
+  menus:
+  - toggle: {fileID: 253073809}
+    menuView: {fileID: 873836508}
+  - toggle: {fileID: 116760970}
+    menuView: {fileID: 1272665572}
 --- !u!1 &1314887094
 GameObject:
   m_ObjectHideFlags: 0

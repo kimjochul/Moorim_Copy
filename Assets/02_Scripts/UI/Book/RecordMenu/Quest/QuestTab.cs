@@ -15,7 +15,6 @@ public class CategoryPair
 
 public class QuestTab : BaseTab
 {
-    [SerializeField] private QuestGenerator test;
     [SerializeField] private CategoryPair[] categoryTabs;
 
     private Dictionary<QuestCategory, List<Quest>> dicActiveQuests = new Dictionary<QuestCategory, List<Quest>>();
