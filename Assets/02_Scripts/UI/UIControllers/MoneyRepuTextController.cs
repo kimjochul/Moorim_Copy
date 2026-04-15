@@ -18,57 +18,26 @@ public class MoneyRepuTextController : MonoBehaviour
 
     void Awake()
     {
-        economyManager = FindFirstObjectByType<EconomyManager>();
-        economyManager.TodayEconomyChanged += OnEconomyChanged;
+        economyManager = EconomyManager.Instance;
     }
 
     private void OnEnable()
     {
-        EconomyManager.Instance.RestaurantEconomyChanged += Refresh;
+        economyManager.RestaurantEconomyChanged += Refresh;
         Refresh();
     }
 
     private void OnDisable()
     {
-        EconomyManager.Instance.RestaurantEconomyChanged -= Refresh;
+        if (economyManager != null)
+        {
+            economyManager.RestaurantEconomyChanged -= Refresh;
+        }
     }
 
     private void Refresh()
     {
-        moneyText.text = EconomyManager.Instance.RestaurantEconomy.Money.ToString();
-    }
-    
-    void Start()
-    {
-        if (restaurantEconomy == null)
-        {
-            Debug.LogError("Couldn't find RestuarantEconomy SO");
-        }
-        
-        currMoney = restaurantEconomy.Money;
-        currFame = restaurantEconomy.Fame;
-        moneyText.text = currMoney.ToString();
-        fameText.text = currFame.ToString();
-    }
-
-    public void OnEconomyChanged()
-    {
-        OnMoneyChanged();
-        OnFameChanged();
-    }
-    
-    public void OnMoneyChanged()
-    {
-        moneyText.text = EconomyManager.Instance.TodayMoneyIncome.ToString();;
-    }
-
-    public void OnFameChanged()
-    {
-        fameText.text = EconomyManager.Instance.TodayFameIncome.ToString();;
-    }
-
-    void OnDestroy()
-    {
-        economyManager.TodayEconomyChanged -= OnEconomyChanged;
+        moneyText.text = economyManager.RestaurantEconomy.Money.ToString();
+        fameText.text = economyManager.RestaurantEconomy.Fame.ToString();
     }
 }
