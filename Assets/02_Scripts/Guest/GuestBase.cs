@@ -52,8 +52,8 @@ public abstract class GuestBase : MonoBehaviour
     public event Action<GuestBase, GuestMood> OnGuestMoodChanged; // 기분 변경 알림용
     public event Action<GuestBase> OnGuestReadyToOrder; // 주문 대기 중일 때
     public event Action<GuestBase, GuestOrderData> OnOrderPlaced; // UI 주문 리스트용
+    public event Action<GuestBase> OnOrderServed; // 서빙 완료 이벤트
     public event Action<GuestBase> OnGuestReadyToPay; // 계산 중일 때
-    // public event Action OnGuestServedAndPaid; // 스포너용
     public event Action OnGuestPaid; // 계산 완료 시 (Pay 상태에서만)
     public event Action OnGuestExited;  // 퇴장 시 (모든 Exit에서)
 
@@ -123,6 +123,7 @@ public abstract class GuestBase : MonoBehaviour
         // OnGuestServedAndPaid = null;
         OnGuestPaid = null;
         OnGuestExited = null;
+        OnOrderServed = null;
     }
     
     // 객체가 생성될 때 매니저에서 딱 한 번 호출해줄 초기화 메소드
@@ -383,6 +384,7 @@ public abstract class GuestBase : MonoBehaviour
         if (myOrder.orderedFood == deliveredFood && !myOrder.isServed)
         {
             myOrder.isServed = true;
+            OnOrderServed?.Invoke(this);
             
             if (quality == FoodQuality.Fine)
                 SetMood(GuestMood.Good);

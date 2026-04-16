@@ -28,6 +28,7 @@ public class BottomSlideAnim : MonoBehaviour
     {
         InventoryManager.Instance.OnInventoryUIOpened += OnInvOpened;
         InventoryManager.Instance.OnInventoryUIClosed += OnInvClosed;
+        InventoryManager.Instance.OnBottomUIToggleRequested += OnToggleRequested;
     }
 
     void OnDestroy()
@@ -36,6 +37,7 @@ public class BottomSlideAnim : MonoBehaviour
         {
             InventoryManager.Instance.OnInventoryUIOpened -= OnInvOpened;
             InventoryManager.Instance.OnInventoryUIClosed -= OnInvClosed;
+            InventoryManager.Instance.OnBottomUIToggleRequested -= OnToggleRequested;
         }
     }
 
@@ -51,6 +53,18 @@ public class BottomSlideAnim : MonoBehaviour
     {
         return type == InventoryType.Fridge
             || type == InventoryType.MealTable;
+    }
+
+    private void OnToggleRequested(bool isOpen)
+    {
+        if (isOpen) openCount++;
+        else openCount = Mathf.Max(0, openCount - 1);
+
+        bool shouldBeUp = openCount > 0;
+
+        if (currentRoutine != null) StopCoroutine(currentRoutine);
+        float targetY = shouldBeUp ? shownPosY : hiddenPosY;
+        currentRoutine = StartCoroutine(SmoothMove(targetY));
     }
     
     private void MoveUI(Inventory inven, bool isOpen)
