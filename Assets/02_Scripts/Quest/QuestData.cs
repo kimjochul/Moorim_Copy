@@ -14,6 +14,12 @@ public enum QuestType
     SubStory
 }
 
+public enum NPCType
+{
+    Merchant,
+    PostMan
+}
+
 /// <summary>
 /// 퀘스트 보상 클래스
 /// </summary>
@@ -36,6 +42,8 @@ public class QuestData : ScriptableObject
     public string questName;
     public List<QuestCondition> conditions;
     public QuestReward reward;
+    
+    public NPCType npcType; // 퀘스트 완료 할 수 있는 대상
 
     public QuestData nextQuest; // 다음 퀘스트
 

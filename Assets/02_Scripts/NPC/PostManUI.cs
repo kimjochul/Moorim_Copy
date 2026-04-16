@@ -108,7 +108,7 @@ public class PostManUI : MonoBehaviour
     
     private void RefreshClear()
     {
-        var quests = QuestManager.Instance.GetQuests(QuestType.PostMan);
+        var quests = QuestManager.Instance.GetQuestsByNPC(NPCType.PostMan);
 
         // 기존 UI 삭제 (여기의 경우 clearbar)
         foreach (Transform child in clearContent)

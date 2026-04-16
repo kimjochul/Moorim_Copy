@@ -22,6 +22,7 @@ public class Sowol : PlayerController
     private void Start()
     {
         inventory = InventoryManager.Instance.GetInventory(InventoryType.Chef);
+        DayManager.Instance.OnDayEnd += ClearInventorySlots;
     }
     
     public override void OnSlotClicked(Slot slot)
@@ -85,6 +86,14 @@ public class Sowol : PlayerController
 
             // 애니메이션
             ChangeState(PlayerState.PickUp);
+        }
+    }
+    
+    private void ClearInventorySlots()
+    {
+        foreach (var slot in inventory.Slots)
+        {
+            slot.Clear();
         }
     }
 }

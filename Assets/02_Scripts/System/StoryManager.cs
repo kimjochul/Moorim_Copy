@@ -244,6 +244,12 @@ public class StoryManager : MonoBehaviour
             
             currentScene = null;
 
+            if (currentStory.rewardQuest != null)
+            {
+                var quest = new Quest(currentStory.rewardQuest, InventoryManager.Instance.GetInventory(InventoryType.Fridge));
+                QuestManager.Instance.OfferQuest(quest);
+            }
+            
             PlayNextQueuedStory();
         });
     }

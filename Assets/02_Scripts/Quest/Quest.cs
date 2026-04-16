@@ -24,6 +24,8 @@ public class Quest : IObserver
 
     public QuestReward RuntimeReward => data.reward;
 
+    public NPCType targetNPC; // 퀘스트 완료 할 수 있는 대상
+    
     private List<QuestCondition> conditions;
     public List<QuestCondition> Conditions => conditions;
     
@@ -40,6 +42,7 @@ public class Quest : IObserver
         QuestName = data.questName;
         IsCompleted = false;
         
+        targetNPC = questData.npcType;
         this.inventory = inventory;
         
         conditions = new List<QuestCondition>();

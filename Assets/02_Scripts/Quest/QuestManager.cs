@@ -197,13 +197,24 @@ public class QuestManager : Singleton<QuestManager>, ISubject
     }
     
     /// <summary>
-    /// 현재 진행 중에 있는 퀘스트 조회 함수
+    /// 현재 진행 중에 있는 퀘스트 조회 퀘스트 타입으로 검색 함수
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
     public List<Quest> GetQuests(QuestType type)
     {
         return activeQuests.Where(q => q.QuestType == type).ToList();
+    }
+    
+    
+    /// <summary>
+    /// 퀘스트 완료 NPC가 볼 수 있는 퀘스트들 받기
+    /// </summary>
+    /// <param name="npc"></param>
+    /// <returns></returns>
+    public List<Quest> GetQuestsByNPC(NPCType npc)
+    {
+        return activeQuests.Where(q => q.targetNPC == npc).ToList();
     }
     
     /// <summary>
