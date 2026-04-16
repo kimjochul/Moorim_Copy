@@ -9,6 +9,8 @@ public class Story:ScriptableObject
     public string storyName;
     
     public List<StoryScene> scenes;
+    
+    public QuestData rewardQuest;
 }
 
 [Serializable]

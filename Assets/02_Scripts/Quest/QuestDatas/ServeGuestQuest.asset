@@ -10,13 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 83d1357942114b64bb7b912949d92f55, type: 3}
-  m_Name: Story1Quest
+  m_Name: ServeGuestQuest
   m_EditorClassIdentifier: Assembly-CSharp::QuestData
-  id: 0
-  questType: 3
-  questName: Story1
+  id: 104
+  questType: 2
+  questName: "\uC190\uB2D8\uC758 \uAE30\uBD84\uC744 \uC88B\uAC8C \uD574\uC8FC\uC138\uC694"
   conditions:
-  - {fileID: 11400000, guid: ec3f9bb829666804486e8fdb19c81863, type: 2}
+  - {fileID: 11400000, guid: 0f51794508610534dbe16991ae0eb59a, type: 2}
   reward:
     gold: 0
     reputation: 0
+  npcType: 1
+  nextQuest: {fileID: 0}
+  questDetail: "\uC190\uB2D8\uC758 \uAE30\uBD84\uC774 \uC77C\uC815 \uC218\uC900 \uC774\uC0C1\uC774
+    \uB418\uAC8C \uD574\uC8FC\uC138\uC694."

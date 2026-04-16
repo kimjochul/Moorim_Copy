@@ -4,7 +4,7 @@ using static Constants;
 /// <summary>
 /// 게임 진행도에 따라 완료되는 퀘스트
 /// </summary>
-[CreateAssetMenu(menuName = "Quest/Condition/Item")]
+[CreateAssetMenu(menuName = "Quest/Condition/Progress")]
 public class ProgressCondition : QuestCondition
 {
     private int currentMoney;

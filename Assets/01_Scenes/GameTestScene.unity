@@ -186,7 +186,6 @@ MonoBehaviour:
   serverInventory: {fileID: 1360274194}
   fridgeInventory: {fileID: 1357923755}
   mealTableInventory: {fileID: 1248328228}
-  guestInventory: {fileID: 1278910506}
 --- !u!4 &18285164
 Transform:
   m_ObjectHideFlags: 0
@@ -16659,7 +16658,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Sowol
   playerType: 1
-  cookingStation: {fileID: 82545915}
 --- !u!1 &1845544284
 GameObject:
   m_ObjectHideFlags: 0
@@ -36975,6 +36973,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f6f41643fa61c940af2e3a5ac5469d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BookView
+  menus: []
 --- !u!114 &5264972481634839451
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -36987,6 +36986,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3bdec3434c315f844b40a2c93b03ce02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BookController
+  bookView: {fileID: 0}
 --- !u!1 &5274630062694891794
 GameObject:
   m_ObjectHideFlags: 0
