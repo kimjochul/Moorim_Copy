@@ -74,7 +74,7 @@ public class Receipt : MonoBehaviour
             week = this.dayManager.DayData,
             totalRevenue = EconomyManager.Instance.TodayMoneyIncome,
             fame = EconomyManager.Instance.TodayFameIncome,
-            debt = 456, // ���߿� �� �����ͷ� ����
+            debt = EconomyManager.Instance.RestaurantEconomy.Debt,
 
             happyGuests = dailyData.goodCount + dailyData.veryGoodCount,
             angryGuests = dailyData.badCount + dailyData.veryBadCount,
@@ -106,7 +106,7 @@ public class Receipt : MonoBehaviour
     {
         ClearSequence();
 
-        this.txtDay.text = data.week.day + "��°";
+        this.txtDay.text = data.week.day + "일째";
 
         this.receiptSequence = DOTween.Sequence();
         this.receiptSequence.AppendInterval(0.5f);
