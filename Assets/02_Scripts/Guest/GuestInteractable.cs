@@ -7,20 +7,16 @@ public class GuestInteractable : MonoBehaviour, IInteractable
 {
     private GuestBase myBrain;
     public GuestBase MyBrain => myBrain;
-
-    private Inventory guestInven;
- 
  
     void Awake()
     {
         myBrain = GetComponent<GuestBase>();
-        guestInven = InventoryManager.Instance.GetInventory(InventoryType.Guest);
     }
  
     // IInteractable 구현 
  
     // 손님은 클릭해서 상호작용 (ClickToInteract)
-    public InteractMode Mode => InteractMode.ClickToInteract;
+    public InteractMode Mode => InteractMode.AutoOnEnter;
  
     // 서빙 캐릭터만 상호작용 가능
     public bool CanInteract(PlayerType playerType)
@@ -41,7 +37,8 @@ public class GuestInteractable : MonoBehaviour, IInteractable
             myBrain.TakeOrder();
         else if (myBrain.currentState == GuestState.WaitFood)
         {
-            OnOpenInventories();
+            Inventory serverInven = InventoryManager.Instance.GetInventory(InventoryType.Server);
+            InventoryManager.Instance.OpenInventory(serverInven);
         }
         else if (myBrain.currentState == GuestState.Exit)
         {
@@ -50,82 +47,25 @@ public class GuestInteractable : MonoBehaviour, IInteractable
             if (thief != null)
                 thief.CatchThief();
         }
-        else
-        {
-            Debug.Log($"상호작용 무시 (현재 상태: {myBrain.currentState})");
-        }
     }
  
     public void OnInteractEnd(PlayerController player)
     {
-        // ClickToInteract — 트리거 퇴장으로 호출되지 않음
-    }
-
-    private void OnOpenInventories()
-    {
-        Inventory serverInven = InventoryManager.Instance.GetInventory(InventoryType.Server);
-        InventoryManager.Instance.OpenInventory(serverInven);
-        InventoryManager.Instance.OpenInventory(guestInven);
+        if (player.PlayerType == PlayerType.Myungwol)
+        {
+            Inventory serverInven = InventoryManager.Instance.GetInventory(InventoryType.Server);
+            InventoryManager.Instance.CloseInventory(serverInven);
+        }
     }
     
-    /// <summary>
-    /// guest inven에 물건 넣기
-    /// </summary>
-    /// <param name="sourceInven"></param>
-    /// <param name="sourceSlot"></param>
-    public void PlaceFood(Inventory sourceInven, Slot sourceSlot)
+    public void DeliverFood(Inventory serverInven, Slot slot)
     {
-        sourceInven.MoveSlotTo(guestInven, sourceSlot, 1);
-    }
-    
-    /// <summary>
-    /// guest inven에서 물건 꺼낼 때
-    /// </summary>
-    /// <param name="slotIndex"></param>
-    /// <param name="targetInven"></param>
-    /// <returns></returns>
-    public IItem TakeFood(int slotIndex, Inventory targetInven)
-    {
-        var slot = guestInven.Slots[slotIndex];
-        if (slot.Item == null)
-        {
-            Debug.Log("음식 없음");
-            return null;
-        }
+        FoodData food = slot.Item.Data as FoodData;
+        if (food == null) return;
 
-        IItem item = slot.Item;
+        serverInven.RemoveItem(slot.Item.ID, 1);
+        myBrain.ReceiveFood(food, FoodQuality.Normal);
 
-        guestInven.MoveSlotTo(targetInven, slot, 1);
-        guestInven.RemoveItem(item.ID, 1);
-        
-        return item;
-    }
-
-    /// <summary>
-    /// 인스펙터 창에서 확인 버튼에 등록할 함수 
-    /// </summary>
-    /// <param name="deliveredFood"></param>
-    /// <param name="quality"></param>
-    public void CallReceiveFood()
-    {
-        foreach (var slot in guestInven.Slots)
-        {
-            if (slot.Item == null)
-                continue;
-
-            if (slot.Item.Data is FoodData deliveredFood)
-            {
-                FoodQuality quality = FoodQuality.Normal;
-                myBrain.ReceiveFood(deliveredFood, quality);
-                guestInven.RemoveItem(deliveredFood.id, slot.Count);
-            }
-        }
-        
-        foreach (var slot in guestInven.Slots)
-            slot.Clear();
-        
-        Inventory serverInven = InventoryManager.Instance.GetInventory(InventoryType.Server);
         InventoryManager.Instance.CloseInventory(serverInven);
-        InventoryManager.Instance.CloseInventory(guestInven);
     }
 }
