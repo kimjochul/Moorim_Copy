@@ -30,12 +30,12 @@ public class PlayerInput : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            // UIManager.Instance.인터페이스/도감 여는 메소드
+             UIManager.Instance.ActiveBook(!UIManager.Instance.IsBookActive);
         }
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            // UIManager.Instance.인터페이스/도감 닫는 메소드
+            UIManager.Instance.ActiveSetting(!UIManager.Instance.IsSettingActive);
         }
     }
 
