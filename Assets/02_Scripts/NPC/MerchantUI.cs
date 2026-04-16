@@ -13,11 +13,7 @@ public class MerchantUI : MonoBehaviour
     [SerializeField] private NPCTalkPanel talkPanel;
     [SerializeField] private DebtPanel debtPanel;
 
-    [SerializeField] private Transform questContent;
-    [SerializeField] private GameObject questSlotPrefab;
-    
-    [SerializeField] private Transform clearContent;
-    [SerializeField] private GameObject clearSlotPrefab;
+    [SerializeField] private NPCQuestUI npcQuestUI;
     
     [SerializeField] private Shop shop;
     private Inventory inventory;
@@ -57,15 +53,10 @@ public class MerchantUI : MonoBehaviour
     {
         lastDialogIndex = -1;
         
-        QuestManager.Instance.OnWaitingQuestChanged += RefreshAccept;
-        QuestManager.Instance.OnActiveQuestChanged += RefreshClear;
         debtPanel.FullPayDebt += FullyRepayDebt;
 
         if (merchant.IsAvailableDay())
             merchant.DayManager.OnDayStart += ResetDialogue;
-        
-        RefreshAccept();
-        RefreshClear();
         
         OpenTalk();
     }
@@ -77,11 +68,6 @@ public class MerchantUI : MonoBehaviour
 
     private void OnDisable()
     {
-        if (QuestManager.Instance != null)
-        {
-            QuestManager.Instance.OnWaitingQuestChanged -= RefreshAccept;
-            QuestManager.Instance.OnActiveQuestChanged -= RefreshClear;
-        }
         if (merchant.DayManager != null)
             merchant.DayManager.OnDayStart -= ResetDialogue;
 
@@ -130,37 +116,6 @@ public class MerchantUI : MonoBehaviour
         
         currentState = MerchantState.Talk;
     }
-
-    private void RefreshAccept()
-    {
-        var quests = QuestManager.Instance.GetWaitingQuests(QuestType.Merchant);
-
-        // 기존 UI 삭제 (여기의 경우 acceptbar)
-        foreach (Transform child in questContent)
-            Destroy(child.gameObject);
-
-        // 새로 생성
-        foreach (var quest in quests)
-        {
-            var obj = Instantiate(questSlotPrefab, questContent);
-            obj.GetComponent<QuestAcceptBar>().Init(quest);
-        }
-    }
-    
-    private void RefreshClear()
-    {
-        var quests = QuestManager.Instance.GetQuestsByNPC(NPCType.Merchant);
-
-        // 기존 UI 삭제 (여기의 경우 clearbar)
-        foreach (Transform child in clearContent)
-            Destroy(child.gameObject); // 만약 최적화 한다면 바꿔야 할 수도
-
-        foreach (var quest in quests)
-        {
-            var obj = Instantiate(clearSlotPrefab, clearContent);
-            obj.GetComponent<QuestClearBar>().Init(quest, inventory);
-        }
-    }
     
     public void OpenShop()
     {
@@ -208,6 +163,8 @@ public class MerchantUI : MonoBehaviour
         questPanel.SetActive(true);
         talkPanel.gameObject.SetActive(true);
         debtPanel.gameObject.SetActive(false);
+        
+        npcQuestUI.Init(QuestType.Merchant, NPCType.Merchant);
         
         SetState(MerchantState.Quest);
     }
