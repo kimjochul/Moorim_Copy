@@ -71,7 +71,7 @@ public abstract class GuestBase : MonoBehaviour
         if (bubbleUI == null)
             bubbleUI = GetComponentInChildren<GuestBubbleUI>();
         if (guestManager != null)
-        guestManager.LeaveWaiting(this);
+            guestManager.LeaveWaiting(this);
         
         // FSM 플래그 — 이게 안 되면 Enter/Exit에서 경로를 안 잡음
         isEnterPathSet = false;
@@ -95,17 +95,17 @@ public abstract class GuestBase : MonoBehaviour
 
         // 의자 반환 (이전 손님이 앉았던 의자가 점유 상태로 남는 것 방지)
         if (myChair != null)
-         {
+        {
             myChair.Empty();
             myChair = null;
-         }
+        }
 
         // 음식 모델 제거
         if (currentFoodModel != null)
         {
             Destroy(currentFoodModel);
             currentFoodModel = null;
-         }
+        }
 
         if (mover != null)
             mover.ResetAgent();
@@ -219,15 +219,15 @@ public abstract class GuestBase : MonoBehaviour
         }
 
         if (mover.HasArrived())
-            {
-                mover.StopAndDisable();
+        {
+            mover.StopAndDisable();
 
-                transform.position = myChair.sitPoint.position;
-                transform.rotation = myChair.sitPoint.rotation;
+            transform.position = myChair.sitPoint.position;
+            transform.rotation = myChair.sitPoint.rotation;
 
-                ChangeState(GuestState.WaitOrder);
-            }
-            
+            ChangeState(GuestState.WaitOrder);
+        }
+
     }
 
     private void HandleWaitingState()
@@ -334,11 +334,11 @@ public abstract class GuestBase : MonoBehaviour
 
     private void HandleExitState()
     {
+        OnGuestExited?.Invoke();
+        
         // 상태 진입 후 딱 한 번만 목적지 찾기
         if (!isExitPathSet && exitDoor != null)
         {
-            OnGuestExited?.Invoke();
-
             if (myChair != null)
             {
                 myChair.Empty();
@@ -350,7 +350,9 @@ public abstract class GuestBase : MonoBehaviour
         }
 
         if (isExitPathSet && mover.HasArrived(2.0f))
+        {
             PoolManager.Instance.Return(myApperance.ToString(), gameObject);
+        }
     }
 
     // 주문 대기 시 플레이어 상호작용 클래스
@@ -426,4 +428,25 @@ public abstract class GuestBase : MonoBehaviour
             EconomyManager.Instance.AddFame(result.reputation);;
     }
 
+    /// <summary>
+    ///  영업 끝나면 강제로 exit
+    /// </summary>
+    public void ForceExit()
+    {
+        if (!gameObject.activeSelf)
+            return;
+
+        // 자리 정리만 (이건 안 하면 버그남)
+        if (myChair != null)
+        {
+            myChair.Empty();
+            myChair = null;
+        }
+
+        // 웨이팅 제거
+        guestManager?.LeaveWaiting(this);
+
+        // 이동/상태/이벤트 전부 무시하고 즉시 반환
+        PoolManager.Instance.Return(myApperance.ToString(), gameObject);
+    }
 }

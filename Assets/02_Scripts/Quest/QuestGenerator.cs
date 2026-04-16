@@ -222,7 +222,7 @@ public class QuestGenerator : MonoBehaviour
                 else
                     recipe = GetRecipeByID(itemCondition.itemID);
                 
-                itemCondition.requiredCount = Random.Range(1, 1); // 테스트 용으로 무조건 1만 나오게 설정
+                itemCondition.requiredCount = Random.Range(1, 3);
                 
                 if (recipe != null)
                     Debug.Log($"{recipe.recipeName} / require count: {itemCondition.requiredCount}");
@@ -233,6 +233,11 @@ public class QuestGenerator : MonoBehaviour
             if (condition is FailLimitCondition failCondition)
             {
                 failCondition.maxFailCount = Random.Range(1, 5);
+            }
+
+            if (condition is ServeCondition serveCondition)
+            {
+                serveCondition.requireCount  = Random.Range(1, 5);
             }
         }
         // 보상도 랜덤으로 설정

@@ -20,6 +20,9 @@ public class UIManager : Singleton<UIManager>
     QuestPopupController _questPopupCtr;
     OrdersPopupController _orderPopupCtr;
     [SerializeField] private GameObject defaultUI;
+
+    [SerializeField] private BookView book;
+    [SerializeField] private Setting setting;
     
     private bool _isQuestPopupOpen = false;
     private bool _isOrderPopupOpen = false;
@@ -166,5 +169,19 @@ public class UIManager : Singleton<UIManager>
         popup.ButtonOk(onOk);
 
         return popup;
+    }
+
+    // 도감
+    public void ActiveBook(bool isShow)
+    {
+        book.ShowBook(isShow);
+    }
+    // 설정창
+    public void ActiveSetting(bool isShow)
+    {
+        if (isShow)
+            setting.Show(); 
+        else
+            setting.Hide();
     }
 }

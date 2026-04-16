@@ -13,6 +13,8 @@ public class QuestPopup : MonoBehaviour
     private bool isShown = false;
     public bool IsShown => isShown;
     
+    private Quest quest;
+    
     void Awake()
     {
         _closeButton.onClick.AddListener(() =>
@@ -29,16 +31,27 @@ public class QuestPopup : MonoBehaviour
         isShown = true;
     }
 
-    public void Init(Quest quest)
+    void OnDisable()
     {
-        _questNameText.text = quest.QuestName;
-        _questDescriptionText.text = "";
+        isShown = false;
         
+        if (quest == null) return;
+
         foreach (var condition in quest.Conditions)
         {
-            _questDescriptionText.text += condition.GetDescription();
-            _questDescriptionText.text += $"\n{condition.GetProgressText()}\n";
+            condition.OnConditionUpdated -= Refresh;
         }
+    }
+
+    public void Init(Quest quest)
+    {
+        this.quest = quest;
+
+        foreach (var condition in quest.Conditions)
+        {
+            condition.OnConditionUpdated += Refresh;
+        }
+        Refresh();
     }
 
     private void Close()
@@ -57,5 +70,17 @@ public class QuestPopup : MonoBehaviour
         {
             _contentObj.SetActive(true);
         });
+    }
+
+    private void Refresh()
+    {
+        _questNameText.text = quest.QuestName;
+        _questDescriptionText.text = "";
+        
+        foreach (var condition in quest.Conditions)
+        {
+            _questDescriptionText.text += condition.GetDescription();
+            _questDescriptionText.text += $"\n{condition.GetProgressText()}\n";
+        }
     }
 }
