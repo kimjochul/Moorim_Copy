@@ -62,4 +62,10 @@
     public const float SPOIL_TIME = 10f;
     public const int SERVINGSLOT_MAXCOUNT = 8;
     public const int FRIDGE_SIZE = 4;
+
+    // 씬 이름
+    public const string SPLASHSCREEN = "01.SplashScreen";
+    public const string MAINMENU = "02.MainMenu";
+    public const string GAME = "03.Game";
+    public const string DIALOG = "04.Dialog";
 }
