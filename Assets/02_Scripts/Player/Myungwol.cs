@@ -55,6 +55,9 @@ public class Myungwol : PlayerController
                 Debug.Log("가져올 음식 없음");
                 return;
             }
+
+            // 애니메이션 실행
+            ChangeState(PlayerState.PickUp);
         }
     }
     
@@ -71,6 +74,9 @@ public class Myungwol : PlayerController
             {
                 Debug.Log("가져올 음식 없음");
             }
+
+            // 애니메이션 실행
+            ChangeState(PlayerState.PickUp);
         }
     }
 
@@ -85,6 +91,7 @@ public class Myungwol : PlayerController
             if (slot.Owner.Type is InventoryType.Server)
             {
                 servingSlot.PlaceFood(inventory, slot);
+                ChangeState(PlayerState.Give);
             }
         }
         else if (interactable is Fridge fridge)
@@ -92,6 +99,7 @@ public class Myungwol : PlayerController
             if (slot.Owner.Type is InventoryType.Server)
             {
                 fridge.PlaceFood(inventory, slot);
+                ChangeState(PlayerState.Give);
             }
         }
         else if (interactable is GuestInteractable guest)
@@ -101,6 +109,7 @@ public class Myungwol : PlayerController
                 // TODO: 팝업 UI 호출
                 // "이 음식을 전달하시겠습니까?" 확인 시 아래 실행
                 guest.DeliverFood(inventory, slot);
+                ChangeState(PlayerState.Give);
             }
         }
     }

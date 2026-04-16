@@ -89,6 +89,9 @@ public class PlayerManager : Singleton<PlayerManager>
         // 이동 중이면 멈추고 상호작용
         selectedUnit.Stop();
 
+        // 상호작용 애니메이션 실행
+        selectedUnit.ChangeState(PlayerState.Interact);
+
         // 상호작용 실행
         target.Interact(selectedUnit);
 

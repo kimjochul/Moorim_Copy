@@ -19,9 +19,9 @@ public class PlayerAnimation : MonoBehaviour
             this.player.OnStateChanged += HandleStateChanged;
         }
     }
-    private void HandleStateChanged(PlayerState newState)
+    private void HandleStateChanged(PlayerState state)
     {
-        switch (newState)
+        switch (state)
         {
             case PlayerState.Idle:
                 this.animator.SetFloat(this.hashSpeed, 0f);
