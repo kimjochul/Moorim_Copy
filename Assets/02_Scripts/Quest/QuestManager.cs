@@ -157,6 +157,7 @@ public class QuestManager : Singleton<QuestManager>, ISubject
     /// </summary>
     public void ClearRandomQuests(QuestType questType = QuestType.None)
     {
+        ClearWaitingQuests(questType);
         bool isChanged = false;
         for (int i = activeQuests.Count - 1; i >= 0; i--)
         {
@@ -251,5 +252,19 @@ public class QuestManager : Singleton<QuestManager>, ISubject
                 return true;
         }
         return false;
+    }
+    
+    /// <summary>
+    /// 퀘스트 waiting에 있는 거는 안받으면 사라지게
+    /// </summary>
+    /// <param name="type"></param>
+    public void ClearWaitingQuests(QuestType type)
+    {
+        waitingQuests.RemoveAll(q =>
+        {
+            //Debug.Log($"대기 퀘스트 삭제 : {q.Conditions[0].GetDescription()}");
+            return q.QuestType == type;
+        });
+        OnWaitingQuestChanged?.Invoke();
     }
 }

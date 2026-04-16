@@ -247,7 +247,7 @@ public class StoryManager : MonoBehaviour
             if (currentStory.rewardQuest != null)
             {
                 var quest = new Quest(currentStory.rewardQuest, InventoryManager.Instance.GetInventory(InventoryType.Fridge));
-                QuestManager.Instance.OfferQuest(quest);
+                QuestManager.Instance.AcceptQuest(quest);
             }
             
             PlayNextQueuedStory();
