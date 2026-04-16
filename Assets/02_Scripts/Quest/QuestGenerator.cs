@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
+using static Constants;
 
 public class QuestGenerator : MonoBehaviour
 {

@@ -4,6 +4,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
+using static Constants;
 
 public class MerchantUI : MonoBehaviour
 {

@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using static Constants;
 
 
 /// <summary>
@@ -23,6 +24,9 @@ public class InventoryManager : Singleton<InventoryManager>
 
     [SerializeField] private Inventory fridgeInventory; // 냉장고
     [SerializeField] private Inventory mealTableInventory; // 배식대
+
+    public event Action<Inventory> OnInventoryUIOpened;
+    public event Action<Inventory> OnInventoryUIClosed;
 
     private void Start()
     {
@@ -79,6 +83,7 @@ public class InventoryManager : Singleton<InventoryManager>
             return;
         }
         UIManager.Instance.OpenInventoryPopup(inventory);
+        OnInventoryUIOpened?.Invoke(inventory);
     }
 
     /// <summary>
@@ -93,5 +98,6 @@ public class InventoryManager : Singleton<InventoryManager>
             return;
         }
         UIManager.Instance.CloseInventoryPopup(inventory);
+        OnInventoryUIClosed?.Invoke(inventory);
     }
 }
