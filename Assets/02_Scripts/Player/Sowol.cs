@@ -61,6 +61,9 @@ public class Sowol : PlayerController
             if (slot.Owner.Type is InventoryType.Chef)
             {
                 servingSlot.PlaceFood(inventory, slot);
+
+                // 애니메이션
+                ChangeState(PlayerState.Give);
             }
         }
     }
@@ -79,6 +82,9 @@ public class Sowol : PlayerController
                 Debug.Log("가져올 음식 없음");
                 return;
             }
+
+            // 애니메이션
+            ChangeState(PlayerState.PickUp);
         }
     }
 }
