@@ -21,6 +21,8 @@ public class PlayerController : MonoBehaviour, IControllable
 
     public IInteractable ActiveInteractable { get; set; }
 
+    private float defaultSpeed;
+
     public bool IsMoving
     {
         get
@@ -41,6 +43,9 @@ public class PlayerController : MonoBehaviour, IControllable
     void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
+
+        // 초기 설정된 기본 속도
+        defaultSpeed = agent.speed;
     }
 
     void Update()
@@ -74,6 +79,12 @@ public class PlayerController : MonoBehaviour, IControllable
         agent.SetDestination(destination);
 
         this.onArrived = onArrived;
+
+        // 현재 설정된 기본 속도보다 높으면 Run 애니메이션
+        if(agent.speed > defaultSpeed)
+            ChangeState(PlayerState.Run);
+        else
+            ChangeState(PlayerState.Walk);
     }
 
     public void Stop()
@@ -81,6 +92,8 @@ public class PlayerController : MonoBehaviour, IControllable
         agent.ResetPath();
         agent.velocity = Vector3.zero;
         this.onArrived = null;
+
+        ChangeState(PlayerState.Idle);
     }
 
     public void SetSpeed(float move, float angular, float accel)
