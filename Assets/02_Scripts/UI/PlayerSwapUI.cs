@@ -7,11 +7,15 @@ public class PlayerSwapUI : MonoBehaviour
     [SerializeField] private Image sowolIcon;
     [SerializeField] private Image myungwolIcon;
 
+    [SerializeField] private GameObject sowolInventoryObj;
+    [SerializeField] private GameObject myungwolInventoryObj;
+
     [SerializeField] private Color activeColor = Color.white; 
     [SerializeField] private Color inactiveColor = new Color(0.3f, 0.3f, 0.3f, 1f); 
 
     void Start()
     {
+         Debug.Log($"[PlayerSwapUI] Start, CurrentPlayer={PlayerManager.Instance.CurrentPlayer}");
         PlayerManager.Instance.OnPlayerSwapped += UpdateIcons;
 
         UpdateIcons(PlayerManager.Instance.CurrentPlayer);
@@ -26,8 +30,13 @@ public class PlayerSwapUI : MonoBehaviour
 
     private void UpdateIcons(PlayerType type)
     {
+        Debug.Log($"[PlayerSwapUI] UpdateIcons 호출: type={type}");
         // 삼항 연산자로 선택된 타입에 따라 컬러 변경
         myungwolIcon.color = (type == PlayerType.Myungwol) ? activeColor : inactiveColor;
         sowolIcon.color = (type == PlayerType.Sowol) ? activeColor : inactiveColor;
+
+        sowolInventoryObj.SetActive(type == PlayerType.Sowol);
+        myungwolInventoryObj.SetActive(type == PlayerType.Myungwol);
+        Debug.Log($"[PlayerSwapUI] 적용 후: sowolActive={sowolInventoryObj.activeSelf}, myungwolActive={myungwolInventoryObj.activeSelf}");
     }
 }

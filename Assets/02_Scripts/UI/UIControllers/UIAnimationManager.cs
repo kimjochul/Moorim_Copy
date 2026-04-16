@@ -166,20 +166,6 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
     [SerializeField] 
     private Ease stampEase = Ease.OutBack;
 
-    [Space(30)]
-    
-    [Header("=== Slide (위아래 밀기) 연출 ===")]
-    [Header("Show 설정")]
-    [Range(0.1f, 1f)]
-    [SerializeField] private float slideShowDuration = 0.3f;
-    [SerializeField] private Ease slideShowEase = Ease.OutQuart;
-
-    [Header("Hide 설정")]
-    [Range(0.1f, 1f)]
-    [SerializeField] private float slideHideDuration = 0.2f;
-    [SerializeField] private Ease slideHideEase = Ease.InQuart;
-
-
     protected override void Awake()
     {
         base.Awake();
@@ -746,54 +732,5 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
             case PaperDirection.BottomRight: return new Vector2(1f, 0f);
             default: return new Vector2(0.5f, 0.5f); // �⺻�� �߾�
         }
-    }
-
-    // 인벤토리 올라오기
-    public void ShowSlideUp(RectTransform ui, float startY, float endY, UnityAction onStart = null, UnityAction onComplete = null)
-    {
-        if (ui == null) return;
-        ui.DOKill();
-
-        CanvasGroup cg = ui.GetComponent<CanvasGroup>();
-        if (cg == null) cg = ui.gameObject.AddComponent<CanvasGroup>();
-        cg.DOKill();
-        cg.blocksRaycasts = false;
-
-        // 시작 위치로 세팅 (화면 아래)
-        ui.anchoredPosition = new Vector2(ui.anchoredPosition.x, startY);
-        cg.alpha = 0f;
-
-        Sequence seq = DOTween.Sequence();
-        seq.OnStart(() => onStart?.Invoke());
-
-        // 목표 위치(endY)로 부드럽게 이동
-        seq.Append(ui.DOAnchorPosY(endY, this.slideShowDuration).SetEase(this.slideShowEase));
-        seq.Join(cg.DOFade(1f, this.slideShowDuration).SetEase(Ease.Linear));
-
-        seq.OnComplete(() => {
-            cg.blocksRaycasts = true;
-            onComplete?.Invoke();
-        });
-    }
-
-    // 인벤토리 내려가기
-    public void HideSlideDown(RectTransform ui, float endY, UnityAction onStart = null, UnityAction onComplete = null)
-    {
-        if (ui == null) return;
-        ui.DOKill();
-
-        CanvasGroup cg = ui.GetComponent<CanvasGroup>();
-        if (cg == null) cg = ui.gameObject.AddComponent<CanvasGroup>();
-        cg.DOKill();
-        cg.blocksRaycasts = false;
-
-        Sequence seq = DOTween.Sequence();
-        seq.OnStart(() => onStart?.Invoke());
-
-        // 다시 화면 아래(endY)로 숨기기
-        seq.Append(ui.DOAnchorPosY(endY, this.slideHideDuration).SetEase(this.slideHideEase));
-        seq.Join(cg.DOFade(0f, this.slideHideDuration).SetEase(Ease.Linear));
-
-        seq.OnComplete(() => onComplete?.Invoke());
     }
 }

@@ -32,12 +32,6 @@ public class InventoryManager : Singleton<InventoryManager>
     {
         OpenCommonInventory();
         CloseCommonInventory();
-        
-        OpenInventory(chefInventory);
-        CloseInventory(chefInventory);
-        
-        OpenInventory(serverInventory);
-        CloseInventory(serverInventory);
     }
 
     public Inventory GetInventory(InventoryType type)
@@ -82,6 +76,8 @@ public class InventoryManager : Singleton<InventoryManager>
             Debug.LogError($"{inventory.Type.ToString()} Inventory 없음");
             return;
         }
+
+        Debug.Log($"{inventory.Type} 열기 시도");
         UIManager.Instance.OpenInventoryPopup(inventory);
         OnInventoryUIOpened?.Invoke(inventory);
     }
