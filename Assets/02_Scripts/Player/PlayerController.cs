@@ -58,16 +58,20 @@ public class PlayerController : MonoBehaviour, IControllable
     private void CheckArrival()
     {
         // 이동 중이 아니면 체크할 필요 없음
-        if (onArrived == null) return;
         if (agent.pathPending) return;
 
         if (agent.remainingDistance <= agent.stoppingDistance)
         {
             if (!agent.hasPath || agent.velocity.sqrMagnitude < 0.01f)
             {
-                UnityAction callback = onArrived;
-                onArrived = null;
-                callback?.Invoke();
+                if (onArrived != null)
+                {
+                    UnityAction callback = onArrived;
+                    onArrived = null;
+                    callback?.Invoke();
+                }
+                // 정지 애니메이션
+                ChangeState(PlayerState.Idle);
             }
         }
     }

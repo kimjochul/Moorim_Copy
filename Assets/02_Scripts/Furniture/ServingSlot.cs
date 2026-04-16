@@ -51,15 +51,15 @@ public class ServingSlot : MonoBehaviour, IInteractable
         // 상호작용 로직
         if (player.PlayerType == PlayerType.Sowol)
         {
-            Inventory chefInventory = InventoryManager.Instance.GetInventory(InventoryType.Chef);
+            // Inventory chefInventory = InventoryManager.Instance.GetInventory(InventoryType.Chef);
             InventoryManager.Instance.OpenInventory(inventory);
-            InventoryManager.Instance.OpenInventory(chefInventory);
+            // InventoryManager.Instance.OpenInventory(chefInventory);
         }
         if (player.PlayerType == PlayerType.Myungwol)
         {
-            Inventory serverInventory = InventoryManager.Instance.GetInventory(InventoryType.Server);
+            //Inventory serverInventory = InventoryManager.Instance.GetInventory(InventoryType.Server);
             InventoryManager.Instance.OpenInventory(inventory);
-            InventoryManager.Instance.OpenInventory(serverInventory);
+            //InventoryManager.Instance.OpenInventory(serverInventory);
         }
     }
 

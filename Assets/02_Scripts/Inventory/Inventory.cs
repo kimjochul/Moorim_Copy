@@ -4,18 +4,7 @@ using Unity.Loading;
 using UnityEditor.UI;
 using UnityEngine;
 using UnityEngine.UI;
-
-public enum InventoryType
-{
-    Fridge,   // 냉장고 (퀘스트 기준)
-    Chef,      // 조리사 (임시 저장소)
-    Server,
-    MealTable,
-    Ingredients,
-    IngredientsButMeatOnly,
-    BondItem,
-    Guest
-}
+using static Constants;
 
 /// <summary>
 /// 인벤토리 클래스, 각 인벤토리 UI에서 슬롯들을 묶는 group역할을 하는 오브젝트에 컴포넌트로 들어간다.

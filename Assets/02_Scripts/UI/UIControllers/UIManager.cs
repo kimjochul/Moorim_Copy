@@ -7,6 +7,8 @@ using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.Splines;
 using UnityEngine.UI;
+using static Constants;
+
 public class UIManager : Singleton<UIManager>
 {
     private Canvas _canvas;
@@ -37,7 +39,7 @@ public class UIManager : Singleton<UIManager>
         _questPopupCtr = FindFirstObjectByType<QuestPopupController>();
         _orderPopupCtr = FindFirstObjectByType<OrdersPopupController>();
         
-        OpenDefaultUI();
+        // OpenDefaultUI();
         
         
         // temp
@@ -50,10 +52,10 @@ public class UIManager : Singleton<UIManager>
         }
     }
 
-    public void OpenDefaultUI()
-    {
-        Instantiate(defaultUI,  _canvas.transform);
-    }
+    // public void OpenDefaultUI()
+    // {
+    //     Instantiate(defaultUI,  _canvas.transform);
+    // }
     
     // 공용 인벤토리 호출시 나오는 함수
     public void OpenCommonInventoryPopup(InventoryPopupController commonInventory)

@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using static Constants;
 
 
 /// <summary>
@@ -24,16 +25,13 @@ public class InventoryManager : Singleton<InventoryManager>
     [SerializeField] private Inventory fridgeInventory; // 냉장고
     [SerializeField] private Inventory mealTableInventory; // 배식대
 
+    public event Action<Inventory> OnInventoryUIOpened;
+    public event Action<Inventory> OnInventoryUIClosed;
+
     private void Start()
     {
         OpenCommonInventory();
         CloseCommonInventory();
-        
-        OpenInventory(chefInventory);
-        CloseInventory(chefInventory);
-        
-        OpenInventory(serverInventory);
-        CloseInventory(serverInventory);
     }
 
     public Inventory GetInventory(InventoryType type)
@@ -78,7 +76,10 @@ public class InventoryManager : Singleton<InventoryManager>
             Debug.LogError($"{inventory.Type.ToString()} Inventory 없음");
             return;
         }
+
+        Debug.Log($"{inventory.Type} 열기 시도");
         UIManager.Instance.OpenInventoryPopup(inventory);
+        OnInventoryUIOpened?.Invoke(inventory);
     }
 
     /// <summary>
@@ -93,5 +94,6 @@ public class InventoryManager : Singleton<InventoryManager>
             return;
         }
         UIManager.Instance.CloseInventoryPopup(inventory);
+        OnInventoryUIClosed?.Invoke(inventory);
     }
 }

@@ -79,34 +79,34 @@ public class GuestAnimation : MonoBehaviour
 
     private void PlaySit()
     {
-        ResetAll();
+        //ResetAll();
         anim.SetBool(IS_SITTING, true);
     }
 
     private void PlayEat()
     {
-        ResetAll();
+        //ResetAll();
         anim.SetTrigger(HANDUP_TRIGGER);
         anim.SetBool(IS_EATING, true);
     }
 
     private void PlayHandUp()
     {
-       ResetAll();
+       //ResetAll();
        anim.SetBool(IS_SITTING, true);
        anim.SetTrigger(HANDUP_TRIGGER);
     }
 
     private void PlayHandDown()
     {
-        ResetAll();
+        //ResetAll();
         anim.SetBool(IS_SITTING, true);
         anim.SetTrigger(HANDDOWN_TRIGGER);
     }
 
     private void PlayAngry()
     {
-        ResetAll();
+        //ResetAll();
         anim.SetBool(IS_ANGRY, true);
     }
 

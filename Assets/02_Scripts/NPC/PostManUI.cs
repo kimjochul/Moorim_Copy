@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using static Constants;
 
 public class PostManUI : MonoBehaviour
 {
