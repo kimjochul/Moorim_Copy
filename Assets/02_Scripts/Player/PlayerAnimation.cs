@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 
 public class PlayerAnimation : MonoBehaviour
@@ -11,20 +12,25 @@ public class PlayerAnimation : MonoBehaviour
     private readonly int hashGive = Animator.StringToHash("Give");
     private readonly int hashInteract = Animator.StringToHash("Interact");
 
-    private void Awake()
+    void Awake()
     {
-        if (this.animator == null)
-        {
-            this.animator = GetComponent<Animator>();
-            this.player.OnStateChanged += HandleStateChanged;
-        }
+        this.animator = GetComponent<Animator>();
+        this.player.OnStateChanged += HandleStateChanged;
     }
+    
     private void HandleStateChanged(PlayerState state)
     {
         switch (state)
         {
             case PlayerState.Idle:
-                this.animator.SetFloat(this.hashSpeed, 0f);
+                DOTween.Kill(this.gameObject.GetInstanceID());
+
+                float currentSpeed = this.animator.GetFloat(this.hashSpeed);
+
+                DOVirtual.Float(currentSpeed, 0f, 0.1f, (value) =>
+                {
+                    this.animator.SetFloat(this.hashSpeed, value);
+                }).SetId(this.gameObject.GetInstanceID());
                 break;
 
             case PlayerState.Walk:
