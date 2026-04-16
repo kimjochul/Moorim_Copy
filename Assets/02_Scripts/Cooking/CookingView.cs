@@ -7,6 +7,7 @@ public class CookingView : MonoBehaviour
 {
     [Header("UI")]
     [SerializeField] private Image recipeIcon;
+    [SerializeField] private Sprite pixelsSprite;
     [SerializeField] private TMP_Text recipeName;
     [SerializeField] private TMP_Text recipeDescription;
     [SerializeField] private CookingIngredientSlotUI[] ingredientSlots;
@@ -82,7 +83,7 @@ public class CookingView : MonoBehaviour
 
     public void ClearView()
     {
-        recipeIcon.sprite = null;
+        recipeIcon.sprite = pixelsSprite;
         recipeName.text = "";
         recipeDescription.text = "";
 
