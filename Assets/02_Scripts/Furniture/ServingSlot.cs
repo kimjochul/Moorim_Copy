@@ -55,7 +55,7 @@ public class ServingSlot : MonoBehaviour, IInteractable
             InventoryManager.Instance.OpenInventory(inventory);
             InventoryManager.Instance.OpenInventory(chefInventory);
         }
-        else if (player.PlayerType == PlayerType.Myungwol)
+        if (player.PlayerType == PlayerType.Myungwol)
         {
             Inventory serverInventory = InventoryManager.Instance.GetInventory(InventoryType.Server);
             InventoryManager.Instance.OpenInventory(inventory);
