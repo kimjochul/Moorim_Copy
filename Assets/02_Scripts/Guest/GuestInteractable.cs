@@ -7,6 +7,8 @@ public class GuestInteractable : MonoBehaviour, IInteractable
 {
     private GuestBase myBrain;
     public GuestBase MyBrain => myBrain;
+
+    private bool bottomUIOpenedByMe = false;
  
     void Awake()
     {
@@ -37,8 +39,8 @@ public class GuestInteractable : MonoBehaviour, IInteractable
             myBrain.TakeOrder();
         else if (myBrain.currentState == GuestState.WaitFood)
         {
-            // Inventory serverInven = InventoryManager.Instance.GetInventory(InventoryType.Server);
-            // InventoryManager.Instance.OpenInventory(serverInven);
+            InventoryManager.Instance.RequestBottomUI(true);
+            bottomUIOpenedByMe = true;
         }
         else if (myBrain.currentState == GuestState.Exit)
         {
@@ -53,8 +55,8 @@ public class GuestInteractable : MonoBehaviour, IInteractable
     {
         if (player.PlayerType == PlayerType.Myungwol)
         {
-            Inventory serverInven = InventoryManager.Instance.GetInventory(InventoryType.Server);
-            InventoryManager.Instance.CloseInventory(serverInven);
+            InventoryManager.Instance.RequestBottomUI(false);
+            bottomUIOpenedByMe = false;
         }
     }
     

@@ -26,34 +26,18 @@ public class Fridge : MonoBehaviour, IInteractable
         
         // 상호작용 로직
         if (player.PlayerType == PlayerType.Sowol)
-        {
-            // Inventory chefInventory = InventoryManager.Instance.GetInventory(InventoryType.Chef);
             InventoryManager.Instance.OpenInventory(inventory);
-            // InventoryManager.Instance.OpenInventory(chefInventory);
-        }
         else if (player.PlayerType == PlayerType.Myungwol)
-        {
-            // Inventory serverInventory = InventoryManager.Instance.GetInventory(InventoryType.Server);
             InventoryManager.Instance.OpenInventory(inventory);
-            // InventoryManager.Instance.OpenInventory(serverInventory);
-        }
     }
 
     public void OnInteractEnd(PlayerController player)
     {
         // 종료 시 정리 로직
         if (player.PlayerType == PlayerType.Sowol)
-        {
-            Inventory chefInventory = InventoryManager.Instance.GetInventory(InventoryType.Chef);
             InventoryManager.Instance.CloseInventory(inventory);
-            InventoryManager.Instance.CloseInventory(chefInventory);
-        }
         else if (player.PlayerType == PlayerType.Myungwol)
-        {
-            Inventory serverInventory = InventoryManager.Instance.GetInventory(InventoryType.Server);
             InventoryManager.Instance.CloseInventory(inventory);
-            InventoryManager.Instance.CloseInventory(serverInventory);
-        }
     }
     
     private void OnDayEnd()

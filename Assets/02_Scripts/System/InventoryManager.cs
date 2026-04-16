@@ -27,6 +27,7 @@ public class InventoryManager : Singleton<InventoryManager>
 
     public event Action<Inventory> OnInventoryUIOpened;
     public event Action<Inventory> OnInventoryUIClosed;
+    public event Action<bool> OnBottomUIToggleRequested;
 
     private void Start()
     {
@@ -95,5 +96,10 @@ public class InventoryManager : Singleton<InventoryManager>
         }
         UIManager.Instance.CloseInventoryPopup(inventory);
         OnInventoryUIClosed?.Invoke(inventory);
+    }
+
+    public void RequestBottomUI(bool open)
+    {
+        OnBottomUIToggleRequested?.Invoke(open);
     }
 }
