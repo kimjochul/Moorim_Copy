@@ -38,8 +38,7 @@ public class QuestConditionUI : MonoBehaviour
         descriptionText.text = condition.GetDescription();
         progressText.text = condition.GetProgressText();
 
-        if (isPreview)
-            progressText.color = condition.IsComplete() ? Color.green : Color.white;
+        progressText.color = condition.IsComplete() ? Color.green : Color.white;
         
         checkIcon.SetActive(condition.IsComplete()); // ✔ 표시
     }

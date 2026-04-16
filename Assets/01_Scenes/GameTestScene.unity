@@ -2991,7 +2991,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ServingSlot
   servingPoint: {fileID: 153406368}
-  foodPosition: {fileID: 0}
+  foodPosition: {fileID: 551105156}
   inventory: {fileID: 1248328228}
 --- !u!65 &304279549
 BoxCollider:
@@ -6757,7 +6757,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a82595332a77724fa76919641ab8fd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DayManager
-  dayLength: 1
+  dayLength: 20
   gameStartHour: 9
   gameEndHour: 21
   npcList:
@@ -40006,12 +40006,12 @@ MonoBehaviour:
   netIncome: {fileID: 580619792130181951}
   objStamp: {fileID: 7444987657988515994}
   btnConfirm: {fileID: 4421750857476037374}
-  labelDelay: 0.5
-  valueDuration: 1.3
-  netIncomeDelay: 1.5
-  netIncomeDuration: 2.3
-  appendInterval: 0.4
-  lastAppendInterval: 2
+  labelDelay: 0.2
+  valueDuration: 0.5
+  netIncomeDelay: 0.5
+  netIncomeDuration: 1
+  appendInterval: 0.2
+  lastAppendInterval: 1
 --- !u!1 &6248693586582453859
 GameObject:
   m_ObjectHideFlags: 0

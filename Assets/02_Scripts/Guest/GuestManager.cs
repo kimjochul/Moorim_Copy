@@ -42,6 +42,9 @@ public class GuestManager : MonoBehaviour
     // 손님 런타임 정보
     private int globalIDCounter = 0;
 
+    // 현재 소환된 손님들 리스트
+    private List<GuestBase> activeGuests = new List<GuestBase>();
+    
     // 웨이팅 목록
     private List<GuestBase> waitingGuests = new List<GuestBase>();
 
@@ -99,7 +102,7 @@ public class GuestManager : MonoBehaviour
 
         // 풀에서 타입에 맞는 오브젝트 꺼냄
         GameObject guestObj = PoolManager.Instance.Get(appearance.ToString());
-
+        
         if (guestObj != null)
         {
             guestObj.transform.position = spawnPoint.position;
@@ -109,6 +112,8 @@ public class GuestManager : MonoBehaviour
 
             if (guest != null)
             {
+                activeGuests.Add(guest);
+                
                 guest.ResetState();
                 guest.Init(globalIDCounter, appearance, exitPoint, this);
 
@@ -121,6 +126,7 @@ public class GuestManager : MonoBehaviour
                 guest.OnGuestExited += () =>
                 {
                     resultTracker.RecordGuest(guest.CurrentMood); // 기분별 집계
+                    activeGuests.Remove(guest);
                 };
 
                 guest.OnOrderPlaced += (g, order) =>
@@ -174,8 +180,20 @@ public class GuestManager : MonoBehaviour
     public void StopSpawn()
     {
         CancelInvoke();
+        ForceAllGuestsExit();
     }
 
+    private void ForceAllGuestsExit()
+    {
+        foreach (var guest in activeGuests)
+        {
+            if (guest == null) continue;
+
+            guest.ForceExit();
+        }
+
+        waitingGuests.Clear();
+    }
 }
 
 
