@@ -118,9 +118,15 @@ public class GuestManager : MonoBehaviour
                     OnGuestServed?.Invoke(); // 외부에 손님 한 명 끝났다고 알림
                 };
 
+                guest.OnOrderServed += (g) =>
+                {
+                    orderPopup.RemoveOrder(g);
+                };  
+
                 guest.OnGuestExited += () =>
                 {
                     resultTracker.RecordGuest(guest.CurrentMood); // 기분별 집계
+                    orderPopup.RemoveOrder(guest);
                 };
 
                 guest.OnOrderPlaced += (g, order) =>

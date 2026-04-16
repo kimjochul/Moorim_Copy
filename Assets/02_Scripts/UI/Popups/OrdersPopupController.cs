@@ -41,8 +41,8 @@ public class OrdersPopupController : PopupController
 
         GameObject newPopupObj = Instantiate(orderPopupPrefab, contentTransform);
 
-        // 먼저 들어온 주문이 맨 위에 오도록 맨 앞에 배치
-        newPopupObj.transform.SetAsFirstSibling();
+        // 먼저 들어온 주문이 맨 위에 오도록 맨 뒤에 배치
+        newPopupObj.transform.SetAsLastSibling();
 
         OrderPopup popup = newPopupObj.GetComponent<OrderPopup>();
         popup.Init(guest, order);
