@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -32,6 +33,9 @@ public class PlayerManager : Singleton<PlayerManager>
     // UI 활성화 중 캐릭터 스왑을 막기 위한 프로퍼티
     public bool BlockSwap { get; set; }
 
+    // 캐릭터가 스왑될 때마다 UI에 알려줄 이벤트
+    public event Action<PlayerType> OnPlayerSwapped;
+
     void Start()
     {
         SelectPlayer(PlayerType.Myungwol);
@@ -60,6 +64,8 @@ public class PlayerManager : Singleton<PlayerManager>
         // 복귀 시 재개
         if (selectedUnit.ActiveInteractable != null && selectedUnit.ActiveInteractable.CanInteract(playerType))
             selectedUnit.ActiveInteractable.Interact(selectedUnit);
+
+        OnPlayerSwapped?.Invoke(playerType);
 
     }
 

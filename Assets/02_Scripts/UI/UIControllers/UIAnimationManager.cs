@@ -12,16 +12,16 @@ public enum OrderDirection
 }
 public enum PaperDirection
 {
-    TopLeft,      // ¿ŞÂÊ À§
-    TopRight,     // ¿À¸¥ÂÊ À§
-    BottomLeft,   // ¿ŞÂÊ ¾Æ·¡
-    BottomRight   // ¿À¸¥ÂÊ ¾Æ·¡
+    TopLeft,      // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
+    TopRight,     // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
+    BottomLeft,   // ï¿½ï¿½ï¿½ï¿½ ï¿½Æ·ï¿½
+    BottomRight   // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Æ·ï¿½
 }
 
 public class UIAnimationManager : Singleton<UIAnimationManager>
 {
-    [Header("=== Á¡Á¡ Ä¿Áö´Â ¿¬Ãâ ===")]
-    [Header("Show ¼³Á¤")]
+    [Header("=== ï¿½ï¿½ï¿½ï¿½ Ä¿ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ===")]
+    [Header("Show ï¿½ï¿½ï¿½ï¿½")]
     [Range(0.1f, 1f)]
     [SerializeField]
     private float popShowDuration = 0.3f;
@@ -31,7 +31,7 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
     [SerializeField]
     private Ease popShowEase = Ease.OutBack;
 
-    [Header("Hide ¼³Á¤")]
+    [Header("Hide ï¿½ï¿½ï¿½ï¿½")]
     [Range(0.1f, 1f)]
     [SerializeField]
     private float popHideDuration = 0.2f;
@@ -43,15 +43,15 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
 
     [Space(30)]
 
-    [Header("=== ¸»Ç³¼± ÆîÄ¡±â ¿¬Ãâ ===")]
-    [Header("Show ¼³Á¤")]
+    [Header("=== ï¿½ï¿½Ç³ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ===")]
+    [Header("Show ï¿½ï¿½ï¿½ï¿½")]
     [Range(0.1f, 1f)]
     [SerializeField]
     private float orderShowDuration = 0.3f;
     [SerializeField]
     private Ease orderShowEase = Ease.OutBack;
 
-    [Header("Hide ¼³Á¤")]
+    [Header("Hide ï¿½ï¿½ï¿½ï¿½")]
     [Range(0.1f, 1f)]
     [SerializeField]
     private float orderHideDuration = 0.2f;
@@ -60,15 +60,15 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
 
     [Space(30)]
 
-    [Header("=== ¼¼·Î ÆîÄ¡±â ¿¬Ãâ ===")]
-    [Header("Show ¼³Á¤")]
+    [Header("=== ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ===")]
+    [Header("Show ï¿½ï¿½ï¿½ï¿½")]
     [Range(0.1f, 1f)]
     [SerializeField]
     private float vUnfoldShowDuration = 0.3f;
     [SerializeField]
     private Ease vUnfoldShowEase = Ease.OutBack;
 
-    [Header("Hide ¼³Á¤")]
+    [Header("Hide ï¿½ï¿½ï¿½ï¿½")]
     [Range(0.1f, 1f)]
     [SerializeField]
     private float vUnfoldHideDuration = 0.2f;
@@ -77,15 +77,15 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
 
     [Space(30)]
 
-    [Header("=== °¡·Î ÆîÄ¡±â ¿¬Ãâ ===")]
-    [Header("Show ¼³Á¤")]
+    [Header("=== ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ===")]
+    [Header("Show ï¿½ï¿½ï¿½ï¿½")]
     [Range(0.1f, 1f)]
     [SerializeField]
     private float hUnfoldShowDuration = 0.3f;
     [SerializeField]
     private Ease hUnfoldShowEase = Ease.OutBack;
 
-    [Header("Hide ¼³Á¤")]
+    [Header("Hide ï¿½ï¿½ï¿½ï¿½")]
     [Range(0.1f, 1f)]
     [SerializeField]
     private float hUnfoldHideDuration = 0.2f;
@@ -94,15 +94,15 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
 
     [Space(30)]
 
-    [Header("=== Á¾ÀÌ ÆîÄ¡±â ¿¬Ãâ ===")]
-    [Header("Show ¼³Á¤")]
+    [Header("=== ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ===")]
+    [Header("Show ï¿½ï¿½ï¿½ï¿½")]
     [Range(0.1f, 1f)]
     [SerializeField]
     private float paperShowDuration = 0.5f;
     [SerializeField]
     private Ease paperShowEase = Ease.OutQuart;
 
-    [Header("Hide ¼³Á¤")]
+    [Header("Hide ï¿½ï¿½ï¿½ï¿½")]
     [Range(0.1f, 1f)]
     [SerializeField]
     private float paperHideDuration = 0.3f;
@@ -111,60 +111,75 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
 
     [Space(30)]
 
-    [Header("=== À§¿¡¼­ ¶³¾îÁ® ÅëÅë Æ¢´Â ¿¬Ãâ ===")]
-    [Header("Show ¼³Á¤")]
+    [Header("=== ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Æ¢ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ===")]
+    [Header("Show ï¿½ï¿½ï¿½ï¿½")]
     [Range(0.1f, 1.5f)]
     [SerializeField] 
     private float bouncePopShowDuration = 0.8f;
     [SerializeField]
     private Ease bouncePopShowEase = Ease.OutBounce;
 
-    [Header("Hide ¼³Á¤")]
+    [Header("Hide ï¿½ï¿½ï¿½ï¿½")]
     [Range(0.1f, 1f)]
     [SerializeField]
     private float bounceHideDuration = 0.3f;
     [SerializeField]
     private Ease bounceHideEase = Ease.InBack;
 
-    [Tooltip("±âÁ¸ À§Ä¡¿¡¼­ ¾ó¸¶³ª À§ÂÊ¿¡¼­ ¶³¾îÁúÁö ¼³Á¤")]
+    [Tooltip("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ï¿½ï¿½ ï¿½ó¸¶³ï¿½ ï¿½ï¿½ï¿½Ê¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")]
     [SerializeField] 
     private float bouncePopStartOffset = 1000f;
 
     [Space(30)]
 
-    [Header("=== Áö±×Àç±× ¹Ù¿î½º ¿¬Ãâ ===")]
-    [Header("Show ¼³Á¤")]
+    [Header("=== ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¿î½º ï¿½ï¿½ï¿½ï¿½ ===")]
+    [Header("Show ï¿½ï¿½ï¿½ï¿½")]
     [Range(0.5f, 2f)]
     [SerializeField] 
-    private float zigzagShowDuration = 1.2f; // Æ¨±â¸ç ÀÌµ¿ÇÒ ÃæºĞÇÑ ½Ã°£
+    private float zigzagShowDuration = 1.2f; // Æ¨ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½
 
-    [Header("Hide ¼³Á¤")]
+    [Header("Hide ï¿½ï¿½ï¿½ï¿½")]
     [Range(0.1f, 1f)]
     [SerializeField]
     private float zigzagHideDuration = 0.3f;
     [SerializeField]
     private Ease zigzagHideEase = Ease.InBack;
 
-    [Tooltip("½ÃÀÛÇÒ ¶§ ³ôÀÌ °ª")]
+    [Tooltip("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½")]
     [SerializeField] 
     private float zigzagDropHeight = 800f;
-    [Tooltip("½ÃÀÛÇÒ ¶§ ¿ŞÂÊ °ª")]
+    [Tooltip("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½")]
     [SerializeField] 
     private float zigzagLeftOffset = 400f;
-    [Tooltip("¿ŞÂÊ¿¡¼­ Æ¨±ä ÈÄ ¿À¸¥ÂÊ °ª")]
+    [Tooltip("ï¿½ï¿½ï¿½Ê¿ï¿½ï¿½ï¿½ Æ¨ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½")]
     [SerializeField] 
     private float zigzagRightOffset = 200f;
 
     [Space(30)]
 
-    [Header("=== Stamp ¿¬Ãâ ===")]
-    [Header("Show ¼³Á¤")]
+    [Header("=== Stamp ï¿½ï¿½ï¿½ï¿½ ===")]
+    [Header("Show ï¿½ï¿½ï¿½ï¿½")]
     [SerializeField] 
     private Vector2 stampStartScale = new Vector2(10f, 10f); 
     [SerializeField] 
     private float stampAnimDuration = 0.5f;
     [SerializeField] 
     private Ease stampEase = Ease.OutBack;
+
+    [Space(30)]
+    
+    [Header("=== Slide (ìœ„ì•„ë˜ ë°€ê¸°) ì—°ì¶œ ===")]
+    [Header("Show ì„¤ì •")]
+    [Range(0.1f, 1f)]
+    [SerializeField] private float slideShowDuration = 0.3f;
+    [SerializeField] private Ease slideShowEase = Ease.OutQuart;
+
+    [Header("Hide ì„¤ì •")]
+    [Range(0.1f, 1f)]
+    [SerializeField] private float slideHideDuration = 0.2f;
+    [SerializeField] private Ease slideHideEase = Ease.InQuart;
+
+
     protected override void Awake()
     {
         base.Awake();
@@ -175,7 +190,7 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
     {
         if (ui == null) return;
 
-        // 1. ±âÁ¸ Æ®À© ²ô±â
+        // 1. ï¿½ï¿½ï¿½ï¿½ Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         ui.DOKill();
 
         CanvasGroup cg = ui.GetComponent<CanvasGroup>();
@@ -191,7 +206,7 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         cg.alpha = 0f;
 
         Sequence seq = DOTween.Sequence();
-        // ½ÃÀÛÇÒ ¶§
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
         seq.OnStart(() => {
             onStart?.Invoke();
         });
@@ -199,7 +214,7 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         seq.Append(ui.DOScale(Vector3.one, this.popShowDuration).SetEase(this.popShowEase));
         seq.Join(cg.DOFade(1f, this.popShowDuration).SetEase(Ease.Linear));
 
-        // ³¡³¯ ¶§
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
         seq.OnComplete(() => {
             cg.blocksRaycasts = true;
             onComplete?.Invoke();
@@ -220,7 +235,7 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         cg.blocksRaycasts = false;
 
         Sequence seq = DOTween.Sequence();
-        // ½ÃÀÛÇÒ ¶§
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
         seq.OnStart(() => {
             onStart?.Invoke();
         });
@@ -228,7 +243,7 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         seq.Append(ui.DOScale(Vector3.one * this.popEndScale, this.popHideDuration).SetEase(this.popHideEase));
         seq.Join(cg.DOFade(0f, this.popHideDuration).SetEase(Ease.Linear));
 
-        // ³¡³¯ ¶§
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
         seq.OnComplete(() => {
             onComplete?.Invoke();
         });
@@ -257,13 +272,13 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         Vector2 startPivot = new Vector2(0.5f, 0.5f);
         switch (direction)
         {
-            case OrderDirection.Top: startPivot = new Vector2(0.5f, 1f); break; // À§ÂÊ °íÁ¤
-            case OrderDirection.Bottom: startPivot = new Vector2(0.5f, 0f); break; // ¾Æ·¡ÂÊ °íÁ¤
-            case OrderDirection.Left: startPivot = new Vector2(0f, 0.5f); break; // ¿ŞÂÊ °íÁ¤
-            case OrderDirection.Right: startPivot = new Vector2(1f, 0.5f); break; // ¿À¸¥ÂÊ °íÁ¤
+            case OrderDirection.Top: startPivot = new Vector2(0.5f, 1f); break; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+            case OrderDirection.Bottom: startPivot = new Vector2(0.5f, 0f); break; // ï¿½Æ·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+            case OrderDirection.Left: startPivot = new Vector2(0f, 0.5f); break; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+            case OrderDirection.Right: startPivot = new Vector2(1f, 0.5f); break; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         }
 
-        // ½ÃÀÛÇÒ ¶§
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
         seq.OnStart(() => {
             SetPivot(ui, startPivot);
             onStart?.Invoke();
@@ -280,7 +295,7 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
 
         seq.Join(cg.DOFade(1f, this.orderShowDuration).SetEase(Ease.Linear));
 
-        // ³¡³¯ ¶§
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
         seq.OnComplete(() => {
             SetPivot(ui, new Vector2(0.5f, 0.5f));
             cg.blocksRaycasts = true;
@@ -313,7 +328,7 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
             case OrderDirection.Right: startPivot = new Vector2(1f, 0.5f); break;
         }
 
-        // ½ÃÀÛÇÒ ¶§
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
         seq.OnStart(() => {
             SetPivot(ui, startPivot);
             onStart?.Invoke();
@@ -353,7 +368,7 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         cg.alpha = 0f;
 
         Sequence seq = DOTween.Sequence();
-        // ½ÃÀÛÇÒ ¶§
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
         seq.OnStart(() => {
             onStart?.Invoke();
         });
@@ -361,7 +376,7 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         seq.Append(ui.DOScaleY(1f, this.vUnfoldShowDuration).SetEase(this.vUnfoldShowEase));
         seq.Join(cg.DOFade(1f, this.vUnfoldShowDuration).SetEase(Ease.Linear));
 
-        // ³¡³¯ ¶§
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
         seq.OnComplete(() => {
             cg.blocksRaycasts = true;
             onComplete?.Invoke();
@@ -382,7 +397,7 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         cg.blocksRaycasts = false;
 
         Sequence seq = DOTween.Sequence();
-        // ½ÃÀÛÇÒ ¶§
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
         seq.OnStart(() => {
             onStart?.Invoke();
         });
@@ -390,7 +405,7 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         seq.Append(ui.DOScaleY(0f, this.vUnfoldHideDuration).SetEase(this.vUnfoldHideEase));
         seq.Join(cg.DOFade(0f, this.vUnfoldHideDuration).SetEase(Ease.Linear));
 
-        // ³¡³¯ ¶§
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
         seq.OnComplete(() => {
             onComplete?.Invoke();
         });
@@ -412,7 +427,7 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         cg.alpha = 0f;
 
         Sequence seq = DOTween.Sequence();
-        // ½ÃÀÛÇÒ ¶§
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
         seq.OnStart(() => {
             onStart?.Invoke();
         });
@@ -420,7 +435,7 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         seq.Append(ui.DOScaleX(1f, this.hUnfoldShowDuration).SetEase(this.hUnfoldShowEase));
         seq.Join(cg.DOFade(1f, this.hUnfoldShowDuration).SetEase(Ease.Linear));
 
-        // ³¡³¯ ¶§
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
         seq.OnComplete(() => {
             cg.blocksRaycasts = true;
             onComplete?.Invoke();
@@ -441,7 +456,7 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         cg.blocksRaycasts = false;
 
         Sequence seq = DOTween.Sequence();
-        // ½ÃÀÛÇÒ ¶§
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
         seq.OnStart(() => {
             onStart?.Invoke();
         });
@@ -449,7 +464,7 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         seq.Append(ui.DOScaleX(0f, this.hUnfoldHideDuration).SetEase(this.hUnfoldHideEase));
         seq.Join(cg.DOFade(0f, this.hUnfoldHideDuration).SetEase(Ease.Linear));
 
-        // ³¡³¯ ¶§
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
         seq.OnComplete(() => {
             onComplete?.Invoke();
         });
@@ -474,7 +489,7 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
 
         Vector2 startPivot = GetPivotFromDirection(direction);
 
-        // ½ÃÀÛÇÒ ¶§
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
         seq.OnStart(() => {
             SetPivot(ui, startPivot); 
             onStart?.Invoke();
@@ -506,7 +521,7 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
 
         Vector2 startPivot = GetPivotFromDirection(direction);
 
-        // ½ÃÀÛÇÒ ¶§
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
         seq.OnStart(() => {
             SetPivot(ui, startPivot);
             onStart?.Invoke();
@@ -515,7 +530,7 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         seq.Append(ui.DOScale(Vector3.zero, this.paperHideDuration).SetEase(this.paperHideEase));
         seq.Join(cg.DOFade(0f, this.paperHideDuration).SetEase(Ease.Linear));
 
-        // ³¡³¯ ¶§
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
         seq.OnComplete(() => {
             SetPivot(ui, new Vector2(0.5f, 0.5f)); 
             onComplete?.Invoke();
@@ -544,7 +559,7 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         cg.alpha = 0f;
 
         Sequence seq = DOTween.Sequence();
-        // ½ÃÀÛÇÒ ¶§
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
         seq.OnStart(() => {
             onStart?.Invoke();
         });
@@ -576,7 +591,7 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         Vector2 endPos = new Vector2(ui.anchoredPosition.x, ui.anchoredPosition.y + this.zigzagDropHeight);
 
         Sequence seq = DOTween.Sequence();
-        // ½ÃÀÛÇÒ ¶§
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
         seq.OnStart(() => {
             onStart?.Invoke();
         });
@@ -584,7 +599,7 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         seq.Append(ui.DOAnchorPosY(endPos.y, this.zigzagHideDuration).SetEase(this.bounceHideEase));
         seq.Join(cg.DOFade(0f, this.zigzagHideDuration).SetEase(Ease.Linear));
 
-        // ³¡³¯ ¶§
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
         seq.OnComplete(() => {
             ui.anchoredPosition = originalPos;
             onComplete?.Invoke();
@@ -613,7 +628,7 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         ui.localEulerAngles = Vector3.zero;
 
         Sequence seq = DOTween.Sequence();
-        // ½ÃÀÛÇÒ ¶§
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
         seq.OnStart(() => {
             onStart?.Invoke();
         });
@@ -642,7 +657,7 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
 
         seq.Append(ui.DOLocalRotate(Vector3.zero, settleTime).SetEase(Ease.OutQuad));
 
-        // ³¡³¯ ¶§
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
         seq.OnComplete(() => {
             cg.blocksRaycasts = true;
             onComplete?.Invoke();
@@ -663,7 +678,7 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         cg.blocksRaycasts = false;
 
         Sequence seq = DOTween.Sequence();
-        // ½ÃÀÛÇÒ ¶§
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
         seq.OnStart(() =>
         {
             onStart?.Invoke();
@@ -695,7 +710,7 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
 
         Sequence seq = DOTween.Sequence();
 
-        // ½ÃÀÛÇÒ ¶§
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
         seq.OnStart(() => {
             onStart?.Invoke();
         });
@@ -703,7 +718,7 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         seq.Append(ui.DOScale(Vector3.one, this.stampAnimDuration).SetEase(this.stampEase));
         seq.Join(cg.DOFade(1f, this.stampAnimDuration * 0.5f).SetEase(Ease.Linear)); 
 
-        // ³¡³¯ ¶§
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
         seq.OnComplete(() => {
             cg.blocksRaycasts = true;
             onComplete?.Invoke();
@@ -729,7 +744,56 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
             case PaperDirection.TopRight: return new Vector2(1f, 1f);
             case PaperDirection.BottomLeft: return new Vector2(0f, 0f);
             case PaperDirection.BottomRight: return new Vector2(1f, 0f);
-            default: return new Vector2(0.5f, 0.5f); // ±âº»°ª Áß¾Ó
+            default: return new Vector2(0.5f, 0.5f); // ï¿½âº»ï¿½ï¿½ ï¿½ß¾ï¿½
         }
+    }
+
+    // ì¸ë²¤í† ë¦¬ ì˜¬ë¼ì˜¤ê¸°
+    public void ShowSlideUp(RectTransform ui, float startY, float endY, UnityAction onStart = null, UnityAction onComplete = null)
+    {
+        if (ui == null) return;
+        ui.DOKill();
+
+        CanvasGroup cg = ui.GetComponent<CanvasGroup>();
+        if (cg == null) cg = ui.gameObject.AddComponent<CanvasGroup>();
+        cg.DOKill();
+        cg.blocksRaycasts = false;
+
+        // ì‹œì‘ ìœ„ì¹˜ë¡œ ì„¸íŒ… (í™”ë©´ ì•„ë˜)
+        ui.anchoredPosition = new Vector2(ui.anchoredPosition.x, startY);
+        cg.alpha = 0f;
+
+        Sequence seq = DOTween.Sequence();
+        seq.OnStart(() => onStart?.Invoke());
+
+        // ëª©í‘œ ìœ„ì¹˜(endY)ë¡œ ë¶€ë“œëŸ½ê²Œ ì´ë™
+        seq.Append(ui.DOAnchorPosY(endY, this.slideShowDuration).SetEase(this.slideShowEase));
+        seq.Join(cg.DOFade(1f, this.slideShowDuration).SetEase(Ease.Linear));
+
+        seq.OnComplete(() => {
+            cg.blocksRaycasts = true;
+            onComplete?.Invoke();
+        });
+    }
+
+    // ì¸ë²¤í† ë¦¬ ë‚´ë ¤ê°€ê¸°
+    public void HideSlideDown(RectTransform ui, float endY, UnityAction onStart = null, UnityAction onComplete = null)
+    {
+        if (ui == null) return;
+        ui.DOKill();
+
+        CanvasGroup cg = ui.GetComponent<CanvasGroup>();
+        if (cg == null) cg = ui.gameObject.AddComponent<CanvasGroup>();
+        cg.DOKill();
+        cg.blocksRaycasts = false;
+
+        Sequence seq = DOTween.Sequence();
+        seq.OnStart(() => onStart?.Invoke());
+
+        // ë‹¤ì‹œ í™”ë©´ ì•„ë˜(endY)ë¡œ ìˆ¨ê¸°ê¸°
+        seq.Append(ui.DOAnchorPosY(endY, this.slideHideDuration).SetEase(this.slideHideEase));
+        seq.Join(cg.DOFade(0f, this.slideHideDuration).SetEase(Ease.Linear));
+
+        seq.OnComplete(() => onComplete?.Invoke());
     }
 }

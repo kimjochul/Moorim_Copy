@@ -1,5 +1,17 @@
 ﻿public class Constants
 {
+    public enum InventoryType
+    {
+       Fridge,   // 냉장고 (퀘스트 기준)
+       Chef,      // 조리사 (임시 저장소)
+       Server,
+       MealTable,
+       Ingredients,
+       IngredientsButMeatOnly,
+       BondItem,
+       Guest
+    }
+    
     public enum IngredientRarity
     {
         Normal,
