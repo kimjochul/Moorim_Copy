@@ -14,6 +14,7 @@ public class Myungwol : PlayerController
     private void Start()
     {
         inventory = InventoryManager.Instance.GetInventory(InventoryType.Server);
+        DayManager.Instance.OnDayEnd += ClearInventorySlots;
     }
 
     public override void OnSelected()
@@ -111,6 +112,14 @@ public class Myungwol : PlayerController
                 guest.DeliverFood(inventory, slot);
                 ChangeState(PlayerState.Give);
             }
+        }
+    }
+    
+    private void ClearInventorySlots()
+    {
+        foreach (var slot in inventory.Slots)
+        {
+            slot.Clear();
         }
     }
 }

@@ -148,7 +148,7 @@ public class MerchantUI : MonoBehaviour
     
     private void RefreshClear()
     {
-        var quests = QuestManager.Instance.GetQuests(QuestType.Merchant);
+        var quests = QuestManager.Instance.GetQuestsByNPC(NPCType.Merchant);
 
         // 기존 UI 삭제 (여기의 경우 clearbar)
         foreach (Transform child in clearContent)
