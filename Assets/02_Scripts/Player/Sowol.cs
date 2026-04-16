@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class Sowol : PlayerController
 {
-    [SerializeField] private CookingStation cookingStation;
-    
     private Inventory inventory;
     
     public override void OnSelected()

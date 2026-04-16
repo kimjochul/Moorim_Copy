@@ -19,6 +19,8 @@ public class PlayerController : MonoBehaviour, IControllable
     public PlayerState CurrentState { get; private set; } = PlayerState.Idle;
     public event UnityAction<PlayerState> OnStateChanged;
 
+    public IInteractable ActiveInteractable { get; set; }
+
     public bool IsMoving
     {
         get
