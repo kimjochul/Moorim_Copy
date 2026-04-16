@@ -28,6 +28,9 @@ public class UIManager : Singleton<UIManager>
     private bool _isOrderPopupOpen = false;
 
     private GameObject inventory;
+
+    public bool IsBookActive => book.gameObject.activeSelf; // 혹은 book.IsShowing 같은 프로퍼티
+    public bool IsSettingActive => setting.gameObject.activeSelf;
     
     // temp 
     private Dictionary<Recipe, int> tempRecipes;

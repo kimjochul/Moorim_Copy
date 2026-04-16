@@ -10,6 +10,9 @@ public class CookingEffects : MonoBehaviour
     [Header("Animator")]
     private Animator anim;
 
+    [Header("VFX")]
+    [SerializeField] private GameObject vfxPrefabs;
+
     [Header("Sound")]
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private AudioClip cookingClip; // 조리 중 루프 사운드
@@ -46,12 +49,14 @@ public class CookingEffects : MonoBehaviour
        switch (state)
         {
              case CookingState.Cooking:
+                vfxPrefabs.SetActive(true);
                 PlayAnimation(COOKING_TRIGGER);
                 PlayLoopSound(cookingClip);
                 HideBubble();
                 break;
  
             case CookingState.Done:
+                vfxPrefabs.SetActive(false);
                 PlayAnimation(DONE_TRIGGER);
                 StopLoopSound();
                 PlayOneShotSound(doneClip);

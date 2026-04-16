@@ -116,13 +116,7 @@ public class PlayerController : MonoBehaviour, IControllable
     }
 
     // 선택/해제
-    public virtual void OnSelected()
-    {
-        Debug.Log($"{gameObject.name} 선택됨");
-    }
+    public virtual void OnSelected() {}
 
-    public virtual void OnDeselected()
-    {
-        Debug.Log($"{gameObject.name} 선택 해제");
-    }
+    public virtual void OnDeselected() {}
 }

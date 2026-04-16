@@ -45,8 +45,6 @@ public class GuestBubbleUI : MonoBehaviour
         // 기분 변경 이벤트 구독
         guest.OnGuestMoodChanged += MoodChanged;
 
-        Debug.Log($"[Bind] OnGuestMoodChanged 구독 완료");
-
         // 메뉴를 골랐을 때
         guest.OnGuestReadyToOrder += ReadyToOrder;
 
