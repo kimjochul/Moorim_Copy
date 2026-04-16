@@ -4,7 +4,8 @@ using UnityEngine;
 public class QuestConditionUI : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI descriptionText;
-    [SerializeField] private TextMeshProUGUI progressText;
+    [SerializeField] private TextMeshProUGUI currentCountText;
+    [SerializeField] private TextMeshProUGUI requiredCountText;
     [SerializeField] private GameObject checkIcon; 
 
     private QuestCondition condition;
@@ -36,9 +37,11 @@ public class QuestConditionUI : MonoBehaviour
     public void Refresh()
     {
         descriptionText.text = condition.GetDescription();
-        progressText.text = condition.GetProgressText();
-
-        progressText.color = condition.IsComplete() ? Color.green : Color.white;
+        currentCountText.text = condition.GetCurrentCount();
+        requiredCountText.text = condition.GetRequiredCount();
+        
+        currentCountText.color = condition.IsComplete() ? Color.green : Color.black;
+        requiredCountText.color = condition.IsComplete() ? Color.green : Color.black;
         
         checkIcon.SetActive(condition.IsComplete()); // ✔ 표시
     }

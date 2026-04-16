@@ -64,6 +64,8 @@ public class QuestManager : Singleton<QuestManager>, ISubject
         if (HasQuest(quest.QuestID) && activeQuests.Contains(quest))
             return;
 
+        quest.QuestAcceptCheck();
+        
         activeQuests.Add(quest);
         waitingQuests.Remove(quest);
         

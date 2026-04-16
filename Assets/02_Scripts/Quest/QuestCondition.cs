@@ -39,7 +39,8 @@ public abstract class QuestCondition : ScriptableObject
     public abstract QuestCondition Clone();
     
     public abstract string GetDescription();
-    public abstract string GetProgressText();
+    public abstract string GetCurrentCount();
+    public abstract string GetRequiredCount();
     
     public event Action OnConditionUpdated;
     protected void NotifyUpdated()

@@ -25,10 +25,10 @@ public class QuestTab : BaseTab
     [SerializeField] private QuestAccordionGroup inProgressGroup;
     [SerializeField] private QuestAccordionGroup completedGroup;
 
-    [Header("¿ÞÂÊ ÆäÀÌÁö")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")]
     [SerializeField] private TextMeshProUGUI txtCategoryName;
 
-    [Header("¿À¸¥ÂÊ ÆäÀÌÁö")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")]
     [SerializeField] private TextMeshProUGUI txtQuestName;
     [SerializeField] private TextMeshProUGUI txtDetail;
     [SerializeField] private TextMeshProUGUI txtDescription;
@@ -54,13 +54,13 @@ public class QuestTab : BaseTab
         switch (this.currentCategory)
         {
             case QuestCategory.Main: 
-                this.txtCategoryName.text = "¸ÞÀÎ Äù½ºÆ®";
+                this.txtCategoryName.text = "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®";
                 break;
             case QuestCategory.Sub: 
-                this.txtCategoryName.text = "¼­ºê Äù½ºÆ®";
+                this.txtCategoryName.text = "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®";
                 break;
             case QuestCategory.Repeat: 
-                this.txtCategoryName.text = "¹Ýº¹ Äù½ºÆ®"; 
+                this.txtCategoryName.text = "ï¿½Ýºï¿½ ï¿½ï¿½ï¿½ï¿½Æ®"; 
                 break;
         }
 
@@ -86,12 +86,12 @@ public class QuestTab : BaseTab
 
         QuestData data = this.currentSelectedSlot.questData;
 
-        // ¿À¸¥ÂÊ ÆäÀÌÁö¿¡ ¶ç¿ï µ¥ÀÌÅÍ
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         this.txtQuestName.text = data.questName;
         this.txtDetail.text = data.questDetail;
         foreach(QuestCondition v in data.conditions)
-            this.txtDescription.text = $"{v.GetDescription()}({v.GetProgressText()})";
-        // º¸»ó Ãß°¡ÇØ¾ßÇÔ
+            this.txtDescription.text = $"{v.GetDescription()}({v.GetCurrentCount()} / {v.GetRequiredCount()})";
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½Ø¾ï¿½ï¿½ï¿½
     }
     private void ListInit()
     {
@@ -135,7 +135,7 @@ public class QuestTab : BaseTab
         }
     }
 
-    // ¿À¸¥ÂÊ ÆäÀÌÁö ºñ¿ì±â
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     private void ClearRightPage()
     {
         if (this.currentSelectedSlot != null)
@@ -144,12 +144,12 @@ public class QuestTab : BaseTab
             this.currentSelectedSlot = null;
         }
 
-        this.txtQuestName.text = "¼±ÅÃµÈ Äù½ºÆ®°¡ ¾ø½À´Ï´Ù";
+        this.txtQuestName.text = "ï¿½ï¿½ï¿½Ãµï¿½ ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½";
         this.txtDetail.text = "";
         this.txtDescription.text = "";
     }
 
-    // Äù½ºÆ® µ¥ÀÌÅÍ ¹Þ¾Æ¿À±â
+    // ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¾Æ¿ï¿½ï¿½ï¿½
     private void QuestCache()
     {
         foreach (List<Quest> list in this.dicActiveQuests.Values)
@@ -163,7 +163,7 @@ public class QuestTab : BaseTab
         foreach (Quest q in QuestManager.Instance.CompletedQuests)
             AddQuestList(q, this.dicCompletedQuests);
     }
-    // Ä«Å×°í¸®¿¡ ¸Â°Ô ¸®½ºÆ® Ãß°¡
+    // Ä«ï¿½×°ï¿½ï¿½ï¿½ ï¿½Â°ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ß°ï¿½
     private void AddQuestList(Quest q, Dictionary<QuestCategory, List<Quest>> targetDic)
     {
         if (q == null)

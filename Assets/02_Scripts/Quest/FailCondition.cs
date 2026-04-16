@@ -96,12 +96,17 @@ public class FailLimitCondition : QuestCondition
                 break;
         }
 
-        description = $"기분이 {mood} 이하인 손님 {maxFailCount}명 이하로 접객하기";
+        description = $"기분이 {mood} 이하인 손님 만들지 않기";
         return description;
     }
     
-    public override string GetProgressText()
+    public override string GetCurrentCount()
     {
-        return $"{currentFailCount} / {maxFailCount}";
+        return currentFailCount.ToString();
+    }
+
+    public override string GetRequiredCount()
+    {
+        return maxFailCount.ToString();
     }
 }

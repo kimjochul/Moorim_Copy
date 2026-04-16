@@ -80,7 +80,7 @@ public class QuestPopup : MonoBehaviour
         foreach (var condition in quest.Conditions)
         {
             _questDescriptionText.text += condition.GetDescription();
-            _questDescriptionText.text += $"\n{condition.GetProgressText()}\n";
+            _questDescriptionText.text += $"\n{condition.GetCurrentCount()} / {condition.GetRequiredCount()}\n";
         }
     }
 }
