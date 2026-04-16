@@ -5476,43 +5476,6 @@ MonoBehaviour:
   _dateText: {fileID: 1681441802}
   _dayOfWeekText: {fileID: 903476873}
   _timeText: {fileID: 614276389}
---- !u!1 &291885834
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 291885835}
-  m_Layer: 5
-  m_Name: Inventory
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &291885835
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 291885834}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1637460666}
-  - {fileID: 1199640768}
-  m_Father: {fileID: 2113381006}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 50, y: -270}
-  m_SizeDelta: {x: 420, y: 180}
-  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &298798355
 GameObject:
   m_ObjectHideFlags: 0
@@ -16340,7 +16303,7 @@ GameObject:
   - component: {fileID: 834262727}
   m_Layer: 5
   m_Name: Dynamic Canvas
-  m_TagString: Untagged
+  m_TagString: Canvas
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -22450,8 +22413,8 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 918128926}
   - {fileID: 564075773}
+  - {fileID: 918128926}
   m_Father: {fileID: 2113381006}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
@@ -22497,6 +22460,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerSwapUI
   sowolIcon: {fileID: 918128927}
   myungwolIcon: {fileID: 564075774}
+  sowolInventoryObj: {fileID: 1637460665}
+  myungwolInventoryObj: {fileID: 1199640767}
   activeColor: {r: 1, g: 1, b: 1, a: 1}
   inactiveColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
 --- !u!1 &1129668075
@@ -24609,7 +24574,6 @@ GameObject:
   - component: {fileID: 1199640772}
   - component: {fileID: 1199640771}
   - component: {fileID: 1199640770}
-  - component: {fileID: 1199640769}
   m_Layer: 5
   m_Name: Myungwol Inventory
   m_TagString: Untagged
@@ -24632,26 +24596,13 @@ RectTransform:
   - {fileID: 1588761069}
   - {fileID: 811840558}
   - {fileID: 820572090}
-  m_Father: {fileID: 291885835}
+  m_Father: {fileID: 2113381006}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 90}
+  m_AnchoredPosition: {x: 0, y: -170.91003}
   m_SizeDelta: {x: 420, y: 180}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1199640769
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1199640767}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0aa422d029d743129946f31744033e6c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InventoryPopupController
-  panelTransform: {fileID: 1199640768}
 --- !u!225 &1199640770
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -35399,7 +35350,7 @@ MonoBehaviour:
   meatIngredientInventory: {fileID: 2022799300}
   otherIngredientInventory: {fileID: 623324430}
   chefInventory: {fileID: 961697661}
-  serverInventory: {fileID: 1054774349}
+  serverInventory: {fileID: 1588761067}
   fridgeInventory: {fileID: 146500700}
   mealTableInventory: {fileID: 1054774349}
 --- !u!1 &1625065911
@@ -35587,14 +35538,13 @@ GameObject:
   - component: {fileID: 1637460670}
   - component: {fileID: 1637460669}
   - component: {fileID: 1637460668}
-  - component: {fileID: 1637460667}
   m_Layer: 5
   m_Name: Sowol Inventory
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1637460666
 RectTransform:
   m_ObjectHideFlags: 0
@@ -35610,26 +35560,13 @@ RectTransform:
   - {fileID: 961697663}
   - {fileID: 1542893688}
   - {fileID: 225899621}
-  m_Father: {fileID: 291885835}
+  m_Father: {fileID: 2113381006}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 90}
+  m_AnchoredPosition: {x: 0, y: -170.91003}
   m_SizeDelta: {x: 420, y: 180}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1637460667
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1637460665}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0aa422d029d743129946f31744033e6c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InventoryPopupController
-  panelTransform: {fileID: 1637460666}
 --- !u!225 &1637460668
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -45091,7 +45028,8 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1119208531}
-  - {fileID: 291885835}
+  - {fileID: 1637460666}
+  - {fileID: 1199640768}
   m_Father: {fileID: 1667261448}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
@@ -45113,6 +45051,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BottomSlideAnim
   hiddenPosY: 130
   shownPosY: 359
+  duration: 0.2
 --- !u!1 &2113943966
 GameObject:
   m_ObjectHideFlags: 0

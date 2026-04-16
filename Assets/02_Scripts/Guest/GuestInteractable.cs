@@ -37,8 +37,8 @@ public class GuestInteractable : MonoBehaviour, IInteractable
             myBrain.TakeOrder();
         else if (myBrain.currentState == GuestState.WaitFood)
         {
-            Inventory serverInven = InventoryManager.Instance.GetInventory(InventoryType.Server);
-            InventoryManager.Instance.OpenInventory(serverInven);
+            // Inventory serverInven = InventoryManager.Instance.GetInventory(InventoryType.Server);
+            // InventoryManager.Instance.OpenInventory(serverInven);
         }
         else if (myBrain.currentState == GuestState.Exit)
         {
