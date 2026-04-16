@@ -62,12 +62,17 @@ public class ServeCondition : QuestCondition
                 break;
         }
 
-        description = $"기분이 {mood} 이상인 손님 {requireCount}명 접객하기";
+        description = $"기분이 {mood} 이상인 손님 접객하기";
         return description;
     }
 
-    public override string GetProgressText()
+    public override string GetCurrentCount()
     {
-        return $"{currentServeCount}/{requireCount}";
+        return currentServeCount.ToString();
+    }
+
+    public override string GetRequiredCount()
+    {
+        return requireCount.ToString();
     }
 }

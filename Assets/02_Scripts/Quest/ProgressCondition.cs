@@ -1,12 +1,22 @@
 using UnityEngine;
 using static Constants;
 
+public enum ProgressType
+{
+    Money,
+    Fame,
+    Day,
+    Prerequisite
+}
+
 /// <summary>
 /// 게임 진행도에 따라 완료되는 퀘스트
 /// </summary>
 [CreateAssetMenu(menuName = "Quest/Condition/Progress")]
 public class ProgressCondition : QuestCondition
 {
+    public ProgressType type;
+    
     private int currentMoney;
     private int currentFame;
     private int dayCount;
@@ -81,36 +91,30 @@ public class ProgressCondition : QuestCondition
         string description = "";
 
         if (requiredMoney != 0)
-            description += $"요구 재력 : {requiredMoney}\n";
+            description = "요구 재력";
         
         if (requiredFame != 0)
-            description += $"요구 명성치 : {requiredFame}\n";
+            description = "요구 명성치";
 
         if (requiredDayCount != 0)
-            description += $"{requiredDayCount}일 까지 진행\n";
+            description = $"{requiredDayCount}일 까지 진행\n";
 
         if (Prerequisite_Quest != null)
-            description += $"선행퀘스트{Prerequisite_Quest.questName}";
+            description = $"선행퀘스트{Prerequisite_Quest.questName}";
         
         return description;
     }
 
-    public override string GetProgressText()
+    public override string GetCurrentCount()
     {
         string description = "";
 
-        if (requiredMoney != 0)
-            description += $"현재 재력 : {currentMoney}/{requiredMoney}\n";
-        
-        if (requiredFame != 0)
-            description += $"요구 명성치 : {currentFame}/{requiredFame}\n";
+        return description;
+    }
 
-        if (requiredDayCount != 0)
-            description += $"현재 {dayCount}/{requiredDayCount}일 까지 진행";
-        
-        if (Prerequisite_Quest != null)
-            description += $"선행퀘스트 : {Prerequisite_Quest.questName}";
-        
+    public override string GetRequiredCount()
+    {
+        string description = "";
         return description;
     }
 }

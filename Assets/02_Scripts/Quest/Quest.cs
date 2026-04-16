@@ -20,6 +20,7 @@ public class Quest : IObserver
     public int QuestID { get; }
     public string QuestName { get; private set; }
     public bool IsCompleted { get; private set; }
+    public bool IsAccepted  { get; private set; }
     public bool IsFailed { get; private set; }
 
     public QuestReward RuntimeReward => data.reward;
@@ -41,6 +42,7 @@ public class Quest : IObserver
         QuestID = data.id;
         QuestName = data.questName;
         IsCompleted = false;
+        IsAccepted = false;
         
         targetNPC = questData.npcType;
         this.inventory = inventory;
@@ -169,5 +171,13 @@ public class Quest : IObserver
     public List<QuestCondition> GetConditions()
     {
         return conditions;
+    }
+
+    /// <summary>
+    /// 퀘스트 수락 시 프로퍼티 체크
+    /// </summary>
+    public void QuestAcceptCheck()
+    {
+        IsAccepted = true;
     }
 }

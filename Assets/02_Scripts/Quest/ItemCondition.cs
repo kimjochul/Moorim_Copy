@@ -74,12 +74,17 @@ public class ItemCondition : QuestCondition
     public override string GetDescription()
     {
         string itemName = DataManager.Instance.GetItemName(itemID);
-        return $"{itemName}를 {requiredCount}개 주세요"; 
+        return $"{itemName}"; 
     }
     
     // 진행도 리턴 함수
-    public override string GetProgressText()
+    public override string GetCurrentCount()
     {
-        return $"{currentCount} / {requiredCount}";
+        return currentCount.ToString();
+    }
+
+    public override string GetRequiredCount()
+    {
+        return requiredCount.ToString();
     }
 }
