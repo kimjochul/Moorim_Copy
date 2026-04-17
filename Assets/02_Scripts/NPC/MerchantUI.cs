@@ -54,9 +54,6 @@ public class MerchantUI : MonoBehaviour
         lastDialogIndex = -1;
         
         debtPanel.FullPayDebt += FullyRepayDebt;
-
-        if (merchant.IsAvailableDay())
-            merchant.DayManager.OnDayStart += ResetDialogue;
         
         OpenTalk();
     }
@@ -86,6 +83,9 @@ public class MerchantUI : MonoBehaviour
         this.merchant = merchant;
         
         shop.Init();
+        
+        if (merchant.IsAvailableDay())
+            merchant.DayManager.OnDayStart += ResetDialogue;
         
         List<Constants.IngredientType> ingredientTypes = new List<Constants.IngredientType>();
         ingredientTypes.Add(Constants.IngredientType.Meats);
