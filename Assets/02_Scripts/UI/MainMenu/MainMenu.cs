@@ -8,6 +8,8 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private Button btnGameStart;
     [SerializeField] private Button btnGameContinue;
     [SerializeField] private Button btnGameSetting;
+
+    [SerializeField] private Setting setting;
     void Awake()
     {
         EventInit();
@@ -25,11 +27,11 @@ public class MainMenu : MonoBehaviour
 
     private void OnClickGameContinue()
     {
-        
+        // 게임 이어하기
     }
 
     private void OnClickGameSetting()
     {
-
+        this.setting.Show();
     }
 }
