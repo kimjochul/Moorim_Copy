@@ -38,6 +38,7 @@ public class ShopProduct : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     {
         this.itemData = itemData;
 
+        this.icon.sprite = this.itemData.icon;
         this.itemName.text = this.itemData.itemName;
         this.amount.text = this.itemData.maxCapacity.ToString();
         this.price.text = this.itemData.price.ToString();

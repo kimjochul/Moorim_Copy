@@ -31,7 +31,9 @@ public class UIManager : Singleton<UIManager>
 
     public bool IsBookActive => book.gameObject.activeSelf; // 혹은 book.IsShowing 같은 프로퍼티
     public bool IsSettingActive => setting.gameObject.activeSelf;
-    
+
+    public UnityAction<float> OnFontSizeChanged;    // 스토리UI 글자 크기
+
     // temp 
     private Dictionary<Recipe, int> tempRecipes;
     [SerializeField] private List<RecipeData> recipes;
@@ -62,7 +64,20 @@ public class UIManager : Singleton<UIManager>
     // {
     //     Instantiate(defaultUI,  _canvas.transform);
     // }
-    
+
+    // 글자 크기
+    public void SetTextScale(float scale)
+    {
+        PlayerPrefs.SetFloat("StoryFontSize", scale);
+        PlayerPrefs.Save();
+
+        this.OnFontSizeChanged?.Invoke(scale);
+    }
+
+    public float GetTextScale()
+    {
+        return PlayerPrefs.GetFloat("StoryFontSize", 40f);
+    }
     // 공용 인벤토리 호출시 나오는 함수
     public void OpenCommonInventoryPopup(InventoryPopupController commonInventory)
     {

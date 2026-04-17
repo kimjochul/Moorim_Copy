@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using static Constants;
@@ -20,6 +21,9 @@ public class Shop : MonoBehaviour
     [SerializeField] private GameObject objProduct;
     [SerializeField] private Transform tsProduct;
     [SerializeField] private Button btnClose;
+
+    [SerializeField] private TextMeshProUGUI txtMoney;
+    [SerializeField] private TextMeshProUGUI txtFame;
 
     // 카테고리
     private Dictionary<IngredientType, ShopCategory> dicCategory = new Dictionary<IngredientType, ShopCategory>();
@@ -190,5 +194,24 @@ public class Shop : MonoBehaviour
         {
             this.listProduct[i].SetActive(false);
         }
+    }
+    private void OnEnable()
+    {
+        EconomyManager.Instance.RestaurantEconomyChanged += Refresh;
+        Refresh();
+    }
+
+    private void OnDisable()
+    {
+        if (EconomyManager.Instance != null)
+        {
+            EconomyManager.Instance.RestaurantEconomyChanged -= Refresh;
+        }
+    }
+
+    private void Refresh()
+    {
+        this.txtMoney.text = EconomyManager.Instance.RestaurantEconomy.Money.ToString();
+        this.txtFame.text = EconomyManager.Instance.RestaurantEconomy.Fame.ToString();
     }
 }
