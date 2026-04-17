@@ -19,6 +19,7 @@ public class StoryLine
     public bool isInnerThought;
     
     public bool showEmotionIcon;
+    public bool useAccentFontSize;
 }
 
 public enum LineType
