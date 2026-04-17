@@ -104,6 +104,7 @@ GameObject:
   - component: {fileID: 674132376110598584}
   - component: {fileID: 2879313025530088630}
   - component: {fileID: 2699006466413213004}
+  - component: {fileID: 8157415360252609425}
   m_Layer: 0
   m_Name: TrayTable
   m_TagString: Untagged
@@ -226,7 +227,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.32, y: 0.73494464, z: 2.05}
+  m_Size: {x: 0.32, y: 0.73494464, z: 1.53}
   m_Center: {x: 0, y: 0.36747232, z: -0.0144579895}
 --- !u!114 &2699006466413213004
 MonoBehaviour:
@@ -243,6 +244,26 @@ MonoBehaviour:
   servingPoint: {fileID: 5160071263618499417}
   foodPosition: {fileID: 159088204332075455}
   inventory: {fileID: 0}
+--- !u!114 &8157415360252609425
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2211443019473060399}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshModifier
+  m_SerializedVersion: 0
+  m_OverrideArea: 1
+  m_Area: 1
+  m_OverrideGenerateLinks: 0
+  m_GenerateLinks: 0
+  m_IgnoreFromBuild: 0
+  m_ApplyToChildren: 1
+  m_AffectedAgents: ffffffff
 --- !u!1 &4370577172554976909
 GameObject:
   m_ObjectHideFlags: 0

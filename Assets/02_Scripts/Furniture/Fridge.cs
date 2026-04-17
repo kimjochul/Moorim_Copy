@@ -111,6 +111,6 @@ public class Fridge : MonoBehaviour, IInteractable
     }
     public bool CanInteract(Constants.PlayerType playerType)
     {
-        return playerType == PlayerType.Myungwol;
+        return playerType == PlayerType.Sowol;
     }
 }
