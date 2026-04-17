@@ -34,7 +34,7 @@ public class StoryUI : MonoBehaviour
     private Coroutine blinkCoroutine;
     
     private float defaultContentFontSize;
-    [SerializeField] private float accentFontSize = 36f;
+    [SerializeField] private float accentFontSize = 48f;
     public void Init(StoryManager manager)
     {
         storyManager = manager;
