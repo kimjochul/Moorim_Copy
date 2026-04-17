@@ -32,10 +32,15 @@ public class StoryUI : MonoBehaviour
     private bool isFirstBackground = true;
     private Coroutine bgCoroutine;
     private Coroutine blinkCoroutine;
-
+    
+    private float defaultContentFontSize;
+    [SerializeField] private float accentFontSize = 48f;
     public void Init(StoryManager manager)
     {
         storyManager = manager;
+        
+        defaultContentFontSize = contentText.fontSize;
+        UIManager.Instance.OnFontSizeChanged += SetFontSize;
     }
 
     public void Show()
@@ -102,6 +107,11 @@ public class StoryUI : MonoBehaviour
             StopCoroutine(typingCoroutine);
 
         HideIndicator();
+        
+        if (line.useAccentFontSize)
+            SetFontSize(accentFontSize);
+        else
+            SetFontSize(defaultContentFontSize);
         
         if (line.lineType == LineType.Narration)
         {
@@ -291,5 +301,12 @@ public class StoryUI : MonoBehaviour
         isFirstBackground = true;
         bgImage.sprite = null;
         bgImage.color = Color.white;
+    }
+    
+    public void SetFontSize(float size)
+    {
+        float targetSize = size;
+
+        contentText.fontSize = targetSize;
     }
 }
