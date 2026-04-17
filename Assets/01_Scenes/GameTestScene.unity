@@ -3358,7 +3358,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a73545e0a567da46be3d7bed3691d91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::IngredientUnlockManager
-  allIngredients: {fileID: 0}
+  allIngredients: {fileID: 11400000, guid: 34e3b194e83c4aa46955db69c20524b7, type: 2}
 --- !u!1 &357548055
 GameObject:
   m_ObjectHideFlags: 0
@@ -40191,10 +40191,10 @@ MonoBehaviour:
   m_FillRect: {fileID: 3852185434672327655}
   m_HandleRect: {fileID: 4972179681803938417}
   m_Direction: 0
-  m_MinValue: 0
-  m_MaxValue: 1
+  m_MinValue: 30
+  m_MaxValue: 50
   m_WholeNumbers: 0
-  m_Value: 0
+  m_Value: 30
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -43121,7 +43121,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Setting
   objSetting: {fileID: 3660412232490480887}
   btnClose: {fileID: 2679939700147668550}
-  resolutionDropdown: {fileID: 0}
 --- !u!114 &8010187724604685217
 MonoBehaviour:
   m_ObjectHideFlags: 0
