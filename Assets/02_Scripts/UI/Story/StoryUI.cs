@@ -34,12 +34,13 @@ public class StoryUI : MonoBehaviour
     private Coroutine blinkCoroutine;
     
     private float defaultContentFontSize;
-    [SerializeField] private float accentFontSize = 48f;
+    private float accentFontSize;
     public void Init(StoryManager manager)
     {
         storyManager = manager;
         
-        defaultContentFontSize = contentText.fontSize;
+        defaultContentFontSize = UIManager.Instance.GetTextScale();
+        accentFontSize = UIManager.Instance.GetTextScale() * 1.3f;
         UIManager.Instance.OnFontSizeChanged += SetFontSize;
     }
 
@@ -108,6 +109,8 @@ public class StoryUI : MonoBehaviour
 
         HideIndicator();
         
+        defaultContentFontSize = UIManager.Instance.GetTextScale();
+        accentFontSize = UIManager.Instance.GetTextScale() * 1.3f;
         if (line.useAccentFontSize)
             SetFontSize(accentFontSize);
         else
