@@ -40,8 +40,8 @@ public class QuestConditionUI : MonoBehaviour
         currentCountText.text = condition.GetCurrentCount();
         requiredCountText.text = condition.GetRequiredCount();
         
-        currentCountText.color = condition.IsComplete() ? Color.green : Color.black;
-        requiredCountText.color = condition.IsComplete() ? Color.green : Color.black;
+        descriptionText.color = condition.IsComplete() ? Color.green : Color.black;
+        currentCountText.color = condition.IsComplete() ? Color.black : Color.red;
         
         checkIcon.SetActive(condition.IsComplete()); // ✔ 표시
     }
