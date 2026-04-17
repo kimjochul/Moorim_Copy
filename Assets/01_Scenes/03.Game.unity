@@ -12810,6 +12810,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 631919200037259521, guid: 5ad49b528235c8f4b8a3a9616e51f9b2, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1788456165020746817, guid: 5ad49b528235c8f4b8a3a9616e51f9b2, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.061999995
@@ -25372,7 +25376,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a82595332a77724fa76919641ab8fd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DayManager
-  dayLength: 60
+  dayLength: 300
   gameStartHour: 9
   gameEndHour: 21
   npcList: []
@@ -36135,6 +36139,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 631919200037259521, guid: 128e2de43e2f7654ea0f9c40d92d5235, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1788456165020746817, guid: 128e2de43e2f7654ea0f9c40d92d5235, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.061999995

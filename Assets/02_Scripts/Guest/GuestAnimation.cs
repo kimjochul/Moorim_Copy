@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using System.Data;
 using UnityEngine;
 using static Constants;
@@ -20,6 +22,14 @@ public class GuestAnimation : MonoBehaviour
     private static readonly int HANDUP_TRIGGER = Animator.StringToHash("HandUp");
     private static readonly int HANDDOWN_TRIGGER = Animator.StringToHash("HandDown");
 
+    public event Action OnSitDownFinished;
+    public event Action OnStandUpFinished;
+    public event Action OnHandUpFinished;
+    public event Action OnHandDownFinished;
+    public event Action OnAngryFinished;
+
+    private Coroutine waitCoroutine;
+
     void Awake()
     {
         anim = GetComponent<Animator>();
@@ -38,77 +48,128 @@ public class GuestAnimation : MonoBehaviour
         {
             case GuestState.Enter:      PlayWalk();         break;
             case GuestState.Waiting:    PlayIdle();         break;
-            case GuestState.WaitOrder:  PlaySitDown();      break;
-            case GuestState.WaitFood:                       break;
-            case GuestState.Eat:        PlayHandUp();       break;
-            case GuestState.Pay:        PlayHandDown();     break;
-            case GuestState.Exit:       PlayStandUp();      break;
         }
     }
 
-        private void MoodChanged(GuestBase g, GuestMood mood)
+    private void MoodChanged(GuestBase g, GuestMood mood)
     {
-        if (mood == GuestMood.VeryBad || mood == GuestMood.Bad)
-            PlayAngry();
+        // if (mood == GuestMood.VeryBad || mood == GuestMood.Bad)
+        //     PlayAngry();
     }
 
-    private void PlayWalk()
+    public void PlayWalk()
     {
         ResetAll();
         anim.SetBool(IS_WALKING, true);
     }
 
-    private void PlayIdle()
+    public void PlayIdle()
     {
         ResetAll();
     }
 
-    private void PlaySitDown()
+    public void PlaySitDown()
     {
+        StopWait();
         anim.SetBool(IS_WALKING, false);
         anim.SetTrigger(SITDOWN_TRIGGER);
         anim.SetBool(IS_SITTING, true);
+        waitCoroutine = StartCoroutine(WaitForAnimation("SitDown", () =>
+        {
+            OnSitDownFinished?.Invoke();
+        }));
     }
 
-    private void PlayStandUp()
+    public void PlaySit()
     {
-        ResetAll();
-        anim.SetTrigger(STANDUP_TRIGGER);
-        anim.SetBool(IS_WALKING, true);
-    }
-
-    private void PlaySit()
-    {
-        //ResetAll();
         anim.SetBool(IS_SITTING, true);
     }
 
-    private void PlayEat()
+    public void PlayHandUp()
     {
-        //ResetAll();
-        anim.SetTrigger(HANDUP_TRIGGER);
-        anim.SetBool(IS_EATING, true);
-    }
-
-    private void PlayHandUp()
-    {
-       //ResetAll();
+       StopWait();
        anim.SetBool(IS_SITTING, true);
        anim.SetTrigger(HANDUP_TRIGGER);
+       waitCoroutine = StartCoroutine(WaitForAnimation("HandUP", () =>
+       {
+           anim.SetBool(IS_EATING, true);
+           OnHandUpFinished?.Invoke();
+       }));
     }
 
-    private void PlayHandDown()
+    public void PlayHandDown()
     {
-        //ResetAll();
-        anim.SetBool(IS_SITTING, true);
+        StopWait();
+        anim.SetBool(IS_EATING, false);
         anim.SetTrigger(HANDDOWN_TRIGGER);
+        waitCoroutine = StartCoroutine(WaitForAnimation("HandDown", () =>
+        {
+            OnHandDownFinished?.Invoke();
+        }));
     }
 
-    private void PlayAngry()
+    public void PlayStandUp()
     {
-        //ResetAll();
-        anim.SetBool(IS_ANGRY, true);
+        StopWait();
+        anim.SetBool(IS_SITTING, false);
+        anim.SetBool(IS_EATING, false);
+        anim.SetBool(IS_ANGRY, false);
+        anim.SetTrigger(STANDUP_TRIGGER);
+        waitCoroutine = StartCoroutine(WaitForAnimation("StandUp", () =>
+        {
+            anim.SetBool(IS_WALKING, true);
+            OnStandUpFinished?.Invoke();
+        }));
     }
+
+    public void PlayAngry()
+    {
+        StopWait();
+        anim.SetBool(IS_ANGRY, true);
+        // Angry 모션이 일정 시간 보여진 뒤 콜백
+        waitCoroutine = StartCoroutine(WaitForAnimation("Angry", () =>
+        {
+            OnAngryFinished?.Invoke();
+        }));
+    }
+
+    // ── 애니메이션 완료 대기 코루틴 ──
+
+    private IEnumerator WaitForAnimation(string stateName, Action onComplete)
+    {
+        // 트리거가 반영될 때까지 1프레임 대기
+        yield return null;
+
+        // 해당 상태에 진입할 때까지 대기 (최대 1초 안전장치)
+        float safety = 0f;
+        while (!anim.GetCurrentAnimatorStateInfo(0).IsName(stateName))
+        {
+            safety += Time.deltaTime;
+            if (safety > 1f) break; // 상태 이름 불일치 시 무한루프 방지
+            yield return null;
+        }
+
+        // 애니메이션 재생 완료 대기
+        AnimatorStateInfo info = anim.GetCurrentAnimatorStateInfo(0);
+        while (info.IsName(stateName) && info.normalizedTime < 0.95f)
+        {
+            yield return null;
+            info = anim.GetCurrentAnimatorStateInfo(0);
+        }
+
+        onComplete?.Invoke();
+        waitCoroutine = null;
+    }
+
+    private void StopWait()
+    {
+        if (waitCoroutine != null)
+        {
+            StopCoroutine(waitCoroutine);
+            waitCoroutine = null;
+        }
+    }
+
 
     // pool 재사용시 초기화
     public void ResetAnimation()

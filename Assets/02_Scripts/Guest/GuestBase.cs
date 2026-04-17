@@ -47,6 +47,10 @@ public abstract class GuestBase : MonoBehaviour
     public GuestMood CurrentMood { get; protected set; } = GuestMood.Neutral;
     private FoodQuality foodQuality = FoodQuality.Normal;
 
+    private bool isAngryExiting = false;  // VeryBad 퇴장 중 플래그
+    private bool isPlayingHandDown = false;
+    private bool isPlayingStandUp = false;
+
     // Action 이벤트
     public event Action<GuestBase, GuestState> OnGuestStateChanged; // 상태 변경 알림용
     public event Action<GuestBase, GuestMood> OnGuestMoodChanged; // 기분 변경 알림용
@@ -113,6 +117,10 @@ public abstract class GuestBase : MonoBehaviour
         if (guestAnim != null)
             guestAnim.ResetAnimation();
 
+        isAngryExiting = false;
+        isPlayingHandDown = false;
+        isPlayingStandUp = false;
+
         // 이벤트 구독 전부 해제
         // 안 하면 이전 생애의 리스너가 남아서 이벤트가 중복 호출됨
         OnGuestStateChanged = null;
@@ -157,6 +165,7 @@ public abstract class GuestBase : MonoBehaviour
         {
             guestAnim.ResetAnimation();
             guestAnim.Bind(this);
+            BindAnimCallbacks();
         }
         
         ChangeState(GuestState.Enter);
@@ -188,6 +197,53 @@ public abstract class GuestBase : MonoBehaviour
         }
     }
 
+    private void BindAnimCallbacks()
+    {
+        // 앉기 완료 → WaitOrder 진입
+        guestAnim.OnSitDownFinished += () =>
+        {
+            if (currentState == GuestState.Enter || currentState == GuestState.WaitOrder)
+            {
+                // 이미 WaitOrder면 버블 UI만 갱신됨
+                // Enter에서 도착 후 앉기가 끝났으므로 진짜 WaitOrder 시작
+            }
+        };
+
+        // HandUp 완료 → 실제 Eating 시작 (이미 Eat 상태)
+        guestAnim.OnHandUpFinished += () =>
+        {
+            // Eat 상태의 타이머가 이 시점부터 의미를 가짐
+            // (HandleEatState에서 타이머 체크)
+        };
+
+        // HandDown 완료 → StandUp 시작
+        guestAnim.OnHandDownFinished += () =>
+        {
+            isPlayingHandDown = false;
+            if (!isAngryExiting)
+            {
+                isPlayingStandUp = true;
+                guestAnim.PlayStandUp();
+            }
+        };
+
+        // StandUp 완료 → Exit 상태 전환
+        guestAnim.OnStandUpFinished += () =>
+        {
+            isPlayingStandUp = false;
+            ChangeState(GuestState.Exit);
+        };
+
+        // Angry 완료 → 일어서서 퇴장
+        guestAnim.OnAngryFinished += () =>
+        {
+            if (isAngryExiting)
+            {
+                guestAnim.PlayStandUp();
+            }
+        };
+    }
+    
     private void HandleEnterState()
     {
         // 상태 진입 후 딱 한 번만 목적지 찾기
@@ -221,13 +277,26 @@ public abstract class GuestBase : MonoBehaviour
         if (mover.HasArrived())
         {
             mover.StopAndDisable();
-
             transform.position = myChair.sitPoint.position;
             transform.rotation = myChair.sitPoint.rotation;
 
-            ChangeState(GuestState.WaitOrder);
+            // 바로 WaitOrder로 넘기지 않고, 앉기 애니메이션 실행
+            // SitDown 애니메이션 완료 후 WaitOrder 진입
+            guestAnim.PlaySitDown();
+
+            // SitDown 완료 콜백에서 상태 전환
+            // 기존 OnSitDownFinished에 이미 바인딩되어 있지만,
+            // 여기서 직접 전환하는 게 더 명확
+            guestAnim.OnSitDownFinished += OnSitDownComplete;
         }
 
+    }
+
+    private void OnSitDownComplete()
+    {
+        // 중복 호출 방지
+        guestAnim.OnSitDownFinished -= OnSitDownComplete;
+        ChangeState(GuestState.WaitOrder);
     }
 
     private void HandleWaitingState()
@@ -251,6 +320,9 @@ public abstract class GuestBase : MonoBehaviour
     
     protected virtual void HandleWaitOrderState()
     {
+        // VeryBad 퇴장 중이면 아무것도 안 함
+        if (isAngryExiting) return;
+        
         stateTimer += Time.deltaTime;
 
         if (!myOrder.HasOrdered && stateTimer >= menuChooseTime)
@@ -268,8 +340,7 @@ public abstract class GuestBase : MonoBehaviour
         if (stateTimer >= orderMaxWaitLimit && CurrentMood == GuestMood.Bad)
         {
             SetMood(GuestMood.VeryBad);
-            SendReward(GuestRewardCalculator.Penalty(-1));
-            ChangeState(GuestState.Exit);
+            TriggerAngryExit(-1);
         }
         else if (stateTimer >= orderMinWaitLimit && CurrentMood == GuestMood.Neutral)
         {
@@ -279,12 +350,14 @@ public abstract class GuestBase : MonoBehaviour
 
     protected virtual void HandleWaitFoodState()
     {
+        if (isAngryExiting) return;
+        
         stateTimer += Time.deltaTime;
 
         if (stateTimer >= foodMaxWaitLimit)
         {
             SendReward(GuestRewardCalculator.Penalty(-2));
-            ChangeState(GuestState.Exit);
+            TriggerAngryExit(-2);
         }
         else if (stateTimer >= foodMidWaitLimit && CurrentMood == GuestMood.Bad)
             SetMood(GuestMood.VeryBad);
@@ -294,14 +367,25 @@ public abstract class GuestBase : MonoBehaviour
     
     protected virtual void HandleEatState()
     {
+        if (isAngryExiting) return;
+        
         stateTimer += Time.deltaTime;
 
         if (stateTimer >= foodEatLimit)
+        {
+            // 밥 다 먹음 → HandDown 실행
+            isPlayingHandDown = true;
+            guestAnim.PlayHandDown();
+            // HandDown 완료 → BindAnimCallbacks에서 Pay/StandUp 처리
             ChangeState(GuestState.Pay);
+        }
     }
 
     protected virtual void HandlePayState()
     {
+        // HandDown/StandUp 애니메이션 진행 중이면 대기
+        if (isPlayingHandDown || isPlayingStandUp) return;
+        
         if (stateTimer == 0f)
         {
             if (foodQuality == FoodQuality.Good && CurrentMood == GuestMood.Neutral)
@@ -310,12 +394,7 @@ public abstract class GuestBase : MonoBehaviour
                 SetMood(GuestMood.Good);
 
             OnGuestReadyToPay?.Invoke(this);
-        }
 
-        stateTimer += Time.deltaTime;
-        
-        if (stateTimer >= payWaitTime)
-        {
             int basePrice = (myOrder != null && myOrder.orderedFood != null) ? myOrder.orderedFood.price : 0;
             var result = GuestRewardCalculator.Calculate(basePrice, CurrentMood, rewardData);
             SendReward(result);
@@ -327,26 +406,30 @@ public abstract class GuestBase : MonoBehaviour
                 Destroy(currentFoodModel);
                 currentFoodModel = null;
             }
-
-            ChangeState(GuestState.Exit);
         }
+
+        stateTimer += Time.deltaTime;
     }
 
     private void HandleExitState()
     {
-        OnGuestExited?.Invoke();
-        
         // 상태 진입 후 딱 한 번만 목적지 찾기
         if (!isExitPathSet && exitDoor != null)
         {
+            OnGuestExited?.Invoke();
+            
             if (myChair != null)
             {
                 myChair.Empty();
                 myChair = null;
             }
             
-            mover.MoveTo(exitDoor.position);
-            isExitPathSet = true;
+            if (exitDoor != null)
+            {
+                mover.EnableAgent();
+                mover.MoveTo(exitDoor.position);
+                isExitPathSet = true;
+            }
         }
 
         if (isExitPathSet && mover.HasArrived(2.0f))
@@ -355,9 +438,23 @@ public abstract class GuestBase : MonoBehaviour
         }
     }
 
+    // ── VeryBad 분노 퇴장 통합 메서드 ──
+    private void TriggerAngryExit(int penaltyLevel)
+    {
+        if (isAngryExiting) return;
+
+        isAngryExiting = true;
+        SetMood(GuestMood.VeryBad);
+        SendReward(GuestRewardCalculator.Penalty(penaltyLevel));
+
+        // Angry 모션 실행 → 완료 후 StandUp → 완료 후 Exit
+        guestAnim.PlayAngry();
+    }
+
     // 주문 대기 시 플레이어 상호작용 클래스
     public void TakeOrder()
     {
+        if (isAngryExiting) return;
         if (currentState != GuestState.WaitOrder || myOrder == null) return;
         if (!myOrder.HasOrdered) return; // 메뉴 안 골랐으면 무시
         if (currentState != GuestState.WaitOrder) return; // 이미 주문을 접수했으면 무시
@@ -370,8 +467,8 @@ public abstract class GuestBase : MonoBehaviour
      // 음식 대기 시 플레이어 상호작용 클래스
     public void ReceiveFood(FoodData deliveredFood, FoodQuality quality)
     {
-        if (currentState != GuestState.WaitFood)
-            return;
+        if (isAngryExiting) return;
+        if (currentState != GuestState.WaitFood) return;
 
         if (myChair != null && myChair.myFoodSpot != null && deliveredFood.foodPrefab != null)
         {
@@ -391,14 +488,14 @@ public abstract class GuestBase : MonoBehaviour
             else if (quality == FoodQuality.Good)
                 SetMood(GuestMood.VeryGood);
 
+            guestAnim.PlayHandUp();
             ChangeState(GuestState.Eat);
         }
         else
         {
             if (CurrentMood == GuestMood.VeryBad)
             {
-                SendReward(GuestRewardCalculator.Penalty(-2));
-                ChangeState(GuestState.Exit);
+                TriggerAngryExit(-2);
                 return;
             }
 
@@ -407,6 +504,7 @@ public abstract class GuestBase : MonoBehaviour
             if (quality == FoodQuality.Fine || quality == FoodQuality.Good)
                 SetMood(GuestMood.Neutral);
 
+            guestAnim.PlayHandUp();
             ChangeState(GuestState.Eat);
         }
     }
