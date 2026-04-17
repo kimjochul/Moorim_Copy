@@ -10,6 +10,10 @@ public class NPCQuestUI : MonoBehaviour
     [Header("오른쪽 상세")]
     [SerializeField] private NPCQuestDetailPanel detailPanel;
 
+    [Header("레시피 해금")]
+    [SerializeField] private RecipeUnlockManager recipeUnlockManager;
+    [SerializeField] private IngredientUnlockManager ingredientUnlockManager;
+    
     private List<Quest> quests = new List<Quest>();
     private Inventory inventory;
     
@@ -31,9 +35,11 @@ public class NPCQuestUI : MonoBehaviour
 
         // 수락 가능
         quests.AddRange(QuestManager.Instance.GetWaitingQuests(questType));
-
         // 진행중 + 클리어 대상
         quests.AddRange(QuestManager.Instance.GetQuestsByNPC(npcType));
+        // 메인, 서브 퀘스트
+        quests.AddRange(QuestManager.Instance.GetQuests(QuestType.MainStory));
+        quests.AddRange(QuestManager.Instance.GetQuests(QuestType.SubStory));
 
         RefreshList();
         detailPanel.Clear();
@@ -93,6 +99,23 @@ public class NPCQuestUI : MonoBehaviour
         // 완료 처리
         selectedQuest.Complete();;
 
+        if (selectedQuest.RewardRecipeIds != null)
+        {
+            foreach (var recipeId in selectedQuest.RewardRecipeIds)
+            {
+                recipeUnlockManager.Unlock(recipeId);
+            }
+        }
+
+        if (selectedQuest.RewardIngredientIds != null)
+        {
+            foreach (var ingredientId in selectedQuest.RewardIngredientIds)
+            {
+                ingredientUnlockManager.Unlock(ingredientId);
+            }
+        }
+        
+        
         Init(currentQuestType, currentNPCType);
     }
 }

@@ -25,6 +25,8 @@ public class StoryManager : MonoBehaviour
 {
     [SerializeField] private DayManager dayManager;
     [SerializeField] private Receipt receipt;
+    [SerializeField] private RecipeUnlockManager recipeUnlockManager;
+    [SerializeField] private IngredientUnlockManager ingredientUnlockManager;
     [SerializeField] private StorySO storySO;
 
     [SerializeField] private List<TriggerGroup> triggerGroups;
@@ -249,6 +251,21 @@ public class StoryManager : MonoBehaviour
             {
                 var quest = new Quest(currentStory.rewardQuest, InventoryManager.Instance.GetInventory(InventoryType.Fridge));
                 QuestManager.Instance.AcceptQuest(quest);
+            }
+            
+            if (currentTrigger != null && currentTrigger.unlockRecipeIds != null)
+            {
+                foreach (var recipeId in currentTrigger.unlockRecipeIds)
+                {
+                    recipeUnlockManager.Unlock(recipeId);
+                }
+            }
+            if (currentTrigger.unlockIngredientIds != null)
+            {
+                foreach (var id in currentTrigger.unlockIngredientIds)
+                {
+                    ingredientUnlockManager.Unlock(id);
+                }
             }
             
             PlayNextQueuedStory();

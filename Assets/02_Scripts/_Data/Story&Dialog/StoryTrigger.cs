@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
@@ -26,6 +27,10 @@ public class StoryTrigger
     
     [Header("옵션")]
     public bool playOnce;
+    
+    [Header("스토리 종료 시 해금")]
+    public List<int> unlockRecipeIds;
+    public List<int> unlockIngredientIds;
 }
 
 [Serializable]

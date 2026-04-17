@@ -22,7 +22,6 @@ public class ScreenSetting : MonoBehaviour
     [Header("글자크기")]
     [SerializeField] private Slider fontSizeSlider;
 
-    public UnityAction<float> OnFontSizeChanged;
     public float CurrentTextScale { get; private set; } = 1f;
     void Awake()
     {
@@ -62,7 +61,7 @@ public class ScreenSetting : MonoBehaviour
     private void InitEvent()
     {
         this.resolutionDropdown.onValueChanged.AddListener(SetResolution);
-        this.fontSizeSlider.onValueChanged.AddListener(SetTextScale);
+        this.fontSizeSlider.onValueChanged.AddListener(SetFontSize);
     }
 
     /// <summary>
@@ -80,11 +79,8 @@ public class ScreenSetting : MonoBehaviour
     /// <summary>
     /// 슬라이더를 움직일 때마다 호출되는 함수 (글자 크기 변경)
     /// </summary>
-    public void SetTextScale(float scale)
+    public void SetFontSize(float scale)
     {
-        this.CurrentTextScale = scale;
-
-        // 이벤트에 가입된 모든 텍스트들에게 변경된 배율(scale)을 방송합니다!
-        this.OnFontSizeChanged?.Invoke(this.CurrentTextScale);
+        UIManager.Instance.SetTextScale(scale);
     }
 }
