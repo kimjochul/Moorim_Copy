@@ -16,6 +16,7 @@ public enum QuestType
 
 public enum NPCType
 {
+    None,
     Merchant,
     PostMan
 }
@@ -41,7 +42,10 @@ public class QuestData : ScriptableObject
     public QuestType questType;
     public string questName;
     public List<QuestCondition> conditions;
+    
     public QuestReward reward;
+    public List<int> rewardRecipeIds;
+    public List<int> rewardIngredientIds;
     
     public NPCType npcType; // 퀘스트 완료 할 수 있는 대상
 
