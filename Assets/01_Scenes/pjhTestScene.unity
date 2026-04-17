@@ -426,10 +426,6 @@ MonoBehaviour:
   stampStartScale: {x: 40, y: 40}
   stampAnimDuration: 0.5
   stampEase: 6
-  slideShowDuration: 0.3
-  slideShowEase: 12
-  slideHideDuration: 0.2
-  slideHideEase: 11
 --- !u!4 &133603406
 Transform:
   m_ObjectHideFlags: 0
@@ -461,6 +457,8 @@ MonoBehaviour:
   amountPopupObj: {fileID: 7939990253794488638, guid: 8d4397d685e008a458c0812e5cbe03b2, type: 3}
   okPopupObj: {fileID: 0}
   defaultUI: {fileID: 0}
+  book: {fileID: 0}
+  setting: {fileID: 0}
   recipes: []
 --- !u!1 &166472618
 GameObject:
@@ -675,7 +673,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1788456165020746817, guid: 128e2de43e2f7654ea0f9c40d92d5235, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 11.89731
+      value: 8.15
       objectReference: {fileID: 0}
     - target: {fileID: 1788456165020746817, guid: 128e2de43e2f7654ea0f9c40d92d5235, type: 3}
       propertyPath: m_LocalPosition.y
@@ -683,7 +681,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1788456165020746817, guid: 128e2de43e2f7654ea0f9c40d92d5235, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 4.32032
+      value: 6.07
       objectReference: {fileID: 0}
     - target: {fileID: 1788456165020746817, guid: 128e2de43e2f7654ea0f9c40d92d5235, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1118,6 +1116,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 163535216979995436, guid: 5ad49b528235c8f4b8a3a9616e51f9b2, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 4013688e066359e47ac52c1a246a8357, type: 2}
     - target: {fileID: 1788456165020746817, guid: 5ad49b528235c8f4b8a3a9616e51f9b2, type: 3}
       propertyPath: m_LocalPosition.x
       value: 12.65582
