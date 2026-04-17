@@ -17,6 +17,20 @@ public class QuestPopupController : PopupController
         QuestManager.Instance.OnActiveQuestRemoved += DeleteQuestPopup;
     }
     
+    void OnEnable()
+    {
+        // 기존 제거
+        foreach (var popup in _questPopups)
+        {
+            Destroy(popup.Key.gameObject);
+        }
+        _questPopups.Clear();
+
+        // 다시 생성
+        var quests = QuestManager.Instance.ActiveQuests;
+        MakeAllQuestPopups(quests);
+    }
+    
     public void Showt()
     {
         base.Show();

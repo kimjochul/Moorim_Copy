@@ -52,32 +52,33 @@ public class ProgressCondition : QuestCondition
 
     public override bool IsComplete()
     {
-        if (currentMoney < requiredMoney)
+        switch (type)
         {
-            Debug.Log("Not enough money");
-            return false;
+            case ProgressType.Money:
+                return currentMoney >= requiredMoney;
+
+            case ProgressType.Fame:
+                return currentFame >= requiredFame;
+
+            case ProgressType.Day:
+                return dayCount >= requiredDayCount;
+
+            case ProgressType.Prerequisite:
+                if (Prerequisite_Quest == null)
+                {
+                    Debug.LogError($"[ProgressCondition] 선행퀘스트 없음: {name}");
+                    return false;
+                }
+                return QuestManager.Instance.PrerequisiteQuestIsDone(Prerequisite_Quest.id);
         }
-        if (currentFame < requiredFame)
-        {
-            Debug.Log("Not enough fame");
-            return false;
-        }
-        if (dayCount < requiredDayCount)
-        {
-            Debug.Log("Not enough day");
-            return false;
-        }
-        if (Prerequisite_Quest != null)
-        {
-            if (!QuestManager.Instance.PrerequisiteQuestIsDone(Prerequisite_Quest.id))
-                return false;
-        }
-        return true;
+
+        return false;
     }
 
     public override QuestCondition Clone()
     {
         var instance = CreateInstance<ProgressCondition>();
+        instance.type = type;
         instance.requiredMoney = requiredMoney;
         instance.requiredFame = requiredFame;
         instance.requiredDayCount = requiredDayCount;
@@ -88,33 +89,63 @@ public class ProgressCondition : QuestCondition
 
     public override string GetDescription()
     {
-        string description = "";
+        switch (type)
+        {
+            case ProgressType.Money:
+                return $"재력 {requiredMoney} 필요";
 
-        if (requiredMoney != 0)
-            description = "요구 재력";
-        
-        if (requiredFame != 0)
-            description = "요구 명성치";
+            case ProgressType.Fame:
+                return $"명성 {requiredFame} 필요";
 
-        if (requiredDayCount != 0)
-            description = $"{requiredDayCount}일 까지 진행\n";
+            case ProgressType.Day:
+                return $"{requiredDayCount}일 이상 진행";
 
-        if (Prerequisite_Quest != null)
-            description = $"선행퀘스트{Prerequisite_Quest.questName}";
-        
-        return description;
+            case ProgressType.Prerequisite:
+                return Prerequisite_Quest != null
+                    ? $"선행퀘스트: {Prerequisite_Quest.questName}"
+                    : "선행퀘스트 없음";
+        }
+
+        return "";
     }
 
     public override string GetCurrentCount()
     {
-        string description = "";
+        switch (type)
+        {
+            case ProgressType.Money:
+                return currentMoney.ToString();
 
-        return description;
+            case ProgressType.Fame:
+                return currentFame.ToString();
+
+            case ProgressType.Day:
+                return dayCount.ToString();
+
+            case ProgressType.Prerequisite:
+                return QuestManager.Instance.PrerequisiteQuestIsDone(Prerequisite_Quest.id) ? "완료" : "미완료";
+        }
+
+        return "";
     }
 
     public override string GetRequiredCount()
     {
-        string description = "";
-        return description;
+        switch (type)
+        {
+            case ProgressType.Money:
+                return requiredMoney.ToString();
+
+            case ProgressType.Fame:
+                return requiredFame.ToString();
+
+            case ProgressType.Day:
+                return requiredDayCount.ToString();
+
+            case ProgressType.Prerequisite:
+                return "완료 필요";
+        }
+
+        return "";
     }
 }

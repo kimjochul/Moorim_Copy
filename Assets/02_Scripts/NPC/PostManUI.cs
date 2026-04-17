@@ -7,11 +7,7 @@ public class PostManUI : MonoBehaviour
     [SerializeField] private GameObject questPanel;
     [SerializeField] private NPCTalkPanel talkPanel;
 
-    [SerializeField] private Transform questContent;
-    [SerializeField] private GameObject questSlotPrefab;
-    
-    [SerializeField] private Transform clearContent;
-    [SerializeField] private GameObject clearSlotPrefab;
+    [SerializeField] private NPCQuestUI questUI;
     
     private Inventory inventory;
     
@@ -42,14 +38,8 @@ public class PostManUI : MonoBehaviour
     
     private void OnEnable()
     {
-        QuestManager.Instance.OnWaitingQuestChanged += RefreshAccept;
-        QuestManager.Instance.OnActiveQuestChanged += RefreshClear;
-
         if (postman.IsAvailableDay())
             postman.DayManager.OnDayStart += ResetDialogue;
-        
-        RefreshAccept();
-        RefreshClear();
         
         OpenTalk();
     }
@@ -61,11 +51,6 @@ public class PostManUI : MonoBehaviour
     
     private void OnDisable()
     {
-        if (QuestManager.Instance != null)
-        {
-            QuestManager.Instance.OnWaitingQuestChanged -= RefreshAccept;
-            QuestManager.Instance.OnActiveQuestChanged -= RefreshClear;
-        }
         if (postman.DayManager != null)
             postman.DayManager.OnDayStart -= ResetDialogue;
     }
@@ -91,41 +76,12 @@ public class PostManUI : MonoBehaviour
         lastDialogIndex = -1;
     }
     
-    private void RefreshAccept()
-    {
-        var quests = QuestManager.Instance.GetWaitingQuests(QuestType.PostMan);
-
-        // 기존 UI 삭제 (여기의 경우 acceptbar)
-        foreach (Transform child in questContent)
-            Destroy(child.gameObject);
-
-        // 새로 생성
-        foreach (var quest in quests)
-        {
-            var obj = Instantiate(questSlotPrefab, questContent);
-            obj.GetComponent<QuestAcceptBar>().Init(quest);
-        }
-    }
-    
-    private void RefreshClear()
-    {
-        var quests = QuestManager.Instance.GetQuestsByNPC(NPCType.PostMan);
-
-        // 기존 UI 삭제 (여기의 경우 clearbar)
-        foreach (Transform child in clearContent)
-            Destroy(child.gameObject); // 만약 최적화 한다면 바꿔야 할 수도
-
-        foreach (var quest in quests)
-        {
-            var obj = Instantiate(clearSlotPrefab, clearContent);
-            obj.GetComponent<QuestClearBar>().Init(quest, inventory);
-        }
-    }
-    
     public void OpenQuest()
     {
         talkPanel.gameObject.SetActive(true);
         questPanel.SetActive(true);
+        
+        questUI.Init(QuestType.PostMan,NPCType.PostMan);
         
         SetState(PostmanState.Quest);
     }
