@@ -24,7 +24,9 @@ public class Quest : IObserver
     public bool IsFailed { get; private set; }
 
     public QuestReward RuntimeReward => data.reward;
-
+    public List<int> RewardRecipeIds;
+    public List<int> RewardIngredientIds;
+    
     public NPCType targetNPC; // 퀘스트 완료 할 수 있는 대상
     
     private List<QuestCondition> conditions;
@@ -48,7 +50,6 @@ public class Quest : IObserver
         this.inventory = inventory;
         
         conditions = new List<QuestCondition>();
-
         foreach (var condition in data.conditions)
         {
             var instance = condition.Clone();
@@ -56,6 +57,9 @@ public class Quest : IObserver
                 
             conditions.Add(instance);
         }
+
+        RewardRecipeIds = questData.rewardRecipeIds;
+        RewardIngredientIds = questData.rewardIngredientIds;
     }
     
     /// <summary>
