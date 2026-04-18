@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RecipeUnlockManager : MonoBehaviour
+public class RecipeUnlockManager : Singleton<RecipeUnlockManager>
 {
     [SerializeField] private RecipeList recipeList;
     private HashSet<int> unlockedRecipes = new HashSet<int>();
@@ -23,7 +23,23 @@ public class RecipeUnlockManager : MonoBehaviour
 
     public void Unlock(int recipeID)
     {
+        if (unlockedRecipes.Contains(recipeID))
+            return;
+        
         Debug.Log("Unlocking recipe " + recipeID);
         unlockedRecipes.Add(recipeID);
+    }
+
+    public RecipeData RandomUnlockedRecipe()
+    {
+        var list = new List<int>(unlockedRecipes);
+
+        if (list.Count == 0)
+            return null;
+        
+        int randomIndex = UnityEngine.Random.Range(0, list.Count);
+        int recipeID = list[randomIndex];
+
+        return DataManager.Instance.GetRecipeMasteryData(recipeID).data;
     }
 }

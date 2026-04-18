@@ -9,12 +9,14 @@ public class QuestGenerator : MonoBehaviour
     [SerializeField] private QuestPool questPool;
     [SerializeField] private Inventory inventory;
     
-    [SerializeField] private RecipeUnlockManager recipeUnlockManager;
+    private RecipeUnlockManager recipeUnlockManager;
+    
     [SerializeField] private RecipeList allRecipes;
 
     private void Start()
     {
         inventory = InventoryManager.Instance.GetInventory(InventoryType.Fridge);
+        recipeUnlockManager = RecipeUnlockManager.Instance;
     }
 
     /// <summary>

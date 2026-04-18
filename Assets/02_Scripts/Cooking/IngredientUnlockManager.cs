@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class IngredientUnlockManager : MonoBehaviour
+public class IngredientUnlockManager : Singleton<IngredientUnlockManager>
 {
     [SerializeField] private IngredientList allIngredients;
 

@@ -16,13 +16,14 @@ public abstract class GuestBase : MonoBehaviour
     [SerializeField] protected float payWaitTime = 3f;
 
     [Header("데이터 연결")]
-    [SerializeField] private RecipeList menuBoard;
     [SerializeField] private GuestRewardData rewardData;
 
     private GuestMover mover;
     private GuestManager guestManager;
     private GuestBubbleUI bubbleUI;
     private GuestAnimation guestAnim;
+    
+    private RecipeUnlockManager recipeUnlockManager;
 
     public Transform exitDoor;
     public Chair myChair;
@@ -65,6 +66,7 @@ public abstract class GuestBase : MonoBehaviour
     {
         mover = GetComponent<GuestMover>();
         bubbleUI = GetComponentInChildren<GuestBubbleUI>();
+        recipeUnlockManager = RecipeUnlockManager.Instance;
     }
     
     // 풀에서 꺼낼 때 호출. 재사용 시 이전 생애의 모든 상태를 깨끗이 초기화해 버그 방지
@@ -327,8 +329,7 @@ public abstract class GuestBase : MonoBehaviour
 
         if (!myOrder.HasOrdered && stateTimer >= menuChooseTime)
         {
-            int randomIndex = UnityEngine.Random.Range(0, menuBoard.recipes.Count);
-            RecipeData choseRecipe = menuBoard.recipes[randomIndex];
+            RecipeData choseRecipe = recipeUnlockManager.RandomUnlockedRecipe();
 
             myOrder.recipe = choseRecipe;
             myOrder.orderedFood = choseRecipe.result;
