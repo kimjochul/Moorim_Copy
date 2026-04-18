@@ -139,7 +139,7 @@ public class CharacterUI : MonoBehaviour
             }
             else if (slot.CurrentCharacterID != -1)
             {
-                slot.SetColor(new Color(0.5f, 0.5f, 0.5f, 0.7f));
+                slot.SetColor(new Color(0.7f, 0.7f, 0.7f, 1f));
             }
         }
     }
