@@ -1689,7 +1689,7 @@ MonoBehaviour:
   m_Content: {fileID: 1310162357}
   m_Horizontal: 1
   m_Vertical: 1
-  m_MovementType: 1
+  m_MovementType: 2
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
@@ -5639,11 +5639,11 @@ Transform:
   m_GameObject: {fileID: 300931284}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 670.7144, y: 0.00005, z: -789.2857}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2059116325}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &300931286
 MonoBehaviour:
@@ -5659,7 +5659,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::QuestGenerator
   questPool: {fileID: 11400000, guid: 9c013438a92b1f34791c8087ada5c88e, type: 2}
   inventory: {fileID: 0}
-  recipeUnlockManager: {fileID: 1188864872}
   allRecipes: {fileID: 11400000, guid: 6d1d33b9b84924d419f1e13f1b6636fc, type: 2}
 --- !u!1 &302516298
 GameObject:
@@ -23841,12 +23840,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1188864870}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 670.7144, y: 0.00005, z: -789.2857}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2059116325}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1188864872
 MonoBehaviour:
@@ -26705,6 +26704,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1310162357}
   - component: {fileID: 1310162358}
+  - component: {fileID: 1310162359}
   m_Layer: 5
   m_Name: Content
   m_TagString: Untagged
@@ -26729,7 +26729,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0.00035383482}
-  m_SizeDelta: {x: 0, y: 364}
+  m_SizeDelta: {x: 0, y: 8}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1310162358
 MonoBehaviour:
@@ -26755,6 +26755,20 @@ MonoBehaviour:
   m_Spacing: {x: 0, y: 8}
   m_Constraint: 1
   m_ConstraintCount: 1
+--- !u!114 &1310162359
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1310162356}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.ContentSizeFitter
+  m_HorizontalFit: 0
+  m_VerticalFit: 2
 --- !u!1 &1313401320
 GameObject:
   m_ObjectHideFlags: 0
@@ -28536,8 +28550,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StoryManager
   dayManager: {fileID: 1185838698}
   receipt: {fileID: 978687535}
-  recipeUnlockManager: {fileID: 0}
-  ingredientUnlockManager: {fileID: 0}
   storySO: {fileID: 11400000, guid: 7778616fbf7c89a4680ab7bdfd5ab792, type: 2}
   triggerGroups:
   - so: {fileID: 11400000, guid: 04bb069dbee32284689b87ebfb9cda7a, type: 2}
@@ -43659,8 +43671,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2059116325}
+  - component: {fileID: 2059116326}
   m_Layer: 0
-  m_Name: Quest
+  m_Name: IngredientUnlockManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -43678,11 +43691,22 @@ Transform:
   m_LocalPosition: {x: 670.7144, y: 0.00005, z: -789.2857}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 300931285}
-  - {fileID: 1188864871}
+  m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2059116326
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2059116324}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a73545e0a567da46be3d7bed3691d91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::IngredientUnlockManager
+  allIngredients: {fileID: 11400000, guid: 34e3b194e83c4aa46955db69c20524b7, type: 2}
 --- !u!1 &2064632381
 GameObject:
   m_ObjectHideFlags: 0
@@ -49504,6 +49528,8 @@ SceneRoots:
   - {fileID: 1752021387}
   - {fileID: 1385896518}
   - {fileID: 1433377236}
+  - {fileID: 300931285}
+  - {fileID: 1188864871}
   - {fileID: 2059116325}
   - {fileID: 592708334}
   - {fileID: 1407251971}
