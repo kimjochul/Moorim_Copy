@@ -28577,6 +28577,10 @@ PrefabInstance:
       value: '[Button] Orders Button'
       objectReference: {fileID: 0}
     - target: {fileID: 8055448860066471154, guid: 12820ead4ba32834eabc1b24327b253f, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8055448860066471154, guid: 12820ead4ba32834eabc1b24327b253f, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1328298724}
@@ -28679,6 +28683,17 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 2907482057518185980, guid: 12820ead4ba32834eabc1b24327b253f, type: 3}
   m_PrefabInstance: {fileID: 1408169005}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1408169008 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8055448860066471154, guid: 12820ead4ba32834eabc1b24327b253f, type: 3}
+  m_PrefabInstance: {fileID: 1408169005}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
 --- !u!1 &1411316123
 GameObject:
   m_ObjectHideFlags: 0
@@ -43225,6 +43240,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2047336149}
   - component: {fileID: 2047336150}
+  - component: {fileID: 2047336151}
   m_Layer: 5
   m_Name: Buttons
   m_TagString: Untagged
@@ -43277,6 +43293,22 @@ MonoBehaviour:
   m_Spacing: {x: 8, y: 0}
   m_Constraint: 2
   m_ConstraintCount: 1
+--- !u!114 &2047336151
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2047336148}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 999e235b593bbc747b7825c2e49f546c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DashboardController
+  btnOrders: {fileID: 1408169008}
+  btnQuests: {fileID: 3373236479079826166}
+  rectOrders: {fileID: 6514172805249057958}
+  rectQuests: {fileID: 6071119895638763359}
 --- !u!1001 &2049898672
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -46960,6 +46992,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7238933794596582150, guid: 083eebe8d4fe51c46a70d3c89e39dede, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7238933794596582150, guid: 083eebe8d4fe51c46a70d3c89e39dede, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1328298724}
@@ -46980,6 +47016,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 083eebe8d4fe51c46a70d3c89e39dede, type: 3}
+--- !u!114 &3373236479079826166 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7238933794596582150, guid: 083eebe8d4fe51c46a70d3c89e39dede, type: 3}
+  m_PrefabInstance: {fileID: 3373236479079826165}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
 --- !u!4 &3428920935091212980
 Transform:
   m_ObjectHideFlags: 0
