@@ -57,6 +57,10 @@ public class SoundManager : Singleton<SoundManager>
 
         this.bgmSource.loop = true;
         this.sfxSource.loop = false;
+
+        this.masterVolume = PlayerPrefs.GetFloat("MasterVolume", 1f);
+        this.bgmVolume = PlayerPrefs.GetFloat("BgmVolume", 1f);
+        this.sfxVolume = PlayerPrefs.GetFloat("SfxVolume", 1f);
     }
 
     /// <summary>
@@ -134,6 +138,10 @@ public class SoundManager : Singleton<SoundManager>
     public void SetMasterVolume(float volume)
     {
         this.masterVolume = Mathf.Clamp01(volume);
+
+        PlayerPrefs.SetFloat("MasterVolume", this.masterVolume);
+        PlayerPrefs.Save();
+
         UpdateVolumes();
     }
     /// <summary>
@@ -142,6 +150,10 @@ public class SoundManager : Singleton<SoundManager>
     public void SetBGMVolume(float volume)
     {
         this.bgmVolume = Mathf.Clamp01(volume);
+
+        PlayerPrefs.SetFloat("BgmVolume", this.bgmVolume);
+        PlayerPrefs.Save();
+
         UpdateVolumes();
     }
 
@@ -151,6 +163,10 @@ public class SoundManager : Singleton<SoundManager>
     public void SetSFXVolume(float volume)
     {
         this.sfxVolume = Mathf.Clamp01(volume);
+
+        PlayerPrefs.SetFloat("SfxVolume", this.sfxVolume);
+        PlayerPrefs.Save();
+
         UpdateVolumes();
     }
 
