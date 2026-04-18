@@ -33,25 +33,21 @@ public class ScreenSetting : MonoBehaviour
     /// </summary>
     private void Init()
     {
-        // 해상도
         this.resolutionDropdown.ClearOptions();
-        List<string> options = new List<string>();
 
+        List<string> options = new List<string>();
         for (int i = 0; i < this.resList.Count; i++)
         {
             options.Add($"{this.resList[i].w}x{this.resList[i].h}");
         }
-
         this.resolutionDropdown.AddOptions(options);
 
-        string currentRes = $"{Screen.width}x{Screen.height}";
-        int index = options.FindIndex(s => s == currentRes);
-        if (index != -1)
-            this.resolutionDropdown.value = index;
-
+        int savedResIndex = UIManager.Instance.GetResolutionIndex();
+        this.resolutionDropdown.value = savedResIndex;
         this.resolutionDropdown.RefreshShownValue();
 
-        // 글자 크기
+        SetResolution(savedResIndex);
+
         if (this.fontSizeSlider != null)
         {
             this.fontSizeSlider.value = UIManager.Instance.GetTextScale();

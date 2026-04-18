@@ -98,7 +98,23 @@ public class CookingController : MonoBehaviour
         InitRuntimeRecipes();
         
         cookingView.SetCookStartInteractable(false);
+
+        // 요리 UI 연출
+        RectTransform cookingRect = this.cookingView.GetComponent<RectTransform>();
+        RectTransform recipeRect = this.recipeListView.GetComponent<RectTransform>();
+
+        UIAnimationManager.Instance.ShowGroupSlide(cookingRect, recipeRect, Direction.Right);
+
+        // 인벤토리 애니메이션 연출
+
         InventoryManager.Instance.OpenCommonInventory();
+
+        RectTransform invenRect = InventoryManager.Instance.GetCommonInventoryRect();
+
+        if (invenRect != null)
+        {
+            UIAnimationManager.Instance.ShowSlide(invenRect, Direction.Left, 800f, 0.4f);
+        }
     }
 
     public void CloseCookingSystem(bool returnIngredients = true)
@@ -109,8 +125,27 @@ public class CookingController : MonoBehaviour
         cookingView.ClearView();
         model.ClearTarget();
 
-        mainCookingUICanvas.SetActive(false);
-        InventoryManager.Instance.CloseCommonInventory();
+        // 요리 UI 연출
+        RectTransform cookingRect = this.cookingView.GetComponent<RectTransform>();
+        RectTransform recipeRect = this.recipeListView.GetComponent<RectTransform>();
+
+        UIAnimationManager.Instance.HideGroupSlide(cookingRect, recipeRect, Direction.Right,
+        onComplete: () => {
+            mainCookingUICanvas.SetActive(false);
+        });
+
+        // 인벤토리 애니메이션 연출
+        RectTransform invenRect = InventoryManager.Instance.GetCommonInventoryRect();
+
+        if (invenRect != null)
+        {
+            UIAnimationManager.Instance.HideSlide(invenRect, Direction.Left, 800f, 0.3f,
+                onComplete: () =>
+                {
+                    InventoryManager.Instance.CloseCommonInventory();
+                }
+            );
+        }
 
         currentStation = null;
         targetInventoryMeat = null;
