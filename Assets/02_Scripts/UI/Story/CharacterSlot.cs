@@ -6,7 +6,7 @@ public class CharacterSlot : MonoBehaviour
 {
     public int slotIndex; // 0: 왼쪽, 1: 중앙, 2: 오른쪽
 
-    [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] private Image characterImage;
 
     [Header("감정 아이콘")]
     [SerializeField] private Image emotionIcon;
@@ -19,7 +19,7 @@ public class CharacterSlot : MonoBehaviour
     public void SetCharacter(int characterID, Sprite sprite)
     {
         currentCharacterID = characterID;
-        spriteRenderer.sprite = sprite;
+        characterImage.sprite = sprite;
         gameObject.SetActive(true);
         
         HideEmotionIcon();
@@ -28,7 +28,7 @@ public class CharacterSlot : MonoBehaviour
     public void Clear()
     {
         currentCharacterID = -1;
-        spriteRenderer.sprite = null;
+        characterImage.sprite = null;
         
         HideEmotionIcon();
     }
@@ -135,7 +135,7 @@ public class CharacterSlot : MonoBehaviour
 
     public void SetColor(Color color)
     {
-        spriteRenderer.color = color;
+        characterImage.color = color;
     }
     
     IEnumerator AppearRoutine()
@@ -183,7 +183,7 @@ public class CharacterSlot : MonoBehaviour
         StopAllCoroutines();
         gameObject.SetActive(false);
         currentCharacterID = -1;
-        spriteRenderer.sprite = null;
+        characterImage.sprite = null;
 
         HideEmotionIcon();
     }
