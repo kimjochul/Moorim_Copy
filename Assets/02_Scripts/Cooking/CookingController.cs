@@ -23,6 +23,9 @@ public class CookingController : MonoBehaviour
     // 재료 반환용 인벤토리 참조
     private Inventory targetInventoryMeat; // 육류
     private Inventory targetInventoryOther; // 육류 외
+    
+    private RecipeUnlockManager recipeUnlockManager;
+    private IngredientUnlockManager ingredientUnlockManager;
 
     void Awake()
     {
@@ -38,6 +41,9 @@ public class CookingController : MonoBehaviour
     {
         mainCookingUICanvas.SetActive(false);
 
+        recipeUnlockManager = RecipeUnlockManager.Instance;
+        ingredientUnlockManager = IngredientUnlockManager.Instance;
+        
         InitView();
         InitRuntimeRecipes();
     }
@@ -74,7 +80,10 @@ public class CookingController : MonoBehaviour
         // 레시피리스트를 읽어서 게임용 리스트로 포장
         runtimeRecipes.Clear();
         foreach (RecipeData data in masterRecipeList.recipes)
-            runtimeRecipes.Add(new Recipe(data));
+        {
+            if(recipeUnlockManager.IsUnlocked(data.id))
+                runtimeRecipes.Add(new Recipe(data));
+        }
 
         // 포장된 리스트를 메뉴 뷰에게 건네주기
         recipeListView.PopulateList(runtimeRecipes);
@@ -85,6 +94,9 @@ public class CookingController : MonoBehaviour
     {
         currentStation = station;
         mainCookingUICanvas.SetActive(true);
+        
+        InitRuntimeRecipes();
+        
         cookingView.SetCookStartInteractable(false);
         InventoryManager.Instance.OpenCommonInventory();
     }

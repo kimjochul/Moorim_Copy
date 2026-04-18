@@ -9,10 +9,9 @@ public class NPCQuestUI : MonoBehaviour
 
     [Header("오른쪽 상세")]
     [SerializeField] private NPCQuestDetailPanel detailPanel;
-
-    [Header("레시피 해금")]
-    [SerializeField] private RecipeUnlockManager recipeUnlockManager;
-    [SerializeField] private IngredientUnlockManager ingredientUnlockManager;
+    
+    private RecipeUnlockManager recipeUnlockManager;
+    private IngredientUnlockManager ingredientUnlockManager;
     
     private List<Quest> quests = new List<Quest>();
     private Inventory inventory;
@@ -28,6 +27,9 @@ public class NPCQuestUI : MonoBehaviour
         
         currentQuestType = questType;
         currentNPCType = npcType;
+        
+        recipeUnlockManager = RecipeUnlockManager.Instance;
+        ingredientUnlockManager = IngredientUnlockManager.Instance;
         
         selectedQuest = null;
         currentSelectedSlot = null;

@@ -13,6 +13,7 @@ public class ThiefGuyGuest : GuestBase
     public override void ResetState()
     {
         base.ResetState();
+        recipeUnlockManager = RecipeUnlockManager.Instance;
         isCaught = false; // 풀에서 다시 나올 때 잡힘 상태도 초기화
     }
     

@@ -16,13 +16,14 @@ public abstract class GuestBase : MonoBehaviour
     [SerializeField] protected float payWaitTime = 3f;
 
     [Header("데이터 연결")]
-    [SerializeField] private RecipeList menuBoard;
     [SerializeField] private GuestRewardData rewardData;
 
     private GuestMover mover;
     private GuestManager guestManager;
     private GuestBubbleUI bubbleUI;
     private GuestAnimation guestAnim;
+    
+    protected RecipeUnlockManager recipeUnlockManager;
 
     public Transform exitDoor;
     public Chair myChair;
@@ -63,11 +64,13 @@ public abstract class GuestBase : MonoBehaviour
     public event Action<GuestBase> OnGuestReadyToPay;
     public event Action OnGuestPaid;
     public event Action OnGuestExited;
+    public event Action<GuestBase> OnGuestAngryExited;
 
     void Awake()
     {
         mover = GetComponent<GuestMover>();
         bubbleUI = GetComponentInChildren<GuestBubbleUI>();
+        recipeUnlockManager = RecipeUnlockManager.Instance;
     }
 
     // 풀에서 꺼낼 때 호출
@@ -136,6 +139,8 @@ public abstract class GuestBase : MonoBehaviour
         OnGuestPaid = null;
         OnGuestExited = null;
         OnOrderServed = null;
+        
+        recipeUnlockManager = RecipeUnlockManager.Instance;
     }
 
     // 객체 생성 시 한 번 호출
@@ -302,8 +307,7 @@ public abstract class GuestBase : MonoBehaviour
 
         if (!myOrder.HasOrdered && stateTimer >= menuChooseTime)
         {
-            int randomIndex = UnityEngine.Random.Range(0, menuBoard.recipes.Count);
-            RecipeData choseRecipe = menuBoard.recipes[randomIndex];
+            RecipeData choseRecipe = recipeUnlockManager.RandomUnlockedRecipe();
 
             myOrder.recipe = choseRecipe;
             myOrder.orderedFood = choseRecipe.result;
@@ -494,7 +498,9 @@ public abstract class GuestBase : MonoBehaviour
         isAngryExiting = true;
         SetMood(GuestMood.VeryBad);
         SendReward(GuestRewardCalculator.Penalty(penaltyLevel));
-
+        
+        OnGuestAngryExited?.Invoke(this);
+        
         // Angry → StandUp → Exit 흐름 시작
         guestAnim.PlayAngry();
     }
