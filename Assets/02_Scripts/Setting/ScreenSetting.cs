@@ -22,7 +22,6 @@ public class ScreenSetting : MonoBehaviour
     [Header("글자크기")]
     [SerializeField] private Slider fontSizeSlider;
 
-    public float CurrentTextScale { get; private set; } = 1f;
     void Awake()
     {
         Init();
@@ -55,7 +54,7 @@ public class ScreenSetting : MonoBehaviour
         // 글자 크기
         if (this.fontSizeSlider != null)
         {
-            this.fontSizeSlider.value = this.CurrentTextScale;
+            this.fontSizeSlider.value = UIManager.Instance.GetTextScale();
         }
     }
     private void InitEvent()

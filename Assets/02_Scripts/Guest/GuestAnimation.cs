@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Data;
 using UnityEngine;
 using static Constants;
 
@@ -9,19 +8,25 @@ public class GuestAnimation : MonoBehaviour
 {
     private Animator anim;
     private GuestBase guest;
-    
-    // 오타 방지 및 메모리 절약
-    // static - 모든 손님 인스턴스가 같은 값을 공유 / readonly - 한 번 설정되면 변경 불가(실수로 값 바꾸는 걸 방지)
-    // stirngToHash = answkduf -> 정수 변환을 최초 1회만 수행
-    private static readonly int IS_WALKING = Animator.StringToHash("IsWalking");
-    private static readonly int IS_SITTING = Animator.StringToHash("IsSitting");
-    private static readonly int IS_EATING = Animator.StringToHash("IsEating");
-    private static readonly int IS_ANGRY = Animator.StringToHash("IsAngry");
-    private static readonly int SITDOWN_TRIGGER = Animator.StringToHash("SitDown");
-    private static readonly int STANDUP_TRIGGER = Animator.StringToHash("StandUp");
-    private static readonly int HANDUP_TRIGGER = Animator.StringToHash("HandUp");
+
+    // Parameter 해시
+    private static readonly int IS_WALKING  = Animator.StringToHash("IsWalking");
+    private static readonly int IS_SITTING  = Animator.StringToHash("IsSitting");
+    private static readonly int IS_EATING   = Animator.StringToHash("IsEating");
+    private static readonly int IS_ANGRY    = Animator.StringToHash("IsAngry");
+    private static readonly int SITDOWN_TRIGGER  = Animator.StringToHash("SitDown");
+    private static readonly int STANDUP_TRIGGER  = Animator.StringToHash("StandUp");
+    private static readonly int HANDUP_TRIGGER   = Animator.StringToHash("HandUp");
     private static readonly int HANDDOWN_TRIGGER = Animator.StringToHash("HandDown");
 
+    // ★ Animator State 이름 상수 (Animator Controller의 State 이름과 정확히 일치해야 함)
+    private const string STATE_SITDOWN  = "Guest_SitDown";
+    private const string STATE_HANDUP   = "Guest_HandUp";
+    private const string STATE_HANDDOWN = "Guest_HandDown";
+    private const string STATE_STANDUP  = "Guest_StandUp";
+    private const string STATE_ANGRY    = "Guest_Angry";
+
+    // 애니메이션 완료 콜백
     public event Action OnSitDownFinished;
     public event Action OnStandUpFinished;
     public event Action OnHandUpFinished;
@@ -39,23 +44,24 @@ public class GuestAnimation : MonoBehaviour
     {
         guest = target;
         guest.OnGuestStateChanged += StateChanged;
-        guest.OnGuestMoodChanged += MoodChanged;
+        guest.OnGuestMoodChanged  += MoodChanged;
     }
 
     private void StateChanged(GuestBase g, GuestState state)
     {
         switch (state)
         {
-            case GuestState.Enter:      PlayWalk();         break;
-            case GuestState.Waiting:    PlayIdle();         break;
+            case GuestState.Enter:      PlayWalk();     break;
+            case GuestState.Waiting:    PlayIdle();     break;
         }
     }
 
     private void MoodChanged(GuestBase g, GuestMood mood)
     {
-        // if (mood == GuestMood.VeryBad || mood == GuestMood.Bad)
-        //     PlayAngry();
+        // Angry는 GuestBase에서 PlayAngry() 직접 호출
     }
+
+    // ── 외부 호출 메서드 ──
 
     public void PlayWalk()
     {
@@ -74,7 +80,7 @@ public class GuestAnimation : MonoBehaviour
         anim.SetBool(IS_WALKING, false);
         anim.SetTrigger(SITDOWN_TRIGGER);
         anim.SetBool(IS_SITTING, true);
-        waitCoroutine = StartCoroutine(WaitForAnimation("SitDown", () =>
+        waitCoroutine = StartCoroutine(WaitForAnimation(STATE_SITDOWN, () =>
         {
             OnSitDownFinished?.Invoke();
         }));
@@ -87,22 +93,22 @@ public class GuestAnimation : MonoBehaviour
 
     public void PlayHandUp()
     {
-       StopWait();
-       anim.SetBool(IS_SITTING, true);
-       anim.SetTrigger(HANDUP_TRIGGER);
-       waitCoroutine = StartCoroutine(WaitForAnimation("HandUP", () =>
-       {
-           anim.SetBool(IS_EATING, true);
-           OnHandUpFinished?.Invoke();
-       }));
+        StopWait();
+        anim.SetBool(IS_SITTING, true);
+        anim.SetTrigger(HANDUP_TRIGGER);
+        waitCoroutine = StartCoroutine(WaitForAnimation(STATE_HANDUP, () =>
+        {
+            anim.SetBool(IS_EATING, true);
+            OnHandUpFinished?.Invoke();
+        }));
     }
 
     public void PlayHandDown()
     {
         StopWait();
-        anim.SetBool(IS_EATING, false);
         anim.SetTrigger(HANDDOWN_TRIGGER);
-        waitCoroutine = StartCoroutine(WaitForAnimation("HandDown", () =>
+        anim.SetBool(IS_EATING, false);
+        waitCoroutine = StartCoroutine(WaitForAnimation(STATE_HANDDOWN, () =>
         {
             OnHandDownFinished?.Invoke();
         }));
@@ -115,7 +121,7 @@ public class GuestAnimation : MonoBehaviour
         anim.SetBool(IS_EATING, false);
         anim.SetBool(IS_ANGRY, false);
         anim.SetTrigger(STANDUP_TRIGGER);
-        waitCoroutine = StartCoroutine(WaitForAnimation("StandUp", () =>
+        waitCoroutine = StartCoroutine(WaitForAnimation(STATE_STANDUP, () =>
         {
             anim.SetBool(IS_WALKING, true);
             OnStandUpFinished?.Invoke();
@@ -126,8 +132,7 @@ public class GuestAnimation : MonoBehaviour
     {
         StopWait();
         anim.SetBool(IS_ANGRY, true);
-        // Angry 모션이 일정 시간 보여진 뒤 콜백
-        waitCoroutine = StartCoroutine(WaitForAnimation("Angry", () =>
+        waitCoroutine = StartCoroutine(WaitForAnimation(STATE_ANGRY, () =>
         {
             OnAngryFinished?.Invoke();
         }));
@@ -137,19 +142,24 @@ public class GuestAnimation : MonoBehaviour
 
     private IEnumerator WaitForAnimation(string stateName, Action onComplete)
     {
-        // 트리거가 반영될 때까지 1프레임 대기
-        yield return null;
+        yield return null; // 트리거 반영 1프레임 대기
 
-        // 해당 상태에 진입할 때까지 대기 (최대 1초 안전장치)
+        // 상태 진입 대기 (최대 2초 안전장치)
         float safety = 0f;
         while (!anim.GetCurrentAnimatorStateInfo(0).IsName(stateName))
         {
             safety += Time.deltaTime;
-            if (safety > 1f) break; // 상태 이름 불일치 시 무한루프 방지
+            if (safety > 2f)
+            {
+                Debug.LogWarning($"[GuestAnimation] '{stateName}' 상태 진입 실패 - Animator Controller의 State 이름/Transition 조건 확인 필요");
+                onComplete?.Invoke(); // 타임아웃 시에도 콜백은 쏨 (흐름 안 막히게)
+                waitCoroutine = null;
+                yield break;
+            }
             yield return null;
         }
 
-        // 애니메이션 재생 완료 대기
+        // 재생 완료 대기 (normalizedTime 0.95 이상)
         AnimatorStateInfo info = anim.GetCurrentAnimatorStateInfo(0);
         while (info.IsName(stateName) && info.normalizedTime < 0.95f)
         {
@@ -170,13 +180,19 @@ public class GuestAnimation : MonoBehaviour
         }
     }
 
+    // ── 초기화 ──
 
-    // pool 재사용시 초기화
     public void ResetAnimation()
     {
-        if (anim == null)
-            anim = GetComponent<Animator>();
+        StopWait();
+        if (anim == null) anim = GetComponent<Animator>();
         ResetAll();
+
+        OnSitDownFinished  = null;
+        OnStandUpFinished  = null;
+        OnHandUpFinished   = null;
+        OnHandDownFinished = null;
+        OnAngryFinished    = null;
     }
 
     private void ResetAll()

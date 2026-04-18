@@ -9,7 +9,6 @@ public class GuestBubbleUI : MonoBehaviour
     [SerializeField] private RectTransform moodRect;
     [SerializeField] private GameObject statusBubble;
     [SerializeField] private RectTransform statusRect;
-    
 
     [Header("Bubble UI")]
     [SerializeField] private Image moodIcon;
@@ -24,7 +23,6 @@ public class GuestBubbleUI : MonoBehaviour
 
     [Header("State UI")]
     [SerializeField] private Sprite orderSprite;
-    // [SerializeField] private Sprite foodSprite;
     [SerializeField] private Sprite paySprite;
 
     private GuestBase guest;
@@ -39,19 +37,10 @@ public class GuestBubbleUI : MonoBehaviour
     {
         guest = target;
 
-        // 상태 변경 이벤트 구독
         guest.OnGuestStateChanged += BubbleChanged;
-
-        // 기분 변경 이벤트 구독
         guest.OnGuestMoodChanged += MoodChanged;
-
-        // 메뉴를 골랐을 때
         guest.OnGuestReadyToOrder += ReadyToOrder;
-
-        // 주문 접수됐을 때
         guest.OnOrderPlaced += OrderPlaced;
-
-        // 계산 중일 때
         guest.OnGuestReadyToPay += ReadyToPay;
     }
 
@@ -64,20 +53,25 @@ public class GuestBubbleUI : MonoBehaviour
                 ShowBubble(moodBubble, moodRect);
                 moodIcon.sprite = GetMoodSprite(g.CurrentMood);
                 break;
+
             case GuestState.WaitFood:
-                // 기분 유지, 상태 말풍선은 OrderPlaced에서 이미 켜짐
+                // 기분 유지, 상태 말풍선은 OrderPlaced에서 켜짐
                 break;
+
             case GuestState.Eat:
                 // 기분 유지, 상태 말풍선 끄기 (음식 받았으니까)
                 HideBubble(statusBubble, statusRect);
                 break;
+
             case GuestState.Pay:
-                // 기분 말풍선 끄고 계산 아이콘으로 교체
-                moodBubble.SetActive(false);
+                // 기분 말풍선 끄기
+                // statusBubble은 ReadyToPay에서 켜줌
+                HideBubble(moodBubble, moodRect);
                 break;
+
             case GuestState.Exit:
                 // 전부 끄기
-                // moodBubble.SetActive(false);
+                HideBubble(moodBubble, moodRect);
                 HideBubble(statusBubble, statusRect);
                 break;
         }
@@ -91,7 +85,7 @@ public class GuestBubbleUI : MonoBehaviour
     private void ReadyToOrder(GuestBase g)
     {
         // 메뉴를 골랐을 때 주문표 아이콘 표시
-        statusBubble.SetActive(true);
+        ShowBubble(statusBubble, statusRect);
         statusIcon.sprite = orderSprite;
     }
 
@@ -100,19 +94,18 @@ public class GuestBubbleUI : MonoBehaviour
         // 주문 접수 → 음식 아이콘으로 변경
         if (order.recipe != null && order.recipe.icon != null)
         {
-            ShowBubble(statusBubble, moodRect);
+            ShowBubble(statusBubble, statusRect);  // ★ moodRect 아니라 statusRect
             statusIcon.sprite = order.recipe.icon;
         }
     }
 
     private void ReadyToPay(GuestBase g)
     {
-        // 계산 중일 때 아이콘 표시
-        statusBubble.SetActive(true);
+        // 계산 아이콘 표시 (Pop 애니메이션 포함)
         statusIcon.sprite = paySprite;
+        ShowBubble(statusBubble, statusRect);
     }
 
-    // 전부 끄기 (ResetState에서 호출용)
     public void HideAll()
     {
         moodBubble.SetActive(false);
@@ -132,7 +125,6 @@ public class GuestBubbleUI : MonoBehaviour
         }
     }
 
-    
     private void ShowBubble(GameObject bubble, RectTransform rect)
     {
         bubble.SetActive(true);
@@ -144,5 +136,4 @@ public class GuestBubbleUI : MonoBehaviour
         UIAnimationManager.Instance.HidePop(rect);
         bubble.SetActive(false);
     }
-
 }

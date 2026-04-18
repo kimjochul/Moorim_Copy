@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework.Interfaces;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -68,6 +69,8 @@ public class UIManager : Singleton<UIManager>
     // 글자 크기
     public void SetTextScale(float scale)
     {
+        float clampedSize = Mathf.Clamp(scale, 30f, 50f);
+
         PlayerPrefs.SetFloat("StoryFontSize", scale);
         PlayerPrefs.Save();
 
