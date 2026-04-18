@@ -138,6 +138,11 @@ public class GuestManager : MonoBehaviour
                 {
                     orderPopup.RemoveOrder(g);  // 서빙 완료 시 제거
                 };
+
+                guest.OnGuestAngryExited += (g) =>
+                {
+                    orderPopup.RemoveOrder(g);
+                };
             }
         }
     }

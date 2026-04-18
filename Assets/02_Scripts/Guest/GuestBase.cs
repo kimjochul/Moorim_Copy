@@ -23,7 +23,7 @@ public abstract class GuestBase : MonoBehaviour
     private GuestBubbleUI bubbleUI;
     private GuestAnimation guestAnim;
     
-    private RecipeUnlockManager recipeUnlockManager;
+    protected RecipeUnlockManager recipeUnlockManager;
 
     public Transform exitDoor;
     public Chair myChair;
@@ -64,6 +64,7 @@ public abstract class GuestBase : MonoBehaviour
     public event Action<GuestBase> OnGuestReadyToPay;
     public event Action OnGuestPaid;
     public event Action OnGuestExited;
+    public event Action<GuestBase> OnGuestAngryExited;
 
     void Awake()
     {
@@ -138,6 +139,8 @@ public abstract class GuestBase : MonoBehaviour
         OnGuestPaid = null;
         OnGuestExited = null;
         OnOrderServed = null;
+        
+        recipeUnlockManager = RecipeUnlockManager.Instance;
     }
 
     // 객체 생성 시 한 번 호출
@@ -495,7 +498,9 @@ public abstract class GuestBase : MonoBehaviour
         isAngryExiting = true;
         SetMood(GuestMood.VeryBad);
         SendReward(GuestRewardCalculator.Penalty(penaltyLevel));
-
+        
+        OnGuestAngryExited?.Invoke(this);
+        
         // Angry → StandUp → Exit 흐름 시작
         guestAnim.PlayAngry();
     }
