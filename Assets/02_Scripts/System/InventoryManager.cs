@@ -65,7 +65,19 @@ public class InventoryManager : Singleton<InventoryManager>
     {
         UIManager.Instance.CloseCommonInventoryPopup(commonInventoryRoot);
     }
-    
+
+    /// <summary>
+    /// 공용 인벤토리의 RectTransform 반환
+    /// </summary>
+    public RectTransform GetCommonInventoryRect()
+    {
+        if (this.commonInventoryRoot != null)
+        {
+            return this.commonInventoryRoot.GetComponent<RectTransform>();
+        }
+        return null;
+    }
+
     /// <summary>
     /// 특정 인벤토리 열기
     /// </summary>

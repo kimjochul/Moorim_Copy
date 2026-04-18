@@ -66,7 +66,7 @@ public class UIManager : Singleton<UIManager>
     //     Instantiate(defaultUI,  _canvas.transform);
     // }
 
-    // 글자 크기
+    // 글자 크기 저장
     public void SetTextScale(float scale)
     {
         float clampedSize = Mathf.Clamp(scale, 30f, 50f);
@@ -81,6 +81,20 @@ public class UIManager : Singleton<UIManager>
     {
         return PlayerPrefs.GetFloat("StoryFontSize", 40f);
     }
+
+    // 해상도 저장
+    public void SetResolutionIndex(int index)
+    {
+        PlayerPrefs.SetInt("ResolutionIndex", index);
+        PlayerPrefs.Save();
+    }
+
+    // 저장된 해상도 인덱스 불러오기(기본값 2번)
+    public int GetResolutionIndex()
+    {
+        return PlayerPrefs.GetInt("ResolutionIndex", 2);
+    }
+
     // 공용 인벤토리 호출시 나오는 함수
     public void OpenCommonInventoryPopup(InventoryPopupController commonInventory)
     {
