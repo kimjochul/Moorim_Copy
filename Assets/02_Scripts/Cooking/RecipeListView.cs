@@ -48,7 +48,7 @@ public class RecipeListView : MonoBehaviour
         foreach (Recipe recipeWrap in sortedRecipes)
         {
             // 레시피가 잠긴 상태라면 넘김
-            if (recipeWrap.Data.isLocked)
+            if (!RecipeUnlockManager.Instance.IsUnlocked(recipeWrap.Data.id))
                 continue;
             
             // 버튼 프리팹을 스크롤큐 컨텐츠의 자식으로 1개 생성

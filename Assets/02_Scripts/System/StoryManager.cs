@@ -25,8 +25,10 @@ public class StoryManager : MonoBehaviour
 {
     [SerializeField] private DayManager dayManager;
     [SerializeField] private Receipt receipt;
-    [SerializeField] private RecipeUnlockManager recipeUnlockManager;
-    [SerializeField] private IngredientUnlockManager ingredientUnlockManager;
+    
+    private RecipeUnlockManager recipeUnlockManager;
+    private IngredientUnlockManager ingredientUnlockManager;
+    
     [SerializeField] private StorySO storySO;
 
     [SerializeField] private List<TriggerGroup> triggerGroups;
@@ -75,6 +77,9 @@ public class StoryManager : MonoBehaviour
         fadePanel.alpha = 0f;
         fadePanel.gameObject.SetActive(false);
         fadePanel.blocksRaycasts = false;
+        
+        recipeUnlockManager = RecipeUnlockManager.Instance;
+        ingredientUnlockManager = IngredientUnlockManager.Instance;
     }
     
     private void Start()
