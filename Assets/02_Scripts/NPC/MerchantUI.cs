@@ -129,7 +129,7 @@ public class MerchantUI : MonoBehaviour
     
     private void HandleProductClicked(ItemData itemData)
     {
-        talkPanel.ChangeText($"{itemData.itemName}을 구매하시려고요?");
+        talkPanel.ChangeText($"{itemData.itemName}을 사고 싶어?");
         UIManager.Instance.CreateAmountPopup($"{itemData.itemName}을 구매하시겠습니까?", itemData,
             (amount) =>
             {
@@ -137,7 +137,7 @@ public class MerchantUI : MonoBehaviour
                 
                 if (!EconomyManager.Instance.CanSpend(totalPrice))
                 {
-                    talkPanel.ChangeText("돈이 부족한 것 같은데요...");
+                    talkPanel.ChangeText("돈이 부족한 것 같은데?");
                     UIManager.Instance.CreateOkPopup("돈이 부족합니다!", () => {});
                     return;
                 }
@@ -146,13 +146,13 @@ public class MerchantUI : MonoBehaviour
 
                 if (success)
                 {
-                    talkPanel.ChangeText("좋은 선택이에요!");
+                    talkPanel.ChangeText("좋은 선택야!");
                     UIManager.Instance.CreateOkPopup("구매 완료!", () => {});
                 }
             },
             () =>
             {
-                talkPanel.ChangeText("천천히 둘러보세요~");
+                talkPanel.ChangeText("천천히 골라도 돼");
                 Debug.Log("취소 버튼 눌림");
             });
     }
@@ -199,11 +199,11 @@ public class MerchantUI : MonoBehaviour
         switch (currentState)
         {
             case MerchantState.Shop:
-                dialogue = "좋은 물건 많아요~ 구경하고 가세요!";
+                dialogue = "좋은 물건 많아~ 구경하고 가";
                 break;
 
             case MerchantState.Quest:
-                dialogue = "일 좀 부탁드려도 될까요? 보상은 해드릴게요";
+                dialogue = "일 좀 부탁해도 될까? 보상은 할게";
                 break;
 
             case MerchantState.Talk:
@@ -211,7 +211,7 @@ public class MerchantUI : MonoBehaviour
                 break;
             
             case MerchantState.Debt:
-                dialogue = "돈을 갚으시고 싶으신가요?";
+                dialogue = "돈을 갚고 싶어?";
                 break;
 
             default:
