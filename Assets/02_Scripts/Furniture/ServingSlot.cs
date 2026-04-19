@@ -59,25 +59,14 @@ public class ServingSlot : MonoBehaviour, IInteractable
         // 상호작용 로직
         InventoryManager.Instance.OpenInventory(this.inventory);
         //this.feedback.PlayFeedback();
-        UIAnimationManager.Instance.ShowPopFromWorld(this.ui.PanelTransform, this.transform);
-        this.inventory.OnCloseRequested += HandleInventoryCloseRequest;
     }
 
     public void OnInteractEnd(PlayerController player)
     {
         // 종료 시 정리 로직
-        HandleInventoryCloseRequest();
+        InventoryManager.Instance.CloseInventory(this.inventory);
     }
-    private void HandleInventoryCloseRequest()
-    {
-        this.inventory.OnCloseRequested -= HandleInventoryCloseRequest;
 
-        UIAnimationManager.Instance.HidePopToWorld(this.ui.PanelTransform, this.transform, 0.3f,
-            onComplete: () =>
-            {
-                InventoryManager.Instance.CloseInventory(this.inventory);
-            });
-    }
 
     /// <summary>
     /// 배식대에 음식을 놓는 상황
