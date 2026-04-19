@@ -20,39 +20,73 @@ public class PlayerAnimation : MonoBehaviour
     
     private void HandleStateChanged(PlayerState state)
     {
+        if (state == PlayerState.Idle || state == PlayerState.Walk || state == PlayerState.Run)
+        {
+            DOTween.Kill(this.gameObject.GetInstanceID());
+        }
+
         switch (state)
         {
-            case PlayerState.Idle:
-                DOTween.Kill(this.gameObject.GetInstanceID());
-
-                float currentSpeed = this.animator.GetFloat(this.hashSpeed);
-
-                DOVirtual.Float(currentSpeed, 0f, 0.1f, (value) =>
-                {
-                    this.animator.SetFloat(this.hashSpeed, value);
-                }).SetId(this.gameObject.GetInstanceID());
+            case PlayerState.Idle: 
+                PlayIdle(); 
                 break;
-
-            case PlayerState.Walk:
-                this.animator.SetFloat(this.hashSpeed, 0.5f);
+            case PlayerState.Walk: 
+                PlayWalk(); 
                 break;
-
-            case PlayerState.Run:
-                this.animator.SetFloat(this.hashSpeed, 1f);
+            case PlayerState.Run: 
+                PlayRun(); 
                 break;
-
-            case PlayerState.PickUp:
-                this.animator.SetTrigger(this.hashPickup);
+            case PlayerState.PickUp: 
+                PlayPickUp(); 
                 break;
-
-            case PlayerState.Give:
-                this.animator.SetTrigger(this.hashGive);
+            case PlayerState.Give: 
+                PlayGive(); 
                 break;
-
-            case PlayerState.Interact:
-                this.animator.SetTrigger(this.hashInteract);
+            case PlayerState.Interact: 
+                PlayInteract();
                 break;
         }
     }
+    private void PlayIdle()
+    {
+        float currentSpeed = this.animator.GetFloat(this.hashSpeed);
+        DOVirtual.Float(currentSpeed, 0f, 0.1f, (value) =>
+        {
+            this.animator.SetFloat(this.hashSpeed, value);
+        }).SetId(this.gameObject.GetInstanceID());
+    }
 
+    private void PlayWalk()
+    {
+        ResetActionTriggers();
+        this.animator.SetFloat(this.hashSpeed, 0.5f);
+    }
+
+    private void PlayRun()
+    {
+        ResetActionTriggers(); 
+        this.animator.SetFloat(this.hashSpeed, 1f);
+    }
+
+    private void PlayPickUp()
+    {
+        this.animator.SetTrigger(this.hashPickup);
+    }
+
+    private void PlayGive()
+    {
+        this.animator.SetTrigger(this.hashGive);
+    }
+
+    private void PlayInteract()
+    {
+        this.animator.SetTrigger(this.hashInteract);
+    }
+
+    private void ResetActionTriggers()
+    {
+        this.animator.ResetTrigger(this.hashPickup);
+        this.animator.ResetTrigger(this.hashGive);
+        this.animator.ResetTrigger(this.hashInteract);
+    }
 }

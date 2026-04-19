@@ -43,11 +43,21 @@ public class PlayerInput : MonoBehaviour
     private void PlayerSelection()
     {
         if (PlayerManager.Instance.BlockSwap) return;
-        
+
+        var currentUnit = PlayerManager.Instance.SelectedUnit;
+
         if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            if (currentUnit.PlayerType == PlayerType.Myungwol) 
+                return;
             PlayerManager.Instance.SelectPlayer(PlayerType.Myungwol);
+        }
         else if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            if (currentUnit.PlayerType == PlayerType.Sowol) 
+                return;
             PlayerManager.Instance.SelectPlayer(PlayerType.Sowol);
+        }
     }
 
     // 마우스 클릭

@@ -5,6 +5,7 @@ public class PopupController : MonoBehaviour
 {
     // 팝업 패널의 RectTransform 참조
     [SerializeField] private RectTransform panelTransform;
+    public RectTransform PanelTransform => panelTransform;
 
     public delegate void PanelControllerHideDelegate();
 

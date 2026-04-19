@@ -706,8 +706,8 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 2113943967}
   - {fileID: 166198944}
+  - {fileID: 2113943967}
   m_Father: {fileID: 834262730}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -3613,6 +3613,11 @@ RectTransform:
   m_AnchoredPosition: {x: -5, y: 0}
   m_SizeDelta: {x: -20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &192042576 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3366009045225874051, guid: 4c10cfba300b8774a9e83f5bc8d8c02f, type: 3}
+  m_PrefabInstance: {fileID: 4885728713000968564}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &196685485
 GameObject:
   m_ObjectHideFlags: 0
@@ -47138,6 +47143,22 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2652942428037689914, guid: 4c10cfba300b8774a9e83f5bc8d8c02f, type: 3}
   m_PrefabInstance: {fileID: 4885728713000968564}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &4430325999717711947
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 192042576}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5099a3a23bf48884db6db59ebea8b9ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractFeedback
+  shakeDuration: 0.381
+  shakeStrength: 0.246
+  shakeVibrato: 23
+  shakeRandomness: 141
 --- !u!33 &4517789672555356741
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -47391,13 +47412,24 @@ PrefabInstance:
       value: Fridge
       objectReference: {fileID: 0}
     - target: {fileID: 7785141689976033341, guid: 4c10cfba300b8774a9e83f5bc8d8c02f, type: 3}
+      propertyPath: ui
+      value: 
+      objectReference: {fileID: 670208715}
+    - target: {fileID: 7785141689976033341, guid: 4c10cfba300b8774a9e83f5bc8d8c02f, type: 3}
+      propertyPath: feedback
+      value: 
+      objectReference: {fileID: 4430325999717711947}
+    - target: {fileID: 7785141689976033341, guid: 4c10cfba300b8774a9e83f5bc8d8c02f, type: 3}
       propertyPath: inventory
       value: 
       objectReference: {fileID: 146500700}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3366009045225874051, guid: 4c10cfba300b8774a9e83f5bc8d8c02f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4430325999717711947}
   m_SourcePrefab: {fileID: 100100000, guid: 4c10cfba300b8774a9e83f5bc8d8c02f, type: 3}
 --- !u!23 &5225116166332020088
 MeshRenderer:

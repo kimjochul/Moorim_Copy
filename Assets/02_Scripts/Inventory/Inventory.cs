@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.Loading;
 using UnityEditor.UI;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 using static Constants;
 
@@ -24,11 +25,21 @@ public class Inventory : MonoBehaviour
     
     public Action<Slot> OnItemAdded;
 
+    public UnityAction OnCloseRequested;
+
     private void Awake()
     {
         CreateSlots(slotCount);
-        if(closeButton != null)
-            closeButton.onClick.AddListener(()=>UIManager.Instance.CloseInventoryPopup(this));
+        if (closeButton != null)
+        {
+            closeButton.onClick.AddListener(() =>
+            {
+                if (OnCloseRequested != null)
+                    OnCloseRequested.Invoke();
+                else
+                    UIManager.Instance.CloseInventoryPopup(this);
+            });
+        }
     }
 
     /// <summary>
