@@ -3347,7 +3347,7 @@ MonoBehaviour:
   m_Content: {fileID: 1411316124}
   m_Horizontal: 1
   m_Vertical: 1
-  m_MovementType: 1
+  m_MovementType: 2
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
@@ -24252,7 +24252,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a82595332a77724fa76919641ab8fd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DayManager
-  dayLength: 300
+  dayLength: 100
   gameStartHour: 9
   gameEndHour: 21
   npcList:
@@ -35912,7 +35912,7 @@ MonoBehaviour:
   spawnPoint: {fileID: 808904804}
   exitPoint: {fileID: 1132518772}
   startSpawnTime: 1
-  spawnInterval: 5
+  spawnInterval: 30
   maxWaitingCount: 4
   waitingPoint:
   - {fileID: 199337818}
@@ -36836,7 +36836,7 @@ MonoBehaviour:
   m_Content: {fileID: 267680506}
   m_Horizontal: 1
   m_Vertical: 1
-  m_MovementType: 1
+  m_MovementType: 2
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
@@ -47397,6 +47397,10 @@ PrefabInstance:
     - target: {fileID: 48328715265272213, guid: fbc254c1c0e12b84b86af12d36b7e377, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4196779011024988245, guid: fbc254c1c0e12b84b86af12d36b7e377, type: 3}
+      propertyPath: cookTime
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 5837705983297118231, guid: fbc254c1c0e12b84b86af12d36b7e377, type: 3}
       propertyPath: m_Name

@@ -16,6 +16,7 @@ public class OrdersPopupController : PopupController
     void Start()
     {
         closeBtn.onClick.AddListener(OnClickCancelButton);
+        DayManager.Instance.OnDayEnd += ResetOrders;
     }
     
     public new void Show()
@@ -63,7 +64,19 @@ public class OrdersPopupController : PopupController
             activeOrders.Remove(guest);
         }
     }
+    void ResetOrders()
+    {
+        foreach (OrderPopup popup in activeOrders.Values)
+        {
+            if (popup != null)
+            {
+                Destroy(popup.gameObject);
+            }
+        }
+        activeOrders.Clear();
 
+        UpdateNotification(false);
+    }
     void UpdateNotification(bool isActive)
     {
         orderNotificationObj.SetActive(isActive);
