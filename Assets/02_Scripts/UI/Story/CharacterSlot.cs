@@ -1,4 +1,5 @@
 using System.Collections;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,6 +17,13 @@ public class CharacterSlot : MonoBehaviour
 
     private Coroutine iconCoroutine;
     
+    private Vector3 originalPosition;
+
+    private void Awake()
+    {
+        originalPosition = transform.localPosition;
+    }
+    
     public void SetCharacter(int characterID, Sprite sprite)
     {
         currentCharacterID = characterID;
@@ -23,6 +31,14 @@ public class CharacterSlot : MonoBehaviour
         gameObject.SetActive(true);
         
         HideEmotionIcon();
+    }
+    
+    public void SetHidden(int characterID, Sprite sprite)
+    {
+        currentCharacterID = characterID;
+        characterImage.sprite = sprite;
+
+        gameObject.SetActive(false);
     }
 
     public void Clear()
@@ -37,6 +53,8 @@ public class CharacterSlot : MonoBehaviour
     {
         SetCharacter(characterID, sprite);
 
+        transform.localPosition = originalPosition;
+        
         StopAllCoroutines();
         StartCoroutine(AppearRoutine());
     }
@@ -176,6 +194,45 @@ public class CharacterSlot : MonoBehaviour
         }
 
         gameObject.SetActive(false);
+    }
+    
+    public void Exit(Vector3 direction, float distance, float duration)
+    {
+        transform.DOKill();
+
+        Vector3 target = transform.localPosition + direction * distance;
+
+        transform.DOLocalMove(target, duration)
+            .SetEase(Ease.InOutQuad)
+            .OnComplete(() =>
+            {
+                Disappear();
+            });
+    }
+    
+    public void Enter(Vector3 direction, float distance, float duration, bool isUnknown)
+    {
+        gameObject.SetActive(true);
+        
+        transform.DOKill();
+
+        // 시작 위치 (화면 밖)
+        Vector3 origin = transform.localPosition;
+        Vector3 start = origin + direction * distance;
+
+        transform.localPosition = start;
+
+        if (isUnknown)
+            SetColor(new Color(0.1f, 0.1f, 0.1f, 1f));
+        else
+            SetColor(Color.white);
+        
+        Sequence seq = DOTween.Sequence();
+
+        seq.Append(transform.DOLocalMove(origin, duration).SetEase(Ease.OutCubic));
+        seq.Join(characterImage.DOFade(1f, duration));
+
+        seq.OnComplete(() =>{ });
     }
     
     public void ClearImmediate()

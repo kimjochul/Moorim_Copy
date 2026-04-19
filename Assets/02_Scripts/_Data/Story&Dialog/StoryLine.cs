@@ -20,6 +20,8 @@ public class StoryLine
     
     public bool showEmotionIcon;
     public bool useAccentFontSize;
+
+    public bool isUnknown;
 }
 
 public enum LineType
@@ -52,6 +54,8 @@ public enum MotionType
     MoveDown,
     ExitLeft,
     ExitRight,
+    EnterLeft,
+    EnterRight,
     Jump,
     Shake
 }
