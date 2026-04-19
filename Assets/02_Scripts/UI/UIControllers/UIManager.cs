@@ -210,6 +210,7 @@ public class UIManager : Singleton<UIManager>
     public void ActiveBook(bool isShow)
     {
         book.ShowBook(isShow);
+        CheckAndPauseGame();
     }
     // 설정창
     public void ActiveSetting(bool isShow)
@@ -218,5 +219,13 @@ public class UIManager : Singleton<UIManager>
             setting.Show(); 
         else
             setting.Hide();
+        CheckAndPauseGame();
+    }
+    private void CheckAndPauseGame()
+    {
+        if (IsBookActive || IsSettingActive)
+            Time.timeScale = 0f;
+        else 
+            Time.timeScale = 1f;
     }
 }
