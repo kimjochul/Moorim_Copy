@@ -29,7 +29,7 @@ public class Fridge : MonoBehaviour, IInteractable
 
         // 상호작용 로직
         InventoryManager.Instance.OpenInventory(this.inventory);
-        this.feedback.PlayFeedback();
+        //this.feedback.PlayFeedback();
         UIAnimationManager.Instance.ShowPopFromWorld(this.ui.PanelTransform, this.transform);
         this.inventory.OnCloseRequested += HandleInventoryCloseRequest;
     }
