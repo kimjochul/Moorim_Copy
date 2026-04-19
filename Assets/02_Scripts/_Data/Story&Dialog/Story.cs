@@ -26,4 +26,5 @@ public class CharacterInScene
 {
     public int characterID;
     public int slotIndex;
+    public bool startVisible;
 }

@@ -223,9 +223,20 @@ public class StoryManager : MonoBehaviour
         if (line.lineType == LineType.Dialogue)
         {
             storyUI.ShowCharacterName();
+            
+            characterUI.SetUnknown(line.characterID, line.isUnknown);
             characterUI.SetExpression(line.characterID, line.emotion);
-            characterUI.Focus(line.characterID);
-            characterUI.PlayMotion(line.characterID, line.motion);
+            
+            if (line.isUnknown)
+            {
+                characterUI.Focus(-1); // 강조 없음
+            }
+            else
+            {
+                characterUI.Focus(line.characterID);
+            }
+            
+            characterUI.PlayMotion(line.characterID, line.motion, line.isUnknown);
             characterUI.ShowEmotionIcon(line.characterID, line.emotion);
         }
         else // ⭐ 나레이션

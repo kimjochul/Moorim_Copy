@@ -123,7 +123,7 @@ public class StoryUI : MonoBehaviour
         }
         else
         {
-            speakerText.text = storyManager.GetCharacterName(line.characterID);
+            speakerText.text = line.isUnknown ? "???" : storyManager.GetCharacterName(line.characterID);
             contentText.alignment = TextAlignmentOptions.TopLeft;
         }
         
@@ -146,7 +146,7 @@ public class StoryUI : MonoBehaviour
         }
         else
         {
-            speakerText.text = storyManager.GetCharacterName(line.characterID);
+            speakerText.text = line.isUnknown ? "???" : storyManager.GetCharacterName(line.characterID);
             contentText.alignment = TextAlignmentOptions.TopLeft;
             ShowCharacterName();
         }

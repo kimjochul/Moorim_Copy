@@ -89,7 +89,16 @@ public class CharacterUI : MonoBehaviour
             // 새로 등장
             if (dataDict.TryGetValue(info.characterID, out var data))
             {
-                slot.Appear(info.characterID, data.emotions[0].sprite);
+                if (info.startVisible)
+                {
+                    // ⭐ 처음부터 보이는 캐릭터
+                    slot.Appear(info.characterID, data.emotions[0].sprite);
+                }
+                else
+                {
+                    // ⭐ 아직 안 온 캐릭터 (숨김 상태)
+                    slot.SetHidden(info.characterID, data.emotions[0].sprite);
+                }
                 currentSlotMap[info.characterID] = info.slotIndex;
             }
         }
@@ -128,6 +137,17 @@ public class CharacterUI : MonoBehaviour
             slot.GetComponent<SpriteRenderer>().sprite = emo.sprite;
         }
     }
+    
+    public void SetUnknown(int characterID, bool isUnknown)
+    {
+        var slot = FindSlot(characterID);
+        if (slot == null) return;
+
+        if (isUnknown)
+            slot.SetColor(new Color(0.1f, 0.1f, 0.1f, 1f));
+        else
+            slot.SetColor(Color.white);
+    }
 
     public void Focus(int speakerID)
     {
@@ -144,7 +164,7 @@ public class CharacterUI : MonoBehaviour
         }
     }
 
-    public void PlayMotion(int characterID, MotionData motion)
+    public void PlayMotion(int characterID, MotionData motion, bool isUnknown)
     {
         var slot = FindSlot(characterID);
         if (slot == null || motion == null) return;
@@ -164,8 +184,21 @@ public class CharacterUI : MonoBehaviour
                 break;
 
             case MotionType.ExitLeft:
-                slot.transform.position += Vector3.left * 5f;
+                slot.Exit(Vector3.left, motion.value, motion.duration);
                 break;
+
+            case MotionType.ExitRight:
+                slot.Exit(Vector3.right, motion.value, motion.duration);
+                break;
+            
+            case MotionType.EnterLeft:
+                slot.Enter(Vector3.left, motion.value, motion.duration, isUnknown);
+                break;
+
+            case MotionType.EnterRight:
+                slot.Enter(Vector3.right, motion.value, motion.duration, isUnknown);
+                break;
+            
             case MotionType.Shake: 
                 StartCoroutine(slot.Shake(motion.duration, motion.value));
                 break;
