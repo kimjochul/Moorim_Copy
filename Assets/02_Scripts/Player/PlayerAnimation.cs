@@ -24,7 +24,6 @@ public class PlayerAnimation : MonoBehaviour
         {
             DOTween.Kill(this.gameObject.GetInstanceID());
         }
-
         switch (state)
         {
             case PlayerState.Idle: 
@@ -58,13 +57,11 @@ public class PlayerAnimation : MonoBehaviour
 
     private void PlayWalk()
     {
-        ResetActionTriggers();
         this.animator.SetFloat(this.hashSpeed, 0.5f);
     }
 
     private void PlayRun()
-    {
-        ResetActionTriggers(); 
+    { 
         this.animator.SetFloat(this.hashSpeed, 1f);
     }
 
@@ -81,12 +78,5 @@ public class PlayerAnimation : MonoBehaviour
     private void PlayInteract()
     {
         this.animator.SetTrigger(this.hashInteract);
-    }
-
-    private void ResetActionTriggers()
-    {
-        this.animator.ResetTrigger(this.hashPickup);
-        this.animator.ResetTrigger(this.hashGive);
-        this.animator.ResetTrigger(this.hashInteract);
     }
 }
