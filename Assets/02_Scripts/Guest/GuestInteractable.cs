@@ -24,6 +24,9 @@ public class GuestInteractable : MonoBehaviour, IInteractable
     public bool CanInteract(PlayerType playerType)
     {
         return playerType == PlayerType.Myungwol;
+
+        //분노 퇴장 중이면 상호작용 불가
+        if (myBrain == null || myBrain.IsAngryExiting) return false;
     }
  
     // 명월이가 손님을 클릭했을 때 맵의 어디로 걸어와야 하는가?
@@ -35,6 +38,8 @@ public class GuestInteractable : MonoBehaviour, IInteractable
     // 명월이가 손님 근처에 도착해서 상호작용을 완료했을 때 벌어질 일
     public void Interact(PlayerController player)
     {
+        if (myBrain == null || myBrain.IsAngryExiting) return;
+        
         if (myBrain.currentState == GuestState.WaitOrder)
             myBrain.TakeOrder();
         else if (myBrain.currentState == GuestState.WaitFood)
@@ -62,6 +67,12 @@ public class GuestInteractable : MonoBehaviour, IInteractable
     
     public void DeliverFood(Inventory serverInven, Slot slot)
     {
+        if (myBrain == null || myBrain.IsAngryExiting)
+        {
+            InventoryManager.Instance.CloseInventory(serverInven);
+            return;
+        }
+        
         FoodData food = slot.Item.Data as FoodData;
         if (food == null) return;
 
