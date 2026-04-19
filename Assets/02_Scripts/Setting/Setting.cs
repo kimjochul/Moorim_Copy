@@ -16,7 +16,7 @@ public class Setting : MonoBehaviour
     }
     private void EventInit()
     {
-        this.btnClose.onClick.AddListener(Hide);
+        this.btnClose.onClick.AddListener(() => UIManager.Instance.ActiveSetting(false));
     }
     public void Show()
     {
