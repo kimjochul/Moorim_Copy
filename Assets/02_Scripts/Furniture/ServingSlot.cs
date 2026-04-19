@@ -39,6 +39,11 @@ public class ServingSlot : MonoBehaviour, IInteractable
 
                 inventory.RemoveItem(slot.Item.ID, 1);
 
+                if (objFoodPrefab != null)
+                {
+                    Destroy(objFoodPrefab);
+                }
+                
                 slot.SpoilTimer = 0f;
             }
             //Debug.Log($"{slot.Index}번 슬롯 Spoil Timer : {slot.SpoilTimer}");
