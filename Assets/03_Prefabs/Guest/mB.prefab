@@ -265,7 +265,7 @@ GameObject:
   - component: {fileID: 4787663467351057983}
   - component: {fileID: 7949732346302113962}
   - component: {fileID: 6587514454175644402}
-  - component: {fileID: 557842974206341919}
+  - component: {fileID: 670875863461783635}
   - component: {fileID: 4108226090132639844}
   - component: {fileID: 4491326595672778144}
   - component: {fileID: 160253749384491004}
@@ -365,7 +365,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 80
   m_CollisionDetection: 0
---- !u!195 &557842974206341919
+--- !u!195 &670875863461783635
 NavMeshAgent:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -374,7 +374,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 5251299094573916000}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.07898979
+  m_Radius: 0.5
   m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 50
@@ -383,8 +383,8 @@ NavMeshAgent:
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
-  m_Height: 0.00001
-  m_BaseOffset: 1
+  m_Height: 2
+  m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!114 &4108226090132639844
@@ -407,7 +407,6 @@ MonoBehaviour:
   foodEatLimit: 15
   menuChooseTime: 3
   payWaitTime: 3
-  menuBoard: {fileID: 11400000, guid: 6d1d33b9b84924d419f1e13f1b6636fc, type: 2}
   rewardData: {fileID: 11400000, guid: 8fa5f676bf8179f4ca79172cc7dc0804, type: 2}
   exitDoor: {fileID: 0}
   myChair: {fileID: 0}

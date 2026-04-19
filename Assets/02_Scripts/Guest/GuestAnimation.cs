@@ -53,6 +53,7 @@ public class GuestAnimation : MonoBehaviour
         {
             case GuestState.Enter:      PlayWalk();     break;
             case GuestState.Waiting:    PlayIdle();     break;
+            case GuestState.Exit:       PlayWalk();     break;
         }
     }
 
@@ -120,10 +121,10 @@ public class GuestAnimation : MonoBehaviour
         anim.SetBool(IS_SITTING, false);
         anim.SetBool(IS_EATING, false);
         anim.SetBool(IS_ANGRY, false);
+        anim.ResetTrigger(STANDUP_TRIGGER);
         anim.SetTrigger(STANDUP_TRIGGER);
         waitCoroutine = StartCoroutine(WaitForAnimation(STATE_STANDUP, () =>
         {
-            anim.SetBool(IS_WALKING, true);
             OnStandUpFinished?.Invoke();
         }));
     }
@@ -146,12 +147,16 @@ public class GuestAnimation : MonoBehaviour
 
         // 상태 진입 대기 (최대 2초 안전장치)
         float safety = 0f;
-        while (!anim.GetCurrentAnimatorStateInfo(0).IsName(stateName))
+        while (true)
         {
+            var stateInfo = anim.GetCurrentAnimatorStateInfo(0);
+            if (stateInfo.IsName(stateName) && stateInfo.normalizedTime < 0.3f)
+                break;
+            
             safety += Time.deltaTime;
             if (safety > 2f)
             {
-                Debug.LogWarning($"[GuestAnimation] '{stateName}' 상태 진입 실패 - Animator Controller의 State 이름/Transition 조건 확인 필요");
+                Debug.LogWarning($"[GuestAnimation] '{stateName}' 상태 진입 실패");
                 onComplete?.Invoke(); // 타임아웃 시에도 콜백은 쏨 (흐름 안 막히게)
                 waitCoroutine = null;
                 yield break;
