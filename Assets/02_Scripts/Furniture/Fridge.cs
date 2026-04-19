@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,8 +9,10 @@ public class Fridge : MonoBehaviour, IInteractable
 {
     [SerializeField] private Transform movePoint;
     [SerializeField] private Inventory inventory;
-    
-    
+    [SerializeField] private PopupController ui;
+
+    [SerializeField] private InteractFeedback feedback;
+
     public InteractMode Mode => InteractMode.AutoOnEnter;
 
     private void Start()
@@ -23,23 +26,29 @@ public class Fridge : MonoBehaviour, IInteractable
     public void Interact(PlayerController player)
     {
         Debug.Log("Fridge Interact 호출됨");
-        
+
         // 상호작용 로직
-        if (player.PlayerType == PlayerType.Sowol)
-            InventoryManager.Instance.OpenInventory(inventory);
-        else if (player.PlayerType == PlayerType.Myungwol)
-            InventoryManager.Instance.OpenInventory(inventory);
+        InventoryManager.Instance.OpenInventory(this.inventory);
+        //this.feedback.PlayFeedback();
+        UIAnimationManager.Instance.ShowPopFromWorld(this.ui.PanelTransform, this.transform);
+        this.inventory.OnCloseRequested += HandleInventoryCloseRequest;
     }
 
     public void OnInteractEnd(PlayerController player)
     {
         // 종료 시 정리 로직
-        if (player.PlayerType == PlayerType.Sowol)
-            InventoryManager.Instance.CloseInventory(inventory);
-        else if (player.PlayerType == PlayerType.Myungwol)
-            InventoryManager.Instance.CloseInventory(inventory);
+        HandleInventoryCloseRequest();
     }
-    
+    private void HandleInventoryCloseRequest()
+    {
+        this.inventory.OnCloseRequested -= HandleInventoryCloseRequest;
+
+        UIAnimationManager.Instance.HidePopToWorld(this.ui.PanelTransform, this.transform, 0.3f,
+            onComplete: () =>
+            {
+                InventoryManager.Instance.CloseInventory(this.inventory);
+            });
+    }
     private void OnDayEnd()
     {
         foreach (var slot in inventory.Slots)
