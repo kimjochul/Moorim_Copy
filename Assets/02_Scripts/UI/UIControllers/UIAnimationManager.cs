@@ -914,6 +914,74 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
             onComplete?.Invoke();
         });
     }
+    public void ShowPopFromWorld(RectTransform ui, Transform worldOrigin, float duration = 0.4f, UnityAction onComplete = null)
+    {
+        if (ui == null || worldOrigin == null) return;
+
+        ui.DOKill();
+        CanvasGroup cg = ui.GetComponent<CanvasGroup>();
+        if (cg == null) cg = ui.gameObject.AddComponent<CanvasGroup>();
+
+        Canvas canvas = ui.GetComponentInParent<Canvas>();
+        RectTransform parentRect = ui.parent.GetComponent<RectTransform>();
+
+        Vector2 finalPos = ui.anchoredPosition;
+
+        // 3D의 위치를 2D UI 좌표로 변환합니다.
+        Camera cam = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
+        Vector2 screenPos = Camera.main.WorldToScreenPoint(worldOrigin.position);
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(parentRect, screenPos, cam, out Vector2 startPos);
+
+        ui.anchoredPosition = startPos;
+        ui.localScale = Vector3.zero;
+        cg.alpha = 0f;
+        cg.blocksRaycasts = false;
+
+        Sequence seq = DOTween.Sequence();
+        seq.Append(ui.DOAnchorPos(finalPos, duration).SetEase(Ease.OutBack));
+        seq.Join(ui.DOScale(Vector3.one, duration).SetEase(Ease.OutBack));
+        seq.Join(cg.DOFade(1f, duration * 0.5f)); 
+
+        seq.OnComplete(() => {
+            cg.blocksRaycasts = true;
+            onComplete?.Invoke();
+        });
+    }
+
+    /// <summary>
+    /// UI 원래 자리에서 3D 오브젝트 위치로 빨려 들어가는 연출
+    /// </summary>
+    public void HidePopToWorld(RectTransform ui, Transform worldOrigin, float duration = 0.3f, UnityAction onComplete = null)
+    {
+        if (ui == null || worldOrigin == null) return;
+
+        ui.DOKill();
+        CanvasGroup cg = ui.GetComponent<CanvasGroup>();
+        if (cg == null) cg = ui.gameObject.AddComponent<CanvasGroup>();
+
+        Canvas canvas = ui.GetComponentInParent<Canvas>();
+        RectTransform parentRect = ui.parent.GetComponent<RectTransform>();
+
+        // 현재 위치 저장
+        Vector2 originalPos = ui.anchoredPosition;
+
+        // 원래 위치 계산
+        Camera cam = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
+        Vector2 screenPos = Camera.main.WorldToScreenPoint(worldOrigin.position);
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(parentRect, screenPos, cam, out Vector2 endPos);
+
+        cg.blocksRaycasts = false;
+
+        Sequence seq = DOTween.Sequence();
+        seq.Append(ui.DOAnchorPos(endPos, duration).SetEase(Ease.InBack));
+        seq.Join(ui.DOScale(Vector3.zero, duration).SetEase(Ease.InBack));
+        seq.Join(cg.DOFade(0f, duration));
+
+        seq.OnComplete(() => {
+            ui.anchoredPosition = originalPos; 
+            onComplete?.Invoke();
+        });
+    }
     private void SetPivot(RectTransform rt, Vector2 newPivot)
     {
         if (rt == null) return;
