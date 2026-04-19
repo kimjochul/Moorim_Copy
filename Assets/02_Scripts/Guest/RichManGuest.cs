@@ -7,9 +7,8 @@ public class RichManGuest : GuestBase
     {
         orderMinWaitLimit = 10f;
         orderMaxWaitLimit = 15f;
-        foodMinWaitLimit = 15f; 
-        foodMidWaitLimit = 45f; 
-        foodMaxWaitLimit = 60f; 
+        foodMinWaitLimit = 30f; 
+        foodMaxWaitLimit = 45f; 
 
         base.Init(id, appearance, exit, manager);
     }

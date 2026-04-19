@@ -42,6 +42,7 @@ public abstract class GuestBase : MonoBehaviour
 
     // 애니메이션 진행 플래그
     private bool isAngryExiting = false;
+    public bool IsAngryExiting => isAngryExiting;
     private bool isPlayingHandDown = false;
     private bool isPlayingStandUp = false;
     private bool hasShownPayUI = false;
@@ -332,12 +333,11 @@ public abstract class GuestBase : MonoBehaviour
 
         stateTimer += Time.deltaTime;
 
-        if (stateTimer >= foodMaxWaitLimit)
+        if (stateTimer >= foodMaxWaitLimit && CurrentMood == GuestMood.Bad)
         {
-            TriggerAngryExit(-2);
-        }
-        else if (stateTimer >= foodMidWaitLimit && CurrentMood == GuestMood.Bad)
             SetMood(GuestMood.VeryBad);
+            TriggerAngryExit(-2);  
+        }
         else if (stateTimer >= foodMinWaitLimit && CurrentMood == GuestMood.Neutral)
             SetMood(GuestMood.Bad);
     }
