@@ -5,8 +5,8 @@ using UnityEngine;
 public class SoundList : ScriptableObject
 {
     [Header("배경 리스트")]
-    public List<SoundData> bgmList = new List<SoundData>();
+    public List<BGMData> bgmList = new List<BGMData>();
 
     [Header("효과음 리스트")]
-    public List<SoundData> sfxList = new List<SoundData>();
+    public List<SFXData> sfxList = new List<SFXData>();
 }

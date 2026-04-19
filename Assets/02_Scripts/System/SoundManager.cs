@@ -10,11 +10,16 @@ public class SoundManager : Singleton<SoundManager>
 
     [Header("사운드 데이터 에셋")]
     [SerializeField] private SoundList soundList;
+    public List<BGMData> BgmList => this.soundList.bgmList;
+
 
     [Header("볼륨 세팅")]
     [Range(0f, 1f)][SerializeField] private float masterVolume = 1f;
     [Range(0f, 1f)][SerializeField] private float bgmVolume = 1f;
     [Range(0f, 1f)][SerializeField] private float sfxVolume = 1f;
+
+    private int currentBgmIndex = -1;
+    public int CurrentBgmIndex => currentBgmIndex;
 
     public float MasterVolume => this.masterVolume;
     public float BgmVolume => this.bgmVolume;
@@ -29,6 +34,11 @@ public class SoundManager : Singleton<SoundManager>
         base.Awake();
         Setting();
         Init();
+    }
+
+    void Start()
+    {
+        PlayRandomBGM();
     }
 
     private void Init()
@@ -47,7 +57,14 @@ public class SoundManager : Singleton<SoundManager>
                 this.dicSFX.Add(data.soundName, data);
         }
     }
+    public void PlayRandomBGM()
+    {
+        if (this.BgmList == null || this.BgmList.Count == 0) return;
 
+        this.currentBgmIndex = Random.Range(0, this.BgmList.Count);
+
+        PlayBGM(this.BgmList[this.currentBgmIndex].soundName);
+    }
     private void Setting()
     {
         if (this.bgmSource == null)

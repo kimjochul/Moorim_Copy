@@ -1,8 +1,7 @@
 using UnityEngine;
+using static Constants;
 
-
-[CreateAssetMenu(fileName = "SoundData", menuName = "SoundSO/SoundData")]
-public class SoundData : ScriptableObject
+public abstract class SoundData : ScriptableObject
 {
     public string soundName;                   // 이름(SoundManager key값)
     public AudioClip clip;                     // 사운드 파일
