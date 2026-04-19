@@ -54,21 +54,18 @@ public class QuestTab : BaseTab
         switch (this.currentCategory)
         {
             case QuestCategory.Main: 
-                this.txtCategoryName.text = "���� ����Ʈ";
+                this.txtCategoryName.text = "메인 퀘스트";
                 break;
             case QuestCategory.Sub: 
-                this.txtCategoryName.text = "���� ����Ʈ";
+                this.txtCategoryName.text = "서브 퀘스트";
                 break;
             case QuestCategory.Repeat: 
-                this.txtCategoryName.text = "�ݺ� ����Ʈ"; 
+                this.txtCategoryName.text = "반복 퀘스트"; 
                 break;
         }
 
         List<Quest> displayActiveQuests = this.dicActiveQuests[this.currentCategory];
         List<Quest> displayCompletedQuests = this.dicCompletedQuests[this.currentCategory];
-
-        Debug.Log(displayActiveQuests.Count);
-        Debug.Log(displayCompletedQuests.Count);
 
         RefreshQuestGroup(this.inProgressGroup, displayActiveQuests);
         RefreshQuestGroup(this.completedGroup, displayCompletedQuests);
@@ -144,7 +141,7 @@ public class QuestTab : BaseTab
             this.currentSelectedSlot = null;
         }
 
-        this.txtQuestName.text = "���õ� ����Ʈ�� �����ϴ�";
+        this.txtQuestName.text = "선택된 퀘스트가 없습니다.";
         this.txtDetail.text = "";
         this.txtDescription.text = "";
     }

@@ -14,12 +14,14 @@ public class StatusTab : BaseTab
     // 오른쪽 페이지
 
     // 명월
+    [SerializeField] private PlayerData myungwolData;
     [SerializeField] private Image imgMyungwol;
     [SerializeField] private TextMeshProUGUI txtMyungwolLike;
     [SerializeField] private TextMeshProUGUI txtMyungwolDislike;
     [SerializeField] private TextMeshProUGUI txtMyungwolSkill;
 
     // 소월
+    [SerializeField] private PlayerData sowolData;
     [SerializeField] private Image imgSowol;
     [SerializeField] private TextMeshProUGUI txtSowolLike;
     [SerializeField] private TextMeshProUGUI txtSowolDislike;
@@ -40,11 +42,8 @@ public class StatusTab : BaseTab
         this.txtTotalHappyGuests.text = happyGuests.ToString();
         this.txtTotalAngryGuests.text = angryGuests.ToString();
 
-        PlayerData data = new PlayerData();
-
-
-        ProfileMyungwol(data);
-        ProfileSowol(data);
+        ProfileMyungwol(this.myungwolData);
+        ProfileSowol(this.sowolData);
     }
     public void ProfileMyungwol(PlayerData data)
     {
