@@ -69,6 +69,7 @@ public class Receipt : MonoBehaviour
     }
     private void HandleDayResult(GuestResultData dailyData, GuestResultData totalData)
     {
+
         this.data = new ReceiptData
         {
             week = this.dayManager.DayData,
@@ -79,7 +80,7 @@ public class Receipt : MonoBehaviour
             happyGuests = dailyData.goodCount + dailyData.veryGoodCount,
             angryGuests = dailyData.badCount + dailyData.veryBadCount,
 
-            netIncome = 1 // ���߿� �� ���� �����ͷ� ����
+            netIncome = EconomyManager.Instance.TodayMoneyIncome
         };
 
         SetReceiptActive(true);

@@ -16,6 +16,7 @@ public class ServingSlot : MonoBehaviour, IInteractable
     private GameObject currentFood;
 
     [SerializeField] private Inventory inventory;
+    [SerializeField] private PopupController ui;
 
     public InteractMode Mode => InteractMode.AutoOnEnter;
     
@@ -53,24 +54,31 @@ public class ServingSlot : MonoBehaviour, IInteractable
     // 시그니처 변경 (내용은 기존 로직 유지하시면서 player 활용)
     public void Interact(PlayerController player)
     {
-        // 상호작용 로직
-        if (player.PlayerType == PlayerType.Sowol)
-            InventoryManager.Instance.OpenInventory(inventory);
+        Debug.Log("Serving Interact 호출됨");
 
-        if (player.PlayerType == PlayerType.Myungwol)
-            InventoryManager.Instance.OpenInventory(inventory);
+        // 상호작용 로직
+        InventoryManager.Instance.OpenInventory(this.inventory);
+        //this.feedback.PlayFeedback();
+        UIAnimationManager.Instance.ShowPopFromWorld(this.ui.PanelTransform, this.transform);
+        this.inventory.OnCloseRequested += HandleInventoryCloseRequest;
     }
 
-    // 추가
     public void OnInteractEnd(PlayerController player)
     {
         // 종료 시 정리 로직
-        if (player.PlayerType == PlayerType.Sowol)
-            InventoryManager.Instance.CloseInventory(inventory);
-        else if (player.PlayerType == PlayerType.Myungwol)
-            InventoryManager.Instance.CloseInventory(inventory);
+        HandleInventoryCloseRequest();
     }
-    
+    private void HandleInventoryCloseRequest()
+    {
+        this.inventory.OnCloseRequested -= HandleInventoryCloseRequest;
+
+        UIAnimationManager.Instance.HidePopToWorld(this.ui.PanelTransform, this.transform, 0.3f,
+            onComplete: () =>
+            {
+                InventoryManager.Instance.CloseInventory(this.inventory);
+            });
+    }
+
     /// <summary>
     /// 배식대에 음식을 놓는 상황
     /// </summary>

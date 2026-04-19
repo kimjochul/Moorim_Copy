@@ -30,11 +30,13 @@ public class PlayerInput : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Tab))
         {
+            Debug.Log(UIManager.Instance.IsBookActive);
              UIManager.Instance.ActiveBook(!UIManager.Instance.IsBookActive);
         }
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
+            Debug.Log(!UIManager.Instance.IsSettingActive);
             UIManager.Instance.ActiveSetting(!UIManager.Instance.IsSettingActive);
         }
     }

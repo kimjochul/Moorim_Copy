@@ -12,15 +12,11 @@ public class Setting : MonoBehaviour
 
     void Start()
     {
-        if (this.objSetting != null)
-        {
-            this.objSetting.SetActive(false);
-        }
         EventInit();
     }
     private void EventInit()
     {
-        this.btnClose.onClick.AddListener(Hide);
+        this.btnClose.onClick.AddListener(() => UIManager.Instance.ActiveSetting(false));
     }
     public void Show()
     {
