@@ -31,6 +31,7 @@ public class OrdersPopupController : PopupController
 
     public void OnClickCancelButton()
     {
+        UpdateNotification(false);
         Hide();
     }
 
