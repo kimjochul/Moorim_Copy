@@ -71,6 +71,11 @@ public class ServeCondition : QuestCondition
         return currentServeCount.ToString();
     }
 
+    public override void SetCurrentCount(int value)
+    {
+        currentServeCount = value;
+    }
+
     public override string GetRequiredCount()
     {
         return requireCount.ToString();

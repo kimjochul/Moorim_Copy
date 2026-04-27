@@ -124,11 +124,17 @@ public class ProgressCondition : QuestCondition
 
             case ProgressType.Prerequisite:
                 return QuestManager.Instance.PrerequisiteQuestIsDone(Prerequisite_Quest.id) ? "완료" : "미완료";
+
         }
 
         return "";
     }
 
+    public override void SetCurrentCount(int value)
+    {
+        // 불러오기를 하지 않아도 상관없는 조건 타입
+    }
+    
     public override string GetRequiredCount()
     {
         switch (type)

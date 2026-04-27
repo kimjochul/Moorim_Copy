@@ -16,14 +16,6 @@ public enum DayOfWeek
     Sunday
 }
 
-[Serializable]
-public class DayData
-{
-    internal int day;
-    internal DayOfWeek dayOfWeek;
-}
-
-
 /// <summary>
 /// 주간 운영에서 시간, 날짜를 관리하는 클래스
 /// </summary>
@@ -62,6 +54,20 @@ public class DayManager : Singleton<DayManager>
     {
         base.Awake();
         
+        _totalGameMinutes = (gameEndHour - gameStartHour) * 60f;
+        
+        if(!SaveManager.Instance.isLoadedGame)
+            InitDay();
+    }
+
+    private void InitNPCs()
+    {
+        if (npcList == null)
+        {
+            Debug.LogError("npcList 없음");
+            return;
+        }
+        
         npcs = new List<INPCSchedule>();
         foreach (var npc in npcList)
         {
@@ -70,18 +76,17 @@ public class DayManager : Singleton<DayManager>
             else
                 Debug.LogWarning($"{npc.name} does not implement INPCSchedule");
         }
-        
-        _totalGameMinutes = (gameEndHour - gameStartHour) * 60f;
-        InitDay();
+    }
+    
+    public void InitForGameScene()
+    {
+        InitNPCs();
     }
     
     private void InitDay()
     {
-        DayData = new DayData
-        {
-            day = 1,
-            dayOfWeek = DayOfWeek.Monday
-        };
+        DayData.day = 1;
+        DayData.dayOfWeek = DayOfWeek.Monday;
     }
     
     /// <summary>
@@ -98,6 +103,8 @@ public class DayManager : Singleton<DayManager>
         _prevHour = -1;
         _prevMinute = -1;
 
+        SaveManager.Instance.SaveGame();
+        
         if (_isFirstDayStart)
         {
             _isFirstDayStart = false;
@@ -109,6 +116,11 @@ public class DayManager : Singleton<DayManager>
         OnDayStart?.Invoke();
     }
 
+    public void RemoteDayStart()
+    {
+        DayStart();
+    }
+    
     void Update()
     {
         if (!IsRunning) return;
@@ -145,6 +157,7 @@ public class DayManager : Singleton<DayManager>
     {
         Debug.Log("Day End");
         IsRunning = false;
+        SaveManager.Instance.SaveGame();
         OnDayEnd?.Invoke();
     }
 
@@ -166,5 +179,22 @@ public class DayManager : Singleton<DayManager>
                 return true;
         }
         return false;
+    }
+    
+    public DaySaveData GetSaveData()
+    {
+        return new DaySaveData
+        {
+            day = DayData.day,
+            dayOfWeek = (int)DayData.dayOfWeek
+        };
+    }
+    
+    public void LoadFromData(DaySaveData data)
+    {
+        DayData.day = data.day;
+        DayData.dayOfWeek = (DayOfWeek)data.dayOfWeek;
+        
+        _isFirstDayStart = false;
     }
 }

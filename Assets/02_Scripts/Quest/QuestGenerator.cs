@@ -246,4 +246,22 @@ public class QuestGenerator : MonoBehaviour
         quest.Data.reward.gold = Random.Range(50, 150); 
         quest.Data.reward.reputation = Random.Range(1, 10);
     }
+    
+    /// <summary>
+    /// ID로 퀘스트 찾아서 퀘스트 데이터 넣을 틀 만들어서 리턴
+    /// </summary>
+    /// <param name="questID"></param>
+    /// <returns></returns>
+    public Quest GenerateQuestByID(int questID)
+    {
+        var data = questPool.quests.Find(q => q.id == questID);
+
+        if (data == null)
+        {
+            Debug.LogError($"QuestData 없음: {questID}");
+            return null;
+        }
+
+        return new Quest(data, inventory);
+    }
 }

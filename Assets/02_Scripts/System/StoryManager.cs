@@ -21,7 +21,7 @@ public class TriggerGroup
     public bool isActive;
 }
 
-public class StoryManager : MonoBehaviour
+public class StoryManager : Singleton<StoryManager>
 {
     [SerializeField] private DayManager dayManager;
     [SerializeField] private Receipt receipt;
@@ -64,8 +64,10 @@ public class StoryManager : MonoBehaviour
     private HashSet<int> playedStoryIds = new();
     private HashSet<string> flags = new();
     
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+        
         storyUI.Init(this);
 
         nameDict = new Dictionary<int, string>();
@@ -426,5 +428,20 @@ public class StoryManager : MonoBehaviour
             fadePanel.blocksRaycasts = false;
             fadePanel.gameObject.SetActive(false);
         });
+    }
+    
+    public StorySaveData GetSaveData()
+    {
+        return new StorySaveData
+        {
+            playedStoryIDs = playedStoryIds.ToList(),
+            flags = flags.ToList()
+        };
+    }
+    
+    public void LoadFromData(StorySaveData data)
+    {
+        playedStoryIds = new HashSet<int>(data.playedStoryIDs);
+        flags = new HashSet<string>(data.flags);
     }
 }

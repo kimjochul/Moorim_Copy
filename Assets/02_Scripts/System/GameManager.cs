@@ -4,15 +4,22 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     // 다른 매니저들을 관리하고 게임에서 플레이 흐름 제어하는 클래스
-    [SerializeField] private DayManager dayManager;
+    private DayManager dayManager;
+    private SaveManager saveManager;
+    
+    private void Awake()
+    {
+        saveManager = SaveManager.Instance;
+        dayManager = DayManager.Instance;
+    }
 
     private void Start()
     {
-        dayManager.DayStart();
+        dayManager.InitForGameScene();
     }
-
-    public void StartDayButton()
+    
+    private void OnApplicationQuit()
     {
-        dayManager.DayStart();
+        SaveManager.Instance.SaveGame();
     }
 }

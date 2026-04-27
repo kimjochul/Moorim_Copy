@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class IngredientUnlockManager : Singleton<IngredientUnlockManager>
@@ -28,5 +29,21 @@ public class IngredientUnlockManager : Singleton<IngredientUnlockManager>
 
         unlockedIngredients.Add(id);
         Debug.Log($"재료 해금: {id}");
+    }
+    
+    public IngredientSaveData GetSaveData()
+    {
+        return new IngredientSaveData
+        {
+            unlockedIngredientIDs = unlockedIngredients.ToList()
+        };
+    }
+    
+    public void LoadFromData(IngredientSaveData data)
+    {
+        unlockedIngredients.Clear();
+
+        foreach (var id in data.unlockedIngredientIDs)
+            Unlock(id);
     }
 }

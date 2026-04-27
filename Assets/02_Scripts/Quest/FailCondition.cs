@@ -105,6 +105,11 @@ public class FailLimitCondition : QuestCondition
         return currentFailCount.ToString();
     }
 
+    public override void SetCurrentCount(int value)
+    {
+        currentFailCount = value;
+    }
+
     public override string GetRequiredCount()
     {
         return maxFailCount.ToString();

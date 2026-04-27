@@ -40,6 +40,7 @@ public abstract class QuestCondition : ScriptableObject
     
     public abstract string GetDescription();
     public abstract string GetCurrentCount();
+    public abstract void SetCurrentCount(int value);
     public abstract string GetRequiredCount();
     
     public event Action OnConditionUpdated;

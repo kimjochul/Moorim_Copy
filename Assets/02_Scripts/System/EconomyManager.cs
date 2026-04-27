@@ -158,4 +158,23 @@ public class EconomyManager : Singleton<EconomyManager>
         RestaurantEconomyChanged?.Invoke();
         return true;
     }
+    
+    public EconomySaveData GetSaveData()
+    {
+        return new EconomySaveData
+        {
+            money = restaurantEconomy.Money,
+            fame = restaurantEconomy.Fame,
+            debt = restaurantEconomy.Debt
+        };
+    }
+    
+    public void LoadFromData(EconomySaveData data)
+    {
+        restaurantEconomy.Money = data.money;
+        restaurantEconomy.Fame = data.fame;
+        restaurantEconomy.Debt = data.debt;
+
+        RestaurantEconomyChanged?.Invoke();
+    }
 }
