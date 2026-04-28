@@ -8,13 +8,19 @@ public class IngredientUnlockManager : Singleton<IngredientUnlockManager>, IInit
 
     private HashSet<int> unlockedIngredients = new HashSet<int>();
 
+    private bool isLoaded = false;
+    private bool isInitialized = false;
+    
     public void Init()
     {
+        if (isLoaded) return;
+        
         foreach (var ingredient in allIngredients.ingredients)
         {
             if (!ingredient.isLocked)
                 Unlock(ingredient.id);
         }
+        isInitialized = true;
     }
 
     public bool IsUnlocked(int id)
@@ -41,6 +47,8 @@ public class IngredientUnlockManager : Singleton<IngredientUnlockManager>, IInit
     
     public void LoadFromData(IngredientSaveData data)
     {
+        isLoaded = true;
+        
         unlockedIngredients.Clear();
 
         foreach (var id in data.unlockedIngredientIDs)
@@ -49,6 +57,9 @@ public class IngredientUnlockManager : Singleton<IngredientUnlockManager>, IInit
     
     public void ResetData()
     {
+        if (isInitialized)
+            return;
+        
         unlockedIngredients.Clear();
 
         foreach (var ingredient in allIngredients.ingredients)

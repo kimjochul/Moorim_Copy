@@ -16,11 +16,11 @@ public class GuestResultTracker : MonoBehaviour
     // 손님 퇴장시 마다 외부에 알림
     public event Action<GuestMood> OnGuestRecorded;
 
-    private void OnEnable()
-    {
-        Debug.Log("GuestResultTracker OnEnable 실행됨");
-        EconomyManager.Instance.RegisterGuestResultTracker(this);
-    }
+    // private void OnEnable()
+    // {
+    //     Debug.Log("GuestResultTracker OnEnable 실행됨");
+    //     EconomyManager.Instance.RegisterGuestResultTracker(this);
+    // }
 
     private void OnDisable()
     {

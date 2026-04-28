@@ -27,6 +27,8 @@ public class EconomyManager : Singleton<EconomyManager>, IInitializable
         _todayMoneyIncome = 0;
         _todayFameIncome = 0;
         _todayCustomerCount = 0;
+        
+        RegisterGuestResultTracker(guestResultTracker);
     }
     
     private void OnEnable()
@@ -43,8 +45,6 @@ public class EconomyManager : Singleton<EconomyManager>, IInitializable
 
     private void OnDisable()
     {
-        base.OnDestroy();
-    
         Debug.Log("Eco Disable");
         if (DayManager.Instance != null)
         {

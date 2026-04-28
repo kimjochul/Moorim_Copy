@@ -18,8 +18,8 @@ public class Singleton<T> : MonoBehaviour where T: MonoBehaviour // where T: mon
 
                 if (instance == null)
                 {
-                    GameObject go = new GameObject(typeof(T).Name);
-                    instance = go.AddComponent<T>();
+                    // GameObject go = new GameObject(typeof(T).Name);
+                    // instance = go.AddComponent<T>();
                 }
             }
             return instance;
@@ -30,6 +30,7 @@ public class Singleton<T> : MonoBehaviour where T: MonoBehaviour // where T: mon
     {
         if (instance != null && instance != this)
         {
+            Debug.Log($"중복 제거: {gameObject.name}");
             Destroy(gameObject);
             return;
         }

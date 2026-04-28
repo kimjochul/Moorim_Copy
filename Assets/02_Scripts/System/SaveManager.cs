@@ -69,9 +69,9 @@ public class SaveManager : Singleton<SaveManager>
         InitAll();
         
         yield return null;
+        yield return new WaitUntil(() => InventoryManager.Instance.IsInitialized);
+        yield return null;
         
-        yield return new WaitUntil(() => InventoryManager.Instance != null);
-
         if (isLoadedGame)
         {
             if (!File.Exists(savePath))
@@ -114,13 +114,13 @@ public class SaveManager : Singleton<SaveManager>
         SaveData data = new SaveData();
         
         data.day = DayManager.Instance.GetSaveData();
-        data.quest = QuestManager.Instance.GetSaveData();
+        data.inventories = InventoryManager.Instance.GetAll().Select(inv => inv.GetSaveData()).ToList();
         data.recipe = RecipeUnlockManager.Instance.GetSaveData();
         data.ingredient = IngredientUnlockManager.Instance.GetSaveData();
         data.story = StoryManager.Instance.GetSaveData();
         data.economy = EconomyManager.Instance.GetSaveData();
         
-        data.inventories = InventoryManager.Instance.GetAll().Select(inv => inv.GetSaveData()).ToList();
+        data.quest = QuestManager.Instance.GetSaveData();
         
         return data;
     }
@@ -133,14 +133,13 @@ public class SaveManager : Singleton<SaveManager>
         DayManager.Instance.LoadFromData(data.day);
         RecipeUnlockManager.Instance.LoadFromData(data.recipe);
         IngredientUnlockManager.Instance.LoadFromData(data.ingredient);
-        StoryManager.Instance.LoadFromData(data.story);
-        EconomyManager.Instance.LoadFromData(data.economy);
-        
         if (data.inventories != null)
         {
             foreach (var invData in data.inventories)
             {
+                Debug.Log($"로드 시도 타입: {invData.type}");
                 var inv = InventoryManager.Instance.GetInventory(invData.type);
+                Debug.Log($"찾은 인벤토리: {inv}");
                 inv.LoadFromData(invData);
                 
                 foreach (var slot in inv.Slots)
@@ -157,6 +156,9 @@ public class SaveManager : Singleton<SaveManager>
                 }
             }
         }
+        StoryManager.Instance.LoadFromData(data.story);
+        EconomyManager.Instance.LoadFromData(data.economy);
+        
         QuestManager.Instance.LoadFromData(data.quest);
     }
 
@@ -165,9 +167,9 @@ public class SaveManager : Singleton<SaveManager>
         DayManager.Instance.ResetData();
         RecipeUnlockManager.Instance.ResetData();
         IngredientUnlockManager.Instance.ResetData();
+        InventoryManager.Instance.ResetData();
         StoryManager.Instance.ResetData();
         EconomyManager.Instance.ResetData();
-        InventoryManager.Instance.ResetData();
         QuestManager.Instance.ResetData();
     }
 

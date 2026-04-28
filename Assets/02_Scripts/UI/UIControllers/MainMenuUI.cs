@@ -8,6 +8,8 @@ public class MainMenuUI : MonoBehaviour
     [SerializeField] private Button ResumeGameButton;
     [SerializeField] private Button SettingsButton;
     [SerializeField] private Button QuitButton;
+    
+    [SerializeField] private Setting setting;
 
     private void Start()
     {
@@ -31,7 +33,7 @@ public class MainMenuUI : MonoBehaviour
 
     private void OnClickSettingsButton()
     {
-        UIManager.Instance.ActiveSetting(true);
+        this.setting.Show();
     }
 
     private void OnClickQuitButton()

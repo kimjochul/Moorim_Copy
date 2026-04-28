@@ -33,24 +33,31 @@ public class InventoryManager : Singleton<InventoryManager>, IInitializable
     public event Action<Inventory> OnInventoryUIClosed;
     public event Action<bool> OnBottomUIToggleRequested;
     
-    private void Start()
-    {
-        OpenCommonInventory();
-        CloseCommonInventory();
-    }
-
+    private bool isInitialized = false;
+    public bool IsInitialized => isInitialized;
+    
     public void Init()
     {
-        inventoryMap = new Dictionary<InventoryType, Inventory>();
-
+        if (isInitialized) return;
+        
         // 🔥 씬에 있는 Inventory 전부 찾아서 Init
         var inventories = FindObjectsByType<Inventory>(FindObjectsInactive.Include, FindObjectsSortMode.None);
 
+        if (inventories.Length == 0)
+        {
+            Debug.LogError("Inventory 없음 Init 실패");
+            return;
+        }
+
+        inventoryMap = new Dictionary<InventoryType, Inventory>();
+        
         foreach (var inv in inventories)
         {
+            Debug.Log(inv.Type.ToString());
             Register(inv);
             inv.Init();
         }
+        isInitialized = true;
     }
 
     
@@ -135,7 +142,14 @@ public class InventoryManager : Singleton<InventoryManager>, IInitializable
             Debug.LogError("Register: inventory 자체 null");
             return;
         }
-        Debug.Log($"[Register 시도] {inventory.name}");
+        
+        Debug.Log($"[Register] {inventory.name} / type: {inventory.Type}");
+    
+        if (inventoryMap.ContainsKey(inventory.Type))
+        {
+            Debug.LogWarning($"중복 타입 발생: {inventory.Type}");
+        }
+        
         inventoryMap[inventory.Type] = inventory;
     }
     
@@ -151,6 +165,8 @@ public class InventoryManager : Singleton<InventoryManager>, IInitializable
             if (inv == null)
                 continue;
 
+            Debug.Log($"[ResetData] {inv.Type}");
+            
             inv.ResetData();
         }
     }
