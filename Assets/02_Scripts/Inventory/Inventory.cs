@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.Loading;
 using UnityEngine;
@@ -10,7 +11,7 @@ using static Constants;
 /// 인벤토리 클래스, 각 인벤토리 UI에서 슬롯들을 묶는 group역할을 하는 오브젝트에 컴포넌트로 들어간다.
 /// 인벤토리 안의 슬롯에 담긴 아이템을 관리하는 클래스.
 /// </summary>
-public class Inventory : MonoBehaviour
+public class Inventory : MonoBehaviour, IInitializable
 {
     [SerializeField] private GameObject slotPrefab;
     [SerializeField] private int slotCount = 10;
@@ -26,9 +27,10 @@ public class Inventory : MonoBehaviour
 
     public UnityAction OnCloseRequested;
 
+    private bool isInit = false;
+    
     private void Awake()
     {
-        CreateSlots(slotCount);
         if (closeButton != null)
         {
             closeButton.onClick.AddListener(() =>
@@ -40,7 +42,16 @@ public class Inventory : MonoBehaviour
             });
         }
     }
+    
+    public void Init()
+    {
+        if (isInit) return;
 
+        CreateSlots(slotCount);
+
+        isInit = true;
+    }
+    
     /// <summary>
     /// 슬롯을 생성하는 함수
     /// </summary>
@@ -389,5 +400,59 @@ public class Inventory : MonoBehaviour
 
         Debug.Log("빈 슬롯 없음");
         return -1;
+    }
+    
+    public InventorySaveData GetSaveData()
+    {
+        var data = new InventorySaveData();
+        data.type = this.type;
+
+        foreach (var slot in slots)
+        {
+            data.slots.Add(new SlotSaveData
+            {
+                itemID = slot.IsEmpty ? -1 : slot.Item.ID,
+                count = slot.Count,
+                spoilTimer = slot.SpoilTimer,
+                fridgeSpoilTimer = slot.FridgeSpoilTimer
+            });
+        }
+
+        return data;
+    }
+    
+    public void LoadFromData(InventorySaveData data)
+    {
+        for (int i = 0; i < slots.Count; i++)
+        {
+            var slotData = data.slots[i];
+
+            if (slotData.itemID == -1)
+            {
+                slots[i].Clear();
+                continue;
+            }
+
+            var itemData = DataManager.Instance.GetItemData(slotData.itemID);
+            IItem item = new Item(itemData);
+
+            slots[i].SetItem(item, slotData.count);
+            slots[i].SpoilTimer = slotData.spoilTimer;
+            slots[i].FridgeSpoilTimer = slotData.fridgeSpoilTimer;
+        }
+    }
+    
+    public void ResetData()
+    {
+        if (slots == null || slots.Count == 0)
+            return;
+
+        foreach (var slot in slots)
+        {
+            if (slot == null)
+                continue;
+
+            slot.Clear();
+        }
     }
 }

@@ -7,15 +7,10 @@ public class GameManager : MonoBehaviour
     private DayManager dayManager;
     private SaveManager saveManager;
     
-    private void Awake()
+    private void Start()
     {
         saveManager = SaveManager.Instance;
         dayManager = DayManager.Instance;
-    }
-
-    private void Start()
-    {
-        dayManager.InitForGameScene();
     }
     
     private void OnApplicationQuit()

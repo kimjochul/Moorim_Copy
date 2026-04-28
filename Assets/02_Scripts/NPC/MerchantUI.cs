@@ -97,10 +97,12 @@ public class MerchantUI : MonoBehaviour
             var ingredientList = DataManager.Instance.GetIngredientList(a);
             foreach (var ingredientData in ingredientList)
             {
+                Item item = ItemFactory.Instance.CreateItem(ingredientData.id);
+                
                 if(ingredientData.type == Constants.IngredientType.Meats)
-                    shop.Buy(ingredientData.id, 10);
+                    InventoryManager.Instance.GetInventory(InventoryType.IngredientsButMeatOnly).GetItem(item, 10);
                 else
-                    shop.Buy(ingredientData.id, 20);
+                    InventoryManager.Instance.GetInventory(InventoryType.Ingredients).GetItem(item, 20);
             }
         }
         

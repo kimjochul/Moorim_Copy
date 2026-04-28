@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using static Constants;
 
@@ -6,7 +8,7 @@ using static Constants;
 /// <summary>
 /// 인벤토리 UI를 조종할 때가 있을 때 사용하기 위한 관리 매니저
 /// </summary>
-public class InventoryManager : Singleton<InventoryManager>
+public class InventoryManager : Singleton<InventoryManager>, IInitializable
 {
     // 미리 생성되어진 인벤토리들 관련 매니저
     // 인벤토리 종류가 5개 이니까 관리하는 클래스가 될 듯
@@ -25,29 +27,40 @@ public class InventoryManager : Singleton<InventoryManager>
     [SerializeField] private Inventory fridgeInventory; // 냉장고
     [SerializeField] private Inventory mealTableInventory; // 배식대
 
+    private Dictionary<InventoryType, Inventory> inventoryMap;
+    
     public event Action<Inventory> OnInventoryUIOpened;
     public event Action<Inventory> OnInventoryUIClosed;
     public event Action<bool> OnBottomUIToggleRequested;
-
+    
     private void Start()
     {
         OpenCommonInventory();
         CloseCommonInventory();
     }
 
+    public void Init()
+    {
+        inventoryMap = new Dictionary<InventoryType, Inventory>();
+
+        // 🔥 씬에 있는 Inventory 전부 찾아서 Init
+        var inventories = FindObjectsByType<Inventory>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+
+        foreach (var inv in inventories)
+        {
+            Register(inv);
+            inv.Init();
+        }
+    }
+
+    
     public Inventory GetInventory(InventoryType type)
     {
-        return type switch
+        if (!inventoryMap.ContainsKey(type))
         {
-            InventoryType.IngredientsButMeatOnly => meatIngredientInventory,
-            InventoryType.Ingredients => otherIngredientInventory,
-            //InventoryType.BondItem => bondItemInventory,
-            InventoryType.Chef => chefInventory,
-            InventoryType.Server => serverInventory,
-            InventoryType.Fridge => fridgeInventory,
-            InventoryType.MealTable => mealTableInventory,
-            _ => null
-        };
+            Debug.LogError($"[InventoryManager] {type} 아직 등록 안됨");
+        }
+        return inventoryMap.GetValueOrDefault(type);
     }
 
     /// <summary>
@@ -113,5 +126,32 @@ public class InventoryManager : Singleton<InventoryManager>
     public void RequestBottomUI(bool open)
     {
         OnBottomUIToggleRequested?.Invoke(open);
+    }
+    
+    public void Register(Inventory inventory)
+    {
+        if (inventory == null)
+        {
+            Debug.LogError("Register: inventory 자체 null");
+            return;
+        }
+        Debug.Log($"[Register 시도] {inventory.name}");
+        inventoryMap[inventory.Type] = inventory;
+    }
+    
+    public List<Inventory> GetAll()
+    {
+        return inventoryMap.Values.ToList();
+    }
+    
+    public void ResetData()
+    {
+        foreach (var inv in GetAll())
+        {
+            if (inv == null)
+                continue;
+
+            inv.ResetData();
+        }
     }
 }

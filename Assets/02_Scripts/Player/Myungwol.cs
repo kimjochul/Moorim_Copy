@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 using static Constants;
@@ -12,10 +13,19 @@ public class Myungwol : PlayerController
     // [SerializeField] private Inventory inventory;
     // public Inventory Inventory => inventory;
 
-    private void Start()
+    private IEnumerator Start()
     {
+        yield return null;
+        yield return null;
+        
         inventory = InventoryManager.Instance.GetInventory(InventoryType.Server);
         DayManager.Instance.OnDayEnd += ClearInventorySlots;
+    }
+    
+    private void OnDestroy()
+    {
+        if (DayManager.Instance != null)
+            DayManager.Instance.OnDayEnd -= ClearInventorySlots;
     }
 
     public override void OnSelected()
@@ -118,8 +128,11 @@ public class Myungwol : PlayerController
     
     private void ClearInventorySlots()
     {
+        if (inventory == null) return;
         foreach (var slot in inventory.Slots)
         {
+            if (slot == null) continue;
+            
             slot.Clear();
         }
     }

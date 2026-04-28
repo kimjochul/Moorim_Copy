@@ -9,7 +9,6 @@ using static Constants;
 public class GuestManager : MonoBehaviour
 {
     [Header("연결해야할 외부 정보")]
-    [SerializeField] private DayManager dayManager;
     [SerializeField] private GuestResultTracker resultTracker;
     [SerializeField] private OrdersPopupController orderPopup;
 
@@ -50,8 +49,9 @@ public class GuestManager : MonoBehaviour
 
     void Awake()
     {
-        dayManager.OnDayStart += StartSpawn;
-        dayManager.OnDayEnd += StopSpawn;
+        
+        DayManager.Instance.OnDayStart += StartSpawn;
+        DayManager.Instance.OnDayEnd += StopSpawn;
 
         // 풀 매니저에 프리팹 등록
         foreach (var entry in normalGuestPrefabs)
@@ -68,8 +68,11 @@ public class GuestManager : MonoBehaviour
 
     void OnDisable()
     {
-        dayManager.OnDayStart -= StartSpawn;
-        dayManager.OnDayEnd -= StopSpawn;
+        if (DayManager.Instance != null)
+        {
+            DayManager.Instance.OnDayStart -= StartSpawn;
+            DayManager.Instance.OnDayEnd -= StopSpawn;
+        }
     }
 
     private void StartSpawn()

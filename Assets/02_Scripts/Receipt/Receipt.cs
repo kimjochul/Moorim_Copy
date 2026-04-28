@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 using TMPro;
@@ -9,7 +10,7 @@ public class Receipt : MonoBehaviour
     [SerializeField] private GameObject objReceipt;
     private ReceiptData data;
 
-    [SerializeField] private DayManager dayManager;
+    private DayManager dayManager;
     [SerializeField] private GuestResultTracker guestTracker;
 
     [SerializeField] private TextMeshProUGUI txtDay;
@@ -40,11 +41,17 @@ public class Receipt : MonoBehaviour
 
     void Awake()
     {
+        dayManager = DayManager.Instance;
         EventInit();
         SetReceiptActive(false);
     }
 
-    void OnEnable()
+    private void OnEnable()
+    {
+        StoryManager.Instance.SetReceipt(this);
+    }
+
+    void Start()
     {
         if (this.guestTracker != null)
         {
@@ -52,7 +59,7 @@ public class Receipt : MonoBehaviour
         }
     }
 
-    void OnDisable()
+    void OnDestroy()
     {
         if (this.guestTracker != null)
         {
@@ -175,4 +182,6 @@ public class Receipt : MonoBehaviour
         this.angryGuests.ClearText();
         this.netIncome.ClearText();
     }
+    
+    
 }

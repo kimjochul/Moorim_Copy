@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 using static Constants;
@@ -20,10 +21,19 @@ public class Sowol : PlayerController
     // 조리대 완료 등의 상태 변화는 조리대가 EndInteract()를 콜백으로 호출
     //   → 소월이 CookingStation을 폴링할 필요 없음
 
-    private void Start()
+    private IEnumerator Start()
     {
+        yield return null;
+        yield return null;
+        
         inventory = InventoryManager.Instance.GetInventory(InventoryType.Chef);
         DayManager.Instance.OnDayEnd += ClearInventorySlots;
+    }
+    
+    private void OnDestroy()
+    {
+        if (DayManager.Instance != null)
+            DayManager.Instance.OnDayEnd -= ClearInventorySlots;
     }
     
     public override void OnSlotClicked(Slot slot)
@@ -92,8 +102,11 @@ public class Sowol : PlayerController
     
     private void ClearInventorySlots()
     {
+        if (inventory == null) return;
         foreach (var slot in inventory.Slots)
         {
+            if (slot == null) continue;
+            
             slot.Clear();
         }
     }

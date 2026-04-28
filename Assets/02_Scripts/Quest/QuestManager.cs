@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -12,7 +13,7 @@ using static Constants;
 /// 이벤트 전달 (Notify)
 /// Observer 등록/해제
 /// </summary>
-public class QuestManager : Singleton<QuestManager>, ISubject
+public class QuestManager : Singleton<QuestManager>, ISubject, IInitializable
 {
     private List<IObserver> observers = new List<IObserver>();
     
@@ -34,12 +35,22 @@ public class QuestManager : Singleton<QuestManager>, ISubject
     public event Action OnWaitingQuestChanged;// 수락 대기중인 퀘스트 수 변경 시 호출
     
 
-    private void Start()
+    private IEnumerator Start()
     {
+        yield return null;
+        
         inventory = InventoryManager.Instance.GetInventory(InventoryType.Chef);
-        guestResultTracker.OnGuestRecorded += DetectGuestMood;
     }
 
+    public void Init()
+    {
+        inventory = InventoryManager.Instance.GetInventory(InventoryType.Chef);
+        guestResultTracker = FindFirstObjectByType<GuestResultTracker>();
+
+        if(guestResultTracker != null)
+            guestResultTracker.OnGuestRecorded += DetectGuestMood;
+    }
+    
     /// <summary>
     /// 퀘스트 수락 전 제안
     /// </summary>
@@ -383,5 +394,13 @@ public class QuestManager : Singleton<QuestManager>, ISubject
             if (quest != null)
                 completedQuests.Add(quest);
         }
+    }
+    
+    public void ResetData()
+    {
+        activeQuests.Clear();
+        completedQuests.Clear();
+
+        Debug.Log("Quest Reset 완료");
     }
 }

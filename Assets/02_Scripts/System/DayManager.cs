@@ -27,9 +27,7 @@ public class DayManager : Singleton<DayManager>
     [SerializeField] private float gameStartHour = 9f;
     [SerializeField] private float gameEndHour = 18f;
     
-    [SerializeField] private List<MonoBehaviour> npcList;
-    
-    private List<INPCSchedule> npcs;
+    private List<INPCSchedule> npcs = new List<INPCSchedule>();
 
     private float _totalGameMinutes;
     private float _timer = 0f;
@@ -59,28 +57,17 @@ public class DayManager : Singleton<DayManager>
         if(!SaveManager.Instance.isLoadedGame)
             InitDay();
     }
-
-    private void InitNPCs()
-    {
-        if (npcList == null)
-        {
-            Debug.LogError("npcList 없음");
-            return;
-        }
-        
-        npcs = new List<INPCSchedule>();
-        foreach (var npc in npcList)
-        {
-            if (npc is INPCSchedule schedule)
-                npcs.Add(schedule);
-            else
-                Debug.LogWarning($"{npc.name} does not implement INPCSchedule");
-        }
-    }
     
-    public void InitForGameScene()
+    public void RegisterNPC(INPCSchedule npc)
     {
-        InitNPCs();
+        if (!npcs.Contains(npc))
+            npcs.Add(npc);
+    }
+
+    public void UnregisterNPC(INPCSchedule npc)
+    {
+        if (npcs.Contains(npc))
+            npcs.Remove(npc);
     }
     
     private void InitDay()
@@ -196,5 +183,24 @@ public class DayManager : Singleton<DayManager>
         DayData.dayOfWeek = (DayOfWeek)data.dayOfWeek;
         
         _isFirstDayStart = false;
+    }
+    
+    public void ResetData()
+    {
+        if (dayData == null)
+        {
+            Debug.LogError("DayData 없음");
+            return;
+        }
+
+        dayData.day = 1;
+        dayData.dayOfWeek = DayOfWeek.Monday;
+
+        _timer = 0f;
+        IsRunning = false;
+
+        _isFirstDayStart = true;
+
+        Debug.Log("DayManager Reset 완료");
     }
 }

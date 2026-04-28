@@ -1,13 +1,13 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 /// <summary>
 /// 객잔의 경제 관련 기능을 할 때 사용하는 클래스
 /// </summary>
-public class EconomyManager : Singleton<EconomyManager>
+public class EconomyManager : Singleton<EconomyManager>, IInitializable
 {
     // 가게의 재정 관련 행동을 할 클래스
-    [SerializeField] private DayManager dayManager;
     [SerializeField] private RestaurantEconomy restaurantEconomy;
     [SerializeField] private GuestResultTracker guestResultTracker;
     public RestaurantEconomy RestaurantEconomy => restaurantEconomy;
@@ -21,36 +21,40 @@ public class EconomyManager : Singleton<EconomyManager>
 
     public event Action RestaurantEconomyChanged;
     public event Action TodayEconomyChanged;
-    
-    protected override void Awake()
+
+    public void Init()
     {
-        base.Awake();
-        if (dayManager == null)
-            dayManager = DayManager.Instance;
+        _todayMoneyIncome = 0;
+        _todayFameIncome = 0;
+        _todayCustomerCount = 0;
     }
     
-    void OnEnable()
+    private void OnEnable()
     {
         Debug.Log("Eco Enable");
-        dayManager.OnDayStart += ResetDay;
         
-        dayManager.OnDayEnd += TotalEarningToday;
-        dayManager.OnDayEnd += TodayResult;
+        DayManager.Instance.OnDayStart += ResetDay;
+        
+        DayManager.Instance.OnDayEnd += TotalEarningToday;
+        DayManager.Instance.OnDayEnd += TodayResult;
 
         GuestManager.OnGuestServed += OnCustomerServed;
-        dayManager.OnDayEnd += guestResultTracker.EndDay;
     }
 
-    void OnDisable()
+    private void OnDisable()
     {
+        base.OnDestroy();
+    
         Debug.Log("Eco Disable");
-        dayManager.OnDayStart -= ResetDay;
-        
-        dayManager.OnDayEnd -= TotalEarningToday;
-        dayManager.OnDayEnd -= TodayResult;
+        if (DayManager.Instance != null)
+        {
+            DayManager.Instance.OnDayStart -= ResetDay;
 
+            DayManager.Instance.OnDayEnd -= TotalEarningToday;
+            DayManager.Instance.OnDayEnd -= TodayResult;
+        }
+        
         GuestManager.OnGuestServed -= OnCustomerServed;
-        dayManager.OnDayEnd -= guestResultTracker.EndDay;
     }
     
     /// <summary>
@@ -159,6 +163,25 @@ public class EconomyManager : Singleton<EconomyManager>
         return true;
     }
     
+    public void RegisterGuestResultTracker(GuestResultTracker tracker)
+    {
+        Debug.Log("Tracker 등록됨");
+        this.guestResultTracker = tracker;
+
+        DayManager.Instance.OnDayEnd -= tracker.EndDay; // 중복 방지
+        DayManager.Instance.OnDayEnd += tracker.EndDay;
+    }
+
+    public void UnregisterGuestResultTracker(GuestResultTracker tracker)
+    {
+        if (this.guestResultTracker == tracker)
+        {
+            DayManager.Instance.OnDayEnd -= tracker.EndDay;
+            this.guestResultTracker = null;
+        }
+    }
+    
+    
     public EconomySaveData GetSaveData()
     {
         return new EconomySaveData
@@ -176,5 +199,17 @@ public class EconomyManager : Singleton<EconomyManager>
         restaurantEconomy.Debt = data.debt;
 
         RestaurantEconomyChanged?.Invoke();
+    }
+    
+    public void ResetData()
+    {
+        RestaurantEconomy.Money = 100000;
+        RestaurantEconomy.Fame = 300;
+        RestaurantEconomy.Debt = 100000; // 기본값
+
+        _todayMoneyIncome = 0;
+        _todayFameIncome = 0;
+
+        Debug.Log("Economy Reset 완료");
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [Serializable]
@@ -15,6 +16,7 @@ public class SaveData
     public IngredientSaveData ingredient;
     public StorySaveData story;
     public EconomySaveData economy;
+    public List<InventorySaveData> inventories;
 }
 
 public class SaveManager : Singleton<SaveManager>
@@ -63,12 +65,19 @@ public class SaveManager : Singleton<SaveManager>
     private IEnumerator StartRoutine()
     {
         yield return null; // 씬 초기화 대기
+        
+        InitAll();
+        
+        yield return null;
+        
+        yield return new WaitUntil(() => InventoryManager.Instance != null);
 
         if (isLoadedGame)
         {
             if (!File.Exists(savePath))
             {
                 Debug.Log("세이브 파일 없음 → 새 게임 시작");
+                InitializeNewGameData();
             }
             else
             {
@@ -78,10 +87,23 @@ public class SaveManager : Singleton<SaveManager>
                 ApplySaveData(data);
             }
         }
-
-        // 👉 핵심: 여기서만 DayStart
+        else
+        {
+            InitializeNewGameData();
+        }
+        
         DayManager.Instance.RemoteDayStart();
         Debug.Log(isLoadedGame ? "로드 완료" : "새 게임 시작");
+    }
+    
+    private void InitAll()
+    {
+        EconomyManager.Instance.Init();
+        RecipeUnlockManager.Instance.Init();
+        IngredientUnlockManager.Instance.Init();
+        InventoryManager.Instance.Init();
+        StoryManager.Instance.Init();
+        QuestManager.Instance.Init();
     }
     
     // ------------------------
@@ -98,6 +120,8 @@ public class SaveManager : Singleton<SaveManager>
         data.story = StoryManager.Instance.GetSaveData();
         data.economy = EconomyManager.Instance.GetSaveData();
         
+        data.inventories = InventoryManager.Instance.GetAll().Select(inv => inv.GetSaveData()).ToList();
+        
         return data;
     }
 
@@ -107,13 +131,46 @@ public class SaveManager : Singleton<SaveManager>
     private void ApplySaveData(SaveData data)
     {
         DayManager.Instance.LoadFromData(data.day);
-        QuestManager.Instance.LoadFromData(data.quest);
         RecipeUnlockManager.Instance.LoadFromData(data.recipe);
         IngredientUnlockManager.Instance.LoadFromData(data.ingredient);
         StoryManager.Instance.LoadFromData(data.story);
         EconomyManager.Instance.LoadFromData(data.economy);
+        
+        if (data.inventories != null)
+        {
+            foreach (var invData in data.inventories)
+            {
+                var inv = InventoryManager.Instance.GetInventory(invData.type);
+                inv.LoadFromData(invData);
+                
+                foreach (var slot in inv.Slots)
+                {
+                    if (!slot.IsEmpty)
+                    {
+                        QuestManager.Instance.NotifyListener(new QuestEvent
+                        {
+                            type = QuestEventType.ItemChanged,
+                            ID = slot.Item.ID,
+                            currentCount = inv.GetItemCount(slot.Item.ID)
+                        });
+                    }
+                }
+            }
+        }
+        QuestManager.Instance.LoadFromData(data.quest);
     }
-    
+
+    private void InitializeNewGameData()
+    {
+        DayManager.Instance.ResetData();
+        RecipeUnlockManager.Instance.ResetData();
+        IngredientUnlockManager.Instance.ResetData();
+        StoryManager.Instance.ResetData();
+        EconomyManager.Instance.ResetData();
+        InventoryManager.Instance.ResetData();
+        QuestManager.Instance.ResetData();
+    }
+
     private void OnApplicationPause(bool pause)
     {
         if (pause)
@@ -191,4 +248,21 @@ public class EconomySaveData
     public int money;
     public int fame;
     public int debt;
+}
+
+[Serializable]
+public class InventorySaveData
+{
+    public Constants.InventoryType type;
+    public List<SlotSaveData> slots = new();
+}
+
+[Serializable]
+public class SlotSaveData
+{
+    public int itemID;
+    public int count;
+
+    public float spoilTimer;
+    public int fridgeSpoilTimer;
 }

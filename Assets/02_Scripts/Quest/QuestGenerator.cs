@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -13,8 +14,11 @@ public class QuestGenerator : MonoBehaviour
     
     [SerializeField] private RecipeList allRecipes;
 
-    private void Start()
+    private IEnumerator Start()
     {
+        yield return null;
+        yield return null;
+        
         inventory = InventoryManager.Instance.GetInventory(InventoryType.Fridge);
         recipeUnlockManager = RecipeUnlockManager.Instance;
     }

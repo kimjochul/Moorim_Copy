@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class RecipeUnlockManager : Singleton<RecipeUnlockManager>
+public class RecipeUnlockManager : Singleton<RecipeUnlockManager>, IInitializable
 {
     [SerializeField] private RecipeList recipeList;
     private HashSet<int> unlockedRecipes = new HashSet<int>();
 
     private bool isLoaded = false;
     
-    private void Start()
+    public void Init()
     {
         if (isLoaded) return;
         
@@ -75,5 +75,24 @@ public class RecipeUnlockManager : Singleton<RecipeUnlockManager>
             var mastery = DataManager.Instance.GetRecipeMasteryData(p.recipeID);
             mastery.proficiency = p.proficiency;
         }
+    }
+    
+    public void ResetData()
+    {
+        unlockedRecipes.Clear();
+
+        foreach (var recipe in recipeList.recipes)
+        {
+            if (!recipe.isLocked)
+                Unlock(recipe.id);
+        }
+
+        // 숙련도 초기화
+        foreach (var mastery in DataManager.Instance.GetAllRecipeMastery())
+        {
+            mastery.proficiency = 0;
+        }
+
+        Debug.Log("Recipe Reset 완료");
     }
 }
