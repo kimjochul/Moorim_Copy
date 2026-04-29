@@ -203,6 +203,8 @@ public class InventoryManager : Singleton<InventoryManager>, IInitializable
             
             inv.ResetData();
         }
+
+        CreateInitItems();
     }
     
     public void SetCommonInventoryRoot()
@@ -230,5 +232,27 @@ public class InventoryManager : Singleton<InventoryManager>, IInitializable
         }
 
         commonInventoryRoot = found;
+    }
+    
+    private void CreateInitItems()
+    {
+        List<Constants.IngredientType> ingredientTypes = new List<Constants.IngredientType>();
+        ingredientTypes.Add(Constants.IngredientType.Meats);
+        ingredientTypes.Add(Constants.IngredientType.Vegetable);
+        ingredientTypes.Add(Constants.IngredientType.Processed);
+        ingredientTypes.Add(Constants.IngredientType.Spices);
+        foreach(var a in ingredientTypes)
+        {
+            var ingredientList = DataManager.Instance.GetIngredientList(a);
+            foreach (var ingredientData in ingredientList)
+            {
+                Item item = ItemFactory.Instance.CreateItem(ingredientData.id);
+                
+                if(ingredientData.type == Constants.IngredientType.Meats)
+                    InventoryManager.Instance.GetInventory(InventoryType.IngredientsButMeatOnly).GetItem(item, 10);
+                else
+                    InventoryManager.Instance.GetInventory(InventoryType.Ingredients).GetItem(item, 20);
+            }
+        }
     }
 }

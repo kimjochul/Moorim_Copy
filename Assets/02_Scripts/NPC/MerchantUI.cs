@@ -87,25 +87,6 @@ public class MerchantUI : MonoBehaviour
         if (merchant.IsAvailableDay())
             merchant.DayManager.OnDayStart += ResetDialogue;
         
-        List<Constants.IngredientType> ingredientTypes = new List<Constants.IngredientType>();
-        ingredientTypes.Add(Constants.IngredientType.Meats);
-        ingredientTypes.Add(Constants.IngredientType.Vegetable);
-        ingredientTypes.Add(Constants.IngredientType.Processed);
-        ingredientTypes.Add(Constants.IngredientType.Spices);
-        foreach(var a in ingredientTypes)
-        {
-            var ingredientList = DataManager.Instance.GetIngredientList(a);
-            foreach (var ingredientData in ingredientList)
-            {
-                Item item = ItemFactory.Instance.CreateItem(ingredientData.id);
-                
-                if(ingredientData.type == Constants.IngredientType.Meats)
-                    InventoryManager.Instance.GetInventory(InventoryType.IngredientsButMeatOnly).GetItem(item, 10);
-                else
-                    InventoryManager.Instance.GetInventory(InventoryType.Ingredients).GetItem(item, 20);
-            }
-        }
-        
         shop.OnProductClicked += HandleProductClicked;
         
         inventory = InventoryManager.Instance.GetInventory(InventoryType.Fridge);
