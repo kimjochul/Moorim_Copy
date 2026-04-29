@@ -12833,13 +12833,14 @@ GameObject:
   - component: {fileID: 670208718}
   - component: {fileID: 670208717}
   - component: {fileID: 670208716}
+  - component: {fileID: 670208719}
   m_Layer: 5
   m_Name: FridgeInven
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &670208714
 RectTransform:
   m_ObjectHideFlags: 0
@@ -12855,11 +12856,11 @@ RectTransform:
   - {fileID: 421787411}
   - {fileID: 146500702}
   - {fileID: 2041159993}
-  m_Father: {fileID: 1069881607}
+  m_Father: {fileID: 834262730}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -129}
   m_SizeDelta: {x: 530, y: 160}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!225 &670208716
@@ -12912,6 +12913,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 670208713}
   m_CullTransparentMesh: 1
+--- !u!114 &670208719
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 670208713}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0aa422d029d743129946f31744033e6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventoryPopupController
+  panelTransform: {fileID: 670208714}
+  isCommonInventory: 0
 --- !u!1 &671073086
 GameObject:
   m_ObjectHideFlags: 0
@@ -16189,8 +16204,8 @@ RectTransform:
   - {fileID: 1700176943}
   - {fileID: 1683543585}
   - {fileID: 1313401321}
-  - {fileID: 1069881607}
-  - {fileID: 2045691762}
+  - {fileID: 1283262431}
+  - {fileID: 670208714}
   - {fileID: 2338990}
   - {fileID: 1747238844}
   m_Father: {fileID: 0}
@@ -21440,69 +21455,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1065123057}
   m_CullTransparentMesh: 1
---- !u!1 &1069881606
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1069881607}
-  - component: {fileID: 1069881609}
-  - component: {fileID: 1069881608}
-  m_Layer: 5
-  m_Name: FridgeInvenRoot
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!224 &1069881607
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1069881606}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 670208714}
-  m_Father: {fileID: 834262730}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -129}
-  m_SizeDelta: {x: 530, y: 160}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1069881608
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1069881606}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0aa422d029d743129946f31744033e6c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InventoryPopupController
-  panelTransform: {fileID: 670208714}
---- !u!225 &1069881609
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1069881606}
-  m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
 --- !u!1 &1073834366
 GameObject:
   m_ObjectHideFlags: 0
@@ -26168,13 +26120,14 @@ GameObject:
   - component: {fileID: 1283262435}
   - component: {fileID: 1283262434}
   - component: {fileID: 1283262433}
+  - component: {fileID: 1283262436}
   m_Layer: 5
   m_Name: ServiceSlotInven
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1283262431
 RectTransform:
   m_ObjectHideFlags: 0
@@ -26190,11 +26143,11 @@ RectTransform:
   - {fileID: 1888137861}
   - {fileID: 1054774351}
   - {fileID: 1288985603}
-  m_Father: {fileID: 2045691762}
+  m_Father: {fileID: 834262730}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -130}
   m_SizeDelta: {x: 370, y: 160}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!225 &1283262433
@@ -26247,6 +26200,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1283262430}
   m_CullTransparentMesh: 1
+--- !u!114 &1283262436
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1283262430}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0aa422d029d743129946f31744033e6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventoryPopupController
+  panelTransform: {fileID: 1283262431}
+  isCommonInventory: 0
 --- !u!1 &1286691970
 GameObject:
   m_ObjectHideFlags: 0
@@ -38221,6 +38188,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InventoryPopupController
   panelTransform: {fileID: 1737785583}
+  isCommonInventory: 1
 --- !u!225 &1737785585
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -43584,69 +43552,6 @@ RectTransform:
   m_AnchoredPosition: {x: 251.68, y: -65}
   m_SizeDelta: {x: 503.36, y: 130}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &2045691761
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2045691762}
-  - component: {fileID: 2045691764}
-  - component: {fileID: 2045691763}
-  m_Layer: 5
-  m_Name: ServiceSlotInvenRoot
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!224 &2045691762
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2045691761}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1283262431}
-  m_Father: {fileID: 834262730}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -130}
-  m_SizeDelta: {x: 370, y: 160}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &2045691763
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2045691761}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0aa422d029d743129946f31744033e6c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InventoryPopupController
-  panelTransform: {fileID: 1283262431}
---- !u!225 &2045691764
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2045691761}
-  m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
 --- !u!1 &2047336148
 GameObject:
   m_ObjectHideFlags: 0
@@ -47960,7 +47865,7 @@ PrefabInstance:
     - target: {fileID: 2699006466413213004, guid: c3f073938abd8a74d8fd0a29b99aa8f2, type: 3}
       propertyPath: ui
       value: 
-      objectReference: {fileID: 2045691763}
+      objectReference: {fileID: 1283262436}
     - target: {fileID: 2699006466413213004, guid: c3f073938abd8a74d8fd0a29b99aa8f2, type: 3}
       propertyPath: inventory
       value: 
@@ -48162,7 +48067,7 @@ PrefabInstance:
     - target: {fileID: 7785141689976033341, guid: 4c10cfba300b8774a9e83f5bc8d8c02f, type: 3}
       propertyPath: ui
       value: 
-      objectReference: {fileID: 1069881608}
+      objectReference: {fileID: 670208719}
     - target: {fileID: 7785141689976033341, guid: 4c10cfba300b8774a9e83f5bc8d8c02f, type: 3}
       propertyPath: inventory
       value: 

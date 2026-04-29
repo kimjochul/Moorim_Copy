@@ -67,6 +67,7 @@ public class SaveManager : Singleton<SaveManager>
         yield return null; // 씬 초기화 대기
         
         InitAll();
+        InitializeNewGameData();
         
         yield return null;
         yield return new WaitUntil(() => InventoryManager.Instance.IsInitialized);
@@ -77,7 +78,6 @@ public class SaveManager : Singleton<SaveManager>
             if (!File.Exists(savePath))
             {
                 Debug.Log("세이브 파일 없음 → 새 게임 시작");
-                InitializeNewGameData();
             }
             else
             {
@@ -86,10 +86,6 @@ public class SaveManager : Singleton<SaveManager>
 
                 ApplySaveData(data);
             }
-        }
-        else
-        {
-            InitializeNewGameData();
         }
         
         DayManager.Instance.RemoteDayStart();

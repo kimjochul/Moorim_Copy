@@ -43,6 +43,8 @@ public class InventoryManager : Singleton<InventoryManager>, IInitializable
         // 🔥 씬에 있는 Inventory 전부 찾아서 Init
         var inventories = FindObjectsByType<Inventory>(FindObjectsInactive.Include, FindObjectsSortMode.None);
 
+        SetCommonInventoryRoot();
+        
         if (inventories.Length == 0)
         {
             Debug.LogError("Inventory 없음 Init 실패");
@@ -151,6 +153,38 @@ public class InventoryManager : Singleton<InventoryManager>, IInitializable
         }
         
         inventoryMap[inventory.Type] = inventory;
+        
+        // 🔥 디버그용: 인스펙터 필드에도 직접 연결
+        switch (inventory.Type)
+        {
+            case InventoryType.MealTable:
+                mealTableInventory = inventory;
+                break;
+
+            case InventoryType.IngredientsButMeatOnly:
+                meatIngredientInventory = inventory;
+                break;
+
+            case InventoryType.Server:
+                serverInventory = inventory;
+                break;
+
+            case InventoryType.Chef:
+                chefInventory = inventory;
+                break;
+
+            case InventoryType.Ingredients:
+                otherIngredientInventory = inventory;
+                break;
+
+            case InventoryType.Fridge:
+                fridgeInventory = inventory;
+                break;
+
+            default:
+                Debug.LogWarning($"[Register] 매핑 안된 타입: {inventory.Type}");
+                break;
+        }
     }
     
     public List<Inventory> GetAll()
@@ -169,5 +203,32 @@ public class InventoryManager : Singleton<InventoryManager>, IInitializable
             
             inv.ResetData();
         }
+    }
+    
+    public void SetCommonInventoryRoot()
+    {
+        var popups = FindObjectsByType<InventoryPopupController>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        
+        InventoryPopupController found = null;
+
+        foreach (var popup in popups)
+        {
+            if (!popup.IsCommonInventory())
+                continue;
+
+            if (found != null)
+            {
+                Debug.LogError("CommonInventoryRoot 2개 이상 있음");
+            }
+
+            found = popup;
+        }
+
+        if (found == null)
+        {
+            Debug.LogError("CommonInventoryRoot 못 찾음");
+        }
+
+        commonInventoryRoot = found;
     }
 }
