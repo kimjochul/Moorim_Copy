@@ -9,6 +9,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.Splines;
 using UnityEngine.UI;
 using static Constants;
+using UnityEngine.SceneManagement;
 
 public class UIManager : Singleton<UIManager>
 {
@@ -30,8 +31,9 @@ public class UIManager : Singleton<UIManager>
 
     private GameObject inventory;
 
-    public bool IsBookActive => book.gameObject.activeSelf; // 혹은 book.IsShowing 같은 프로퍼티
-    public bool IsSettingActive => setting.gameObject.activeSelf;
+    
+    public bool IsBookActive => book != null && book.gameObject.activeSelf;  // 혹은 book.IsShowing 같은 프로퍼티
+    public bool IsSettingActive => setting != null && setting.gameObject.activeSelf;
 
     public UnityAction<float> OnFontSizeChanged;    // 스토리UI 글자 크기
 
@@ -44,6 +46,9 @@ public class UIManager : Singleton<UIManager>
     {
         base.Awake();
         _canvas = GameObject.FindGameObjectWithTag("Canvas").GetComponent<Canvas>();
+        
+        SceneManager.sceneLoaded += OnSceneLoaded;
+        BindSceneUI();
         
         _questPopupCtr = FindFirstObjectByType<QuestPopupController>();
         _orderPopupCtr = FindFirstObjectByType<OrdersPopupController>();
@@ -61,6 +66,16 @@ public class UIManager : Singleton<UIManager>
         }
     }
 
+    private void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+    
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        BindSceneUI();
+    }
+    
     // public void OpenDefaultUI()
     // {
     //     Instantiate(defaultUI,  _canvas.transform);
@@ -209,6 +224,12 @@ public class UIManager : Singleton<UIManager>
     // 도감
     public void ActiveBook(bool isShow)
     {
+        if (book == null)
+        {
+            Debug.Log("Book 없음 (현재 씬)");
+            return;
+        }
+        
         book.ShowBook(isShow);
         CheckAndPauseGame();
     }
@@ -227,5 +248,11 @@ public class UIManager : Singleton<UIManager>
             Time.timeScale = 0f;
         else 
             Time.timeScale = 1f;
+    }
+
+    private void BindSceneUI()
+    {
+        book = FindFirstObjectByType<BookView>(FindObjectsInactive.Include);
+        setting = FindFirstObjectByType<Setting>(FindObjectsInactive.Include);
     }
 }

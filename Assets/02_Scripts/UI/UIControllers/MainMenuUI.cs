@@ -9,6 +9,8 @@ public class MainMenuUI : MonoBehaviour
     [SerializeField] private Button SettingsButton;
     [SerializeField] private Button QuitButton;
     
+    [SerializeField] private SaveLoadUI saveLoadUI;
+    
     [SerializeField] private Setting setting;
 
     private void Start()
@@ -28,7 +30,7 @@ public class MainMenuUI : MonoBehaviour
     private void OnClickResumeGameButton()
     {
         SceneManager.LoadScene("01_Scenes/03.Game");
-        SaveManager.Instance.LoadGame();
+        SaveManager.Instance.LoadGame(0, SaveSlotType.Auto);
     }
 
     private void OnClickSettingsButton()
@@ -38,6 +40,16 @@ public class MainMenuUI : MonoBehaviour
 
     private void OnClickQuitButton()
     {
-        Application.Quit();
+        SaveManager.Instance.SaveAndQuit();
+    }
+    
+    public void OnClickSave()
+    {
+        saveLoadUI.OpenSaveUI();
+    }
+
+    public void OnClickLoad()
+    {
+        saveLoadUI.OpenLoadUI();
     }
 }

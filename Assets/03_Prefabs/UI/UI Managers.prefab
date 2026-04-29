@@ -47,11 +47,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIManager
   dialogPopupPrefab: {fileID: 8818912250172461115, guid: f03dad30d4b36b64792b3d9a51404b16, type: 3}
-  commonInventoryPopupPrefab: {fileID: 4631136036883731046, guid: 2c40bf3773bf4ca4c87f12497767546e, type: 3}
   amountPopupObj: {fileID: 7939990253794488638, guid: 8d4397d685e008a458c0812e5cbe03b2, type: 3}
-  inventoryObj: {fileID: 4631136036883731046, guid: 2c40bf3773bf4ca4c87f12497767546e, type: 3}
+  okPopupObj: {fileID: 1720754264813194590, guid: 8c5354b9f7446604a848aaee2bff6f53, type: 3}
   defaultUI: {fileID: 245850363357209031, guid: 5d3109dae117dbc47b3d052961c6a083, type: 3}
-  tempGuestData: {fileID: 11400000, guid: 88c698d04248ba942998aa4c267e52b3, type: 2}
+  book: {fileID: 0}
+  setting: {fileID: 0}
   recipes:
   - {fileID: 11400000, guid: 3db4de0c04ae3ce4b8d22c6343c6aa29, type: 2}
 --- !u!114 &3097089116953780395
@@ -99,6 +99,9 @@ MonoBehaviour:
   zigzagDropHeight: 800
   zigzagLeftOffset: 400
   zigzagRightOffset: 200
+  stampStartScale: {x: 10, y: 10}
+  stampAnimDuration: 0.5
+  stampEase: 27
 --- !u!225 &8879920912751730264
 CanvasGroup:
   m_ObjectHideFlags: 0

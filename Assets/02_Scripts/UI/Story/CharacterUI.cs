@@ -32,8 +32,7 @@ public class CharacterUI : MonoBehaviour
     
     public void Show()
     {
-        foreach (var slot in slots)
-            slot.gameObject.SetActive(true);
+        
     }
 
     public void Hide()

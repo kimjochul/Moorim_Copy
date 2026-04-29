@@ -19,16 +19,32 @@ public class SaveData
     public List<InventorySaveData> inventories;
 }
 
+public enum SaveSlotType
+{
+    Auto,
+    Manual
+}
+[Serializable]
+public class SaveMetaData
+{
+    public int day;
+    public int hour;
+    public int minute;
+    public string saveTime; // 실제 시간
+}
+
 public class SaveManager : Singleton<SaveManager>
 {
-    private string savePath;
     
     public bool isLoadedGame = false;
+    private bool isQuitting = false;
+    
+    private int loadSlotIndex;
+    private SaveSlotType loadType;
     
     protected override void Awake()
     {
         base.Awake();
-        savePath = Path.Combine(Application.persistentDataPath, "save.json");
     }
     
     // ------------------------
@@ -43,22 +59,50 @@ public class SaveManager : Singleton<SaveManager>
     // ------------------------
     // 저장
     // ------------------------
-    public void SaveGame()
+    public void SaveGame(int slotIndex, SaveSlotType type)
     {
+        if (isQuitting)
+        {
+            Debug.Log("종료 중 저장 스킵");
+            return;
+        }
+        
+        string path = GetSavePath(slotIndex, type);
+
         SaveData data = CreateSaveData();
-
         string json = JsonUtility.ToJson(data, true);
-        File.WriteAllText(savePath, json);
+        
+        SaveMetaData meta = new SaveMetaData
+        {
+            day = data.day.day,
+            hour = data.day.hour,
+            minute = data.day.minute,
+            saveTime = DateTime.Now.ToString()
+        };
+        File.WriteAllText(path, json);
+        
+        Debug.Log($"저장 완료: {path}");
+    }
+    
+    private string GetSavePath(int slotIndex, SaveSlotType type)
+    {
+        string fileName = type == SaveSlotType.Auto
+            ? "auto_save.json"
+            : $"save_{slotIndex}.json";
 
-        Debug.Log($"저장 완료: {savePath}");
+        return Path.Combine(Application.persistentDataPath, fileName);
     }
 
     // ------------------------
     // 불러오기
     // ------------------------
-    public void LoadGame()
+    public void LoadGame(int slotIndex, SaveSlotType type)
     {
         isLoadedGame = true;
+        
+        loadSlotIndex = slotIndex;
+        loadType = type;
+        
         StartCoroutine(StartRoutine());
     }
     
@@ -67,7 +111,6 @@ public class SaveManager : Singleton<SaveManager>
         yield return null; // 씬 초기화 대기
         
         InitAll();
-        InitializeNewGameData();
         
         yield return null;
         yield return new WaitUntil(() => InventoryManager.Instance.IsInitialized);
@@ -75,20 +118,26 @@ public class SaveManager : Singleton<SaveManager>
         
         if (isLoadedGame)
         {
-            if (!File.Exists(savePath))
+            string path = GetSavePath(loadSlotIndex, loadType);
+            
+            if (!File.Exists(path))
             {
                 Debug.Log("세이브 파일 없음 → 새 게임 시작");
             }
             else
             {
-                string json = File.ReadAllText(savePath);
+                string json = File.ReadAllText(path);
                 SaveData data = JsonUtility.FromJson<SaveData>(json);
 
                 ApplySaveData(data);
             }
         }
+        else if (!isLoadedGame)
+        {
+            InitializeNewGameData(); 
+        }
         
-        DayManager.Instance.RemoteDayStart();
+        DayManager.Instance.RemoteDayStart(isLoadedGame);
         Debug.Log(isLoadedGame ? "로드 완료" : "새 게임 시작");
     }
     
@@ -108,16 +157,29 @@ public class SaveManager : Singleton<SaveManager>
     private SaveData CreateSaveData()
     {
         SaveData data = new SaveData();
-        
-        data.day = DayManager.Instance.GetSaveData();
-        data.inventories = InventoryManager.Instance.GetAll().Select(inv => inv.GetSaveData()).ToList();
-        data.recipe = RecipeUnlockManager.Instance.GetSaveData();
-        data.ingredient = IngredientUnlockManager.Instance.GetSaveData();
-        data.story = StoryManager.Instance.GetSaveData();
-        data.economy = EconomyManager.Instance.GetSaveData();
-        
-        data.quest = QuestManager.Instance.GetSaveData();
-        
+
+        if (DayManager.Instance)
+            data.day = DayManager.Instance.GetSaveData();
+
+        if (InventoryManager.Instance)
+            data.inventories = InventoryManager.Instance.GetAll()
+                .Select(inv => inv.GetSaveData()).ToList();
+
+        if (RecipeUnlockManager.Instance)
+            data.recipe = RecipeUnlockManager.Instance.GetSaveData();
+
+        if (IngredientUnlockManager.Instance)
+            data.ingredient = IngredientUnlockManager.Instance.GetSaveData();
+
+        if (StoryManager.Instance)
+            data.story = StoryManager.Instance.GetSaveData();
+
+        if (EconomyManager.Instance)
+            data.economy = EconomyManager.Instance.GetSaveData();
+
+        if (QuestManager.Instance)
+            data.quest = QuestManager.Instance.GetSaveData();
+
         return data;
     }
 
@@ -168,11 +230,11 @@ public class SaveManager : Singleton<SaveManager>
         EconomyManager.Instance.ResetData();
         QuestManager.Instance.ResetData();
     }
-
-    private void OnApplicationPause(bool pause)
+    
+    public void SaveAndQuit()
     {
-        if (pause)
-            SaveGame();
+        SaveGame(0, SaveSlotType.Auto);
+        Application.Quit();
     }
 }
 
@@ -181,6 +243,8 @@ public class DaySaveData
 {
     public int day;
     public int dayOfWeek;
+    public int hour;
+    public int minute;
 }
 
 [Serializable]

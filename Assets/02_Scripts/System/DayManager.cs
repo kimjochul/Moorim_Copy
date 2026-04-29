@@ -25,7 +25,7 @@ public class DayManager : Singleton<DayManager>
     
     [SerializeField] private float dayLength = 600f;
     [SerializeField] private float gameStartHour = 9f;
-    [SerializeField] private float gameEndHour = 18f;
+    [SerializeField] private float gameEndHour = 21f;
     
     private List<INPCSchedule> npcs = new List<INPCSchedule>();
 
@@ -47,15 +47,13 @@ public class DayManager : Singleton<DayManager>
     private int _prevMinute = -1;
     
     private bool _isFirstDayStart = true;
+    private bool _isBusinessOver = false;
 
     protected override void Awake()
     {
         base.Awake();
         
         _totalGameMinutes = (gameEndHour - gameStartHour) * 60f;
-        
-        if(!SaveManager.Instance.isLoadedGame)
-            InitDay();
     }
     
     public void RegisterNPC(INPCSchedule npc)
@@ -70,42 +68,56 @@ public class DayManager : Singleton<DayManager>
             npcs.Remove(npc);
     }
     
-    private void InitDay()
-    {
-        DayData.day = 1;
-        DayData.dayOfWeek = DayOfWeek.Monday;
-    }
-    
     /// <summary>
     /// 주간 영업이 시작될 때 호출되는 함수. OnDayStart Action을 이용해 다른 매니저들도 영업이 시작될 때 맞는 행동을 한다.
     /// </summary>
-    public void DayStart()
+    public void DayStart(bool isLoad = false)
     {
         Debug.Log("Day Start");
-        _timer = 0f;
+        if (!isLoad)
+            _timer = 0f;
         IsRunning = true;
         
-        _hour = (int)gameStartHour;
-        _minute = 0;
+        // _hour = (int)gameStartHour;
+        // _minute = 0;
         _prevHour = -1;
         _prevMinute = -1;
-
-        SaveManager.Instance.SaveGame();
+        
+        _isBusinessOver = false;
+        
+        SaveManager.Instance.SaveGame(0, SaveSlotType.Auto);
         
         if (_isFirstDayStart)
         {
             _isFirstDayStart = false;
         }
-        else
+        else if(!isLoad)
         {
             UpdateDayData();
         }
         OnDayStart?.Invoke();
     }
-
-    public void RemoteDayStart()
+    
+    private void LoadDayStart()
     {
-        DayStart();
+        Debug.Log("Load Day Start");
+
+        IsRunning = true;
+
+        _prevHour = -1;
+        _prevMinute = -1;
+
+        _isBusinessOver = false;
+        
+        OnDayStart?.Invoke();
+    }
+
+    public void RemoteDayStart(bool isLoad = false)
+    {
+        if (isLoad)
+            LoadDayStart();
+        else
+            DayStart(isLoad);
     }
     
     void Update()
@@ -144,7 +156,8 @@ public class DayManager : Singleton<DayManager>
     {
         Debug.Log("Day End");
         IsRunning = false;
-        SaveManager.Instance.SaveGame();
+        _isBusinessOver = true;
+        SaveManager.Instance.SaveGame(0, SaveSlotType.Auto);
         OnDayEnd?.Invoke();
     }
 
@@ -170,17 +183,37 @@ public class DayManager : Singleton<DayManager>
     
     public DaySaveData GetSaveData()
     {
-        return new DaySaveData
+        if (!_isBusinessOver)
         {
-            day = DayData.day,
-            dayOfWeek = (int)DayData.dayOfWeek
-        };
+            return new DaySaveData
+            {
+                day = DayData.day,
+                dayOfWeek = (int)DayData.dayOfWeek,
+                hour = (int)gameStartHour,
+                minute = 0,
+            };
+        }
+        else
+        {
+            return new DaySaveData
+            {
+                day = DayData.day,
+                dayOfWeek = (int)DayData.dayOfWeek,
+                hour = (int)gameEndHour - 1,
+                minute = 59,
+            };
+        }
     }
     
     public void LoadFromData(DaySaveData data)
     {
         DayData.day = data.day;
         DayData.dayOfWeek = (DayOfWeek)data.dayOfWeek;
+        _hour = data.hour;
+        _minute = data.minute;
+        
+        float loadedMinutes = (data.hour - gameStartHour) * 60f + data.minute;
+        _timer = (loadedMinutes / _totalGameMinutes) * dayLength;
         
         _isFirstDayStart = false;
     }
