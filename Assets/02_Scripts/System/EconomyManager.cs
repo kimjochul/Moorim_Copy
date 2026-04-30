@@ -11,6 +11,7 @@ public class EconomyManager : Singleton<EconomyManager>, IInitializable
     [SerializeField] private RestaurantEconomy restaurantEconomy;
     [SerializeField] private GuestResultTracker guestResultTracker;
     public RestaurantEconomy RestaurantEconomy => restaurantEconomy;
+    public  GuestResultTracker GuestResultTracker => guestResultTracker;
 
     private int _todayMoneyIncome;
     public int TodayMoneyIncome => _todayMoneyIncome;
@@ -45,44 +46,6 @@ public class EconomyManager : Singleton<EconomyManager>, IInitializable
         else 
             Debug.LogWarning("GuestResultTracker 없음");
     }
-    
-    // private void OnEnable()
-    // {
-    //     Debug.Log("Eco Enable");
-    //     
-    //     DayManager.Instance.OnDayStart += ResetDay;
-    //     
-    //     DayManager.Instance.OnDayEnd += TotalEarningToday;
-    //     DayManager.Instance.OnDayEnd += TodayResult;
-    //
-    //     GuestManager.OnGuestServed += OnCustomerServed;
-    //     
-    //     if (guestResultTracker == null) 
-    //         guestResultTracker = FindFirstObjectByType<GuestResultTracker>(); 
-    //     
-    //     if (guestResultTracker != null) 
-    //         RegisterGuestResultTracker(guestResultTracker); 
-    //     else 
-    //         Debug.LogWarning("GuestResultTracker 없음");
-    // }
-    //
-    // private void OnDisable()
-    // {
-    //     Debug.Log("Eco Disable");
-    //     
-    //     if (guestResultTracker != null) 
-    //         UnregisterGuestResultTracker(guestResultTracker);
-    //     
-    //     if (DayManager.Instance != null)
-    //     {
-    //         DayManager.Instance.OnDayStart -= ResetDay;
-    //
-    //         DayManager.Instance.OnDayEnd -= TotalEarningToday;
-    //         DayManager.Instance.OnDayEnd -= TodayResult;
-    //     }
-    //     
-    //     GuestManager.OnGuestServed -= OnCustomerServed;
-    // }
     
     /// <summary>
     /// 주간 영업 중에 금일 수입을 업데이트하기 위한 함수
@@ -219,6 +182,19 @@ public class EconomyManager : Singleton<EconomyManager>, IInitializable
         };
     }
     
+    public DailyResultSaveData GetDailyResult(GuestResultTracker tracker)
+    {
+        return new DailyResultSaveData
+        {
+            todayMoneyIncome = _todayMoneyIncome,
+            todayFameIncome = _todayFameIncome,
+            todayCustomerCount = _todayCustomerCount,
+
+            happyGuests = tracker.DailyResult.goodCount + tracker.DailyResult.veryGoodCount,
+            angryGuests = tracker.DailyResult.badCount + tracker.DailyResult.veryBadCount,
+        };
+    }
+    
     public void LoadFromData(EconomySaveData data)
     {
         restaurantEconomy.Money = data.money;
@@ -226,6 +202,15 @@ public class EconomyManager : Singleton<EconomyManager>, IInitializable
         restaurantEconomy.Debt = data.debt;
 
         RestaurantEconomyChanged?.Invoke();
+    }
+    
+    public void LoadDailyResult(DailyResultSaveData data)
+    {
+        _todayMoneyIncome = data.todayMoneyIncome;
+        _todayFameIncome = data.todayFameIncome;
+        _todayCustomerCount = data.todayCustomerCount;
+
+        TodayEconomyChanged?.Invoke();
     }
     
     public void ResetData()
@@ -238,6 +223,7 @@ public class EconomyManager : Singleton<EconomyManager>, IInitializable
         _todayFameIncome = 0; 
         _todayCustomerCount = 0;
 
+        TodayEconomyChanged?.Invoke();
         Debug.Log("Economy Reset 완료");
     }
 }

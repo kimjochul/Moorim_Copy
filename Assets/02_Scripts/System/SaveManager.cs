@@ -16,6 +16,7 @@ public class SaveData
     public IngredientSaveData ingredient;
     public StorySaveData story;
     public EconomySaveData economy;
+    public DailyResultSaveData dailyResult;
     public List<InventorySaveData> inventories;
 }
 
@@ -177,7 +178,10 @@ public class SaveManager : Singleton<SaveManager>
             data.story = StoryManager.Instance.GetSaveData();
 
         if (EconomyManager.Instance)
+        {
             data.economy = EconomyManager.Instance.GetSaveData();
+            data.dailyResult = EconomyManager.Instance.GetDailyResult(EconomyManager.Instance.GuestResultTracker);
+        }
 
         if (QuestManager.Instance)
             data.quest = QuestManager.Instance.GetSaveData();
@@ -218,7 +222,10 @@ public class SaveManager : Singleton<SaveManager>
         }
         StoryManager.Instance.LoadFromData(data.story);
         EconomyManager.Instance.LoadFromData(data.economy);
-        
+        if (data.dailyResult != null)
+        {
+            EconomyManager.Instance.LoadDailyResult(data.dailyResult);
+        }
         QuestManager.Instance.LoadFromData(data.quest);
     }
 
@@ -312,6 +319,17 @@ public class EconomySaveData
     public int money;
     public int fame;
     public int debt;
+}
+
+[Serializable]
+public class DailyResultSaveData
+{
+    public int todayMoneyIncome;
+    public int todayFameIncome;
+    public int todayCustomerCount;
+
+    public int happyGuests;
+    public int angryGuests;
 }
 
 [Serializable]

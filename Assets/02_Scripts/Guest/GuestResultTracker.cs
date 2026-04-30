@@ -6,6 +6,7 @@ public class GuestResultTracker : MonoBehaviour
 {
     // 하루 집계
     private GuestResultData dailyResult = new GuestResultData();
+    public GuestResultData DailyResult => dailyResult;
 
     // 누적 집계
     private GuestResultData totalResult = new GuestResultData();
