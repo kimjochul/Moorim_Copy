@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using static Constants;
+using UnityEngine.SceneManagement;
 
 
 /// <summary>
@@ -35,7 +36,14 @@ public class InventoryManager : Singleton<InventoryManager>, IInitializable
     
     private bool isInitialized = false;
     public bool IsInitialized => isInitialized;
-    
+
+    protected override void Awake()
+    {
+        base.Awake();
+        
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
     public void Init()
     {
         if (isInitialized) return;
@@ -62,7 +70,34 @@ public class InventoryManager : Singleton<InventoryManager>, IInitializable
         isInitialized = true;
     }
 
-    
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        var inventories = FindObjectsByType<Inventory>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+
+        SetCommonInventoryRoot();
+        
+        if (inventories.Length == 0)
+        {
+            Debug.LogError("Inventory 없음 Init 실패");
+            return;
+        }
+
+        inventoryMap = new Dictionary<InventoryType, Inventory>();
+        
+        foreach (var inv in inventories)
+        {
+            Debug.Log(inv.Type.ToString());
+            Register(inv);
+            inv.Init();
+        }
+    }
+
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
     public Inventory GetInventory(InventoryType type)
     {
         if (!inventoryMap.ContainsKey(type))

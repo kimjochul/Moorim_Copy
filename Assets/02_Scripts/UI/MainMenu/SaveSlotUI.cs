@@ -1,6 +1,7 @@
 using System.IO;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class SaveSlotUI : MonoBehaviour
@@ -56,6 +57,7 @@ public class SaveSlotUI : MonoBehaviour
         }
         else
         {
+            SceneManager.LoadScene("01_Scenes/03.Game");
             SaveManager.Instance.LoadGame(slotIndex, slotType);
         }
     }

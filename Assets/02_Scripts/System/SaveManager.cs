@@ -137,6 +137,8 @@ public class SaveManager : Singleton<SaveManager>
             InitializeNewGameData(); 
         }
         
+        UIManager.Instance.CloseAllUI();
+        
         DayManager.Instance.RemoteDayStart(isLoadedGame);
         Debug.Log(isLoadedGame ? "로드 완료" : "새 게임 시작");
     }

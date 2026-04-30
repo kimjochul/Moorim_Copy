@@ -118,6 +118,12 @@ public class Slot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDropHandler
         this.Item = newItem;
         Count = newCount;
         
+        if (slotIcon == null)
+            return;
+
+        if (slotIcon.gameObject == null)
+            return;
+        
         if (newItem == null)
         {
             IsEmpty = true;

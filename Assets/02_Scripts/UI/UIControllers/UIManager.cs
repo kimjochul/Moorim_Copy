@@ -9,7 +9,6 @@ using UnityEngine.SceneManagement;
 using UnityEngine.Splines;
 using UnityEngine.UI;
 using static Constants;
-using UnityEngine.SceneManagement;
 
 public class UIManager : Singleton<UIManager>
 {
@@ -25,6 +24,7 @@ public class UIManager : Singleton<UIManager>
 
     [SerializeField] private BookView book;
     [SerializeField] private Setting setting;
+    [SerializeField] private SaveLoadUI saveLoadUI;
     
     private bool _isQuestPopupOpen = false;
     private bool _isOrderPopupOpen = false;
@@ -34,6 +34,7 @@ public class UIManager : Singleton<UIManager>
     
     public bool IsBookActive => book != null && book.gameObject.activeSelf;  // 혹은 book.IsShowing 같은 프로퍼티
     public bool IsSettingActive => setting != null && setting.gameObject.activeSelf;
+    public bool IsSaveLoadActive => saveLoadUI != null && saveLoadUI.gameObject.activeSelf;
 
     public UnityAction<float> OnFontSizeChanged;    // 스토리UI 글자 크기
 
@@ -69,10 +70,12 @@ public class UIManager : Singleton<UIManager>
     private void OnDestroy()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
+        base.OnDestroy();
     }
     
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        BindSceneCanvas();
         BindSceneUI();
     }
     
@@ -214,6 +217,17 @@ public class UIManager : Singleton<UIManager>
     // 설명을 띄워줄 팝업
     public OkPopup CreateOkPopup(string message, UnityAction onOk)
     {
+        if (_canvas == null)
+        {
+            BindSceneCanvas();
+        }
+
+        if (_canvas == null)
+        {
+            Debug.LogError("Canvas 없음 → Popup 생성 실패");
+            return null;
+        }
+        
         var popup = Instantiate(okPopupObj, _canvas.transform).GetComponent<OkPopup>();
         popup.Init(message);
         popup.ButtonOk(onOk);
@@ -231,6 +245,10 @@ public class UIManager : Singleton<UIManager>
         }
         
         book.ShowBook(isShow);
+        
+        if(setting)
+            setting.Hide();
+        
         CheckAndPauseGame();
     }
     // 설정창
@@ -240,11 +258,35 @@ public class UIManager : Singleton<UIManager>
             setting.Show(); 
         else
             setting.Hide();
+        
+        if(book)
+            book.ShowBook(false);
+        
         CheckAndPauseGame();
     }
+    // 세이브 화면
+    public void ActiveSaveUI(bool isShow)
+    {
+        if (isShow)
+            saveLoadUI.OpenSaveUI(isShow); 
+        else
+            saveLoadUI.OpenSaveUI(isShow);
+        CheckAndPauseGame();
+    }
+    // 로드 화면
+    public void ActiveLoadUI(bool isShow)
+    {
+        if (isShow)
+            saveLoadUI.OpenLoadUI(isShow); 
+        else
+            saveLoadUI.OpenLoadUI(isShow);
+        CheckAndPauseGame();
+    }
+    
+    
     private void CheckAndPauseGame()
     {
-        if (IsBookActive || IsSettingActive)
+        if (IsBookActive || IsSettingActive || IsSaveLoadActive)
             Time.timeScale = 0f;
         else 
             Time.timeScale = 1f;
@@ -254,5 +296,56 @@ public class UIManager : Singleton<UIManager>
     {
         book = FindFirstObjectByType<BookView>(FindObjectsInactive.Include);
         setting = FindFirstObjectByType<Setting>(FindObjectsInactive.Include);
+        saveLoadUI = FindFirstObjectByType<SaveLoadUI>(FindObjectsInactive.Include);
+    }
+
+    private void BindSceneCanvas()
+    {
+        var canvasObj = GameObject.FindGameObjectWithTag("Canvas");
+
+        if (canvasObj == null)
+        {
+            Debug.LogError("Canvas 못 찾음");
+            return;
+        }
+
+        _canvas = canvasObj.GetComponent<Canvas>();
+    }
+    
+    public void CloseAllUI()
+    {
+        // 개별 UI 닫기
+        if (book != null)
+            book.ShowBook(false);
+
+        if (setting != null)
+            setting.Hide();
+
+        if (saveLoadUI != null)
+            saveLoadUI.OpenSaveUI(false); // 내부에서 둘 다 꺼지게 처리되어 있으면 OK
+        // 아니면 OpenLoadUI(false)도 따로 호출
+
+        // 인벤토리 팝업들 전부 닫기
+        var popups = FindObjectsByType<InventoryPopupController>(FindObjectsSortMode.None);
+        foreach (var popup in popups)
+        {
+            popup.Hide();
+        }
+
+        // 퀘스트 / 주문 팝업
+        var quest = FindFirstObjectByType<QuestPopupController>(FindObjectsInactive.Include);
+        if (quest != null)
+            quest.Hide();
+
+        var order = FindFirstObjectByType<OrdersPopupController>(FindObjectsInactive.Include);
+        if (order != null)
+            order.Hide();
+
+        var cook = FindFirstObjectByType<CookingController>(FindObjectsInactive.Include);
+        if (cook != null)
+            cook.CloseCookingSystem(true);
+        
+        // 🔥 핵심: 시간 복구
+        Time.timeScale = 1f;
     }
 }

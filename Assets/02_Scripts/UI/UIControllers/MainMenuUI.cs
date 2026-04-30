@@ -9,14 +9,13 @@ public class MainMenuUI : MonoBehaviour
     [SerializeField] private Button SettingsButton;
     [SerializeField] private Button QuitButton;
     
-    [SerializeField] private SaveLoadUI saveLoadUI;
     
     [SerializeField] private Setting setting;
 
     private void Start()
     {
         StartNewGameButton.onClick.AddListener(OnClickStartNewGameButton);
-        ResumeGameButton.onClick.AddListener(OnClickResumeGameButton);
+        ResumeGameButton.onClick.AddListener(OnClickLoad);
         SettingsButton.onClick.AddListener(OnClickSettingsButton);
         QuitButton.onClick.AddListener(OnClickQuitButton);
     }
@@ -35,21 +34,16 @@ public class MainMenuUI : MonoBehaviour
 
     private void OnClickSettingsButton()
     {
-        this.setting.Show();
+        UIManager.Instance.ActiveSetting(true);
     }
 
     private void OnClickQuitButton()
     {
         SaveManager.Instance.SaveAndQuit();
     }
-    
-    public void OnClickSave()
-    {
-        saveLoadUI.OpenSaveUI();
-    }
 
     public void OnClickLoad()
     {
-        saveLoadUI.OpenLoadUI();
+        UIManager.Instance.ActiveLoadUI(true);
     }
 }

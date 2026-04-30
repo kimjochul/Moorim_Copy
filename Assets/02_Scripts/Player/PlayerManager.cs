@@ -36,9 +36,28 @@ public class PlayerManager : Singleton<PlayerManager>
     // 캐릭터가 스왑될 때마다 UI에 알려줄 이벤트
     public event Action<PlayerType> OnPlayerSwapped;
 
+    protected override void Awake()
+    {
+        base.Awake();
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
     void Start()
     {
         SelectPlayer(PlayerType.Myungwol);
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        players[0] = FindFirstObjectByType<Myungwol>();
+        players[1] = FindFirstObjectByType<Sowol>();
+        SelectPlayer(PlayerType.Myungwol);
+    }
+
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     public void SelectPlayer(PlayerType playerType)
@@ -65,6 +84,8 @@ public class PlayerManager : Singleton<PlayerManager>
         if (selectedUnit.ActiveInteractable != null && selectedUnit.ActiveInteractable.CanInteract(playerType))
             selectedUnit.ActiveInteractable.Interact(selectedUnit);
 
+        UIManager.Instance.CloseAllUI();
+        
         OnPlayerSwapped?.Invoke(playerType);
 
     }

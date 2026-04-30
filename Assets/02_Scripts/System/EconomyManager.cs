@@ -28,12 +28,7 @@ public class EconomyManager : Singleton<EconomyManager>, IInitializable
         _todayFameIncome = 0;
         _todayCustomerCount = 0;
         
-        RegisterGuestResultTracker(guestResultTracker);
-    }
-    
-    private void OnEnable()
-    {
-        Debug.Log("Eco Enable");
+        //RegisterGuestResultTracker(guestResultTracker);
         
         DayManager.Instance.OnDayStart += ResetDay;
         
@@ -41,21 +36,53 @@ public class EconomyManager : Singleton<EconomyManager>, IInitializable
         DayManager.Instance.OnDayEnd += TodayResult;
 
         GuestManager.OnGuestServed += OnCustomerServed;
-    }
-
-    private void OnDisable()
-    {
-        Debug.Log("Eco Disable");
-        if (DayManager.Instance != null)
-        {
-            DayManager.Instance.OnDayStart -= ResetDay;
-
-            DayManager.Instance.OnDayEnd -= TotalEarningToday;
-            DayManager.Instance.OnDayEnd -= TodayResult;
-        }
         
-        GuestManager.OnGuestServed -= OnCustomerServed;
+        if (guestResultTracker == null) 
+            guestResultTracker = FindFirstObjectByType<GuestResultTracker>(); 
+        
+        if (guestResultTracker != null) 
+            RegisterGuestResultTracker(guestResultTracker); 
+        else 
+            Debug.LogWarning("GuestResultTracker 없음");
     }
+    
+    // private void OnEnable()
+    // {
+    //     Debug.Log("Eco Enable");
+    //     
+    //     DayManager.Instance.OnDayStart += ResetDay;
+    //     
+    //     DayManager.Instance.OnDayEnd += TotalEarningToday;
+    //     DayManager.Instance.OnDayEnd += TodayResult;
+    //
+    //     GuestManager.OnGuestServed += OnCustomerServed;
+    //     
+    //     if (guestResultTracker == null) 
+    //         guestResultTracker = FindFirstObjectByType<GuestResultTracker>(); 
+    //     
+    //     if (guestResultTracker != null) 
+    //         RegisterGuestResultTracker(guestResultTracker); 
+    //     else 
+    //         Debug.LogWarning("GuestResultTracker 없음");
+    // }
+    //
+    // private void OnDisable()
+    // {
+    //     Debug.Log("Eco Disable");
+    //     
+    //     if (guestResultTracker != null) 
+    //         UnregisterGuestResultTracker(guestResultTracker);
+    //     
+    //     if (DayManager.Instance != null)
+    //     {
+    //         DayManager.Instance.OnDayStart -= ResetDay;
+    //
+    //         DayManager.Instance.OnDayEnd -= TotalEarningToday;
+    //         DayManager.Instance.OnDayEnd -= TodayResult;
+    //     }
+    //     
+    //     GuestManager.OnGuestServed -= OnCustomerServed;
+    // }
     
     /// <summary>
     /// 주간 영업 중에 금일 수입을 업데이트하기 위한 함수
@@ -207,8 +234,9 @@ public class EconomyManager : Singleton<EconomyManager>, IInitializable
         RestaurantEconomy.Fame = 300;
         RestaurantEconomy.Debt = 100000; // 기본값
 
-        _todayMoneyIncome = 0;
-        _todayFameIncome = 0;
+        _todayMoneyIncome = 0; 
+        _todayFameIncome = 0; 
+        _todayCustomerCount = 0;
 
         Debug.Log("Economy Reset 완료");
     }

@@ -1,16 +1,33 @@
+using System;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using static Constants;
 
 public class PlayerInput : MonoBehaviour
 {
     private Camera mainCamera;
 
+    private void Awake()
+    {
+        SceneManager.sceneLoaded += OnsceneLoaded;
+    }
+
     void Start()
     {
         mainCamera = Camera.main;
+    }
+
+    private void OnsceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        mainCamera = Camera.main;
+    }
+
+    private void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnsceneLoaded;
     }
 
     void Update()

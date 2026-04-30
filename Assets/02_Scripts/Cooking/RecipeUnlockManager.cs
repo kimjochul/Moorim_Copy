@@ -7,20 +7,11 @@ public class RecipeUnlockManager : Singleton<RecipeUnlockManager>, IInitializabl
 {
     [SerializeField] private RecipeList recipeList;
     private HashSet<int> unlockedRecipes = new HashSet<int>();
-
-    private bool isLoaded = false;
-    private bool isInitialized = false;
+    
     
     public void Init()
     {
-        if (isLoaded) return;
         
-        foreach (var recipe in recipeList.recipes)
-        {
-            if (!unlockedRecipes.Contains(recipe.id) && recipe.isLocked == false)
-                Unlock(recipe.id);
-        }
-        isInitialized = true;
     }
 
     public bool IsUnlocked(int recipeID)
@@ -65,8 +56,6 @@ public class RecipeUnlockManager : Singleton<RecipeUnlockManager>, IInitializabl
     
     public void LoadFromData(RecipeSaveData data)
     {
-        isLoaded = true;
-
         unlockedRecipes.Clear();
 
         foreach (var id in data.unlockedRecipeIDs)
@@ -81,9 +70,6 @@ public class RecipeUnlockManager : Singleton<RecipeUnlockManager>, IInitializabl
     
     public void ResetData()
     {
-        if (isInitialized)
-            return;
-        
         unlockedRecipes.Clear();
 
         foreach (var recipe in recipeList.recipes)

@@ -46,7 +46,8 @@ public class QuestManager : Singleton<QuestManager>, ISubject, IInitializable
     {
         inventory = InventoryManager.Instance.GetInventory(InventoryType.Chef);
         guestResultTracker = FindFirstObjectByType<GuestResultTracker>();
-
+        generator  = FindFirstObjectByType<QuestGenerator>();
+        
         if(guestResultTracker != null)
             guestResultTracker.OnGuestRecorded += DetectGuestMood;
     }

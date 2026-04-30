@@ -74,6 +74,7 @@ public class DayManager : Singleton<DayManager>
     public void DayStart(bool isLoad = false)
     {
         Debug.Log("Day Start");
+        
         if (!isLoad)
             _timer = 0f;
         IsRunning = true;
@@ -85,7 +86,6 @@ public class DayManager : Singleton<DayManager>
         
         _isBusinessOver = false;
         
-        SaveManager.Instance.SaveGame(0, SaveSlotType.Auto);
         
         if (_isFirstDayStart)
         {
@@ -95,6 +95,8 @@ public class DayManager : Singleton<DayManager>
         {
             UpdateDayData();
         }
+        
+        SaveManager.Instance.SaveGame(0, SaveSlotType.Auto);
         OnDayStart?.Invoke();
     }
     
@@ -199,8 +201,8 @@ public class DayManager : Singleton<DayManager>
             {
                 day = DayData.day,
                 dayOfWeek = (int)DayData.dayOfWeek,
-                hour = (int)gameEndHour - 1,
-                minute = 59,
+                hour = (int)gameEndHour,
+                minute = 00,
             };
         }
     }
