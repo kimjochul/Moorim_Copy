@@ -25,21 +25,24 @@ public class CharacterUI : MonoBehaviour
         }
     }
     
+    private void OnEnable()
+    {
+        StoryManager.Instance.SetCharacterUI(this);
+    }
+    
     public void Show()
     {
-        gameObject.SetActive(true);
+        
     }
 
     public void Hide()
     {
-        gameObject.SetActive(false);
-
         // 혹시 남아있는 상태 초기화
         foreach (var slot in slots)
         {
             slot.ClearImmediate();
+            slot.gameObject.SetActive(false);
         }
-
         currentSlotMap.Clear();
     }
     

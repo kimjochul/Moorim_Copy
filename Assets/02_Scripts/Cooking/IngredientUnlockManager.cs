@@ -1,19 +1,15 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
-public class IngredientUnlockManager : Singleton<IngredientUnlockManager>
+public class IngredientUnlockManager : Singleton<IngredientUnlockManager>, IInitializable
 {
     [SerializeField] private IngredientList allIngredients;
 
     private HashSet<int> unlockedIngredients = new HashSet<int>();
-
-    private void Start()
+    
+    public void Init()
     {
-        foreach (var ingredient in allIngredients.ingredients)
-        {
-            if (!ingredient.isLocked)
-                Unlock(ingredient.id);
-        }
     }
 
     public bool IsUnlocked(int id)
@@ -28,5 +24,34 @@ public class IngredientUnlockManager : Singleton<IngredientUnlockManager>
 
         unlockedIngredients.Add(id);
         Debug.Log($"재료 해금: {id}");
+    }
+    
+    public IngredientSaveData GetSaveData()
+    {
+        return new IngredientSaveData
+        {
+            unlockedIngredientIDs = unlockedIngredients.ToList()
+        };
+    }
+    
+    public void LoadFromData(IngredientSaveData data)
+    {
+        unlockedIngredients.Clear();
+
+        foreach (var id in data.unlockedIngredientIDs)
+            Unlock(id);
+    }
+    
+    public void ResetData()
+    {
+        unlockedIngredients.Clear();
+
+        foreach (var ingredient in allIngredients.ingredients)
+        {
+            if (!ingredient.isLocked)
+                Unlock(ingredient.id);
+        }
+
+        Debug.Log("Ingredient Reset 완료");
     }
 }

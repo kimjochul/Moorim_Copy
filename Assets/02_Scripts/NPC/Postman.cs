@@ -1,10 +1,11 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using static Constants;
 
 public class Postman : MonoBehaviour, IInteractable, INPCSchedule
-{
-    [SerializeField] private DayManager dayManager;
+{ 
+    private DayManager dayManager;
     public DayManager DayManager => dayManager;
     [SerializeField] private StoryManager storyManager;
     
@@ -15,11 +16,26 @@ public class Postman : MonoBehaviour, IInteractable, INPCSchedule
     // 우편배달부는 클릭해서 상호작용
     public InteractMode Mode => InteractMode.ClickToInteract;
  
-    private void Start()
+    private void OnEnable()
     {
+        dayManager = DayManager.Instance;
+        storyManager = StoryManager.Instance;
+        DayManager.Instance.RegisterNPC(this);
+    }
+
+    private void OnDisable()
+    {
+        if (DayManager.Instance != null)
+            DayManager.Instance.UnregisterNPC(this);
+    }
+    
+    IEnumerator Start()
+    {
+        yield return null; // 1프레임 대기 (모든 Awake 끝나게)
+        
         storyManager.OnEndStory += postmanViewActive;
         storyManager.OnEndStory += DailyQuestCreate;
-        
+
         postmanUI.Init(this);
         postmanView.SetActive(false);
     }

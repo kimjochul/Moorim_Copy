@@ -83,6 +83,11 @@ public class ItemCondition : QuestCondition
         return currentCount.ToString();
     }
 
+    public override void SetCurrentCount(int value)
+    {
+        currentCount = value;
+    }
+    
     public override string GetRequiredCount()
     {
         return requiredCount.ToString();

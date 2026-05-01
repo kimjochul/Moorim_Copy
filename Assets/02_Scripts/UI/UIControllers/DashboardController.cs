@@ -3,18 +3,22 @@ using UnityEngine.UI;
 
 public class DashboardController : MonoBehaviour
 {
-    [Header("¸Þ´º ¹öÆ°")]
+    [Header("ï¿½Þ´ï¿½ ï¿½ï¿½Æ°")]
     [SerializeField] private Button btnOrders;
     [SerializeField] private Button btnQuests;
+    [SerializeField] private Button btnSave;
+    [SerializeField] private Button btnLoad;
 
-    [Header("ÆË¾÷ Ã¢")]
+    [Header("ï¿½Ë¾ï¿½ Ã¢")]
     [SerializeField] private RectTransform rectOrders;
     [SerializeField] private RectTransform rectQuests;
 
-    void Start()
+    void Awake()
     {
         this.btnOrders.onClick.AddListener(OnClickOrders);
         this.btnQuests.onClick.AddListener(OnClickQuests);
+        btnSave.onClick.AddListener(OnClickSave);
+        btnLoad.onClick.AddListener(OnClickLoad);
     }
 
     private void OnClickOrders()
@@ -55,5 +59,15 @@ public class DashboardController : MonoBehaviour
         UIManager.Instance.OpenQuestPopup(this.rectQuests.gameObject);
 
         UIAnimationManager.Instance.ShowPaper(this.rectQuests, PaperDirection.TopRight);
+    }
+
+    private void OnClickSave()
+    {
+        UIManager.Instance.ActiveSaveUI(true);
+    }
+
+    private void OnClickLoad()
+    {
+        UIManager.Instance.ActiveLoadUI(true);
     }
 }

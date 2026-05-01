@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 4131908169433360139}
   - component: {fileID: 7785141689976033341}
   - component: {fileID: 3365612656084194270}
+  - component: {fileID: 1444849736056427644}
   m_Layer: 0
   m_Name: Fridge
   m_TagString: Untagged
@@ -132,6 +133,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Fridge
   movePoint: {fileID: 2652942428037689914}
   inventory: {fileID: 0}
+  ui: {fileID: 0}
+  feedback: {fileID: 1444849736056427644}
 --- !u!65 &3365612656084194270
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -153,6 +156,22 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.4, y: 0.89, z: 0.7}
   m_Center: {x: 0, y: 1.0065722, z: 0.72}
+--- !u!114 &1444849736056427644
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3366009045225874051}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5099a3a23bf48884db6db59ebea8b9ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractFeedback
+  shakeDuration: 0.381
+  shakeStrength: 0.246
+  shakeVibrato: 23
+  shakeRandomness: 141
 --- !u!1 &3973009238072763806
 GameObject:
   m_ObjectHideFlags: 0

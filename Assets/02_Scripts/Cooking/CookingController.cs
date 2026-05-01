@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using DG.Tweening;
 using UnityEngine;
 using static Constants;
 
@@ -24,6 +25,11 @@ public class CookingController : MonoBehaviour
     private Inventory targetInventoryMeat; // 육류
     private Inventory targetInventoryOther; // 육류 외
     
+    // UI 위치 초기값
+    private Vector2 cookingInitPos;
+    private Vector2 recipeInitPos;
+    private Vector2 commonInvenInitPos;
+    
     private RecipeUnlockManager recipeUnlockManager;
     private IngredientUnlockManager ingredientUnlockManager;
 
@@ -46,6 +52,9 @@ public class CookingController : MonoBehaviour
         
         InitView();
         InitRuntimeRecipes();
+        
+        cookingInitPos = cookingView.GetComponent<RectTransform>().anchoredPosition;
+        recipeInitPos = recipeListView.GetComponent<RectTransform>().anchoredPosition;
     }
 
     void OnDestroy()
@@ -74,6 +83,13 @@ public class CookingController : MonoBehaviour
         cookingView.OnCookClicked += OnCookButtonClicked;
         cookingView.OnCloseClicked += HandleClose;
     }
+    
+    private void ResetUIPosition()
+    {
+        cookingView.GetComponent<RectTransform>().anchoredPosition = cookingInitPos;
+        recipeListView.GetComponent<RectTransform>().anchoredPosition = recipeInitPos;
+        
+    }
 
     private void InitRuntimeRecipes()
     {
@@ -93,6 +109,11 @@ public class CookingController : MonoBehaviour
     public void OpenCookingSystem(CookingStation station)
     {
         currentStation = station;
+        
+        ResetUIPosition();
+        cookingView.GetComponent<RectTransform>().DOKill(true);
+        recipeListView.GetComponent<RectTransform>().DOKill(true);
+        
         mainCookingUICanvas.SetActive(true);
         
         InitRuntimeRecipes();
@@ -103,17 +124,18 @@ public class CookingController : MonoBehaviour
         RectTransform cookingRect = this.cookingView.GetComponent<RectTransform>();
         RectTransform recipeRect = this.recipeListView.GetComponent<RectTransform>();
 
-        UIAnimationManager.Instance.ShowGroupSlide(cookingRect, recipeRect, Direction.Right);
+        UIAnimationManager.Instance.ShowGroupSlide(cookingRect, recipeRect, cookingInitPos, recipeInitPos,Direction.Right);
 
         // 인벤토리 애니메이션 연출
 
         InventoryManager.Instance.OpenCommonInventory();
 
         RectTransform invenRect = InventoryManager.Instance.GetCommonInventoryRect();
-
+        commonInvenInitPos = InventoryManager.Instance.CommonInvenInitPos;
+        
         if (invenRect != null)
         {
-            UIAnimationManager.Instance.ShowSlide(invenRect, Direction.Left, 800f, 0.4f);
+            UIAnimationManager.Instance.ShowSlide(invenRect,commonInvenInitPos, Direction.Left, 800f, 0.4f);
         }
     }
 
@@ -129,17 +151,18 @@ public class CookingController : MonoBehaviour
         RectTransform cookingRect = this.cookingView.GetComponent<RectTransform>();
         RectTransform recipeRect = this.recipeListView.GetComponent<RectTransform>();
 
-        UIAnimationManager.Instance.HideGroupSlide(cookingRect, recipeRect, Direction.Right,
+        UIAnimationManager.Instance.HideGroupSlide(cookingRect, recipeRect, cookingInitPos, recipeInitPos, Direction.Right,
         onComplete: () => {
             mainCookingUICanvas.SetActive(false);
         });
 
         // 인벤토리 애니메이션 연출
         RectTransform invenRect = InventoryManager.Instance.GetCommonInventoryRect();
+        commonInvenInitPos = InventoryManager.Instance.CommonInvenInitPos;
 
         if (invenRect != null)
         {
-            UIAnimationManager.Instance.HideSlide(invenRect, Direction.Left, 800f, 0.3f,
+            UIAnimationManager.Instance.HideSlide(invenRect, commonInvenInitPos, Direction.Left, 800f, 0.3f,
                 onComplete: () =>
                 {
                     InventoryManager.Instance.CloseCommonInventory();
@@ -258,6 +281,7 @@ public class CookingController : MonoBehaviour
         if (currentStation != null && model.IsReadyToCook())
         {
             currentStation.StartCooking(model.CurrentRecipe);
+            DataManager.Instance.AddRecipeProficiency(model.CurrentRecipe.Data, 1);
             model.InsertedIngredients.Clear();
             CloseCookingSystem(false);
         }

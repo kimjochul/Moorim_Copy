@@ -23,10 +23,11 @@ public class GuestInteractable : MonoBehaviour, IInteractable
     // 서빙 캐릭터만 상호작용 가능
     public bool CanInteract(PlayerType playerType)
     {
-        return playerType == PlayerType.Myungwol;
-
         //분노 퇴장 중이면 상호작용 불가
         if (myBrain == null || myBrain.IsAngryExiting) return false;
+        
+        return playerType == PlayerType.Myungwol;
+
     }
  
     // 명월이가 손님을 클릭했을 때 맵의 어디로 걸어와야 하는가?

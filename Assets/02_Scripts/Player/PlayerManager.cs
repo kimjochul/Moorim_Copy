@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -36,9 +37,30 @@ public class PlayerManager : Singleton<PlayerManager>
     // 캐릭터가 스왑될 때마다 UI에 알려줄 이벤트
     public event Action<PlayerType> OnPlayerSwapped;
 
+    private Dictionary<PlayerType, IInteractable> lastInteractables = new();
+    
+    protected override void Awake()
+    {
+        base.Awake();
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
     void Start()
     {
         SelectPlayer(PlayerType.Myungwol);
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        players[0] = FindFirstObjectByType<Myungwol>();
+        players[1] = FindFirstObjectByType<Sowol>();
+        SelectPlayer(PlayerType.Myungwol);
+    }
+
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     public void SelectPlayer(PlayerType playerType)
@@ -51,22 +73,39 @@ public class PlayerManager : Singleton<PlayerManager>
         {
             // ui 닫기 (ActiveInteractable은 유지)
             if (selectedUnit.ActiveInteractable != null)
+            {
+                lastInteractables[CurrentPlayer] = selectedUnit.ActiveInteractable;
                 selectedUnit.ActiveInteractable.OnInteractEnd(selectedUnit);
+            }
 
             selectedUnit.OnDeselected();
         }
 
+        bool resumed = false;
+        
         // 새 캐릭터 선택
         selectedUnit = players[index];
         CurrentPlayer = playerType;
         selectedUnit.OnSelected();
 
+        if (lastInteractables.TryGetValue(playerType, out var last))
+        {
+            if (last != null && last.CanInteract(playerType))
+            {
+                if (last is MonoBehaviour mb && mb.gameObject.activeInHierarchy)
+                {
+                    selectedUnit.ActiveInteractable = last;
+                    last.Interact(selectedUnit);
+                    resumed = true;
+                }
+            }
+        }
+        
         // 복귀 시 재개
-        if (selectedUnit.ActiveInteractable != null && selectedUnit.ActiveInteractable.CanInteract(playerType))
+        if (!resumed && selectedUnit.ActiveInteractable != null && selectedUnit.ActiveInteractable.CanInteract(playerType))
             selectedUnit.ActiveInteractable.Interact(selectedUnit);
-
+        
         OnPlayerSwapped?.Invoke(playerType);
-
     }
 
     public void MoveSelectedUnitTo(Vector3 destination, UnityAction onArrived = null)

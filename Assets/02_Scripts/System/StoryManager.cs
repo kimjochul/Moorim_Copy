@@ -21,9 +21,9 @@ public class TriggerGroup
     public bool isActive;
 }
 
-public class StoryManager : MonoBehaviour
+public class StoryManager : Singleton<StoryManager>, IInitializable
 {
-    [SerializeField] private DayManager dayManager;
+    private DayManager dayManager;
     [SerializeField] private Receipt receipt;
     
     private RecipeUnlockManager recipeUnlockManager;
@@ -35,13 +35,13 @@ public class StoryManager : MonoBehaviour
 
     [SerializeField] private RestaurantEconomy economy;
     
-    [SerializeField] private StoryUI storyUI;
-    [SerializeField] private CharacterUI characterUI;
+    private StoryUI storyUI;
+    private CharacterUI characterUI;
+    private StoryFadePanel fadePanel;
 
     [SerializeField] private List<CharacterName> characterNames;
     private Dictionary<int, string> nameDict;
 
-    [SerializeField] private CanvasGroup fadePanel;
     [SerializeField] private float fadeDuration;
     
     public event Action OnEndStory;
@@ -63,28 +63,21 @@ public class StoryManager : MonoBehaviour
     
     private HashSet<int> playedStoryIds = new();
     private HashSet<string> flags = new();
-    
-    private void Awake()
-    {
-        storyUI.Init(this);
 
-        nameDict = new Dictionary<int, string>();
-        foreach (var c in characterNames)
-        {
-            nameDict[c.id] = c.name;
-        }
-        
-        fadePanel.alpha = 0f;
-        fadePanel.gameObject.SetActive(false);
-        fadePanel.blocksRaycasts = false;
-        
+    public void Init()
+    {
+        dayManager = DayManager.Instance;
         recipeUnlockManager = RecipeUnlockManager.Instance;
         ingredientUnlockManager = IngredientUnlockManager.Instance;
     }
     
     private void Start()
     {
-        receipt.onButtonConfirm += HandleDayEnd;
+        nameDict = new Dictionary<int, string>();
+        foreach (var c in characterNames)
+        {
+            nameDict[c.id] = c.name;
+        }
     }
     
     private void HandleDayEnd()
@@ -148,9 +141,9 @@ public class StoryManager : MonoBehaviour
             return;
         }
         
-        fadePanel.gameObject.SetActive(true);
-        fadePanel.alpha = 1f;
-        fadePanel.blocksRaycasts = true;
+        fadePanel.canvasGroup.gameObject.SetActive(true);
+        fadePanel.canvasGroup.alpha = 1f;
+        fadePanel.canvasGroup.blocksRaycasts = true;
 
         currentSceneIndex = 0;
         currentIndex = 0;
@@ -394,14 +387,14 @@ public class StoryManager : MonoBehaviour
     {
         isTransitioning = true; // ⭐ 잠금
         
-        fadePanel.gameObject.SetActive(true);
-        fadePanel.blocksRaycasts = true;
+        fadePanel.canvasGroup.gameObject.SetActive(true);
+        fadePanel.canvasGroup.blocksRaycasts = true;
 
         Sequence seq = DOTween.Sequence();
 
-        if (fadePanel.alpha < 1f)
+        if (fadePanel.canvasGroup.alpha < 1f)
         {
-            seq.Append(fadePanel.DOFade(1f, fadeDuration).SetEase(Ease.InOutQuad));
+            seq.Append(fadePanel.canvasGroup.DOFade(1f, fadeDuration).SetEase(Ease.InOutQuad));
         }
         
         seq.AppendInterval(0.2f);
@@ -419,12 +412,61 @@ public class StoryManager : MonoBehaviour
             ShowNextLine();
         });
         
-        seq.Append(fadePanel.DOFade(0f, fadeDuration).SetEase(Ease.InOutQuad));
+        seq.Append(fadePanel.canvasGroup.DOFade(0f, fadeDuration).SetEase(Ease.InOutQuad));
 
         seq.OnComplete(() =>
         {
-            fadePanel.blocksRaycasts = false;
-            fadePanel.gameObject.SetActive(false);
+            fadePanel.canvasGroup.blocksRaycasts = false;
+            fadePanel.canvasGroup.gameObject.SetActive(false);
         });
+    }
+    
+    public StorySaveData GetSaveData()
+    {
+        return new StorySaveData
+        {
+            playedStoryIDs = playedStoryIds.ToList(),
+            flags = flags.ToList()
+        };
+    }
+    
+    public void LoadFromData(StorySaveData data)
+    {
+        playedStoryIds = new HashSet<int>(data.playedStoryIDs);
+        flags = new HashSet<string>(data.flags);
+    }
+    
+    public void ResetData()
+    {
+        playedStoryIds.Clear();
+        flags.Clear();
+
+        Debug.Log("Story Reset 완료");
+    }
+    
+    public void SetStoryUI(StoryUI ui)
+    {
+        storyUI = ui;
+        storyUI.Init();
+    }
+    
+    public void SetCharacterUI(CharacterUI ui)
+    {
+        characterUI = ui;
+    }
+    
+    public void SetReceipt(Receipt receipt)
+    {
+        this.receipt = receipt;
+        receipt.onButtonConfirm += HandleDayEnd; 
+    }
+    
+    public void SetFadePanel(StoryFadePanel panel)
+    {
+        fadePanel = panel;
+        
+        fadePanel.canvasGroup.alpha = 0f;
+        fadePanel.canvasGroup.gameObject.SetActive(false);
+        fadePanel.canvasGroup.blocksRaycasts = false;
     }
 }

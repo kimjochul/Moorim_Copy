@@ -188,4 +188,11 @@ public class DataManager : Singleton<DataManager>
             }
         }
     }
+    
+    public List<RecipeMastery> GetAllRecipeMastery()
+    {
+        return dicRecipe.Values
+            .SelectMany(list => list)
+            .ToList();
+    }
 }

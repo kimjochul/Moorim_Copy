@@ -6,6 +6,7 @@ public class GuestResultTracker : MonoBehaviour
 {
     // 하루 집계
     private GuestResultData dailyResult = new GuestResultData();
+    public GuestResultData DailyResult => dailyResult;
 
     // 누적 집계
     private GuestResultData totalResult = new GuestResultData();
@@ -16,6 +17,18 @@ public class GuestResultTracker : MonoBehaviour
     // 손님 퇴장시 마다 외부에 알림
     public event Action<GuestMood> OnGuestRecorded;
 
+    // private void OnEnable()
+    // {
+    //     Debug.Log("GuestResultTracker OnEnable 실행됨");
+    //     EconomyManager.Instance.RegisterGuestResultTracker(this);
+    // }
+
+    private void OnDisable()
+    {
+        if (EconomyManager.Instance != null)
+            EconomyManager.Instance.UnregisterGuestResultTracker(this);
+    }
+    
     public void RecordGuest(GuestMood mood)
     {
         dailyResult.AddResult(mood);
@@ -25,6 +38,7 @@ public class GuestResultTracker : MonoBehaviour
 
     public void EndDay()
     {
+        Debug.Log("EndDay by GuestTracker");
         OnDayResultReady?.Invoke(dailyResult, totalResult);
         dailyResult.Reset();
     }

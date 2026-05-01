@@ -3,6 +3,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Pool;
+using UnityEngine.SceneManagement;
 
 public class PoolManager : Singleton<PoolManager>
 {
@@ -16,7 +17,24 @@ public class PoolManager : Singleton<PoolManager>
     private Dictionary<string, GameObject> prefabMap
         = new Dictionary<string, GameObject>();
 
-    
+    protected override void Awake()
+    {
+        base.Awake();
+
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        poolParent = GameObject.FindWithTag("Pool").transform;
+    }
+
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
     // 프리팹 정보를 여기에 등록하는 메소드
     // 이 메소드를 호출해야 해당 타입의 풀이 생성됨.
     public void Register(string key, GameObject prefab, int preloadCount = 3)

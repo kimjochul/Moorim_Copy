@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 using static Constants;
@@ -12,10 +13,19 @@ public class Myungwol : PlayerController
     // [SerializeField] private Inventory inventory;
     // public Inventory Inventory => inventory;
 
-    private void Start()
+    private IEnumerator Start()
     {
+        yield return null;
+        yield return null;
+        
         inventory = InventoryManager.Instance.GetInventory(InventoryType.Server);
         DayManager.Instance.OnDayEnd += ClearInventorySlots;
+    }
+    
+    private void OnDestroy()
+    {
+        if (DayManager.Instance != null)
+            DayManager.Instance.OnDayEnd -= ClearInventorySlots;
     }
 
     public override void OnSelected()
@@ -37,8 +47,6 @@ public class Myungwol : PlayerController
 
         if (slot.Owner.Type is InventoryType.MealTable)
             ClickMealTableSlot(slot);
-        else if (slot.Owner.Type is InventoryType.Fridge)
-            ClickFridgeSlot(slot);
         else if(slot.Owner.Type is InventoryType.Server)
             ClickServerSlot(slot);
     }
@@ -62,25 +70,6 @@ public class Myungwol : PlayerController
             ChangeState(PlayerState.PickUp);
         }
     }
-    
-    private void ClickFridgeSlot(Slot slot)
-    {
-        if (slot.Item == null)
-            return;
-        
-        var interactable = PlayerManager.Instance.ActiveInteractable;
-        if (interactable is Fridge fridge)
-        {
-            IItem foodItem = fridge.TakeFood(slot.Index, inventory);
-            if (foodItem == null)
-            {
-                Debug.Log("가져올 음식 없음");
-            }
-
-            // 애니메이션 실행
-            ChangeState(PlayerState.PickUp);
-        }
-    }
 
     public void ClickServerSlot(Slot slot)
     {
@@ -93,14 +82,6 @@ public class Myungwol : PlayerController
             if (slot.Owner.Type is InventoryType.Server)
             {
                 servingSlot.PlaceFood(inventory, slot);
-                ChangeState(PlayerState.Give);
-            }
-        }
-        else if (interactable is Fridge fridge)
-        {
-            if (slot.Owner.Type is InventoryType.Server)
-            {
-                fridge.PlaceFood(inventory, slot);
                 ChangeState(PlayerState.Give);
             }
         }
@@ -118,8 +99,11 @@ public class Myungwol : PlayerController
     
     private void ClearInventorySlots()
     {
+        if (inventory == null) return;
         foreach (var slot in inventory.Slots)
         {
+            if (slot == null) continue;
+            
             slot.Clear();
         }
     }

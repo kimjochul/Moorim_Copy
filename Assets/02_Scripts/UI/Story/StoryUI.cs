@@ -22,8 +22,6 @@ public class StoryUI : MonoBehaviour
 
     private bool isTyping;
 
-    private StoryManager storyManager;
-
     private List<StoryLine> history = new();
     private int historyIndex = -1;
     
@@ -35,15 +33,18 @@ public class StoryUI : MonoBehaviour
     
     private float defaultContentFontSize;
     private float accentFontSize;
-    public void Init(StoryManager manager)
+    public void Init()
     {
-        storyManager = manager;
-        
         defaultContentFontSize = UIManager.Instance.GetTextScale();
         accentFontSize = UIManager.Instance.GetTextScale() * 1.3f;
         UIManager.Instance.OnFontSizeChanged += SetFontSize;
     }
 
+    private void OnEnable()
+    {
+        StoryManager.Instance.SetStoryUI(this);
+    }
+    
     public void Show()
     {
         root.SetActive(true);
@@ -73,7 +74,7 @@ public class StoryUI : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.LeftControl))
         {
-            storyManager.SkipCurrentScene();
+            StoryManager.Instance.SkipCurrentScene();
             return;
         }
 
@@ -86,7 +87,7 @@ public class StoryUI : MonoBehaviour
             }
             else
             {
-                storyManager.ShowNextLine();
+                StoryManager.Instance.ShowNextLine();
             }
         }
 
@@ -123,7 +124,7 @@ public class StoryUI : MonoBehaviour
         }
         else
         {
-            speakerText.text = line.isUnknown ? "???" : storyManager.GetCharacterName(line.characterID);
+            speakerText.text = line.isUnknown ? "???" : StoryManager.Instance.GetCharacterName(line.characterID);
             contentText.alignment = TextAlignmentOptions.TopLeft;
         }
         
@@ -146,7 +147,7 @@ public class StoryUI : MonoBehaviour
         }
         else
         {
-            speakerText.text = line.isUnknown ? "???" : storyManager.GetCharacterName(line.characterID);
+            speakerText.text = line.isUnknown ? "???" : StoryManager.Instance.GetCharacterName(line.characterID);
             contentText.alignment = TextAlignmentOptions.TopLeft;
             ShowCharacterName();
         }
@@ -201,7 +202,7 @@ public class StoryUI : MonoBehaviour
         if (historyIndex >= history.Count - 1)
         {
             // 최신이면 다음 라인 진행
-            storyManager.ShowNextLine();
+            StoryManager.Instance.ShowNextLine();
             return;
         }
 

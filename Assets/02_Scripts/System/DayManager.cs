@@ -16,14 +16,6 @@ public enum DayOfWeek
     Sunday
 }
 
-[Serializable]
-public class DayData
-{
-    internal int day;
-    internal DayOfWeek dayOfWeek;
-}
-
-
 /// <summary>
 /// 주간 운영에서 시간, 날짜를 관리하는 클래스
 /// </summary>
@@ -33,11 +25,9 @@ public class DayManager : Singleton<DayManager>
     
     [SerializeField] private float dayLength = 600f;
     [SerializeField] private float gameStartHour = 9f;
-    [SerializeField] private float gameEndHour = 18f;
+    [SerializeField] private float gameEndHour = 21f;
     
-    [SerializeField] private List<MonoBehaviour> npcList;
-    
-    private List<INPCSchedule> npcs;
+    private List<INPCSchedule> npcs = new List<INPCSchedule>();
 
     private float _totalGameMinutes;
     private float _timer = 0f;
@@ -57,58 +47,81 @@ public class DayManager : Singleton<DayManager>
     private int _prevMinute = -1;
     
     private bool _isFirstDayStart = true;
+    private bool _isBusinessOver = false;
 
     protected override void Awake()
     {
         base.Awake();
         
-        npcs = new List<INPCSchedule>();
-        foreach (var npc in npcList)
-        {
-            if (npc is INPCSchedule schedule)
-                npcs.Add(schedule);
-            else
-                Debug.LogWarning($"{npc.name} does not implement INPCSchedule");
-        }
-        
         _totalGameMinutes = (gameEndHour - gameStartHour) * 60f;
-        InitDay();
     }
     
-    private void InitDay()
+    public void RegisterNPC(INPCSchedule npc)
     {
-        DayData = new DayData
-        {
-            day = 1,
-            dayOfWeek = DayOfWeek.Monday
-        };
+        if (!npcs.Contains(npc))
+            npcs.Add(npc);
+    }
+
+    public void UnregisterNPC(INPCSchedule npc)
+    {
+        if (npcs.Contains(npc))
+            npcs.Remove(npc);
     }
     
     /// <summary>
     /// 주간 영업이 시작될 때 호출되는 함수. OnDayStart Action을 이용해 다른 매니저들도 영업이 시작될 때 맞는 행동을 한다.
     /// </summary>
-    public void DayStart()
+    public void DayStart(bool isLoad = false)
     {
         Debug.Log("Day Start");
-        _timer = 0f;
+        
+        if (!isLoad)
+            _timer = 0f;
         IsRunning = true;
         
-        _hour = (int)gameStartHour;
-        _minute = 0;
+        // _hour = (int)gameStartHour;
+        // _minute = 0;
         _prevHour = -1;
         _prevMinute = -1;
-
+        
+        _isBusinessOver = false;
+        
+        
         if (_isFirstDayStart)
         {
             _isFirstDayStart = false;
         }
-        else
+        else if(!isLoad)
         {
             UpdateDayData();
         }
+        
+        SaveManager.Instance.SaveGame(0, SaveSlotType.Auto);
+        OnDayStart?.Invoke();
+    }
+    
+    private void LoadDayStart()
+    {
+        Debug.Log("Load Day Start");
+
+        IsRunning = true;
+
+        _prevHour = -1;
+        _prevMinute = -1;
+
+        _isBusinessOver = false;
+        
         OnDayStart?.Invoke();
     }
 
+    public void RemoteDayStart(bool isLoad = false)
+    {
+        if (isLoad)
+            LoadDayStart();
+        else
+            DayStart(isLoad);
+    }
+    
     void Update()
     {
         if (!IsRunning) return;
@@ -145,7 +158,11 @@ public class DayManager : Singleton<DayManager>
     {
         Debug.Log("Day End");
         IsRunning = false;
+        _isBusinessOver = true;
+        
+        EconomyManager.Instance.CacheDailyResult();
         OnDayEnd?.Invoke();
+        SaveManager.Instance.SaveGame(0, SaveSlotType.Auto);
     }
 
     /// <summary>
@@ -166,5 +183,61 @@ public class DayManager : Singleton<DayManager>
                 return true;
         }
         return false;
+    }
+    
+    public DaySaveData GetSaveData()
+    {
+        if (!_isBusinessOver)
+        {
+            return new DaySaveData
+            {
+                day = DayData.day,
+                dayOfWeek = (int)DayData.dayOfWeek,
+                hour = (int)gameStartHour,
+                minute = 0,
+            };
+        }
+        else
+        {
+            return new DaySaveData
+            {
+                day = DayData.day,
+                dayOfWeek = (int)DayData.dayOfWeek,
+                hour = (int)gameEndHour,
+                minute = 00,
+            };
+        }
+    }
+    
+    public void LoadFromData(DaySaveData data)
+    {
+        DayData.day = data.day;
+        DayData.dayOfWeek = (DayOfWeek)data.dayOfWeek;
+        _hour = data.hour;
+        _minute = data.minute;
+        
+        float loadedMinutes = (data.hour - gameStartHour) * 60f + data.minute;
+        _timer = (loadedMinutes / _totalGameMinutes) * dayLength;
+        
+        _isFirstDayStart = false;
+    }
+    
+    public void ResetData()
+    {
+        if (dayData == null)
+        {
+            Debug.LogError("DayData 없음");
+            return;
+        }
+
+        dayData.day = 1;
+        dayData.dayOfWeek = DayOfWeek.Monday;
+
+        _timer = 0f;
+        IsRunning = false;
+
+        _isFirstDayStart = true;
+
+        Debug.Log("DayManager Reset 완료");
     }
 }

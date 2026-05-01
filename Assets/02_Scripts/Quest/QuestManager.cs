@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -12,7 +13,7 @@ using static Constants;
 /// 이벤트 전달 (Notify)
 /// Observer 등록/해제
 /// </summary>
-public class QuestManager : Singleton<QuestManager>, ISubject
+public class QuestManager : Singleton<QuestManager>, ISubject, IInitializable
 {
     private List<IObserver> observers = new List<IObserver>();
     
@@ -34,12 +35,23 @@ public class QuestManager : Singleton<QuestManager>, ISubject
     public event Action OnWaitingQuestChanged;// 수락 대기중인 퀘스트 수 변경 시 호출
     
 
-    private void Start()
+    private IEnumerator Start()
     {
+        yield return null;
+        
         inventory = InventoryManager.Instance.GetInventory(InventoryType.Chef);
-        guestResultTracker.OnGuestRecorded += DetectGuestMood;
     }
 
+    public void Init()
+    {
+        inventory = InventoryManager.Instance.GetInventory(InventoryType.Chef);
+        guestResultTracker = FindFirstObjectByType<GuestResultTracker>();
+        generator  = FindFirstObjectByType<QuestGenerator>();
+        
+        if(guestResultTracker != null)
+            guestResultTracker.OnGuestRecorded += DetectGuestMood;
+    }
+    
     /// <summary>
     /// 퀘스트 수락 전 제안
     /// </summary>
@@ -269,5 +281,127 @@ public class QuestManager : Singleton<QuestManager>, ISubject
             return q.QuestType == type;
         });
         OnWaitingQuestChanged?.Invoke();
+    }
+    
+    /// <summary>
+    /// 퀘스트 데이터 저장
+    /// </summary>
+    /// <returns></returns>
+    public QuestSaveData GetSaveData()
+    {
+        var data = new QuestSaveData();
+
+        foreach (var quest in activeQuests)
+        {
+            var questData = new QuestRuntimeData
+            {
+                questID = quest.QuestID,
+                rewardGold = quest.Data.reward.gold,
+                rewardFame = quest.Data.reward.reputation
+            };
+
+            var conditions = quest.GetConditions();
+
+            for (int i = 0; i < conditions.Count; i++)
+            {
+                var cond = conditions[i];
+
+                var condData = new ConditionRuntimeData
+                {
+                    conditionIndex = i,
+                    currentCount = int.Parse(cond.GetCurrentCount())
+                };
+
+                // 🔥 타입별 저장
+                if (cond is ItemCondition item)
+                {
+                    condData.targetID = item.itemID;
+                    condData.requiredCount = item.requiredCount;
+                }
+                else if (cond is FailLimitCondition fail)
+                {
+                    condData.extraValue = fail.maxFailCount;
+                }
+                else if (cond is ServeCondition serve)
+                {
+                    condData.requiredCount = serve.requireCount;
+                }
+
+                questData.conditions.Add(condData);
+            }
+
+            data.activeQuests.Add(questData);
+        }
+
+        foreach (var quest in completedQuests)
+        {
+            data.completedQuestIDs.Add(quest.QuestID);
+        }
+
+        return data;
+    }
+    
+    public void LoadFromData(QuestSaveData data)
+    {
+        activeQuests.Clear();
+        completedQuests.Clear();
+
+        foreach (var savedQuest in data.activeQuests)
+        {
+            var quest = generator.GenerateQuestByID(savedQuest.questID);
+
+            if (quest == null)
+                continue;
+
+            // 🔥 보상 복원
+            quest.Data.reward.gold = savedQuest.rewardGold;
+            quest.Data.reward.reputation = savedQuest.rewardFame;
+
+            var conditions = quest.GetConditions();
+
+            foreach (var savedCond in savedQuest.conditions)
+            {
+                if (savedCond.conditionIndex >= conditions.Count)
+                    continue;
+
+                var cond = conditions[savedCond.conditionIndex];
+
+                // 🔥 진행도 복원
+                cond.SetCurrentCount(savedCond.currentCount);
+
+                // 🔥 타입별 복원
+                if (cond is ItemCondition item)
+                {
+                    item.itemID = savedCond.targetID;
+                    item.requiredCount = savedCond.requiredCount;
+                }
+                else if (cond is FailLimitCondition fail)
+                {
+                    fail.maxFailCount = savedCond.extraValue;
+                }
+                else if (cond is ServeCondition serve)
+                {
+                    serve.requireCount = savedCond.requiredCount;
+                }
+            }
+
+            activeQuests.Add(quest);
+            AddObserver(quest);
+        }
+
+        foreach (var id in data.completedQuestIDs)
+        {
+            var quest = generator.GenerateQuestByID(id);
+            if (quest != null)
+                completedQuests.Add(quest);
+        }
+    }
+    
+    public void ResetData()
+    {
+        activeQuests.Clear();
+        completedQuests.Clear();
+
+        Debug.Log("Quest Reset 완료");
     }
 }

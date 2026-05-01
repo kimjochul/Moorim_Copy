@@ -710,11 +710,18 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
             onComplete?.Invoke();
         });
     }
-    public void ShowSlide(RectTransform ui, Direction direction = Direction.Bottom, float offsetDistance = 800f, float duration = 0.4f, UnityAction onStart = null, UnityAction onComplete = null)
+    public void ShowSlide(
+        RectTransform ui,
+        Vector2 basePos,
+        Direction direction = Direction.Bottom, 
+        float offsetDistance = 800f, 
+        float duration = 0.4f, 
+        UnityAction onStart = null, 
+        UnityAction onComplete = null)
     {
         if (ui == null) return;
 
-        ui.DOKill();
+        ui.DOKill(true);
 
         CanvasGroup cg = ui.GetComponent<CanvasGroup>();
         if (cg == null)
@@ -723,9 +730,7 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         cg.DOKill();
         cg.blocksRaycasts = false;
 
-        Vector2 originalPos = ui.anchoredPosition;
-
-        Vector2 startPos = originalPos;
+        Vector2 startPos = basePos;
         switch (direction)
         {
             case Direction.Top: startPos.y += offsetDistance; break;
@@ -744,7 +749,7 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
             onStart?.Invoke();
         });
 
-        seq.Append(ui.DOAnchorPos(originalPos, duration).SetEase(Ease.OutQuart));
+        seq.Append(ui.DOAnchorPos(basePos, duration).SetEase(Ease.OutQuart));
         seq.Join(cg.DOFade(1f, duration).SetEase(Ease.Linear));
 
         seq.OnComplete(() => {
@@ -753,11 +758,18 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         });
     }
 
-    public void HideSlide(RectTransform ui, Direction direction = Direction.Bottom, float offsetDistance = 800f, float duration = 0.3f, UnityAction onStart = null, UnityAction onComplete = null)
+    public void HideSlide(
+        RectTransform ui,
+        Vector2 basePos,
+        Direction direction = Direction.Bottom, 
+        float offsetDistance = 800f, 
+        float duration = 0.3f, 
+        UnityAction onStart = null, 
+        UnityAction onComplete = null)
     {
         if (ui == null) return;
 
-        ui.DOKill();
+        ui.DOKill(true);
 
         CanvasGroup cg = ui.GetComponent<CanvasGroup>();
         if (cg == null)
@@ -765,10 +777,8 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
 
         cg.DOKill();
         cg.blocksRaycasts = false;
-
-        Vector2 originalPos = ui.anchoredPosition;
-
-        Vector2 endPos = originalPos;
+        
+        Vector2 endPos = basePos;
         switch (direction)
         {
             case Direction.Top: endPos.y += offsetDistance; break;
@@ -777,6 +787,8 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
             case Direction.Right: endPos.x += offsetDistance; break;
         }
 
+        ui.anchoredPosition = basePos;
+        
         Sequence seq = DOTween.Sequence();
 
         seq.OnStart(() => {
@@ -787,16 +799,26 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         seq.Join(cg.DOFade(0f, duration).SetEase(Ease.Linear));
 
         seq.OnComplete(() => {
-            ui.anchoredPosition = originalPos;
+            ui.anchoredPosition = basePos;
             onComplete?.Invoke();
         });
     }
-    public void ShowGroupSlide(RectTransform mainRect, RectTransform subRect, Direction direction = Direction.Right, float offsetDistance = 800f, float mainDuration = 0.4f, float subDuration = 0.2f, UnityAction onStart = null, UnityAction onComplete = null)
+    public void ShowGroupSlide(
+        RectTransform mainRect, 
+        RectTransform subRect,
+        Vector2 mainBasePos,
+        Vector2 subBasePos,
+        Direction direction = Direction.Right, 
+        float offsetDistance = 800f, 
+        float mainDuration = 0.4f, 
+        float subDuration = 0.2f, 
+        UnityAction onStart = null, 
+        UnityAction onComplete = null)
     {
         if (mainRect == null || subRect == null) return;
 
-        mainRect.DOKill();
-        subRect.DOKill();
+        mainRect.DOKill(true);
+        subRect.DOKill(true);
 
         CanvasGroup mainCG = mainRect.GetComponent<CanvasGroup>();
         if (mainCG == null) mainCG = mainRect.gameObject.AddComponent<CanvasGroup>();
@@ -804,50 +826,49 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         CanvasGroup subCG = subRect.GetComponent<CanvasGroup>();
         if (subCG == null) subCG = subRect.gameObject.AddComponent<CanvasGroup>();
 
-        mainCG.DOKill();
-        subCG.DOKill();
+        mainCG.DOKill(true);
+        subCG.DOKill(true);
 
         mainCG.blocksRaycasts = false;
         subCG.blocksRaycasts = false;
 
-        Vector2 mainOrig = mainRect.anchoredPosition;
-        Vector2 subOrig = subRect.anchoredPosition;
-
-        Vector2 subOverlapPos = subOrig;
-        Vector2 mainStartPos = mainOrig;
+        Vector2 mainStartPos = mainBasePos;
+        Vector2 subOverlapPos = subBasePos;
 
         switch (direction)
         {
             case Direction.Top:
             case Direction.Bottom:
                 mainStartPos.y += (direction == Direction.Top) ? offsetDistance : -offsetDistance;
-                subOverlapPos.y = mainOrig.y; 
+                subOverlapPos.y = mainBasePos.y; 
                 break;
             case Direction.Left:
             case Direction.Right:
                 mainStartPos.x += (direction == Direction.Right) ? offsetDistance : -offsetDistance;
-                subOverlapPos.x = mainOrig.x; 
+                subOverlapPos.x = mainBasePos.x; 
                 break;
         }
 
         Vector2 subStartPos = subOverlapPos;
+        
         if (direction == Direction.Top || direction == Direction.Bottom) subStartPos.y = mainStartPos.y;
         else subStartPos.x = mainStartPos.x;
 
         mainRect.anchoredPosition = mainStartPos;
         subRect.anchoredPosition = subStartPos;
+        
         mainCG.alpha = 0f;
         subCG.alpha = 0f;
 
         Sequence seq = DOTween.Sequence();
         seq.OnStart(() => { onStart?.Invoke(); });
 
-        seq.Append(mainRect.DOAnchorPos(mainOrig, mainDuration).SetEase(Ease.OutQuart));
+        seq.Append(mainRect.DOAnchorPos(mainBasePos, mainDuration).SetEase(Ease.OutQuart));
         seq.Join(subRect.DOAnchorPos(subOverlapPos, mainDuration).SetEase(Ease.OutQuart));
         seq.Join(mainCG.DOFade(1f, mainDuration));
         seq.Join(subCG.DOFade(1f, mainDuration));
 
-        seq.Append(subRect.DOAnchorPos(subOrig, subDuration).SetEase(Ease.OutBack));
+        seq.Append(subRect.DOAnchorPos(subBasePos, subDuration).SetEase(Ease.OutBack));
 
         seq.OnComplete(() => {
             mainCG.blocksRaycasts = true;
@@ -855,12 +876,22 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
             onComplete?.Invoke();
         });
     }
-    public void HideGroupSlide(RectTransform mainRect, RectTransform subRect, Direction direction = Direction.Right, float offsetDistance = 800f, float mainDuration = 0.3f, float subDuration = 0.2f, UnityAction onStart = null, UnityAction onComplete = null)
+    public void HideGroupSlide(
+        RectTransform mainRect, 
+        RectTransform subRect, 
+        Vector2 mainBasePos,
+        Vector2 subBasePos,
+        Direction direction = Direction.Right, 
+        float offsetDistance = 800f, 
+        float mainDuration = 0.3f, 
+        float subDuration = 0.2f, 
+        UnityAction onStart = null, 
+        UnityAction onComplete = null)
     {
         if (mainRect == null || subRect == null) return;
 
-        mainRect.DOKill();
-        subRect.DOKill();
+        mainRect.DOKill(true);
+        subRect.DOKill(true);
 
         CanvasGroup mainCG = mainRect.GetComponent<CanvasGroup>();
         if (mainCG == null) mainCG = mainRect.gameObject.AddComponent<CanvasGroup>();
@@ -873,28 +904,26 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
 
         mainCG.blocksRaycasts = false;
         subCG.blocksRaycasts = false;
-
-        Vector2 mainOrig = mainRect.anchoredPosition;
-        Vector2 subOrig = subRect.anchoredPosition;
-
-        Vector2 subOverlapPos = subOrig;
-        Vector2 mainEndPos = mainOrig;
+        
+        Vector2 subOverlapPos = subBasePos;
+        Vector2 mainEndPos = mainBasePos;
 
         switch (direction)
         {
             case Direction.Top:
             case Direction.Bottom:
                 mainEndPos.y += (direction == Direction.Top) ? offsetDistance : -offsetDistance;
-                subOverlapPos.y = mainOrig.y;
+                subOverlapPos.y = mainBasePos.y;
                 break;
             case Direction.Left:
             case Direction.Right:
                 mainEndPos.x += (direction == Direction.Right) ? offsetDistance : -offsetDistance;
-                subOverlapPos.x = mainOrig.x;
+                subOverlapPos.x = mainBasePos.x;
                 break;
         }
 
         Vector2 subEndPos = subOverlapPos;
+        
         if (direction == Direction.Top || direction == Direction.Bottom) subEndPos.y = mainEndPos.y;
         else subEndPos.x = mainEndPos.x;
 
@@ -909,8 +938,8 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         seq.Join(subCG.DOFade(0f, mainDuration));
 
         seq.OnComplete(() => {
-            mainRect.anchoredPosition = mainOrig;
-            subRect.anchoredPosition = subOrig;
+            mainRect.anchoredPosition = mainBasePos;
+            subRect.anchoredPosition = subBasePos;
             onComplete?.Invoke();
         });
     }
