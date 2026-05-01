@@ -81,6 +81,8 @@ public class PlayerManager : Singleton<PlayerManager>
             selectedUnit.OnDeselected();
         }
 
+        bool resumed = false;
+        
         // 새 캐릭터 선택
         selectedUnit = players[index];
         CurrentPlayer = playerType;
@@ -90,13 +92,17 @@ public class PlayerManager : Singleton<PlayerManager>
         {
             if (last != null && last.CanInteract(playerType))
             {
-                selectedUnit.ActiveInteractable = last;
-                last.Interact(selectedUnit);
+                if (last is MonoBehaviour mb && mb.gameObject.activeInHierarchy)
+                {
+                    selectedUnit.ActiveInteractable = last;
+                    last.Interact(selectedUnit);
+                    resumed = true;
+                }
             }
         }
         
         // 복귀 시 재개
-        if (selectedUnit.ActiveInteractable != null && selectedUnit.ActiveInteractable.CanInteract(playerType))
+        if (!resumed && selectedUnit.ActiveInteractable != null && selectedUnit.ActiveInteractable.CanInteract(playerType))
             selectedUnit.ActiveInteractable.Interact(selectedUnit);
         
         OnPlayerSwapped?.Invoke(playerType);
