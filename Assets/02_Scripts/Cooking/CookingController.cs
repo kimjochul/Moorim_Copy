@@ -281,6 +281,7 @@ public class CookingController : MonoBehaviour
         if (currentStation != null && model.IsReadyToCook())
         {
             currentStation.StartCooking(model.CurrentRecipe);
+            DataManager.Instance.AddRecipeProficiency(model.CurrentRecipe.Data, 1);
             model.InsertedIngredients.Clear();
             CloseCookingSystem(false);
         }

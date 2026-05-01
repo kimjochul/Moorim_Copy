@@ -20,6 +20,11 @@ public class EconomyManager : Singleton<EconomyManager>, IInitializable
     private int _todayCustomerCount;
     public int TodayCustomerCount => _todayCustomerCount;
 
+    private DailyResultSaveData _lastDailyResult;
+    public DailyResultSaveData LastDailyResult => _lastDailyResult;
+    
+    private bool _hasPlayedToday = false;
+    
     public event Action RestaurantEconomyChanged;
     public event Action TodayEconomyChanged;
 
@@ -30,7 +35,6 @@ public class EconomyManager : Singleton<EconomyManager>, IInitializable
         _todayCustomerCount = 0;
         
         //RegisterGuestResultTracker(guestResultTracker);
-        
         DayManager.Instance.OnDayStart += ResetDay;
         
         DayManager.Instance.OnDayEnd += TotalEarningToday;
@@ -79,6 +83,7 @@ public class EconomyManager : Singleton<EconomyManager>, IInitializable
     void OnCustomerServed()
     {
         _todayCustomerCount++;
+        _hasPlayedToday = true; 
         TodayEconomyChanged?.Invoke();
     }
     
@@ -158,6 +163,9 @@ public class EconomyManager : Singleton<EconomyManager>, IInitializable
         Debug.Log("Tracker 등록됨");
         this.guestResultTracker = tracker;
 
+        DayManager.Instance.OnDayEnd -= CacheDailyResult;
+        DayManager.Instance.OnDayEnd += CacheDailyResult;
+        
         DayManager.Instance.OnDayEnd -= tracker.EndDay; // 중복 방지
         DayManager.Instance.OnDayEnd += tracker.EndDay;
     }
@@ -182,19 +190,6 @@ public class EconomyManager : Singleton<EconomyManager>, IInitializable
         };
     }
     
-    public DailyResultSaveData GetDailyResult(GuestResultTracker tracker)
-    {
-        return new DailyResultSaveData
-        {
-            todayMoneyIncome = _todayMoneyIncome,
-            todayFameIncome = _todayFameIncome,
-            todayCustomerCount = _todayCustomerCount,
-
-            happyGuests = tracker.DailyResult.goodCount + tracker.DailyResult.veryGoodCount,
-            angryGuests = tracker.DailyResult.badCount + tracker.DailyResult.veryBadCount,
-        };
-    }
-    
     public void LoadFromData(EconomySaveData data)
     {
         restaurantEconomy.Money = data.money;
@@ -206,11 +201,7 @@ public class EconomyManager : Singleton<EconomyManager>, IInitializable
     
     public void LoadDailyResult(DailyResultSaveData data)
     {
-        _todayMoneyIncome = data.todayMoneyIncome;
-        _todayFameIncome = data.todayFameIncome;
-        _todayCustomerCount = data.todayCustomerCount;
-
-        TodayEconomyChanged?.Invoke();
+        _lastDailyResult = data;
     }
     
     public void ResetData()
@@ -225,5 +216,28 @@ public class EconomyManager : Singleton<EconomyManager>, IInitializable
 
         TodayEconomyChanged?.Invoke();
         Debug.Log("Economy Reset 완료");
+    }
+    
+    public void CacheDailyResult()
+    {
+        if (!_hasPlayedToday)
+        {
+            Debug.Log("플레이 안 해서 캐시 안함");
+            return;
+        }
+        
+        if (guestResultTracker == null) return;
+        
+        Debug.Log("CacheDailyResult 실행됨");
+
+        _lastDailyResult = new DailyResultSaveData
+        {
+            todayMoneyIncome = _todayMoneyIncome,
+            todayFameIncome = _todayFameIncome,
+            todayCustomerCount = _todayCustomerCount,
+
+            happyGuests = guestResultTracker.DailyResult.goodCount + guestResultTracker.DailyResult.veryGoodCount,
+            angryGuests = guestResultTracker.DailyResult.badCount + guestResultTracker.DailyResult.veryBadCount,
+        };
     }
 }

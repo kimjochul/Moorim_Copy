@@ -159,8 +159,10 @@ public class DayManager : Singleton<DayManager>
         Debug.Log("Day End");
         IsRunning = false;
         _isBusinessOver = true;
-        SaveManager.Instance.SaveGame(0, SaveSlotType.Auto);
+        
+        EconomyManager.Instance.CacheDailyResult();
         OnDayEnd?.Invoke();
+        SaveManager.Instance.SaveGame(0, SaveSlotType.Auto);
     }
 
     /// <summary>

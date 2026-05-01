@@ -180,7 +180,7 @@ public class SaveManager : Singleton<SaveManager>
         if (EconomyManager.Instance)
         {
             data.economy = EconomyManager.Instance.GetSaveData();
-            data.dailyResult = EconomyManager.Instance.GetDailyResult(EconomyManager.Instance.GuestResultTracker);
+            data.dailyResult = EconomyManager.Instance.LastDailyResult;;
         }
 
         if (QuestManager.Instance)
@@ -225,6 +225,12 @@ public class SaveManager : Singleton<SaveManager>
         if (data.dailyResult != null)
         {
             EconomyManager.Instance.LoadDailyResult(data.dailyResult);
+            
+            var receipt = FindFirstObjectByType<Receipt>(FindObjectsInactive.Include);
+            if (receipt != null)
+            {
+                receipt.LoadFromSave(data.dailyResult);
+            }
         }
         QuestManager.Instance.LoadFromData(data.quest);
     }

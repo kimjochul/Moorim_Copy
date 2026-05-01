@@ -39,6 +39,8 @@ public class Receipt : MonoBehaviour
     // ��ǥ ����
     private Sequence receiptSequence;
 
+    private bool isLoadedReceipt = false;
+    
     void Awake()
     {
         dayManager = DayManager.Instance;
@@ -76,7 +78,8 @@ public class Receipt : MonoBehaviour
     }
     private void HandleDayResult(GuestResultData dailyData, GuestResultData totalData)
     {
-
+        if (isLoadedReceipt) return;
+        
         this.data = new ReceiptData
         {
             week = this.dayManager.DayData,
@@ -183,5 +186,22 @@ public class Receipt : MonoBehaviour
         this.netIncome.ClearText();
     }
     
-    
+    public void LoadFromSave(DailyResultSaveData data)
+    {
+        isLoadedReceipt = true;
+        
+        this.data = new ReceiptData
+        {
+            week = DayManager.Instance.DayData,
+            totalRevenue = data.todayMoneyIncome,
+            fame = data.todayFameIncome,
+            debt = EconomyManager.Instance.RestaurantEconomy.Debt,
+            happyGuests = data.happyGuests,
+            angryGuests = data.angryGuests,
+            netIncome = data.todayMoneyIncome
+        };
+
+        SetReceiptActive(true);
+        StartAnimationText();
+    }
 }

@@ -44,6 +44,8 @@ public class Sowol : PlayerController
             ClickChefInvenSlot(slot);
         else if (slot.Owner.Type is InventoryType.MealTable)
             ClickMealTableSlot(slot);
+        else if (slot.Owner.Type is InventoryType.Fridge)
+            ClickFridgeSlot(slot);
     }
 
     private void ClickIngredientInvenSlot(Slot slot)
@@ -78,6 +80,14 @@ public class Sowol : PlayerController
                 ChangeState(PlayerState.Give);
             }
         }
+        else if (interactable is Fridge fridge)
+        {
+            if (slot.Owner.Type is InventoryType.Chef)
+            {
+                fridge.PlaceFood(inventory, slot);
+                ChangeState(PlayerState.Give);
+            }
+        }
     }
     
     private void ClickMealTableSlot(Slot slot)
@@ -96,6 +106,25 @@ public class Sowol : PlayerController
             }
 
             // 애니메이션
+            ChangeState(PlayerState.PickUp);
+        }
+    }
+    
+    private void ClickFridgeSlot(Slot slot)
+    {
+        if (slot.Item == null)
+            return;
+        
+        var interactable = PlayerManager.Instance.ActiveInteractable;
+        if (interactable is Fridge fridge)
+        {
+            IItem foodItem = fridge.TakeFood(slot.Index, inventory);
+            if (foodItem == null)
+            {
+                Debug.Log("가져올 음식 없음");
+            }
+
+            // 애니메이션 실행
             ChangeState(PlayerState.PickUp);
         }
     }
