@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -36,6 +37,8 @@ public class PlayerManager : Singleton<PlayerManager>
     // 캐릭터가 스왑될 때마다 UI에 알려줄 이벤트
     public event Action<PlayerType> OnPlayerSwapped;
 
+    private Dictionary<PlayerType, IInteractable> lastInteractables = new();
+    
     protected override void Awake()
     {
         base.Awake();
@@ -70,7 +73,10 @@ public class PlayerManager : Singleton<PlayerManager>
         {
             // ui 닫기 (ActiveInteractable은 유지)
             if (selectedUnit.ActiveInteractable != null)
+            {
+                lastInteractables[CurrentPlayer] = selectedUnit.ActiveInteractable;
                 selectedUnit.ActiveInteractable.OnInteractEnd(selectedUnit);
+            }
 
             selectedUnit.OnDeselected();
         }
@@ -80,14 +86,20 @@ public class PlayerManager : Singleton<PlayerManager>
         CurrentPlayer = playerType;
         selectedUnit.OnSelected();
 
+        if (lastInteractables.TryGetValue(playerType, out var last))
+        {
+            if (last != null && last.CanInteract(playerType))
+            {
+                selectedUnit.ActiveInteractable = last;
+                last.Interact(selectedUnit);
+            }
+        }
+        
         // 복귀 시 재개
         if (selectedUnit.ActiveInteractable != null && selectedUnit.ActiveInteractable.CanInteract(playerType))
             selectedUnit.ActiveInteractable.Interact(selectedUnit);
-
-        UIManager.Instance.CloseAllUI();
         
         OnPlayerSwapped?.Invoke(playerType);
-
     }
 
     public void MoveSelectedUnitTo(Vector3 destination, UnityAction onArrived = null)

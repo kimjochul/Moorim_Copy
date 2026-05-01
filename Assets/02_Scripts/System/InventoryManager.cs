@@ -29,6 +29,8 @@ public class InventoryManager : Singleton<InventoryManager>, IInitializable
     [SerializeField] private Inventory mealTableInventory; // 배식대
 
     private Dictionary<InventoryType, Inventory> inventoryMap;
+
+    public Vector2 CommonInvenInitPos;
     
     public event Action<Inventory> OnInventoryUIOpened;
     public event Action<Inventory> OnInventoryUIClosed;
@@ -52,6 +54,7 @@ public class InventoryManager : Singleton<InventoryManager>, IInitializable
         var inventories = FindObjectsByType<Inventory>(FindObjectsInactive.Include, FindObjectsSortMode.None);
 
         SetCommonInventoryRoot();
+        
         
         if (inventories.Length == 0)
         {
@@ -267,6 +270,7 @@ public class InventoryManager : Singleton<InventoryManager>, IInitializable
         }
 
         commonInventoryRoot = found;
+        CommonInvenInitPos = commonInventoryRoot.GetComponent<RectTransform>().anchoredPosition;
     }
     
     private void CreateInitItems()

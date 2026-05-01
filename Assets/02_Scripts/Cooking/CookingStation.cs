@@ -57,6 +57,7 @@ public class CookingStation : MonoBehaviour, IInteractable
     public void OnInteractEnd(PlayerController player)
     {
         // ClickToInteract 모드이므로 트리거 퇴장으로는 호출되지 않음
+        CookingController.Instance.CloseCookingSystem(true);
     }
  
     public Vector3 GetInteractPosition()
