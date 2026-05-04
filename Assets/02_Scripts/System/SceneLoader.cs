@@ -17,9 +17,11 @@ public class SceneLoader : Singleton<SceneLoader>
 
         // 1️ Fade Out
         yield return LoadUIManager.Instance.FadeOut();
-
+        yield return new WaitForSeconds(0.2f);
         // 2️ Loading UI 표시
         LoadUIManager.Instance.ShowLoading();
+        yield return LoadUIManager.Instance.FadeIn();
+        
 
         // 3️ 씬 로딩 시작
         AsyncOperation op = SceneManager.LoadSceneAsync(sceneName);
@@ -56,6 +58,8 @@ public class SceneLoader : Singleton<SceneLoader>
         onSceneLoaded?.Invoke();
 
         // 4️ 종료 연출
+        yield return LoadUIManager.Instance.FadeOut();
+        yield return new WaitForSeconds(0.2f);
         LoadUIManager.Instance.HideLoading();
         yield return LoadUIManager.Instance.FadeIn();
     }

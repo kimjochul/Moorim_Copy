@@ -18,17 +18,20 @@ public class LoadUIManager : Singleton<LoadUIManager>
 
     #region Fade
 
-    public IEnumerator FadeOut(float duration = 0.5f)
+    public IEnumerator FadeOut(float duration = 1f)
     {
         fade.gameObject.SetActive(true);
         fade.blocksRaycasts = true;
 
-        yield return fade.DOFade(1f, duration).WaitForCompletion();
+        fade.alpha = 0f;
+        
+        yield return fade.DOFade(1f, duration).SetUpdate(true).WaitForCompletion();
     }
 
-    public IEnumerator FadeIn(float duration = 0.5f)
+    public IEnumerator FadeIn(float duration = 1f)
     {
-        yield return fade.DOFade(0f, duration).WaitForCompletion();
+        fade.alpha = 1f;
+        yield return fade.DOFade(0f, duration).SetUpdate(true).WaitForCompletion();
 
         fade.blocksRaycasts = false;
         fade.gameObject.SetActive(false);
