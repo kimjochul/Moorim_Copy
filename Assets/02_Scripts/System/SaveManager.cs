@@ -54,7 +54,14 @@ public class SaveManager : Singleton<SaveManager>
     public void StartNewGame()
     {
         isLoadedGame = false;
-        StartCoroutine(StartRoutine());
+        SceneLoader.Instance.LoadScene("01_Scenes/03.Game", () =>
+        {
+            InitAll();
+            InitializeNewGameData();
+
+            UIManager.Instance.CloseAllUI();
+            DayManager.Instance.RemoteDayStart(isLoadedGame);
+        });
     }
     
     // ------------------------
@@ -99,12 +106,33 @@ public class SaveManager : Singleton<SaveManager>
     // ------------------------
     public void LoadGame(int slotIndex, SaveSlotType type)
     {
+        Time.timeScale = 1f;
         isLoadedGame = true;
         
         loadSlotIndex = slotIndex;
         loadType = type;
         
-        StartCoroutine(StartRoutine());
+        SceneLoader.Instance.LoadScene("01_Scenes/03.Game", () =>
+        {
+            InitAll();
+            
+            string path = GetSavePath(loadSlotIndex, loadType);
+
+            if (!File.Exists(path))
+            {
+                Debug.Log("세이브 없음 → 새 게임");
+                InitializeNewGameData();
+                return;
+            }
+            else
+            {
+                string json = File.ReadAllText(path);
+                SaveData data = JsonUtility.FromJson<SaveData>(json);
+                ApplySaveData(data);
+            }
+            UIManager.Instance.CloseAllUI();
+            DayManager.Instance.RemoteDayStart(isLoadedGame);
+        });
     }
     
     private IEnumerator StartRoutine()
@@ -227,7 +255,7 @@ public class SaveManager : Singleton<SaveManager>
             EconomyManager.Instance.LoadDailyResult(data.dailyResult);
             
             var receipt = FindFirstObjectByType<Receipt>(FindObjectsInactive.Include);
-            if (receipt != null)
+            if (receipt != null && data.day.isDayEnded)
             {
                 receipt.LoadFromSave(data.dailyResult);
             }
@@ -260,6 +288,7 @@ public class DaySaveData
     public int dayOfWeek;
     public int hour;
     public int minute;
+    public bool isDayEnded;
 }
 
 [Serializable]

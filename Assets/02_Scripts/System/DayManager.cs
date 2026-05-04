@@ -195,6 +195,7 @@ public class DayManager : Singleton<DayManager>
                 dayOfWeek = (int)DayData.dayOfWeek,
                 hour = (int)gameStartHour,
                 minute = 0,
+                isDayEnded = false
             };
         }
         else
@@ -205,6 +206,7 @@ public class DayManager : Singleton<DayManager>
                 dayOfWeek = (int)DayData.dayOfWeek,
                 hour = (int)gameEndHour,
                 minute = 00,
+                isDayEnded = true
             };
         }
     }

@@ -22,14 +22,7 @@ public class MainMenuUI : MonoBehaviour
 
     private void OnClickStartNewGameButton()
     {  
-        SceneManager.LoadScene("01_Scenes/03.Game");
         SaveManager.Instance.StartNewGame();
-    }
-
-    private void OnClickResumeGameButton()
-    {
-        SceneManager.LoadScene("01_Scenes/03.Game");
-        SaveManager.Instance.LoadGame(0, SaveSlotType.Auto);
     }
 
     private void OnClickSettingsButton()
