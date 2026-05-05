@@ -7,7 +7,6 @@ public class Postman : MonoBehaviour, IInteractable, INPCSchedule
 { 
     private DayManager dayManager;
     public DayManager DayManager => dayManager;
-    [SerializeField] private StoryManager storyManager;
     
     [SerializeField] private GameObject postmanView;
     [SerializeField] private PostManUI postmanUI;
@@ -19,7 +18,6 @@ public class Postman : MonoBehaviour, IInteractable, INPCSchedule
     private void OnEnable()
     {
         dayManager = DayManager.Instance;
-        storyManager = StoryManager.Instance;
         DayManager.Instance.RegisterNPC(this);
     }
 
@@ -32,17 +30,19 @@ public class Postman : MonoBehaviour, IInteractable, INPCSchedule
     IEnumerator Start()
     {
         yield return null; // 1프레임 대기 (모든 Awake 끝나게)
-        
-        storyManager.OnEndStory += postmanViewActive;
-        storyManager.OnEndStory += DailyQuestCreate;
 
         postmanUI.Init(this);
         postmanView.SetActive(false);
     }
-    
-    private void postmanViewActive()
+
+    public void ViewActive()
     {
-        Debug.Log("postmanViewActive");
+        if (IsAvailableDay())
+        {
+            GameManager.Instance.SetState(GameFlowState.NPC);
+            DailyQuestCreate();
+        }
+        
         postmanView.SetActive(IsAvailableDay());
         postmanUI.gameObject.SetActive(IsAvailableDay());
     }

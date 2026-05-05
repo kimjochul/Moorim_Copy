@@ -28,6 +28,7 @@ public class DayManager : Singleton<DayManager>
     [SerializeField] private float gameEndHour = 21f;
     
     private List<INPCSchedule> npcs = new List<INPCSchedule>();
+    public List<INPCSchedule> NPCs { get => npcs; private set => npcs = value; }
 
     private float _totalGameMinutes;
     private float _timer = 0f;
@@ -73,7 +74,7 @@ public class DayManager : Singleton<DayManager>
     /// </summary>
     public void DayStart(bool isLoad = false)
     {
-        Debug.Log("Day Start");
+        GameManager.Instance.SetState(GameFlowState.Gameplay);
         
         if (!isLoad)
             _timer = 0f;
@@ -162,6 +163,8 @@ public class DayManager : Singleton<DayManager>
         
         EconomyManager.Instance.CacheDailyResult();
         OnDayEnd?.Invoke();
+        if(GameManager.Instance.CurrentState == GameFlowState.Gameplay)
+            GameManager.Instance.CompleteState(GameFlowState.Gameplay);
         SaveManager.Instance.SaveGame(0, SaveSlotType.Auto);
     }
 

@@ -130,6 +130,7 @@ public class SaveManager : Singleton<SaveManager>
                 SaveData data = JsonUtility.FromJson<SaveData>(json);
                 ApplySaveData(data);
             }
+            GameManager.Instance.ResetFlow();
             UIManager.Instance.CloseAllUI();
             DayManager.Instance.RemoteDayStart(isLoadedGame);
         });
