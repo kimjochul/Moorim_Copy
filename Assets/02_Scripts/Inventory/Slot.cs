@@ -20,7 +20,6 @@ public class Slot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDropHandler
     [SerializeField] private Image slotIcon;
     [SerializeField] private Button slotButton;
     
-    [SerializeField] private Image dragItem;  // 드래그해서 실제로 움직이는건 이미지만
     private static Slot dragSlot;             
     // dragSlot은 옮겨지는 슬롯을 참조한다. class, monobehavior, GameObject, Transform 등등은 참조타입
     
@@ -93,14 +92,12 @@ public class Slot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDropHandler
             return;
 
         dragSlot = this;  // 참조 설정 dragslot을 통해 원래 슬롯에 접근
-        dragItem.sprite = Item.Icon;
-        dragItem.gameObject.SetActive(true);
-        dragItem.raycastTarget = false;
+        DragUI.Instance.StartDrag(Item.Icon);
     }
 
     public void OnDrag(PointerEventData eventData) // 드래그 중
     {
-        dragItem.transform.position = eventData.position;
+        DragUI.Instance.UpdatePosition(eventData.position);
     }
     
     public void OnDrop(PointerEventData eventData) // 놓은 경우
@@ -157,9 +154,7 @@ public class Slot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDropHandler
     
     private void EndDrag()
     {
-        dragItem.sprite = null;
-        dragItem.gameObject.SetActive(false);
-        dragItem.raycastTarget = true;
+        DragUI.Instance.EndDrag();
         dragSlot = null;
     }
 

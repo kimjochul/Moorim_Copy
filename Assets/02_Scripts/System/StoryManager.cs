@@ -44,8 +44,6 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
 
     [SerializeField] private float fadeDuration;
     
-    public event Action OnEndStory;
-    
     /// <summary>
     /// flag 내용들을 저장데이터로 넣어놓으면 스토리 이어서
     /// </summary>
@@ -80,14 +78,11 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         }
     }
     
-    private void HandleDayEnd()
+    public void HandleStoryStart()
     {
-        CheckTriggers();
+        GameManager.Instance.SetState(GameFlowState.Story);
         
-        if (!dayManager.HasAnyAvailableNPC())
-        {
-            dayManager.DayStart();
-        }
+        CheckTriggers();
     }
 
     private void CheckTriggers()
@@ -123,7 +118,8 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
     {
         if (triggerQueue.Count == 0)
         {
-            OnEndStory?.Invoke();
+            //Debug.Log("No queued story to play");
+            GameManager.Instance.CompleteState(GameFlowState.Story);
             return;
         }
 
@@ -458,7 +454,7 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
     public void SetReceipt(Receipt receipt)
     {
         this.receipt = receipt;
-        receipt.onButtonConfirm += HandleDayEnd; 
+        //receipt.onButtonConfirm += HandleDayEnd; 
     }
     
     public void SetFadePanel(StoryFadePanel panel)

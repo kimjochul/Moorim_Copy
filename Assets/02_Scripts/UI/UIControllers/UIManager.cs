@@ -67,7 +67,7 @@ public class UIManager : Singleton<UIManager>
         }
     }
 
-    private void OnDestroy()
+    protected override void OnDestroy()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
         base.OnDestroy();

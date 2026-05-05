@@ -53,34 +53,35 @@ public class Receipt : MonoBehaviour
         StoryManager.Instance.SetReceipt(this);
     }
 
-    void Start()
-    {
-        if (this.guestTracker != null)
-        {
-            this.guestTracker.OnDayResultReady += HandleDayResult;
-        }
-    }
-
-    void OnDestroy()
-    {
-        if (this.guestTracker != null)
-        {
-            this.guestTracker.OnDayResultReady -= HandleDayResult;
-        }
-    }
+    // void Start()
+    // {
+    //     if (this.guestTracker != null)
+    //     {
+    //         this.guestTracker.OnDayResultReady += HandleDayResult;
+    //     }
+    // }
+    //
+    // void OnDestroy()
+    // {
+    //     if (this.guestTracker != null)
+    //     {
+    //         this.guestTracker.OnDayResultReady -= HandleDayResult;
+    //     }
+    // }
     private void EventInit()
     {
         this.btnConfirm.onClick.AddListener(() =>
         {
-            this.onButtonConfirm?.Invoke();
+            //this.onButtonConfirm?.Invoke();
             SetReceiptActive(false);
+            GameManager.Instance.CompleteState(GameFlowState.Receipt);
         });
     }
-    private void HandleDayResult(GuestResultData dailyData, GuestResultData totalData)
+    public ReceiptData? HandleDayResult(GuestResultData dailyData, GuestResultData totalData)
     {
-        if (isLoadedReceipt) return;
+        if (isLoadedReceipt) return null;
         
-        this.data = new ReceiptData
+        return new ReceiptData
         {
             week = this.dayManager.DayData,
             totalRevenue = EconomyManager.Instance.TodayMoneyIncome,
@@ -92,13 +93,22 @@ public class Receipt : MonoBehaviour
 
             netIncome = EconomyManager.Instance.TodayMoneyIncome
         };
+    }
 
+    public void TurnOnReceipt(ReceiptData? data)
+    {
+        if (data == null)
+            return;
+        
+        this.data = data.Value;
         SetReceiptActive(true);
         StartAnimationText();
     }
-
-    public void Show()
+    
+    private void Show()
     {
+        GameManager.Instance.SetState(GameFlowState.Receipt);
+        
         ClearSlotText();
 
         if (this.objStamp != null)
@@ -189,6 +199,8 @@ public class Receipt : MonoBehaviour
     public void LoadFromSave(DailyResultSaveData data)
     {
         isLoadedReceipt = true;
+        
+        Debug.Log("Loaded Receipt");
         
         this.data = new ReceiptData
         {

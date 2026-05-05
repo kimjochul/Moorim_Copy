@@ -57,7 +57,6 @@ public class SaveSlotUI : MonoBehaviour
         }
         else
         {
-            SceneManager.LoadScene("01_Scenes/03.Game");
             SaveManager.Instance.LoadGame(slotIndex, slotType);
         }
     }

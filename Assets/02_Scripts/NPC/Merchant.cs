@@ -7,7 +7,6 @@ public class Merchant : MonoBehaviour, IInteractable, INPCSchedule
 {
     private DayManager dayManager;
     public DayManager DayManager =>  dayManager;
-    [SerializeField] private StoryManager storyManager;
     
     [SerializeField] private GameObject merchantView;
     [SerializeField] private MerchantUI merchantUI;
@@ -20,7 +19,6 @@ public class Merchant : MonoBehaviour, IInteractable, INPCSchedule
     private void OnEnable()
     {
         dayManager = DayManager.Instance;
-        storyManager = StoryManager.Instance;
         DayManager.Instance.RegisterNPC(this);
     }
 
@@ -34,16 +32,18 @@ public class Merchant : MonoBehaviour, IInteractable, INPCSchedule
     {
         yield return null; // 1프레임 대기 (모든 Awake 끝나게)
         
-        storyManager.OnEndStory += MerchantViewActive;
-        storyManager.OnEndStory += DailyQuestCreate;
-        
         merchantUI.Init(this);
         merchantView.SetActive(false);
     }
-    
-    private void MerchantViewActive()
+
+    public void ViewActive()
     {
-        Debug.Log("MerchantViewActive");
+        if (IsAvailableDay())
+        {
+            GameManager.Instance.SetState(GameFlowState.NPC);
+            DailyQuestCreate();
+        }
+        
         merchantView.SetActive(IsAvailableDay());
         merchantUI.gameObject.SetActive(IsAvailableDay());
     }

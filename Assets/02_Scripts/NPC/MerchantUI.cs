@@ -245,8 +245,8 @@ public class MerchantUI : MonoBehaviour
     public void Close()
     {
         gameObject.SetActive(false);
-        DayManager dayManager = FindFirstObjectByType<DayManager>();
-        dayManager.DayStart();
+        GameManager.Instance.CompleteState(GameFlowState.NPC);
+        //DayManager.Instance.DayStart();
     }
     
     public void ResetDialogue()
