@@ -12,6 +12,7 @@ public class StoryLine
     public int characterID;
     public Emotion emotion;
     public MotionData motion;
+    public List<MotionCommand> motions;
     
     [TextArea(3, 10)]
     public string line;
@@ -38,6 +39,14 @@ public enum Emotion
 }
 
 [Serializable]
+public class MotionCommand
+{
+    public int characterID;
+    public int targetID;
+    public MotionData motion;
+}
+
+[Serializable]
 public class MotionData
 {
     public MotionType type;
@@ -57,5 +66,9 @@ public enum MotionType
     EnterLeft,
     EnterRight,
     Jump,
-    Shake
+    Shake,
+    Attack,   // 추가
+    Hit,      // 추가
+    Emphasis,    // 강조
+    Nervous,  // 떨림
 }

@@ -225,7 +225,23 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
                 characterUI.Focus(line.characterID);
             }
             
-            characterUI.PlayMotion(line.characterID, line.motion, line.isUnknown);
+            // 1. 새로운 방식 우선
+            if (line.motions != null && line.motions.Count > 0)
+            {
+                foreach (var cmd in line.motions)
+                {
+                    if (cmd.motion.type == MotionType.Attack)
+                        characterUI.PlayMotionWithTarget(cmd); // 관계형
+                    else
+                        characterUI.PlayMotion(cmd.characterID, cmd.motion, line.isUnknown); // 기존 방식
+                }
+            }
+            // 2. 기존 방식 fallback
+            else if (line.motion != null && line.motion.type != MotionType.None)
+            {
+                characterUI.PlayMotion(line.characterID, line.motion, line.isUnknown);
+            }
+            
             characterUI.ShowEmotionIcon(line.characterID, line.emotion);
         }
         else // ⭐ 나레이션

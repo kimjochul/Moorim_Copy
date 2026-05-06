@@ -26,8 +26,6 @@ public class Receipt : MonoBehaviour
     [SerializeField] private GameObject objStamp;
     [SerializeField] private Button btnConfirm;
 
-    public event UnityAction onButtonConfirm;
-
     [Header("�ִϸ��̼� ���� �ð�")]
     [Range(0f, 3f)][SerializeField] private float labelDelay;
     [Range(0f, 3f)][SerializeField] private float valueDuration;
@@ -52,22 +50,7 @@ public class Receipt : MonoBehaviour
     {
         StoryManager.Instance.SetReceipt(this);
     }
-
-    // void Start()
-    // {
-    //     if (this.guestTracker != null)
-    //     {
-    //         this.guestTracker.OnDayResultReady += HandleDayResult;
-    //     }
-    // }
-    //
-    // void OnDestroy()
-    // {
-    //     if (this.guestTracker != null)
-    //     {
-    //         this.guestTracker.OnDayResultReady -= HandleDayResult;
-    //     }
-    // }
+    
     private void EventInit()
     {
         this.btnConfirm.onClick.AddListener(() =>
