@@ -118,7 +118,7 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
     {
         if (triggerQueue.Count == 0)
         {
-            //Debug.Log("No queued story to play");
+            Debug.Log("스토리 없음 → NPC로 넘김");
             GameManager.Instance.CompleteState(GameFlowState.Story);
             return;
         }

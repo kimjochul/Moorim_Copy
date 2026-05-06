@@ -13,8 +13,29 @@ public enum GameFlowState
     NPC
 }
 
+public class StateNode
+{
+    public GameFlowState state;
+    public GameFlowState nextState;
+
+    public Action onEnter;
+    public Action onExit;
+
+    public StateNode(GameFlowState state, GameFlowState nextState,
+        Action onEnter = null,
+        Action onExit = null)
+    {
+        this.state = state;
+        this.nextState = nextState;
+        this.onEnter = onEnter;
+        this.onExit = onExit;
+    }
+}
+
 public class GameManager : Singleton<GameManager>
 {
+    private Dictionary<GameFlowState, StateNode> stateTable;
+    
     private Receipt receipt;
     private List<INPCSchedule> npcs = new List<INPCSchedule>();
     
@@ -34,8 +55,9 @@ public class GameManager : Singleton<GameManager>
         npcs = DayManager.Instance.NPCs;
         
         BindEvents();
+        InitStateTable();
     }
-
+    
     public void SetState(GameFlowState state)
     {
         if (CurrentState == state) return;
@@ -43,95 +65,126 @@ public class GameManager : Singleton<GameManager>
         CurrentState = state;
         Debug.Log($"[GameFlow] State Changed → {state}");
     }
+
+    private void ChangeState(GameFlowState newState)
+    {
+        if (CurrentState == newState)
+            return;
+
+        Debug.Log($"[GameFlow] {CurrentState} → {newState}");
+
+        // exit
+        if (stateTable.ContainsKey(CurrentState))
+        {
+            stateTable[CurrentState].onExit?.Invoke();
+        }
+
+        CurrentState = newState;
+
+        // enter
+        stateTable[CurrentState].onEnter?.Invoke();
+    }
     
     public void CompleteState(GameFlowState state)
     {
-        if (CurrentState != state)
-            return;
-
-        Debug.Log($"CompleteState 요청: {state}, 현재: {CurrentState}");
-        Next();
-    }
-    
-    private void Next()
-    {
         if (isTransitioning)
         {
-            pendingNext = true;
+            StartCoroutine(WaitAndComplete(state));
             return;
         }
 
+        if (CurrentState != state)
+        {
+            Debug.LogWarning($"잘못된 CompleteState 호출: {state}, 현재: {CurrentState}");
+            return;
+        }
+        
+        Debug.Log($"CompleteState 요청: {state}, 현재: {CurrentState}");
+        //Next();
+        StartCoroutine(TransitionRoutine());
+    }
+    
+    private IEnumerator WaitAndComplete(GameFlowState state)
+    {
+        yield return new WaitUntil(() => !isTransitioning);
+        CompleteState(state);
+    }
+    
+    private IEnumerator TransitionRoutine()
+    {
         isTransitioning = true;
 
-        StartCoroutine(NextRoutine());
-    }
+        yield return null;
 
-    private IEnumerator NextRoutine()
-    {
-        yield return null; // 한 프레임 잠금
-        
-        switch (CurrentState)
-        {
-            case GameFlowState.Gameplay:
-                EnterState(GameFlowState.Receipt);
-                break;
+        var node = stateTable[CurrentState];
+        ChangeState(node.nextState);
 
-            case GameFlowState.Receipt:
-                EnterState(GameFlowState.Story);
-                break;
-
-            case GameFlowState.Story:
-                EnterState(GameFlowState.NPC);
-                break;
-
-            case GameFlowState.NPC:
-                EnterState(GameFlowState.Gameplay);
-                break;
-        }
-        
         isTransitioning = false;
-        
-        if (pendingNext)
-        {
-            pendingNext = false;
-            Next();
-        }
     }
-
-    private void EnterState(GameFlowState state)
+    
+    private void InitStateTable()
     {
-        switch (state)
+        stateTable = new Dictionary<GameFlowState, StateNode>()
         {
-            case GameFlowState.Gameplay:
-                DayManager.Instance.DayStart();
-                break;
-
-            case GameFlowState.Receipt:
-                receipt.TurnOnReceipt(cachedResult);
-                break;
-
-            case GameFlowState.Story:
-                StoryManager.Instance.HandleStoryStart();
-                break;
-
-            case GameFlowState.NPC:
-                bool anyNPCActive = false;
-                foreach (var npc in npcs)
-                {
-                    Debug.Log(npc.ToString());
-                    if (npc.IsAvailableDay())
+            {
+                GameFlowState.Gameplay,
+                new StateNode(
+                    GameFlowState.Gameplay,
+                    GameFlowState.Receipt,
+                    onEnter: () =>
                     {
-                        Debug.Log(npc.ToString());
-                        npc.ViewActive();
-                        anyNPCActive = true;
+                        DayManager.Instance.DayStart();
                     }
-                }
-                if (!anyNPCActive)
-                {
-                    CompleteState(GameFlowState.NPC);
-                }
-                break;
-        }
+                )
+            },
+            {
+                GameFlowState.Receipt,
+                new StateNode(
+                    GameFlowState.Receipt,
+                    GameFlowState.Story,
+                    onEnter: () =>
+                    {
+                        receipt.TurnOnReceipt(cachedResult);
+                    }
+                )
+            },
+            {
+                GameFlowState.Story,
+                new StateNode(
+                    GameFlowState.Story,
+                    GameFlowState.NPC,
+                    onEnter: () =>
+                    {
+                        StoryManager.Instance.HandleStoryStart();
+                    }
+                )
+            },
+            {
+                GameFlowState.NPC,
+                new StateNode(
+                    GameFlowState.NPC,
+                    GameFlowState.Gameplay,
+                    onEnter: () =>
+                    {
+                        bool anyNPC = false;
+
+                        foreach (var npc in npcs)
+                        {
+                            if (npc.IsAvailableDay())
+                            {
+                                npc.ViewActive();
+                                anyNPC = true;
+                            }
+                        }
+
+                        if (!anyNPC)
+                        {
+                            CompleteState(GameFlowState.NPC);
+                        }
+                    }
+                )
+            }
+        };
     }
     
     private void BindEvents()
