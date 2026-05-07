@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using static Constants;
 
 /// <summary>
@@ -80,7 +81,7 @@ public class GuestManager : MonoBehaviour
         InvokeRepeating(nameof(SpawnGuset), startSpawnTime, spawnInterval);
     }
 
-    private void SpawnGuset()
+    public void SpawnGuset()
     {
         // 빈자리도 없고 웨이팅도 꽉 차면 스폰 중지
         bool hasEmptyChair = SeatManager.Instance.FindEmptyChair() != null;
