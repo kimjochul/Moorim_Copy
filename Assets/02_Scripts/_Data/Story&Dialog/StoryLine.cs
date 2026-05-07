@@ -8,6 +8,7 @@ public class StoryLine
     public int id;
     
     public LineType lineType;
+    public Sprite illustrationOverride;
     
     public int characterID;
     public Emotion emotion;
@@ -23,6 +24,13 @@ public class StoryLine
     public bool useAccentFontSize;
 
     public bool isUnknown;
+    
+    public bool hideDialogueUI;
+    
+    public bool autoNext;
+    public float autoDelay = 1.5f;
+
+    public bool hideFromLog;
 }
 
 public enum LineType

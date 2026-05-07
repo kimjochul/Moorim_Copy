@@ -1,8 +1,31 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
+
+public enum LogType
+{
+    Dialogue,
+    Header
+}
+
+[Serializable]
+public class DialogueLog
+{
+    public LogType logType;
+    
+    public int day;
+    public string title;
+    
+    public string speaker;
+    public string content;
+
+    public bool isNarration;
+    public bool isInnerThought;
+}
 
 public class StoryUI : MonoBehaviour
 {
@@ -13,18 +36,27 @@ public class StoryUI : MonoBehaviour
     [SerializeField] private GameObject characterNameRoot;
     [SerializeField] private Image bgImage;
     [SerializeField] private GameObject darkBackGround;
+    [SerializeField] private Image illustrationImage;
+    [SerializeField] private DialogueLogUI dialogueLogUI;
+    
+    [SerializeField] private Button dialogueButton;
     
     [SerializeField] private Image nextIndicator;
     
     [SerializeField] private float fadeDuration = 0.3f;
 
     private Coroutine typingCoroutine;
+    private Coroutine autoCoroutine;
 
     private bool isTyping;
 
     private List<StoryLine> history = new();
     private int historyIndex = -1;
     
+    private List<DialogueLog> dialogueLogs = new();
+    public IReadOnlyList<DialogueLog> DialogueLogs => dialogueLogs;
+    
+    private StoryLine currentLine;
     private string currentFullText;
     
     private bool isFirstBackground = true;
@@ -33,6 +65,10 @@ public class StoryUI : MonoBehaviour
     
     private float defaultContentFontSize;
     private float accentFontSize;
+    
+    private float ignoreClickTimer;
+    private bool blockAdvanceInput;
+    
     public void Init()
     {
         defaultContentFontSize = UIManager.Instance.GetTextScale();
@@ -43,6 +79,7 @@ public class StoryUI : MonoBehaviour
     private void OnEnable()
     {
         StoryManager.Instance.SetStoryUI(this);
+        dialogueButton.onClick.AddListener(ToggleLogUI);
     }
     
     public void Show()
@@ -58,6 +95,27 @@ public class StoryUI : MonoBehaviour
         bgImage.gameObject.SetActive(false);
     }
 
+    public void ShowIllustration(Sprite sprite)
+    {
+        illustrationImage.gameObject.SetActive(true);
+        illustrationImage.sprite = sprite;
+    }
+
+    public void ChangeIllustration(Sprite sprite)
+    {
+        illustrationImage.sprite = sprite;
+    }
+    
+    public void HideIllustration()
+    {
+        illustrationImage.gameObject.SetActive(false);
+    }
+    
+    public void SetDialogueUIVisible(bool visible)
+    {
+        root.SetActive(visible);
+    }
+    
     public void ShowCharacterName()
     {
         characterNameRoot.SetActive(true);
@@ -71,7 +129,24 @@ public class StoryUI : MonoBehaviour
     private void Update()
     {
         if (!root.activeSelf) return;
-
+        
+        if (blockAdvanceInput)
+            return;
+        
+        if (ignoreClickTimer > 0f)
+        {
+            ignoreClickTimer -= Time.deltaTime;
+            return;
+        }
+        
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            dialogueLogUI.Close();
+        }
+        
+        if (dialogueLogUI.gameObject.activeSelf)
+            return;
+        
         if (Input.GetKeyDown(KeyCode.LeftControl))
         {
             StoryManager.Instance.SkipCurrentScene();
@@ -81,6 +156,9 @@ public class StoryUI : MonoBehaviour
         // 클릭
         if (Input.GetMouseButtonDown(0))
         {
+            if (CurrentLineIsAuto())
+                return;
+            
             if (isTyping)
             {
                 CompleteTyping();
@@ -108,6 +186,8 @@ public class StoryUI : MonoBehaviour
         if (typingCoroutine != null)
             StopCoroutine(typingCoroutine);
 
+        currentLine = line;
+        
         HideIndicator();
         
         defaultContentFontSize = UIManager.Instance.GetTextScale();
@@ -128,13 +208,33 @@ public class StoryUI : MonoBehaviour
             contentText.alignment = TextAlignmentOptions.TopLeft;
         }
         
-        history.Add(line);
-        historyIndex = history.Count - 1;
+        if (!line.hideFromLog)
+        {
+            history.Add(line);
+            historyIndex = history.Count - 1;
+            
+            dialogueLogs.Add(new DialogueLog
+            {
+                logType = LogType.Dialogue,
+                speaker = line.lineType == LineType.Narration ? "" : (line.isUnknown ? "???" : StoryManager.Instance.GetCharacterName(line.characterID)),
+                content = line.line,
+                isNarration = line.lineType == LineType.Narration,
+                isInnerThought = line.isInnerThought
+            });
+        }
         
         ApplyLineUI(line);
+        SetDialogueUIVisible(!line.hideDialogueUI);
         currentFullText = line.line;
 
         typingCoroutine = StartCoroutine(TypeLine(line.line));
+        if (line.autoNext)
+        {
+            if (autoCoroutine != null)
+                StopCoroutine(autoCoroutine);
+
+            autoCoroutine = StartCoroutine(AutoNextRoutine(line));
+        }
     }
 
     private void ApplyLineUI(StoryLine line)
@@ -171,6 +271,32 @@ public class StoryUI : MonoBehaviour
 
         isTyping = false;
         ShowIndicator();
+    }
+    
+    private IEnumerator AutoNextRoutine(StoryLine line)
+    {
+        while (isTyping)
+            yield return null;
+
+        float timer = 0f;
+
+        while (timer < line.autoDelay)
+        {
+            // 로그 열려있으면 시간 멈춤
+            if (!dialogueLogUI.gameObject.activeSelf)
+            {
+                timer += Time.deltaTime;
+            }
+
+            yield return null;
+        }
+
+        StoryManager.Instance.ShowNextLine();
+    }
+    
+    private bool CurrentLineIsAuto()
+    {
+        return currentLine != null && currentLine.autoNext && currentLine.hideDialogueUI;
     }
 
     private void CompleteTyping()
@@ -312,5 +438,53 @@ public class StoryUI : MonoBehaviour
         float targetSize = size;
 
         contentText.fontSize = targetSize;
+    }
+    
+    public void AddLogHeader(int day, string storyTitle)
+    {
+        dialogueLogs.Add(new DialogueLog
+        {
+            logType = LogType.Header,
+            day = day,
+            title = storyTitle,
+        });
+    }
+    
+    public void ClearLogs()
+    {
+        dialogueLogs.Clear();
+
+        history.Clear();
+        historyIndex = -1;
+    }
+    
+    public void ToggleLogUI()
+    {
+        ignoreClickTimer = 0.15f;
+
+        if (dialogueLogUI.gameObject.activeSelf)
+        {
+            dialogueLogUI.Close();
+            ShowIndicator();
+        }
+        else
+        {
+            dialogueLogUI.Open();
+            HideIndicator();
+        }
+    }
+    
+    public void OnLogButtonDown()
+    {
+        blockAdvanceInput = true;
+    }
+    public void OnLogButtonUp()
+    {
+        StartCoroutine(ReleaseInputBlock());
+    }
+    private IEnumerator ReleaseInputBlock()
+    {
+        yield return null;
+        blockAdvanceInput = false;
     }
 }

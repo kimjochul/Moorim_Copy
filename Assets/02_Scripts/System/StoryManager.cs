@@ -36,6 +36,7 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
     [SerializeField] private RestaurantEconomy economy;
     
     private StoryUI storyUI;
+    public StoryUI StoryUI => storyUI;
     private CharacterUI characterUI;
     private StoryFadePanel fadePanel;
 
@@ -130,7 +131,13 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
     public void PlayStory(int id)
     {
         currentStory = storySO.stories.Find(s => s.id == id);
-
+        storyUI.ClearLogs();
+        
+        storyUI.AddLogHeader(
+            DayManager.Instance.DayData.day,
+            currentStory.storyName
+        );
+        
         if (currentStory == null)
         {
             Debug.LogError("스토리 없음");
@@ -171,10 +178,23 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         currentScene = currentStory.scenes[currentSceneIndex];
         currentIndex = 0;
             
-        if (currentScene.characters == null || currentScene.characters.Count == 0)
+        if (currentScene.visualType == SceneVisualType.Illustration)
+        {
             characterUI.Hide();
+
+            storyUI.ShowIllustration(currentScene.illustration);
+        }
         else
-            characterUI.Show();
+        {
+            storyUI.HideIllustration();
+
+            if (currentScene.characters == null || currentScene.characters.Count == 0)
+                characterUI.Hide();
+            else
+                characterUI.Show();
+
+            characterUI.SetupScene(currentScene.characters);
+        }
             
         // Debug.Log($"{currentStory.id}");
         // foreach(var currentCharacter in currentScene.characters)
@@ -209,6 +229,11 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         
         var line = currentScene.lines[currentIndex++];
 
+        if (line.illustrationOverride != null)
+        {
+            storyUI.ChangeIllustration(line.illustrationOverride);
+        }
+        
         if (line.lineType == LineType.Dialogue)
         {
             storyUI.ShowCharacterName();
