@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
@@ -10,6 +11,11 @@ public class PlayerInput : MonoBehaviour
 {
     private Camera mainCamera;
 
+    [Header("클릭 시 나올 마우스 클릭")]
+    public GameObject clickCircle;
+    private ParticleSystem clickCircleParticles;
+    private Coroutine clickCoroutine;
+
     private void Awake()
     {
         SceneManager.sceneLoaded += OnsceneLoaded;
@@ -18,6 +24,7 @@ public class PlayerInput : MonoBehaviour
     void Start()
     {
         mainCamera = Camera.main;
+        clickCircleParticles = clickCircle.GetComponent<ParticleSystem>();
     }
 
     private void OnsceneLoaded(Scene scene, LoadSceneMode mode)
@@ -133,5 +140,21 @@ public class PlayerInput : MonoBehaviour
 
         PlayerManager.Instance.ReservedInteractable = null;
         PlayerManager.Instance.MoveSelectedUnitTo(point);
+
+        // 마우스 클릭 이펙트 : 만약 기존에 이미 코루틴이 실행되고 있었다면 취소하고 다시 실행.
+        if (clickCoroutine != null)
+            StopCoroutine(clickCoroutine);
+        
+        clickCoroutine = StartCoroutine(ClickEffect(point));
+    }
+
+    private IEnumerator ClickEffect(Vector3 point)
+    {
+        clickCircle.SetActive(true);
+        clickCircle.transform.position = point;
+        clickCircleParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        clickCircleParticles.Play();
+        yield return new WaitForSeconds(2f);
+        clickCircle.SetActive(false);
     }
 }
