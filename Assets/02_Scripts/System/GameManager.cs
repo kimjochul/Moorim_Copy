@@ -43,7 +43,6 @@ public class GameManager : Singleton<GameManager>
     private GuestResultTracker guest;
     
     private bool isTransitioning = false;
-    private bool pendingNext = false;
     
     public GameFlowState CurrentState { get; private set; }
 
@@ -201,6 +200,5 @@ public class GameManager : Singleton<GameManager>
     public void ResetFlow()
     {
         isTransitioning = false;
-        pendingNext = false;
     }
 }

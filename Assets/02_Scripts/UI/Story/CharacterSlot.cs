@@ -17,11 +17,12 @@ public class CharacterSlot : MonoBehaviour
 
     private Coroutine iconCoroutine;
     
-    private Vector3 originalPosition;
+    private RectTransform rt;
+    public Vector2 SlotPos => rt.anchoredPosition;
 
     private void Awake()
     {
-        originalPosition = transform.localPosition;
+        rt = GetComponent<RectTransform>();
     }
     
     public void SetCharacter(int characterID, Sprite sprite)
@@ -49,22 +50,20 @@ public class CharacterSlot : MonoBehaviour
         HideEmotionIcon();
     }
     
-    public void Appear(int characterID, Sprite sprite)
+    public void Appear(int characterID, Sprite sprite, Vector2 targetPos)
     {
         SetCharacter(characterID, sprite);
-
-        transform.localPosition = originalPosition;
         
         StopAllCoroutines();
-        StartCoroutine(AppearRoutine());
+        StartCoroutine(AppearRoutine(targetPos));
     }
 
-    public void Disappear()
+    public void Disappear(Vector2 startPos)
     {
         Clear();
         
         StopAllCoroutines();
-        StartCoroutine(DisappearRoutine());
+        StartCoroutine(DisappearRoutine(startPos));
     }
     
     public void PlayEmotionIcon(Sprite icon)
@@ -128,7 +127,7 @@ public class CharacterSlot : MonoBehaviour
     // 흔들기 (캐릭터)
     public IEnumerator Shake(float duration = 0.3f, float power = 0.1f)
     {
-        Vector3 origin = transform.localPosition;
+        Vector3 origin = rt.anchoredPosition;
         float time = 0;
 
         while (time < duration)
@@ -138,12 +137,12 @@ public class CharacterSlot : MonoBehaviour
             float x = Random.Range(-power, power);
             float y = Random.Range(-power, power);
 
-            transform.localPosition = origin + new Vector3(x, y, 0);
+            rt.anchoredPosition = origin + new Vector3(x, y, 0);
 
             yield return null;
         }
 
-        transform.localPosition = origin;
+        rt.anchoredPosition = origin;
     }
     
     public void HideEmotionIcon()
@@ -151,17 +150,16 @@ public class CharacterSlot : MonoBehaviour
         emotionIcon.gameObject.SetActive(false);
     }
 
-    public void SetColor(Color color)
+    public void SetColor(Color target, float duration = 0.2f)
     {
-        characterImage.color = color;
+        characterImage.DOColor(target, duration);
     }
     
-    IEnumerator AppearRoutine()
+    IEnumerator AppearRoutine(Vector2 targetPos)
     {
-        Vector3 origin = transform.localPosition;
-        Vector3 start = origin + Vector3.left * 200f; // 왼쪽에서 등장
+        Vector2 start = targetPos + Vector2.left * 200f;
 
-        transform.localPosition = start;
+        rt.anchoredPosition = start;
 
         float time = 0;
 
@@ -170,17 +168,16 @@ public class CharacterSlot : MonoBehaviour
             time += Time.deltaTime;
             float t = time / 0.3f;
 
-            transform.localPosition = Vector3.Lerp(start, origin, t);
+            rt.anchoredPosition = Vector2.Lerp(start, targetPos, t);
             yield return null;
         }
 
-        transform.localPosition = origin;
+        rt.anchoredPosition = targetPos;
     }
     
-    IEnumerator DisappearRoutine()
+    IEnumerator DisappearRoutine(Vector2 startPos)
     {
-        Vector3 origin = transform.localPosition;
-        Vector3 end = origin + Vector3.right * 200f;
+        Vector2  end = startPos + Vector2.right * 200f;
 
         float time = 0;
 
@@ -189,38 +186,37 @@ public class CharacterSlot : MonoBehaviour
             time += Time.deltaTime;
             float t = time / 0.3f;
 
-            transform.localPosition = Vector3.Lerp(origin, end, t);
+            transform.localPosition = Vector3.Lerp(startPos, end, t);
             yield return null;
         }
 
         gameObject.SetActive(false);
     }
     
-    public void Exit(Vector3 direction, float distance, float duration)
+    public void Exit(Vector2 direction, float distance, float duration)
     {
         transform.DOKill();
 
-        Vector3 target = transform.localPosition + direction * distance;
+        Vector2 start = rt.anchoredPosition;
+        Vector2 target = start + direction * distance;
 
-        transform.DOLocalMove(target, duration)
+        rt.DOAnchorPos(target, duration)
             .SetEase(Ease.InOutQuad)
             .OnComplete(() =>
             {
-                Disappear();
+                Disappear(target);
             });
     }
     
-    public void Enter(Vector3 direction, float distance, float duration, bool isUnknown)
+    public void Enter(Vector2 targetPos, Vector2 direction, float distance, float duration, bool isUnknown)
     {
         gameObject.SetActive(true);
         
         transform.DOKill();
 
         // 시작 위치 (화면 밖)
-        Vector3 origin = transform.localPosition;
-        Vector3 start = origin + direction * distance;
-
-        transform.localPosition = start;
+        Vector3 start = targetPos + direction * distance;
+        rt.anchoredPosition = start;
 
         if (isUnknown)
             SetColor(new Color(0.1f, 0.1f, 0.1f, 1f));
@@ -229,10 +225,44 @@ public class CharacterSlot : MonoBehaviour
         
         Sequence seq = DOTween.Sequence();
 
-        seq.Append(transform.DOLocalMove(origin, duration).SetEase(Ease.OutCubic));
+        seq.Append(rt.DOAnchorPos(targetPos, duration).SetEase(Ease.OutCubic));
         seq.Join(characterImage.DOFade(1f, duration));
 
         seq.OnComplete(() =>{ });
+    }
+    
+    public void PlayAttack(Vector2 dir, float power = 80f, float duration = 0.15f)
+    {
+        Vector2 origin = rt.anchoredPosition;
+        
+        Vector2 forward = origin + dir * power;
+
+        Sequence seq = DOTween.Sequence();
+        seq.Append(rt.DOAnchorPos(forward, duration).SetEase(Ease.OutQuad));
+        seq.Append(rt.DOAnchorPos(origin, duration).SetEase(Ease.InQuad));
+    }
+    
+    public void PlayHit(Vector2 dir, float power = 30f, float duration = 0.2f)
+    {
+        Vector2 origin = rt.anchoredPosition;
+
+        Sequence seq = DOTween.Sequence();
+
+        seq.Append(rt.DOAnchorPos(origin + dir * power, duration * 0.3f));
+        seq.Append(rt.DOAnchorPos(origin, duration * 0.7f));
+
+        // 흔들림
+        rt.DOShakeAnchorPos(duration, 10f, 20, 90, false, true);
+    }
+    
+    public void Emphasis(float strength = 0.2f)
+    {
+        rt.DOPunchScale(Vector3.one * strength, 0.3f, 10, 1);
+    }
+    
+    public void NervousShake()
+    {
+        rt.DOShakeAnchorPos(0.5f, 5f, 30);
     }
     
     public void ClearImmediate()
