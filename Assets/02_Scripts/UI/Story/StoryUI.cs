@@ -47,6 +47,7 @@ public class StoryUI : MonoBehaviour
 
     private Coroutine typingCoroutine;
     private Coroutine autoCoroutine;
+    private Coroutine illustrationCoroutine;
 
     private bool isTyping;
 
@@ -95,21 +96,67 @@ public class StoryUI : MonoBehaviour
         bgImage.gameObject.SetActive(false);
     }
 
+    #region 스토리 진행 일러스트 전용 화면 호출
     public void ShowIllustration(Sprite sprite)
     {
         illustrationImage.gameObject.SetActive(true);
         illustrationImage.sprite = sprite;
+
+        Color color = illustrationImage.color;
+        color.a = 1f;
+        illustrationImage.color = color;
     }
 
     public void ChangeIllustration(Sprite sprite)
     {
-        illustrationImage.sprite = sprite;
+        if (illustrationCoroutine != null)
+            StopCoroutine(illustrationCoroutine);
+
+        illustrationCoroutine = StartCoroutine(FadeIllustration(sprite));
+    }
+    
+    private IEnumerator FadeIllustration(Sprite newSprite)
+    {
+        float time = 0f;
+
+        Color color = illustrationImage.color;
+
+        // Fade Out
+        while (time < fadeDuration)
+        {
+            time += Time.deltaTime;
+
+            color.a = Mathf.Lerp(1f, 0.3f, time / fadeDuration);
+            illustrationImage.color = color;
+
+            yield return null;
+        }
+
+        // 교체
+        illustrationImage.sprite = newSprite;
+
+        time = 0f;
+
+        // Fade In
+        while (time < fadeDuration)
+        {
+            time += Time.deltaTime;
+
+            color.a = Mathf.Lerp(0.3f, 1f, time / fadeDuration);
+            illustrationImage.color = color;
+
+            yield return null;
+        }
+
+        color.a = 1f;
+        illustrationImage.color = color;
     }
     
     public void HideIllustration()
     {
         illustrationImage.gameObject.SetActive(false);
     }
+    #endregion
     
     public void SetDialogueUIVisible(bool visible)
     {
