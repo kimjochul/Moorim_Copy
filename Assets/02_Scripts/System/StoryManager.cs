@@ -39,6 +39,7 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
     public StoryUI StoryUI => storyUI;
     private CharacterUI characterUI;
     private StoryFadePanel fadePanel;
+    private ScreenEffectUI screenEffectUI;
 
     [SerializeField] private List<CharacterName> characterNames;
     private Dictionary<int, string> nameDict;
@@ -276,6 +277,7 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         }
 
         storyUI.ShowLine(line);
+        ApplyScreenEffect(line);
     }
 
     private void EndStory(int storyId = -1)
@@ -458,6 +460,49 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         });
     }
     
+    private void ApplyScreenEffect(StoryLine line)
+    {
+        var effectUI = screenEffectUI;
+        var slot = characterUI.FindSlot(line.characterID);
+        
+        switch (line.screenEffect)
+        {
+            case ScreenEffectType.FadeBlack:
+                effectUI.FadeBlack(line.effectDuration);
+                break;
+
+            case ScreenEffectType.FadeFromBlack:
+                effectUI.FadeFromBlack(line.effectDuration);
+                break;
+
+            case ScreenEffectType.FlashWhite:
+                effectUI.FlashWhite(line.effectDuration);
+                break;
+
+            case ScreenEffectType.Shake:
+                effectUI.ShakeScreen(line.effectPower, line.effectDuration);
+                break;
+
+            case ScreenEffectType.ZoomIn:
+                effectUI.ZoomTo(slot.SlotPos, 1.1f, line.effectDuration);
+                storyUI.FocusDialogue();
+                break;
+
+            case ScreenEffectType.ZoomOut:
+                effectUI.ResetZoom(line.effectDuration);
+                storyUI.RestoreDialogue();
+                break;
+
+            case ScreenEffectType.VignetteDark:
+                effectUI.SetVignette(0.45f, line.effectDuration);
+                break;
+
+            case ScreenEffectType.VignetteClear:
+                effectUI.SetVignette(0f, line.effectDuration);
+                break;
+        }
+    }
+    
     public StorySaveData GetSaveData()
     {
         return new StorySaveData
@@ -505,5 +550,10 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         fadePanel.canvasGroup.alpha = 0f;
         fadePanel.canvasGroup.gameObject.SetActive(false);
         fadePanel.canvasGroup.blocksRaycasts = false;
+    }
+
+    public void SetScreenEffectUI(ScreenEffectUI ui)
+    {
+        screenEffectUI = ui;
     }
 }

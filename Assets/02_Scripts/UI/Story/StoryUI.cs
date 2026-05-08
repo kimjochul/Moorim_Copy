@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -34,23 +35,37 @@ public class StoryUI : MonoBehaviour
 
     [SerializeField] private GameObject root;
     [SerializeField] private GameObject characterNameRoot;
-    [SerializeField] private Image bgImage;
     [SerializeField] private GameObject darkBackGround;
-    [SerializeField] private Image illustrationImage;
     [SerializeField] private DialogueLogUI dialogueLogUI;
     
-    [SerializeField] private Button dialogueButton;
+    [SerializeField] private Image bgImage;
+    [SerializeField] private Image illustrationA;
+    [SerializeField] private Image illustrationB;
     
+    [SerializeField] private Button dialogueButton;
+    [SerializeField] private Button autoPlayButton;
     [SerializeField] private Image nextIndicator;
     
+    [SerializeField] private float autoPlayDelay = 1.5f;
     [SerializeField] private float fadeDuration = 0.45f;
-
+    private readonly WaitForSeconds typingWait = new(0.03f);
+    
+    [Header("Dialogue Motion")]
+    [SerializeField] private RectTransform dialogueRoot;
+    [SerializeField] private CanvasGroup dialogueCanvasGroup;
+    
     private Coroutine typingCoroutine;
     private Coroutine autoCoroutine;
+    private Coroutine autoPlayCoroutine;
     private Coroutine illustrationCoroutine;
 
-    private bool isTyping;
-
+    private bool isTyping; // 현재 글자 나오고 있는 상황인지
+    private bool isLogOpen;
+    private bool isTransitioning; // 일러스트 전환 중인지
+    private bool isCutSceneAuto; // 컷 씬용 대사 자동 재생 on인지
+    private bool isAutoPlayEnabled; // 자동 재생 on off인지
+    private bool isPointerBlocking; // 다른 버튼 눌렀을 때 대사 안 넘어가도록 bool 값 설정
+    
     private List<StoryLine> history = new();
     private int historyIndex = -1;
     
@@ -67,20 +82,49 @@ public class StoryUI : MonoBehaviour
     private float defaultContentFontSize;
     private float accentFontSize;
     
-    private float ignoreClickTimer;
-    private bool blockAdvanceInput;
+    
+    private Image currentIllust;
+    private Image nextIllust;
+
+    private CanvasGroup currentGroup;
+    private CanvasGroup nextGroup;
     
     public void Init()
     {
         defaultContentFontSize = UIManager.Instance.GetTextScale();
         accentFontSize = UIManager.Instance.GetTextScale() * 1.3f;
         UIManager.Instance.OnFontSizeChanged += SetFontSize;
+        
+        currentIllust = illustrationA;
+        nextIllust = illustrationB;
+
+        currentGroup = currentIllust.GetComponent<CanvasGroup>();
+        nextGroup = nextIllust.GetComponent<CanvasGroup>();
+
+        currentGroup.alpha = 1f;
+        nextGroup.alpha = 0f;
+
+        currentIllust.gameObject.SetActive(false);
+        nextIllust.gameObject.SetActive(false);
     }
 
     private void OnEnable()
     {
         StoryManager.Instance.SetStoryUI(this);
         dialogueButton.onClick.AddListener(ToggleLogUI);
+        autoPlayButton.onClick.AddListener(ToggleAutoPlay);
+    }
+    
+    private void OnDisable()
+    {
+        if (dialogueButton != null)
+            dialogueButton.onClick.RemoveListener(ToggleLogUI);
+
+        if (autoPlayButton != null)
+            autoPlayButton.onClick.RemoveListener(ToggleAutoPlay);
+
+        if (UIManager.Instance != null)
+            UIManager.Instance.OnFontSizeChanged -= SetFontSize;
     }
     
     public void Show()
@@ -95,82 +139,6 @@ public class StoryUI : MonoBehaviour
         root.SetActive(false);
         bgImage.gameObject.SetActive(false);
     }
-
-    #region 스토리 진행 일러스트 전용 화면 호출
-    public void ShowIllustration(Sprite sprite)
-    {
-        illustrationImage.gameObject.SetActive(true);
-        illustrationImage.sprite = sprite;
-
-        Color color = illustrationImage.color;
-        color.a = 1f;
-        illustrationImage.color = color;
-    }
-
-    public void ChangeIllustration(Sprite sprite)
-    {
-        if (illustrationCoroutine != null)
-            StopCoroutine(illustrationCoroutine);
-
-        illustrationCoroutine = StartCoroutine(FadeIllustration(sprite));
-    }
-    
-    private IEnumerator FadeIllustration(Sprite newSprite)
-    {
-        float time = 0f;
-
-        Color color = illustrationImage.color;
-
-        // Fade Out
-        while (time < fadeDuration)
-        {
-            time += Time.deltaTime;
-
-            float t = time / fadeDuration;
-
-            // 부드러운 easing
-            t = Mathf.SmoothStep(0f, 1f, t);
-
-            color.a = Mathf.Lerp(1f, 0f, t);
-            illustrationImage.color = color;
-
-            yield return null;
-        }
-
-        color.a = 0f;
-        illustrationImage.color = color;
-
-        // 살짝 텀
-        yield return new WaitForSeconds(0.08f);
-
-        // 교체
-        illustrationImage.sprite = newSprite;
-
-        time = 0f;
-
-        // Fade In
-        while (time < fadeDuration)
-        {
-            time += Time.deltaTime;
-
-            float t = time / fadeDuration;
-            t = Mathf.SmoothStep(0f, 1f, t);
-
-            color.a = Mathf.Lerp(0f, 1f, t);
-            illustrationImage.color = color;
-
-            yield return null;
-        }
-
-        color.a = 1f;
-        illustrationImage.color = color;
-    }
-    
-    public void HideIllustration()
-    {
-        illustrationImage.gameObject.SetActive(false);
-    }
-    #endregion
     
     public void SetDialogueUIVisible(bool visible)
     {
@@ -190,57 +158,13 @@ public class StoryUI : MonoBehaviour
     private void Update()
     {
         if (!root.activeSelf) return;
-        
-        if (blockAdvanceInput)
-            return;
-        
-        if (ignoreClickTimer > 0f)
-        {
-            ignoreClickTimer -= Time.deltaTime;
-            return;
-        }
-        
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            dialogueLogUI.Close();
-        }
-        
-        if (dialogueLogUI.gameObject.activeSelf)
-            return;
-        
-        if (Input.GetKeyDown(KeyCode.LeftControl))
-        {
-            StoryManager.Instance.SkipCurrentScene();
-            return;
-        }
 
-        // 클릭
-        if (Input.GetMouseButtonDown(0))
-        {
-            if (CurrentLineIsAuto())
-                return;
-            
-            if (isTyping)
-            {
-                CompleteTyping();
-            }
-            else
-            {
-                StoryManager.Instance.ShowNextLine();
-            }
-        }
-
-        // 휠
-        float scroll = Input.mouseScrollDelta.y;
-        if (scroll > 0)
-        {
-            ShowPrevious();
-        }
-        else if (scroll < 0)
-        {
-            ShowNext(); // ⭐ 추가
-        }
+        HandleKeyboardInput();
+        HandleMouseInput();
+        HandleScrollInput();
     }
+
+    #region 대사 관련
 
     public void ShowLine(StoryLine line)
     {
@@ -258,16 +182,7 @@ public class StoryUI : MonoBehaviour
         else
             SetFontSize(defaultContentFontSize);
         
-        if (line.lineType == LineType.Narration)
-        {
-            speakerText.text = "";
-            contentText.alignment = TextAlignmentOptions.Center;
-        }
-        else
-        {
-            speakerText.text = line.isUnknown ? "???" : StoryManager.Instance.GetCharacterName(line.characterID);
-            contentText.alignment = TextAlignmentOptions.TopLeft;
-        }
+        ApplyLineUI(line);
         
         if (!line.hideFromLog)
         {
@@ -284,13 +199,14 @@ public class StoryUI : MonoBehaviour
             });
         }
         
-        ApplyLineUI(line);
         SetDialogueUIVisible(!line.hideDialogueUI);
         currentFullText = line.line;
 
         typingCoroutine = StartCoroutine(TypeLine(line.line));
         if (line.autoNext)
         {
+            isCutSceneAuto = true;
+            
             if (autoCoroutine != null)
                 StopCoroutine(autoCoroutine);
 
@@ -323,47 +239,23 @@ public class StoryUI : MonoBehaviour
         
         HideIndicator();
 
-        foreach (char c in text)
+        for (int i = 0; i < text.Length; i++)
         {
-            contentText.text += c;
-
-            yield return new WaitForSeconds(0.03f);
+            contentText.text = text[..(i + 1)];
+            yield return typingWait;
         }
 
         isTyping = false;
         ShowIndicator();
     }
     
-    private IEnumerator AutoNextRoutine(StoryLine line)
-    {
-        while (isTyping)
-            yield return null;
-
-        float timer = 0f;
-
-        while (timer < line.autoDelay)
-        {
-            // 로그 열려있으면 시간 멈춤
-            if (!dialogueLogUI.gameObject.activeSelf)
-            {
-                timer += Time.deltaTime;
-            }
-
-            yield return null;
-        }
-
-        StoryManager.Instance.ShowNextLine();
-    }
-    
-    private bool CurrentLineIsAuto()
-    {
-        return currentLine != null && currentLine.autoNext && currentLine.hideDialogueUI;
-    }
-
     private void CompleteTyping()
     {
         if (typingCoroutine != null)
+        {
             StopCoroutine(typingCoroutine);
+            typingCoroutine = null;
+        }
 
         contentText.text = currentFullText; // ⭐ 핵심
         isTyping = false;
@@ -413,7 +305,18 @@ public class StoryUI : MonoBehaviour
             darkBackGround.SetActive(false);
         }
     }
+
+    private void SetFontSize(float size)
+    {
+        float targetSize = size;
+
+        contentText.fontSize = targetSize;
+    }
     
+    #endregion
+
+    #region 뒷 배경 관련
+
     public void ChangeBackground(Sprite bg)
     {
         if (isFirstBackground)
@@ -452,6 +355,77 @@ public class StoryUI : MonoBehaviour
         }
     }
     
+    private void ResetBackgroundState()
+    {
+        isFirstBackground = true;
+        bgImage.sprite = null;
+        bgImage.color = Color.white;
+    }
+
+    #endregion
+    
+    #region 일러스트 스토리 진행 화면
+
+    public void ShowIllustration(Sprite sprite)
+    {
+        currentIllust.gameObject.SetActive(true);
+
+        currentIllust.sprite = sprite;
+
+        currentGroup.alpha = 1f;
+    }
+
+    public void ChangeIllustration(Sprite sprite)
+    {
+        if (illustrationCoroutine != null)
+            StopCoroutine(illustrationCoroutine);
+
+        illustrationCoroutine = StartCoroutine(CrossFadeIllustration(sprite));
+    }
+    
+    private IEnumerator CrossFadeIllustration(Sprite sprite)
+    {
+        isTransitioning = true;
+        
+        nextIllust.sprite = sprite;
+        nextIllust.gameObject.SetActive(true);
+        
+        nextGroup.alpha = 0f;
+        
+        float time = 0f;
+
+        while (time < fadeDuration)
+        {
+            time += Time.deltaTime;
+
+            float t = Mathf.SmoothStep(0f, 1f, time / fadeDuration);
+
+            nextGroup.alpha = t;
+            currentGroup.alpha = 1f - t;
+
+            yield return null;
+        }
+        
+        nextGroup.alpha = 1f;
+        currentGroup.alpha = 0f;
+
+        currentIllust.gameObject.SetActive(false);
+
+        (currentIllust, nextIllust) = (nextIllust, currentIllust); // Swap
+        (currentGroup, nextGroup) = (nextGroup, currentGroup); // Swap
+        
+        isTransitioning = false;
+    }
+    
+    public void HideIllustration()
+    {
+        currentIllust.gameObject.SetActive(false);
+        nextIllust.gameObject.SetActive(false);
+    }
+
+    #endregion
+    
+    #region Indicator 관련
     private void ShowIndicator()
     {
         if (blinkCoroutine != null)
@@ -486,21 +460,9 @@ public class StoryUI : MonoBehaviour
             yield return null;
         }
     }
-    
-    public void ResetBackgroundState()
-    {
-        isFirstBackground = true;
-        bgImage.sprite = null;
-        bgImage.color = Color.white;
-    }
-    
-    public void SetFontSize(float size)
-    {
-        float targetSize = size;
+    #endregion
 
-        contentText.fontSize = targetSize;
-    }
-    
+    #region 로그창 관련 함수
     public void AddLogHeader(int day, string storyTitle)
     {
         dialogueLogs.Add(new DialogueLog
@@ -521,31 +483,277 @@ public class StoryUI : MonoBehaviour
     
     public void ToggleLogUI()
     {
-        ignoreClickTimer = 0.15f;
-
-        if (dialogueLogUI.gameObject.activeSelf)
+        if (isLogOpen)
         {
-            dialogueLogUI.Close();
-            ShowIndicator();
+            CloseLogUI();
         }
         else
         {
-            dialogueLogUI.Open();
-            HideIndicator();
+            OpenLogUI();
         }
     }
     
-    public void OnLogButtonDown()
+    private void OpenLogUI()
     {
-        blockAdvanceInput = true;
+        isLogOpen = true;
+
+        dialogueLogUI.Open();
+
+        HideIndicator();
     }
-    public void OnLogButtonUp()
+    
+    private void CloseLogUI()
     {
-        StartCoroutine(ReleaseInputBlock());
+        isLogOpen = false;
+
+        dialogueLogUI.Close();
+
+        ShowIndicator();
     }
-    private IEnumerator ReleaseInputBlock()
+    #endregion
+
+    #region 자동재생 관련 내용
+    
+    /// <summary>
+    /// 컷 씬용 자동 재생 함수
+    /// </summary>
+    /// <param name="line"></param>
+    /// <returns></returns>
+    private IEnumerator AutoNextRoutine(StoryLine line)
+    {
+        while (isTyping)
+            yield return null;
+
+        float timer = 0f;
+
+        while (timer < line.autoDelay)
+        {
+            // 로그 열려있으면 시간 멈춤
+            if (!dialogueLogUI.gameObject.activeSelf)
+            {
+                timer += Time.deltaTime;
+            }
+
+            yield return null;
+        }
+        StoryManager.Instance.ShowNextLine();
+        isCutSceneAuto = false;
+    }
+    
+    private bool CurrentLineIsAuto()
+    {
+        return currentLine != null && currentLine.autoNext && currentLine.hideDialogueUI;
+    }
+
+    /// <summary>
+    /// 수동으로 자동 재생 on할 때 사용하는 함수
+    /// </summary>
+    private void StartAutoPlay()
+    {
+        if (autoPlayCoroutine != null)
+            StopCoroutine(autoPlayCoroutine);
+
+        autoPlayCoroutine = StartCoroutine(AutoPlayRoutine());
+    }
+
+    /// <summary>
+    /// 수동으로 자동 재생 off
+    /// </summary>
+    private void StopAutoPlay()
+    {
+        if (autoPlayCoroutine != null)
+            StopCoroutine(autoPlayCoroutine);
+
+        autoPlayCoroutine = null;
+    }
+    
+    private IEnumerator AutoPlayRoutine()
+    {
+        while (isAutoPlayEnabled)
+        {
+            // 현재 타이핑 중이면 대기
+            while (isTyping)
+                yield return null;
+
+            // 로그창 / 전환 중이면 대기
+            while (!CanAdvance())
+                yield return null;
+
+            yield return new WaitForSeconds(autoPlayDelay);
+
+            // 다시 한번 체크
+            if (!CanAdvance())
+                continue;
+
+            // 현재 줄 자체 autoNext면 스킵
+            if (CurrentLineIsAuto())
+                continue;
+
+            StoryManager.Instance.ShowNextLine();
+        }
+    }
+    
+    public void ToggleAutoPlay()
+    {
+        isAutoPlayEnabled = !isAutoPlayEnabled;
+
+        if (isAutoPlayEnabled)
+        {
+            StartAutoPlay();
+        }
+        else
+        {
+            StopAutoPlay();
+        }
+    }
+    #endregion
+
+    #region 대사창 움직임
+
+    public void FocusDialogue(float duration = 0.3f)
+    {
+        dialogueRoot.DOKill();
+        dialogueCanvasGroup.DOKill();
+
+        Sequence seq = DOTween.Sequence();
+
+        seq.Join(
+            dialogueRoot.DOAnchorPosY(-80f, duration)
+                .SetEase(Ease.OutCubic)
+        );
+
+        seq.Join(
+            dialogueCanvasGroup.DOFade(0.65f, duration)
+        );
+    }
+
+    public void RestoreDialogue(float duration = 0.3f)
+    {
+        dialogueRoot.DOKill();
+        dialogueCanvasGroup.DOKill();
+
+        Sequence seq = DOTween.Sequence();
+
+        seq.Join(
+            dialogueRoot.DOAnchorPosY(0f, duration)
+                .SetEase(Ease.OutCubic)
+        );
+
+        seq.Join(
+            dialogueCanvasGroup.DOFade(1f, duration)
+        );
+    }
+
+    #endregion
+    
+    #region 행동 가능 여부 확인 함수
+    private bool CanAdvance()
+    {
+        return !IsBlocked();
+    }
+
+    private bool IsBlocked()
+    {
+        return
+            isLogOpen ||
+            isTransitioning ||
+            isCutSceneAuto ||
+            isPointerBlocking;
+    }
+    
+    private bool CanScrollHistory()
+    {
+        return
+            !isTyping &&
+            !isTransitioning &&
+            !isCutSceneAuto;
+    }
+    
+    private bool CanSkip()
+    {
+        return
+            !isTransitioning;
+    }
+    #endregion
+
+    #region 입력 관련 함수
+    private void HandleKeyboardInput()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (isLogOpen)
+            {
+                CloseLogUI();
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.LeftControl))
+        {
+            if (CanSkip())
+            {
+                StoryManager.Instance.SkipCurrentScene();
+            }
+        }
+    }
+    
+    private void HandleMouseInput()
+    {
+        if (!Input.GetMouseButtonDown(0))
+            return;
+        
+        if (isPointerBlocking)
+            return;
+        
+        if (isAutoPlayEnabled)
+        {
+            isAutoPlayEnabled = false;
+            StopAutoPlay();
+        }
+
+        if (!CanAdvance())
+            return;
+
+        if (isTyping)
+        {
+            CompleteTyping();
+            return;
+        }
+
+        StoryManager.Instance.ShowNextLine();
+    }
+    
+    private void HandleScrollInput()
+    {
+        if (!CanScrollHistory())
+            return;
+
+        float scroll = Input.mouseScrollDelta.y;
+
+        if (scroll > 0)
+        {
+            ShowPrevious();
+        }
+        else if (scroll < 0)
+        {
+            ShowNext();
+        }
+    }
+    
+    public void SetPointerBlock(bool value)
+    {
+        isPointerBlocking = value;
+    }
+    
+    public void StartReleasePointerBlock()
+    {
+        StartCoroutine(ReleasePointerBlockRoutine());
+    }
+
+    private IEnumerator ReleasePointerBlockRoutine()
     {
         yield return null;
-        blockAdvanceInput = false;
+
+        isPointerBlocking = false;
     }
+    #endregion
 }
