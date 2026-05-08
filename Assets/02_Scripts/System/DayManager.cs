@@ -103,6 +103,7 @@ public class DayManager : Singleton<DayManager>
     
     private void LoadDayStart()
     {
+        GameManager.Instance.SetState(GameFlowState.Gameplay);
         Debug.Log("Load Day Start");
 
         IsRunning = true;

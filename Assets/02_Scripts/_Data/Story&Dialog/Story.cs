@@ -16,9 +16,11 @@ public class Story:ScriptableObject
 [Serializable]
 public class StoryScene
 {
+    public SceneVisualType visualType;
     public List<CharacterInScene> characters;
     public List<StoryLine> lines;
     public Sprite background; 
+    public Sprite illustration;
 }
 
 [Serializable]
@@ -27,4 +29,11 @@ public class CharacterInScene
     public int characterID;
     public int slotIndex;
     public bool startVisible;
+}
+
+[Serializable]
+public enum SceneVisualType
+{
+    CharacterSlots, // 기존 방식
+    Illustration    // CG 컷씬 방식
 }

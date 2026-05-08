@@ -1,12 +1,24 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
+
+[Serializable]
+public class SlotPreset
+{
+    public Vector2 position;
+    public float scale;
+    
+    [Header("연출용")]
+    public float focusScale;   // 강조 시 크기
+}
 
 public class CharacterUI : MonoBehaviour
 {
     [Header("슬롯들")]
     [SerializeField] private List<CharacterSlot> slots;
+    [SerializeField] private List<SlotPreset> presets;
 
     [Header("캐릭터 데이터")]
     [SerializeField] private List<Character> characterDatas;
@@ -60,7 +72,7 @@ public class CharacterUI : MonoBehaviour
             foreach (var slot in slots)
             {
                 if(slot.isActiveAndEnabled)
-                    slot.Disappear();
+                    slot.Disappear(slot.SlotPos);
             }
 
             currentSlotMap.Clear();
@@ -81,6 +93,12 @@ public class CharacterUI : MonoBehaviour
             newIDs.Add(info.characterID);
 
             var slot = slots[info.slotIndex];
+            var preset = presets[info.slotIndex];
+
+            RectTransform rt = slot.GetComponent<RectTransform>();
+
+            rt.anchoredPosition = preset.position;
+            rt.localScale = Vector3.one * preset.scale;
 
             // 이미 같은 슬롯에 있으면 유지
             if (currentSlotMap.TryGetValue(info.characterID, out int prevSlot))
@@ -95,7 +113,7 @@ public class CharacterUI : MonoBehaviour
                 if (info.startVisible)
                 {
                     // ⭐ 처음부터 보이는 캐릭터
-                    slot.Appear(info.characterID, data.emotions[0].sprite);
+                    slot.Appear(info.characterID, data.emotions[0].sprite, preset.position);
                 }
                 else
                 {
@@ -114,7 +132,7 @@ public class CharacterUI : MonoBehaviour
             if (!newIDs.Contains(pair.Key))
             {
                 int slotIndex = pair.Value;
-                slots[slotIndex].Disappear();
+                slots[slotIndex].Disappear(slots[slotIndex].SlotPos);
 
                 toRemove.Add(pair.Key);
             }
@@ -156,12 +174,23 @@ public class CharacterUI : MonoBehaviour
     {
         foreach (var slot in slots)
         {
-            if (slot.CurrentCharacterID == speakerID)
+            int id = slot.CurrentCharacterID;
+            if (id == -1) continue;
+            
+            int slotIndex = currentSlotMap[id];
+            var preset = presets[slotIndex];
+            
+            RectTransform rt = slot.GetComponent<RectTransform>();
+            var cg = slot.GetComponent<CanvasGroup>();
+            
+            if (id == speakerID)
             {
+                rt.localScale = Vector3.one * preset.focusScale;
                 slot.SetColor(Color.white);
             }
-            else if (slot.CurrentCharacterID != -1)
+            else
             {
+                rt.localScale = Vector3.one * preset.scale;
                 slot.SetColor(new Color(0.7f, 0.7f, 0.7f, 1f));
             }
         }
@@ -170,6 +199,8 @@ public class CharacterUI : MonoBehaviour
     public void PlayMotion(int characterID, MotionData motion, bool isUnknown)
     {
         var slot = FindSlot(characterID);
+        var preset = presets[slot.slotIndex];
+        //Debug.Log($"{slot.slotIndex}, {preset.position}");
         if (slot == null || motion == null) return;
 
         switch (motion.type)
@@ -195,17 +226,84 @@ public class CharacterUI : MonoBehaviour
                 break;
             
             case MotionType.EnterLeft:
-                slot.Enter(Vector3.left, motion.value, motion.duration, isUnknown);
+                slot.Enter(preset.position, Vector3.left, motion.value, motion.duration, isUnknown);
                 break;
 
             case MotionType.EnterRight:
-                slot.Enter(Vector3.right, motion.value, motion.duration, isUnknown);
+                slot.Enter(preset.position, Vector3.right, motion.value, motion.duration, isUnknown);
                 break;
             
             case MotionType.Shake: 
                 StartCoroutine(slot.Shake(motion.duration, motion.value));
                 break;
+            
+            case MotionType.Emphasis:
+                slot.Emphasis();
+                break;
+            
+            case MotionType.Nervous:
+                slot.NervousShake();
+                break;
         }
+    }
+    
+    public void PlayMotionWithTarget(MotionCommand cmd)
+    {
+        var actor = FindSlot(cmd.characterID);
+        if (actor == null) return;
+
+        var motion = cmd.motion;
+
+        switch (motion.type)
+        {
+            case MotionType.Attack:
+            {
+                var target = FindSlot(cmd.targetID);
+                if (target == null)
+                {
+                    actor.PlayAttack(Vector2.right); // fallback
+                    return;
+                }
+
+                // 방향 계산
+                Vector2 dir = GetDirection(actor, target);
+
+                // 공격자
+                actor.PlayAttack(dir);
+
+                // 피격자 (약간 딜레이)
+                DOVirtual.DelayedCall(0.1f, () =>
+                {
+                    target.PlayHit(-dir);
+                });
+
+                break;
+            }
+
+            case MotionType.Hit:
+            {
+                var target = FindSlot(cmd.targetID);
+                Vector2 dir = target != null ? GetDirection(target, actor) : Vector2.left;
+
+                actor.PlayHit(dir);
+                break;
+            }
+
+            default:
+            {
+                // 기존 로직
+                PlayMotion(cmd.characterID, motion, false);
+                break;
+            }
+        }
+    }
+    
+    private Vector2 GetDirection(CharacterSlot from, CharacterSlot to)
+    {
+        RectTransform a = from.GetComponent<RectTransform>();
+        RectTransform b = to.GetComponent<RectTransform>();
+
+        return (b.anchoredPosition - a.anchoredPosition).normalized;
     }
     
     private CharacterSlot FindSlot(int characterID)
