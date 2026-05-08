@@ -15,6 +15,10 @@ public class StoryLine
     public MotionData motion;
     public List<MotionCommand> motions;
     
+    public ScreenEffectType screenEffect;
+    public float effectDuration = 0.3f;
+    public float effectPower = 30f;
+    
     [TextArea(3, 10)]
     public string line;
     
@@ -79,4 +83,22 @@ public enum MotionType
     Hit,      // 추가
     Emphasis,    // 강조
     Nervous,  // 떨림
+}
+
+public enum ScreenEffectType
+{
+    None,
+
+    FadeBlack,
+    FadeFromBlack,
+
+    FlashWhite,
+
+    Shake,
+
+    ZoomIn,
+    ZoomOut,
+
+    VignetteDark,
+    VignetteClear
 }
