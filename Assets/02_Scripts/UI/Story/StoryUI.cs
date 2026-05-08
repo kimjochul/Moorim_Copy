@@ -43,7 +43,7 @@ public class StoryUI : MonoBehaviour
     
     [SerializeField] private Image nextIndicator;
     
-    [SerializeField] private float fadeDuration = 0.3f;
+    [SerializeField] private float fadeDuration = 0.45f;
 
     private Coroutine typingCoroutine;
     private Coroutine autoCoroutine;
@@ -126,11 +126,22 @@ public class StoryUI : MonoBehaviour
         {
             time += Time.deltaTime;
 
-            color.a = Mathf.Lerp(1f, 0.3f, time / fadeDuration);
+            float t = time / fadeDuration;
+
+            // 부드러운 easing
+            t = Mathf.SmoothStep(0f, 1f, t);
+
+            color.a = Mathf.Lerp(1f, 0f, t);
             illustrationImage.color = color;
 
             yield return null;
         }
+
+        color.a = 0f;
+        illustrationImage.color = color;
+
+        // 살짝 텀
+        yield return new WaitForSeconds(0.08f);
 
         // 교체
         illustrationImage.sprite = newSprite;
@@ -142,7 +153,10 @@ public class StoryUI : MonoBehaviour
         {
             time += Time.deltaTime;
 
-            color.a = Mathf.Lerp(0.3f, 1f, time / fadeDuration);
+            float t = time / fadeDuration;
+            t = Mathf.SmoothStep(0f, 1f, t);
+
+            color.a = Mathf.Lerp(0f, 1f, t);
             illustrationImage.color = color;
 
             yield return null;
