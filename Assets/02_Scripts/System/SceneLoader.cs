@@ -7,6 +7,8 @@ public class SceneLoader : Singleton<SceneLoader>
 {
     public void LoadScene(string sceneName, Action onSceneLoaded)
     {
+        Time.timeScale = 1f;
+        
         StartCoroutine(LoadRoutine(sceneName, onSceneLoaded));
     }
 

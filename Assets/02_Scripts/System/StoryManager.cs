@@ -35,6 +35,9 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
 
     [SerializeField] private RestaurantEconomy economy;
     
+    [Header("사운드")]
+    [SerializeField] private AudioClip hitSE;
+    
     private StoryUI storyUI;
     public StoryUI StoryUI => storyUI;
     private CharacterUI characterUI;
@@ -121,10 +124,11 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         if (triggerQueue.Count == 0)
         {
             Debug.Log("스토리 없음 → NPC로 넘김");
+            SoundManager.Instance.PlayRandomBGM();
             GameManager.Instance.CompleteState(GameFlowState.Story);
             return;
         }
-
+        SoundManager.Instance.StopBGM();
         currentTrigger = triggerQueue.Dequeue();
         PlayStory(currentTrigger.storyId);
     }
@@ -200,9 +204,9 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         // Debug.Log($"{currentStory.id}");
         // foreach(var currentCharacter in currentScene.characters)
         //     Debug.Log(currentCharacter.characterID);
-            
+        
         characterUI.SetupScene(currentScene.characters);
-        storyUI.ChangeBackground(currentScene.background);
+        storyUI.ChangeBackground(currentScene.background, GetTransitionDuration(TransitionSpeed.Default));
     }
 
     public void ShowNextLine()
@@ -229,10 +233,10 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         }
         
         var line = currentScene.lines[currentIndex++];
-
+        float transitionDuration = GetTransitionDuration(line.transitionSpeed);
         if (line.illustrationOverride != null)
         {
-            storyUI.ChangeIllustration(line.illustrationOverride);
+            storyUI.ChangeIllustration(line.illustrationOverride, transitionDuration);
         }
         
         if (line.lineType == LineType.Dialogue)
@@ -422,6 +426,17 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         return true;
     }
     
+    private float GetTransitionDuration(TransitionSpeed speed)
+    {
+        return speed switch
+        {
+            TransitionSpeed.Fast => 0.5f,
+            TransitionSpeed.Slow => 1.5f,
+            TransitionSpeed.Dramatic => 2f,
+            TransitionSpeed.Default => fadeDuration
+        };
+    }
+    
     public void PlaySceneTransition(Action onMid)
     {
         isTransitioning = true; // ⭐ 잠금
@@ -485,12 +500,12 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
 
             case ScreenEffectType.ZoomIn:
                 effectUI.ZoomTo(slot.SlotPos, 1.1f, line.effectDuration);
-                storyUI.FocusDialogue();
+                storyUI.FocusMode(true);
                 break;
 
             case ScreenEffectType.ZoomOut:
                 effectUI.ResetZoom(line.effectDuration);
-                storyUI.RestoreDialogue();
+                storyUI.FocusMode(false);
                 break;
 
             case ScreenEffectType.VignetteDark:
@@ -499,6 +514,10 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
 
             case ScreenEffectType.VignetteClear:
                 effectUI.SetVignette(0f, line.effectDuration);
+                break;
+            
+            case ScreenEffectType.FlashWithShake :
+                effectUI.PlayImpact(line.effectPower, line.effectDuration, hitSE);
                 break;
         }
     }

@@ -35,6 +35,8 @@ public class StoryLine
     public float autoDelay = 1.5f;
 
     public bool hideFromLog;
+    
+    public TransitionSpeed transitionSpeed;
 }
 
 public enum LineType
@@ -93,12 +95,33 @@ public enum ScreenEffectType
     FadeFromBlack,
 
     FlashWhite,
-
     Shake,
+    FlashWithShake,
 
     ZoomIn,
     ZoomOut,
 
     VignetteDark,
     VignetteClear
+}
+
+public static class DialogueStyle
+{
+    public static string Angry(string text)
+    {
+        return $"<color=#FF5555><b>{text}</b></color>";
+    }
+
+    public static string Whisper(string text)
+    {
+        return $"<alpha=#88><i>{text}</i>";
+    }
+}
+
+public enum TransitionSpeed
+{
+    Default,
+    Fast,
+    Slow,
+    Dramatic
 }
