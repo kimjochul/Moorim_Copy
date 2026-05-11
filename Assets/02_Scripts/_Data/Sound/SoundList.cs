@@ -4,9 +4,11 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "SoundList", menuName = "SoundSO/SoundList")]
 public class SoundList : ScriptableObject
 {
-    [Header("¹è°æ ¸®½ºÆ®")]
+    [Header("ë°°ê²½ ë¦¬ìŠ¤íŠ¸")]
     public List<BGMData> bgmList = new List<BGMData>();
 
-    [Header("È¿°úÀ½ ¸®½ºÆ®")]
+    [Header("íš¨ê³¼ìŒ ë¦¬ìŠ¤íŠ¸")]
     public List<SFXData> sfxList = new List<SFXData>();
+
+    public AudioClip typingSound;
 }

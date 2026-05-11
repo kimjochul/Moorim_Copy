@@ -4,16 +4,17 @@ using UnityEngine.UI;
 
 public class SoundManager : Singleton<SoundManager>
 {
-    [Header("¿Àµð¿À ¼Ò½º")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ò½ï¿½")]
     [SerializeField] private AudioSource bgmSource;
     [SerializeField] private AudioSource sfxSource;
+    [SerializeField] private AudioSource typingSource;
 
-    [Header("»ç¿îµå µ¥ÀÌÅÍ ¿¡¼Â")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")]
     [SerializeField] private SoundList soundList;
     public List<BGMData> BgmList => this.soundList.bgmList;
 
 
-    [Header("º¼·ý ¼¼ÆÃ")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")]
     [Range(0f, 1f)][SerializeField] private float masterVolume = 1f;
     [Range(0f, 1f)][SerializeField] private float bgmVolume = 1f;
     [Range(0f, 1f)][SerializeField] private float sfxVolume = 1f;
@@ -71,9 +72,12 @@ public class SoundManager : Singleton<SoundManager>
             this.bgmSource = this.gameObject.AddComponent<AudioSource>();
         if (this.sfxSource == null)
             this.sfxSource = this.gameObject.AddComponent<AudioSource>();
-
+        if (typingSource == null)
+            typingSource = gameObject.AddComponent<AudioSource>();
+        
         this.bgmSource.loop = true;
         this.sfxSource.loop = false;
+        typingSource.loop = false;
 
         this.masterVolume = PlayerPrefs.GetFloat("MasterVolume", 1f);
         this.bgmVolume = PlayerPrefs.GetFloat("BgmVolume", 1f);
@@ -81,7 +85,7 @@ public class SoundManager : Singleton<SoundManager>
     }
 
     /// <summary>
-    /// ÁöÁ¤ÇÑ ÀÌ¸§ÀÇ BGMÀ» Àç»ý
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ï¿½ï¿½ BGMï¿½ï¿½ ï¿½ï¿½ï¿½
     /// </summary>
     public void PlayBGM(string soundName)
     {
@@ -97,7 +101,7 @@ public class SoundManager : Singleton<SoundManager>
     }
 
     /// <summary>
-    /// ÁöÁ¤ÇÑ ÀÌ¸§ÀÇ SFXÀ» Àç»ý
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ï¿½ï¿½ SFXï¿½ï¿½ ï¿½ï¿½ï¿½
     /// </summary>
     public void PlaySFX(string soundName)
     {
@@ -108,7 +112,7 @@ public class SoundManager : Singleton<SoundManager>
     }
 
     /// <summary>
-    /// Æ¯Á¤ ¿ÀºêÁ§Æ®ÀÇ À§Ä¡¿¡¼­ È¿°úÀ½À» Àç»ý
+    /// Æ¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ï¿½ï¿½ È¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
     /// </summary>
     public void PlaySoundOnObj(string soundName, GameObject obj)
     {
@@ -127,7 +131,7 @@ public class SoundManager : Singleton<SoundManager>
     }
 
     /// <summary>
-    /// BGM ¿Àµð¿À Å¬¸³À» °Ë»öÇÏ¿© ¹ÝÈ¯
+    /// BGM ï¿½ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½Ë»ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½È¯
     /// </summary>
     public AudioClip GetBGMClip(string soundName)
     {
@@ -139,7 +143,7 @@ public class SoundManager : Singleton<SoundManager>
     }
 
     /// <summary>
-    /// SFX ¿Àµð¿À Å¬¸³À» °Ë»öÇÏ¿© ¹ÝÈ¯
+    /// SFX ï¿½ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½Ë»ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½È¯
     /// </summary>
     public AudioClip GetSFXClip(string soundName)
     {
@@ -149,8 +153,22 @@ public class SoundManager : Singleton<SoundManager>
         }
         return null;
     }
+
+    public void PlayTypeSound()
+    {
+        typingSource.PlayOneShot(soundList.typingSound, this.sfxVolume * this.masterVolume);
+    }
+
+    public void PlaySE(AudioClip clip)
+    {
+        if (clip == null)
+            return;
+        
+        sfxSource.PlayOneShot(clip, this.sfxVolume * this.masterVolume);
+    }
+    
     /// <summary>
-    /// ¸¶½ºÅÍ º¼·ýÀ» Á¶Àý (0.0 ~ 1.0)
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (0.0 ~ 1.0)
     /// </summary>
     public void SetMasterVolume(float volume)
     {
@@ -162,7 +180,7 @@ public class SoundManager : Singleton<SoundManager>
         UpdateVolumes();
     }
     /// <summary>
-    /// BGM º¼·ýÀ» Á¶Àý (0.0 ~ 1.0)
+    /// BGM ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (0.0 ~ 1.0)
     /// </summary>
     public void SetBGMVolume(float volume)
     {
@@ -175,7 +193,7 @@ public class SoundManager : Singleton<SoundManager>
     }
 
     /// <summary>
-    /// SFX º¼·ýÀ» Á¶Àý (0.0 ~ 1.0)
+    /// SFX ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (0.0 ~ 1.0)
     /// </summary>
     public void SetSFXVolume(float volume)
     {
@@ -188,7 +206,7 @@ public class SoundManager : Singleton<SoundManager>
     }
 
     /// <summary>
-    /// º¯°æµÈ º¼·ý ¼öÄ¡¸¦ AudioSource¿¡ Áï½Ã ¹Ý¿µ
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ AudioSourceï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ý¿ï¿½
     /// </summary>
     private void UpdateVolumes()
     {
@@ -197,45 +215,48 @@ public class SoundManager : Singleton<SoundManager>
 
         if (this.sfxSource != null)
             this.sfxSource.volume = this.sfxVolume * this.masterVolume;
+        
+        if (typingSource != null)
+            typingSource.volume = sfxVolume * masterVolume;
     }
 
     /// <summary>
-    /// ÇöÀç Àç»ý ÁßÀÎ ¹è°æÀ½¾ÇÀ» Á¤Áö
+    /// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public void StopBGM() => this.bgmSource.Stop();
 
     /// <summary>
-    /// ÇöÀç Àç»ý ÁßÀÎ È¿°úÀ½À» Á¤Áö
+    /// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public void StopSFX() => this.sfxSource.Stop();
 
     /// <summary>
-    /// ÇöÀç Àç»ý ÁßÀÎ ¹è°æÀ½¾ÇÀ» ÀÏ½ÃÁ¤Áö
+    /// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ï½ï¿½ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public void PauseBGM() => this.bgmSource.Pause();
 
     /// <summary>
-    /// ÀÏ½ÃÁ¤ÁöµÈ ¹è°æÀ½¾ÇÀ» ´Ù½Ã Àç»ý
+    /// ï¿½Ï½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù½ï¿½ ï¿½ï¿½ï¿½
     /// </summary>
     public void ResumeBGM() => this.bgmSource.UnPause();
 
     /// <summary>
-    /// ÇöÀç Àç»ý ÁßÀÎ ¸ðµç È¿°úÀ½À» ÀÏ½ÃÁ¤Áö
+    /// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ È¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ï½ï¿½ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public void PauseSFX() => this.sfxSource.Pause();
 
     /// <summary>
-    /// ÀÏ½ÃÁ¤ÁöµÈ È¿°úÀ½µéÀ» ´Ù½Ã Àç»ý
+    /// ï¿½Ï½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù½ï¿½ ï¿½ï¿½ï¿½
     /// </summary>
     public void ResumeSFX() => this.sfxSource.UnPause();
 
     /// <summary>
-    /// ¹è°æÀ½¾ÇÀÇ À½¼Ò°Å ¼³Á¤
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ò°ï¿½ ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public void SetMuteBGM(bool isMute) => this.bgmSource.mute = isMute;
 
     /// <summary>
-    /// È¿°úÀ½ÀÇ À½¼Ò°Å ¼³Á¤
+    /// È¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ò°ï¿½ ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public void SetMuteSFX(bool isMute) => this.sfxSource.mute = isMute;
 }

@@ -76,9 +76,14 @@ public class CharacterSlot : MonoBehaviour
     
     public void ChangeExpression(Sprite sprite, float duration = 0.2f)
     {
+        rt.DOKill();
+        currentImage.DOKill();
+        nextImage.DOKill();
+        
+        Color keepColor = currentImage.color;
         nextImage.sprite = sprite;
         
-        nextImage.color = new Color(1f, 1f, 1f, 0f);
+        nextImage.color = new Color(keepColor.r, keepColor.g, keepColor.b, 0f);
 
         Sequence seq = DOTween.Sequence();
 
@@ -88,9 +93,10 @@ public class CharacterSlot : MonoBehaviour
         seq.OnComplete(() =>
         {
             currentImage.sprite = sprite;
-            currentImage.color = Color.white;
+            currentImage.color = keepColor;
+            nextImage.color = new Color(keepColor.r, keepColor.g, keepColor.b, 0f);
             
-            nextImage.color = new Color(1f, 1f, 1f, 0f);
+            rt.DOPunchScale(Vector3.one * 0.05f, 0.2f, 5, 0.5f);
         });
     }
     

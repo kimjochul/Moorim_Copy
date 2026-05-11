@@ -54,6 +54,10 @@ public class StoryUI : MonoBehaviour
     [SerializeField] private RectTransform dialogueRoot;
     [SerializeField] private CanvasGroup dialogueCanvasGroup;
     
+    [Header("Focus Mode")]
+    [SerializeField] private float focusFade = 0.85f;
+    [SerializeField] private float focusDuration = 0.25f;
+    
     private Coroutine typingCoroutine;
     private Coroutine autoCoroutine;
     private Coroutine autoPlayCoroutine;
@@ -239,10 +243,40 @@ public class StoryUI : MonoBehaviour
         
         HideIndicator();
 
-        for (int i = 0; i < text.Length; i++)
+        int visibleCount = 0;
+        int visibleCharCount = 0;
+
+        while (visibleCount < text.Length)
         {
-            contentText.text = text[..(i + 1)];
-            yield return typingWait;
+            if (text[visibleCount] == '<')
+            {
+                int closeIndex = text.IndexOf('>', visibleCount);
+
+                if (closeIndex != -1)
+                {
+                    visibleCount = closeIndex + 1;
+                }
+            }
+            else
+            {
+                char c = text[visibleCount];
+                
+                visibleCount++;
+                visibleCharCount++;
+
+                contentText.text = text[..visibleCount]; 
+                
+                if (!char.IsPunctuation(c) &&
+                    !char.IsWhiteSpace(c) &&
+                    visibleCharCount % 2 == 0)
+                {
+                    SoundManager.Instance.PlayTypeSound();
+                }
+                
+                yield return typingWait;
+                continue;
+            }
+            contentText.text = text[..visibleCount]; // 0 ~ visibleCount-1 까지
         }
 
         isTyping = false;
@@ -314,10 +348,10 @@ public class StoryUI : MonoBehaviour
     }
     
     #endregion
-
+    
     #region 뒷 배경 관련
 
-    public void ChangeBackground(Sprite bg)
+    public void ChangeBackground(Sprite bg, float duration)
     {
         if (isFirstBackground)
         {
@@ -329,17 +363,17 @@ public class StoryUI : MonoBehaviour
         if (bgCoroutine != null)
             StopCoroutine(bgCoroutine);
 
-        bgCoroutine = StartCoroutine(FadeBackground(bg));
+        bgCoroutine = StartCoroutine(FadeBackground(bg, duration));
     }
     
-    public IEnumerator FadeBackground(Sprite newBg)
+    public IEnumerator FadeBackground(Sprite newBg, float duration)
     {
         float time = 0;
 
-        while (time < fadeDuration)
+        while (time < duration)
         {
             time += Time.deltaTime;
-            bgImage.color = new Color(1,1,1,1 - time / fadeDuration);
+            bgImage.color = new Color(1,1,1,1 - time / duration);
             yield return null;
         }
 
@@ -347,10 +381,10 @@ public class StoryUI : MonoBehaviour
 
         time = 0;
 
-        while (time < fadeDuration)
+        while (time < duration)
         {
             time += Time.deltaTime;
-            bgImage.color = new Color(1,1,1,time / fadeDuration);
+            bgImage.color = new Color(1,1,1,time / duration);
             yield return null;
         }
     }
@@ -375,15 +409,15 @@ public class StoryUI : MonoBehaviour
         currentGroup.alpha = 1f;
     }
 
-    public void ChangeIllustration(Sprite sprite)
+    public void ChangeIllustration(Sprite sprite, float duration)
     {
         if (illustrationCoroutine != null)
             StopCoroutine(illustrationCoroutine);
 
-        illustrationCoroutine = StartCoroutine(CrossFadeIllustration(sprite));
+        illustrationCoroutine = StartCoroutine(CrossFadeIllustration(sprite, duration));
     }
     
-    private IEnumerator CrossFadeIllustration(Sprite sprite)
+    private IEnumerator CrossFadeIllustration(Sprite sprite, float duration)
     {
         isTransitioning = true;
         
@@ -394,11 +428,11 @@ public class StoryUI : MonoBehaviour
         
         float time = 0f;
 
-        while (time < fadeDuration)
+        while (time < duration)
         {
             time += Time.deltaTime;
 
-            float t = Mathf.SmoothStep(0f, 1f, time / fadeDuration);
+            float t = Mathf.SmoothStep(0f, 1f, time / duration);
 
             nextGroup.alpha = t;
             currentGroup.alpha = 1f - t;
@@ -608,40 +642,21 @@ public class StoryUI : MonoBehaviour
     }
     #endregion
 
-    #region 대사창 움직임
+    #region 대사창에 효과
 
-    public void FocusDialogue(float duration = 0.3f)
+    public void FocusMode(bool enable)
     {
         dialogueRoot.DOKill();
         dialogueCanvasGroup.DOKill();
 
-        Sequence seq = DOTween.Sequence();
-
-        seq.Join(
-            dialogueRoot.DOAnchorPosY(-80f, duration)
-                .SetEase(Ease.OutCubic)
-        );
-
-        seq.Join(
-            dialogueCanvasGroup.DOFade(0.65f, duration)
-        );
-    }
-
-    public void RestoreDialogue(float duration = 0.3f)
-    {
-        dialogueRoot.DOKill();
-        dialogueCanvasGroup.DOKill();
-
-        Sequence seq = DOTween.Sequence();
-
-        seq.Join(
-            dialogueRoot.DOAnchorPosY(0f, duration)
-                .SetEase(Ease.OutCubic)
-        );
-
-        seq.Join(
-            dialogueCanvasGroup.DOFade(1f, duration)
-        );
+        if (enable)
+        {
+            dialogueCanvasGroup.DOFade(focusFade, focusDuration).SetEase(Ease.OutCubic);
+        }
+        else
+        {
+            dialogueCanvasGroup.DOFade(1f, focusDuration).SetEase(Ease.OutCubic);
+        }
     }
 
     #endregion

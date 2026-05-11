@@ -100,15 +100,9 @@ public class ScreenEffectUI : MonoBehaviour
         
         Sequence seq = DOTween.Sequence();
 
-        seq.Join(
-            screenRoot.DOScale(scale, duration)
-                .SetEase(Ease.OutCubic)
-        );
+        seq.Join(screenRoot.DOScale(scale, duration).SetEase(Ease.OutCubic));
 
-        seq.Join(
-            screenRoot.DOAnchorPos(focusPos, duration)
-                .SetEase(Ease.OutCubic)
-        );
+        seq.Join(screenRoot.DOAnchorPos(focusPos, duration).SetEase(Ease.OutCubic));
     }
 
     public void ResetZoom(float duration)
@@ -117,15 +111,9 @@ public class ScreenEffectUI : MonoBehaviour
 
         Sequence seq = DOTween.Sequence();
 
-        seq.Join(
-            screenRoot.DOScale(defaultScale, duration)
-                .SetEase(Ease.OutCubic)
-        );
+        seq.Join(screenRoot.DOScale(defaultScale, duration).SetEase(Ease.OutCubic));
 
-        seq.Join(
-            screenRoot.DOAnchorPos(defaultPos, duration)
-                .SetEase(Ease.OutCubic)
-        );
+        seq.Join(screenRoot.DOAnchorPos(defaultPos, duration).SetEase(Ease.OutCubic));
     }
 
     #endregion
@@ -142,5 +130,20 @@ public class ScreenEffectUI : MonoBehaviour
         );
     }
 
+    #endregion
+
+
+    #region Combined Effect
+    public void PlayImpact(
+        float shakePower,
+        float shakeDuration,
+        AudioClip se)
+    {
+        FlashWhite();
+
+        ShakeScreen(shakePower, shakeDuration);
+
+        SoundManager.Instance.PlaySE(se);
+    }
     #endregion
 }
