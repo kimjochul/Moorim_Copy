@@ -1,0 +1,149 @@
+using System;
+using DG.Tweening;
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
+
+public class ScreenEffectUI : MonoBehaviour
+{
+    [SerializeField] private RectTransform screenRoot;
+    [SerializeField] private Image fadeImage;
+    [SerializeField] private Volume volume; // 하이어라키 창에서 global volume 추가 및 연결 필요
+    
+    private Vector2 defaultPos;
+    private Vector3 defaultScale;
+    
+    private Vignette vignette;
+    
+    private void Awake()
+    {
+        volume.profile.TryGet(out vignette);
+        defaultPos = screenRoot.anchoredPosition;
+        defaultScale = screenRoot.localScale;
+    }
+
+    private void OnEnable()
+    {
+        StoryManager.Instance.SetScreenEffectUI(this);
+    }
+
+    #region Fade Effect
+
+    public void FadeBlack(float duration)
+    {
+        fadeImage.gameObject.SetActive(true);
+
+        fadeImage.color = new Color(0,0,0,0);
+
+        fadeImage
+            .DOFade(1f, duration);
+    }
+
+    public void FadeFromBlack(float duration)
+    {
+        fadeImage.color = new Color(0,0,0,1);
+
+        fadeImage
+            .DOFade(0f, duration)
+            .OnComplete(() =>
+            {
+                fadeImage.gameObject.SetActive(false);
+            });
+    }
+
+    public void FlashWhite(float duration = 0.15f)
+    {
+        fadeImage.gameObject.SetActive(true);
+
+        fadeImage.color = Color.white;
+
+        Sequence seq = DOTween.Sequence();
+
+        seq.Append(fadeImage.DOFade(1f, 0.05f));
+        seq.Append(fadeImage.DOFade(0f, duration));
+
+        seq.OnComplete(() =>
+        {
+            fadeImage.gameObject.SetActive(false);
+        });
+    }
+
+    #endregion
+
+    #region Shake Effect
+
+    public void ShakeScreen(float power = 30f, float duration = 0.3f)
+    {
+        screenRoot.DOComplete();
+
+        screenRoot.DOShakeAnchorPos(
+            duration,
+            power,
+            20,
+            90,
+            false,
+            true
+        );
+    }
+
+    #endregion
+
+    #region Zoom Effect
+
+    public void ZoomTo(Vector2 targetPos, float scale, float duration)
+    {
+        screenRoot.DOKill();
+
+        Vector2 focusPos =
+            -targetPos * (scale - 1f);
+        
+        Sequence seq = DOTween.Sequence();
+
+        seq.Join(screenRoot.DOScale(scale, duration).SetEase(Ease.OutCubic));
+
+        seq.Join(screenRoot.DOAnchorPos(focusPos, duration).SetEase(Ease.OutCubic));
+    }
+
+    public void ResetZoom(float duration)
+    {
+        screenRoot.DOKill();
+
+        Sequence seq = DOTween.Sequence();
+
+        seq.Join(screenRoot.DOScale(defaultScale, duration).SetEase(Ease.OutCubic));
+
+        seq.Join(screenRoot.DOAnchorPos(defaultPos, duration).SetEase(Ease.OutCubic));
+    }
+
+    #endregion
+
+    #region Vignette Effect
+
+    public void SetVignette(float intensity, float duration)
+    {
+        DOTween.To(
+            () => vignette.intensity.value,
+            x => vignette.intensity.value = x,
+            intensity,
+            duration
+        );
+    }
+
+    #endregion
+
+
+    #region Combined Effect
+    public void PlayImpact(
+        float shakePower,
+        float shakeDuration,
+        AudioClip se)
+    {
+        FlashWhite();
+
+        ShakeScreen(shakePower, shakeDuration);
+
+        SoundManager.Instance.PlaySE(se);
+    }
+    #endregion
+}

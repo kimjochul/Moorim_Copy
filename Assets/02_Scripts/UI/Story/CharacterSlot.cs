@@ -5,10 +5,11 @@ using UnityEngine.UI;
 
 public class CharacterSlot : MonoBehaviour
 {
-    public int slotIndex; // 0: 왼쪽, 1: 중앙, 2: 오른쪽
+    public int slotIndex; // 0, 1, 2, 3
 
-    [SerializeField] private Image characterImage;
-
+    [SerializeField] private Image currentImage;
+    [SerializeField] private Image nextImage;
+    
     [Header("감정 아이콘")]
     [SerializeField] private Image emotionIcon;
     
@@ -23,12 +24,19 @@ public class CharacterSlot : MonoBehaviour
     private void Awake()
     {
         rt = GetComponent<RectTransform>();
+        
+        currentImage.color = Color.white;
+        nextImage.color = new Color(1,1,1,0);
     }
     
     public void SetCharacter(int characterID, Sprite sprite)
     {
         currentCharacterID = characterID;
-        characterImage.sprite = sprite;
+        currentImage.sprite = sprite;
+        currentImage.color = Color.white;
+
+        nextImage.color = new Color(1,1,1,0);
+        
         gameObject.SetActive(true);
         
         HideEmotionIcon();
@@ -37,15 +45,15 @@ public class CharacterSlot : MonoBehaviour
     public void SetHidden(int characterID, Sprite sprite)
     {
         currentCharacterID = characterID;
-        characterImage.sprite = sprite;
-
+        currentImage.sprite = sprite;
+        nextImage.color = new Color(1,1,1,0);
         gameObject.SetActive(false);
     }
 
     public void Clear()
     {
         currentCharacterID = -1;
-        characterImage.sprite = null;
+        currentImage.sprite = null;
         
         HideEmotionIcon();
     }
@@ -64,6 +72,32 @@ public class CharacterSlot : MonoBehaviour
         
         StopAllCoroutines();
         StartCoroutine(DisappearRoutine(startPos));
+    }
+    
+    public void ChangeExpression(Sprite sprite, float duration = 0.2f)
+    {
+        rt.DOKill();
+        currentImage.DOKill();
+        nextImage.DOKill();
+        
+        Color keepColor = currentImage.color;
+        nextImage.sprite = sprite;
+        
+        nextImage.color = new Color(keepColor.r, keepColor.g, keepColor.b, 0f);
+
+        Sequence seq = DOTween.Sequence();
+
+        seq.Append(nextImage.DOFade(1f, duration));
+        seq.Join(currentImage.DOFade(0f, duration));
+
+        seq.OnComplete(() =>
+        {
+            currentImage.sprite = sprite;
+            currentImage.color = keepColor;
+            nextImage.color = new Color(keepColor.r, keepColor.g, keepColor.b, 0f);
+            
+            rt.DOPunchScale(Vector3.one * 0.05f, 0.2f, 5, 0.5f);
+        });
     }
     
     public void PlayEmotionIcon(Sprite icon)
@@ -152,7 +186,13 @@ public class CharacterSlot : MonoBehaviour
 
     public void SetColor(Color target, float duration = 0.2f)
     {
-        characterImage.DOColor(target, duration);
+        currentImage.DOColor(target, duration);
+
+        Color next = nextImage.color;
+        next.r = target.r;
+        next.g = target.g;
+        next.b = target.b;
+        nextImage.DOColor(next, duration);
     }
     
     IEnumerator AppearRoutine(Vector2 targetPos)
@@ -186,7 +226,7 @@ public class CharacterSlot : MonoBehaviour
             time += Time.deltaTime;
             float t = time / 0.3f;
 
-            transform.localPosition = Vector3.Lerp(startPos, end, t);
+            rt.anchoredPosition = Vector2.Lerp(startPos, end, t);
             yield return null;
         }
 
@@ -211,9 +251,10 @@ public class CharacterSlot : MonoBehaviour
     public void Enter(Vector2 targetPos, Vector2 direction, float distance, float duration, bool isUnknown)
     {
         gameObject.SetActive(true);
-        
         transform.DOKill();
 
+        nextImage.color = new Color(1,1,1,0);
+        
         // 시작 위치 (화면 밖)
         Vector3 start = targetPos + direction * distance;
         rt.anchoredPosition = start;
@@ -226,7 +267,7 @@ public class CharacterSlot : MonoBehaviour
         Sequence seq = DOTween.Sequence();
 
         seq.Append(rt.DOAnchorPos(targetPos, duration).SetEase(Ease.OutCubic));
-        seq.Join(characterImage.DOFade(1f, duration));
+        seq.Join(currentImage.DOFade(1f, duration));
 
         seq.OnComplete(() =>{ });
     }
@@ -270,8 +311,9 @@ public class CharacterSlot : MonoBehaviour
         StopAllCoroutines();
         gameObject.SetActive(false);
         currentCharacterID = -1;
-        characterImage.sprite = null;
-
+        currentImage.sprite = null;
+        nextImage.sprite = null;
+        nextImage.color = new Color(1,1,1,0);
         HideEmotionIcon();
     }
 }

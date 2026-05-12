@@ -155,7 +155,7 @@ public class CharacterUI : MonoBehaviour
         var emo = data.emotions.Find(e => e.emotion == emotion);
         if (emo != null)
         {
-            slot.GetComponent<SpriteRenderer>().sprite = emo.sprite;
+            slot.ChangeExpression(emo.sprite);
         }
     }
     
@@ -306,7 +306,7 @@ public class CharacterUI : MonoBehaviour
         return (b.anchoredPosition - a.anchoredPosition).normalized;
     }
     
-    private CharacterSlot FindSlot(int characterID)
+    public CharacterSlot FindSlot(int characterID)
     {
         return slots.Find(s => s.CurrentCharacterID == characterID);
     }

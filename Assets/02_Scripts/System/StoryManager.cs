@@ -35,10 +35,14 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
 
     [SerializeField] private RestaurantEconomy economy;
     
+    [Header("사운드")]
+    [SerializeField] private AudioClip hitSE;
+    
     private StoryUI storyUI;
     public StoryUI StoryUI => storyUI;
     private CharacterUI characterUI;
     private StoryFadePanel fadePanel;
+    private ScreenEffectUI screenEffectUI;
 
     [SerializeField] private List<CharacterName> characterNames;
     private Dictionary<int, string> nameDict;
@@ -120,10 +124,11 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         if (triggerQueue.Count == 0)
         {
             Debug.Log("스토리 없음 → NPC로 넘김");
+            SoundManager.Instance.PlayRandomBGM();
             GameManager.Instance.CompleteState(GameFlowState.Story);
             return;
         }
-
+        SoundManager.Instance.StopBGM();
         currentTrigger = triggerQueue.Dequeue();
         PlayStory(currentTrigger.storyId);
     }
@@ -199,9 +204,9 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         // Debug.Log($"{currentStory.id}");
         // foreach(var currentCharacter in currentScene.characters)
         //     Debug.Log(currentCharacter.characterID);
-            
+        
         characterUI.SetupScene(currentScene.characters);
-        storyUI.ChangeBackground(currentScene.background);
+        storyUI.ChangeBackground(currentScene.background, GetTransitionDuration(TransitionSpeed.Default));
     }
 
     public void ShowNextLine()
@@ -228,10 +233,10 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         }
         
         var line = currentScene.lines[currentIndex++];
-
+        float transitionDuration = GetTransitionDuration(line.transitionSpeed);
         if (line.illustrationOverride != null)
         {
-            storyUI.ChangeIllustration(line.illustrationOverride);
+            storyUI.ChangeIllustration(line.illustrationOverride, transitionDuration);
         }
         
         if (line.lineType == LineType.Dialogue)
@@ -276,6 +281,7 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         }
 
         storyUI.ShowLine(line);
+        ApplyScreenEffect(line);
     }
 
     private void EndStory(int storyId = -1)
@@ -420,6 +426,17 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         return true;
     }
     
+    private float GetTransitionDuration(TransitionSpeed speed)
+    {
+        return speed switch
+        {
+            TransitionSpeed.Fast => 0.5f,
+            TransitionSpeed.Slow => 1.5f,
+            TransitionSpeed.Dramatic => 2f,
+            TransitionSpeed.Default => fadeDuration
+        };
+    }
+    
     public void PlaySceneTransition(Action onMid)
     {
         isTransitioning = true; // ⭐ 잠금
@@ -456,6 +473,53 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
             fadePanel.canvasGroup.blocksRaycasts = false;
             fadePanel.canvasGroup.gameObject.SetActive(false);
         });
+    }
+    
+    private void ApplyScreenEffect(StoryLine line)
+    {
+        var effectUI = screenEffectUI;
+        var slot = characterUI.FindSlot(line.characterID);
+        
+        switch (line.screenEffect)
+        {
+            case ScreenEffectType.FadeBlack:
+                effectUI.FadeBlack(line.effectDuration);
+                break;
+
+            case ScreenEffectType.FadeFromBlack:
+                effectUI.FadeFromBlack(line.effectDuration);
+                break;
+
+            case ScreenEffectType.FlashWhite:
+                effectUI.FlashWhite(line.effectDuration);
+                break;
+
+            case ScreenEffectType.Shake:
+                effectUI.ShakeScreen(line.effectPower, line.effectDuration);
+                break;
+
+            case ScreenEffectType.ZoomIn:
+                effectUI.ZoomTo(slot.SlotPos, 1.1f, line.effectDuration);
+                storyUI.FocusMode(true);
+                break;
+
+            case ScreenEffectType.ZoomOut:
+                effectUI.ResetZoom(line.effectDuration);
+                storyUI.FocusMode(false);
+                break;
+
+            case ScreenEffectType.VignetteDark:
+                effectUI.SetVignette(0.45f, line.effectDuration);
+                break;
+
+            case ScreenEffectType.VignetteClear:
+                effectUI.SetVignette(0f, line.effectDuration);
+                break;
+            
+            case ScreenEffectType.FlashWithShake :
+                effectUI.PlayImpact(line.effectPower, line.effectDuration, hitSE);
+                break;
+        }
     }
     
     public StorySaveData GetSaveData()
@@ -505,5 +569,10 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         fadePanel.canvasGroup.alpha = 0f;
         fadePanel.canvasGroup.gameObject.SetActive(false);
         fadePanel.canvasGroup.blocksRaycasts = false;
+    }
+
+    public void SetScreenEffectUI(ScreenEffectUI ui)
+    {
+        screenEffectUI = ui;
     }
 }

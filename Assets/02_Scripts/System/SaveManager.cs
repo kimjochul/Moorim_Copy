@@ -53,6 +53,7 @@ public class SaveManager : Singleton<SaveManager>
     // ------------------------
     public void StartNewGame()
     {
+        Time.timeScale = 1f;
         isLoadedGame = false;
         SceneLoader.Instance.LoadScene("01_Scenes/03.Game", () =>
         {
