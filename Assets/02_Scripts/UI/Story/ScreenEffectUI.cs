@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
@@ -54,14 +55,15 @@ public class ScreenEffectUI : MonoBehaviour
 
     public void FlashWhite(float duration = 0.15f)
     {
+        fadeImage.DOKill();
         fadeImage.gameObject.SetActive(true);
-
-        fadeImage.color = Color.white;
+        // 시작은 투명
+        fadeImage.color = new Color(1f, 1f, 1f, 0f);
 
         Sequence seq = DOTween.Sequence();
 
-        seq.Append(fadeImage.DOFade(1f, 0.05f));
-        seq.Append(fadeImage.DOFade(0f, duration));
+        seq.Append(fadeImage.DOFade(1f, duration * 0.2f));
+        seq.Append(fadeImage.DOFade(0f, duration * 0.8f));
 
         seq.OnComplete(() =>
         {
@@ -69,6 +71,21 @@ public class ScreenEffectUI : MonoBehaviour
         });
     }
 
+    public IEnumerator FlashWhiteRoutine(float duration, Action onMid = null)
+    {
+        fadeImage.DOKill();
+        fadeImage.gameObject.SetActive(true);
+        fadeImage.color = new Color(1,1,1,0);
+
+        yield return fadeImage.DOFade(1f, duration * 0.2f).WaitForCompletion();
+
+        onMid?.Invoke();
+        
+        yield return fadeImage.DOFade(0f, duration * 0.8f).WaitForCompletion();
+
+        fadeImage.gameObject.SetActive(false);
+    }
+    
     #endregion
 
     #region Shake Effect

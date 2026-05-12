@@ -7,35 +7,52 @@ public class StoryLine
 {
     public int id;
     
+    [Header("대화인지 나레이션인지")]
     public LineType lineType;
+    
+    [Header("일러스트 단일 그림 화면인 경우")]
     public Sprite illustrationOverride;
     
+    [Header("일러스트 다중 그림 시퀀스의 경우")]
+    public List<IllustrationFrame> illustrationSequence;
+    
+    [Header("캐릭터 슬롯의 경우 캐릭터 현재 캐릭터에 대한 정보 및 행동 설정")]
     public int characterID;
+    public bool isUnknown;
     public Emotion emotion;
     public MotionData motion;
     public List<MotionCommand> motions;
     
+    [Header("스크린 이펙트 관련")]
     public ScreenEffectType screenEffect;
     public float effectDuration = 0.3f;
     public float effectPower = 30f;
     
+    
+    [Header("대사 본문")]
     [TextArea(3, 10)]
     public string line;
     
+    [Header("생각인지 발화인지")]
     public bool isInnerThought;
     
+    [Header("감정 이모지 사용하는지")]
     public bool showEmotionIcon;
-    public bool useAccentFontSize;
-
-    public bool isUnknown;
     
+    [Header("강조 대사인지")]
+    public bool useAccentFontSize;
+    
+    [Header("대사 창을 내릴 지(대사 없이 그림만 나올 때 사용 가능)")]
     public bool hideDialogueUI;
     
+    [Header("대사 자동 진행")]
     public bool autoNext;
     public float autoDelay = 1.5f;
-
+    
+    [Header("로그 창에 추가 안하는 경우")]
     public bool hideFromLog;
     
+    [Header("장면 씬 전환 속도")]
     public TransitionSpeed transitionSpeed;
 }
 
@@ -66,6 +83,15 @@ public class MotionData
     public MotionType type;
     public float duration = 0.5f;
     public float value = 1f; // 이동 거리 or 점프 높이
+}
+
+[Serializable]
+public class IllustrationFrame
+{
+    public Sprite sprite;
+    public float duration = 1f;
+    public TransitionSpeed transitionSpeed;
+    public IllustrationTransitionType transitionType;
 }
 
 public enum MotionType
@@ -125,3 +151,5 @@ public enum TransitionSpeed
     Slow,
     Dramatic
 }
+
+public enum IllustrationTransitionType { Fade, Flash, }

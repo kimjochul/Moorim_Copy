@@ -49,6 +49,9 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
 
     [SerializeField] private float fadeDuration;
     
+    private Tween transitionTween;
+    private bool isSkipLocked;
+    
     /// <summary>
     /// flag 내용들을 저장데이터로 넣어놓으면 스토리 이어서
     /// </summary>
@@ -234,10 +237,11 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         
         var line = currentScene.lines[currentIndex++];
         float transitionDuration = GetTransitionDuration(line.transitionSpeed);
-        if (line.illustrationOverride != null)
-        {
+        
+        if (line.illustrationSequence != null && line.illustrationSequence.Count > 0)
+            storyUI.PlayIllustrationSequence(line.illustrationSequence);
+        else if (line.illustrationOverride != null)
             storyUI.ChangeIllustration(line.illustrationOverride, transitionDuration);
-        }
         
         if (line.lineType == LineType.Dialogue)
         {
@@ -329,14 +333,21 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         if (!isPlaying || currentScene == null)
             return;
         
-        if (isTransitioning)
+        if (isTransitioning || isSkipLocked)
             return;
+        
+        isSkipLocked = true;
 
         // 현재 씬 끝으로 이동
         currentIndex = currentScene.lines.Count;
 
         // 다음 ShowNextLine 호출 시 씬 종료 처리됨
         ShowNextLine();
+        
+        DOVirtual.DelayedCall(0.3f, () =>
+        {
+            isSkipLocked = false;
+        });
     }
     
     public string GetCharacterName(int id)
@@ -426,25 +437,29 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         return true;
     }
     
-    private float GetTransitionDuration(TransitionSpeed speed)
+    public float GetTransitionDuration(TransitionSpeed speed)
     {
         return speed switch
         {
             TransitionSpeed.Fast => 0.5f,
             TransitionSpeed.Slow => 1.5f,
             TransitionSpeed.Dramatic => 2f,
-            TransitionSpeed.Default => fadeDuration
+            TransitionSpeed.Default => fadeDuration,
+            _ => fadeDuration
         };
     }
     
     public void PlaySceneTransition(Action onMid)
     {
+        transitionTween?.Kill();
+        
         isTransitioning = true; // ⭐ 잠금
         
         fadePanel.canvasGroup.gameObject.SetActive(true);
         fadePanel.canvasGroup.blocksRaycasts = true;
 
         Sequence seq = DOTween.Sequence();
+        transitionTween = seq;
 
         if (fadePanel.canvasGroup.alpha < 1f)
         {
@@ -472,7 +487,11 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         {
             fadePanel.canvasGroup.blocksRaycasts = false;
             fadePanel.canvasGroup.gameObject.SetActive(false);
+            
+            transitionTween =  null;
         });
+        
+        seq.OnKill(()=> transitionTween = null);
     }
     
     private void ApplyScreenEffect(StoryLine line)
