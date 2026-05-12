@@ -15,17 +15,22 @@ public class CookingView : MonoBehaviour
     [Header("Button")]
     [SerializeField] private Button cookBtn;
     [SerializeField] private Button clostBtn;
+    [SerializeField] private Button autoBtn;
+
 
     public event Action OnCookClicked;
     public event Action OnCloseClicked;
+    public event Action OnAutoClicked;
 
     public void Init()
     {
         cookBtn.onClick.RemoveAllListeners();  // 혹시 모를 중복 방지
         clostBtn.onClick.RemoveAllListeners();
+        autoBtn.onClick.RemoveAllListeners();
         
         cookBtn.onClick.AddListener(() => OnCookClicked?.Invoke());
         clostBtn.onClick.AddListener(() => OnCloseClicked?.Invoke());
+        autoBtn.onClick.AddListener(() => OnAutoClicked?.Invoke());
     }
 
     // 레시피가 선택됐을 때 ui에 연결

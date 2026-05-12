@@ -9,6 +9,9 @@ using static Constants;
 /// </summary>
 public class GuestManager : MonoBehaviour
 {
+    [Header("테스트용, 삭제 필수")]
+    public bool isTest;
+    
     [Header("연결해야할 외부 정보")]
     [SerializeField] private GuestResultTracker resultTracker;
     [SerializeField] private OrdersPopupController orderPopup;
@@ -78,7 +81,8 @@ public class GuestManager : MonoBehaviour
 
     private void StartSpawn()
     {
-        InvokeRepeating(nameof(SpawnGuset), startSpawnTime, spawnInterval);
+        //InvokeRepeating(nameof(SpawnGuset), startSpawnTime, spawnInterval);
+        Invoke(nameof(SpawnGuset), startSpawnTime);
     }
 
     public void SpawnGuset()
@@ -92,16 +96,24 @@ public class GuestManager : MonoBehaviour
 
         GuestAppearance appearance = GuestAppearance.NormalMaleA;
 
-        // 확률 돌려서 손님 타입과 외형 결정 (0~1사이 랜덤)
-        float rand = UnityEngine.Random.value;
-        if (rand < 0.05f)
+
+        if (isTest)
+        {
             appearance = GuestAppearance.ThiefGuy;
-        else if (rand < 0.1f)
-            appearance = GuestAppearance.RichMan;
+        }
         else
         {
-            int randomIndex = UnityEngine.Random.Range(0, normalGuestPrefabs.Length);
-            appearance  = normalGuestPrefabs[randomIndex].appearance;
+            // 확률 돌려서 손님 타입과 외형 결정 (0~1사이 랜덤)
+            float rand = UnityEngine.Random.value;
+            if (rand < 0.05f)
+                appearance = GuestAppearance.ThiefGuy;
+            else if (rand < 0.1f)
+                appearance = GuestAppearance.RichMan;
+            else
+            {
+                int randomIndex = UnityEngine.Random.Range(0, normalGuestPrefabs.Length);
+                appearance  = normalGuestPrefabs[randomIndex].appearance;
+            }
         }
 
         // 풀에서 타입에 맞는 오브젝트 꺼냄
