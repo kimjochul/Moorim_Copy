@@ -68,6 +68,7 @@ public class CookingController : MonoBehaviour
         {
             cookingView.OnCookClicked -= OnCookButtonClicked;
             cookingView.OnCloseClicked -= HandleClose;
+            cookingView.OnAutoClicked -= OnAutoFillClicked;
         }
     }
 
@@ -82,6 +83,7 @@ public class CookingController : MonoBehaviour
         recipeListView.OnCategorySelected += ShowRecipesByCategory;
         cookingView.OnCookClicked += OnCookButtonClicked;
         cookingView.OnCloseClicked += HandleClose;
+        cookingView.OnAutoClicked += OnAutoFillClicked;
     }
     
     private void ResetUIPosition()
@@ -293,5 +295,86 @@ public class CookingController : MonoBehaviour
         List<Recipe> fillterList = runtimeRecipes.Where(r => r.Data.foodType == targetCategory).ToList();
 
         recipeListView.PopulateList(fillterList);
+    }
+
+    private void OnAutoFillClicked()
+    {
+        // 1. 레시피가 없거나 이미 재료가 다 준비되었다면 무시
+        if (model.CurrentRecipe == null || model.IsReadyToCook())
+            return;
+
+        RecipeData currentData = model.CurrentRecipe.Data;
+
+        // 2. 레시피에 필요한 재료들을 하나씩 검사
+        foreach (var req in currentData.ingredients)
+        {
+            int reqId = req.ingredient.id;
+            int reqAmount = req.amount;
+
+            // 이미 모델(요리대)에 투입된 해당 재료의 갯수
+            int currentInsertedAmount = 0;
+            if (model.InsertedIngredients.ContainsKey(reqId))
+            {
+                currentInsertedAmount = model.InsertedIngredients[reqId];
+            }
+
+            // 앞으로 더 넣어야 할 갯수 계산
+            int amountNeeded = reqAmount - currentInsertedAmount;
+
+            if (amountNeeded <= 0)
+                continue;
+
+            // 3. 인벤토리에서 해당 ID를 가진 슬롯들을 모두 찾아옴
+            List<Slot> matchingSlots = FindIngredientSlots(reqId);
+
+            // 4. 찾은 슬롯들에서 필요한 만큼 재료를 빼옴
+            foreach (Slot slot in matchingSlots)
+            {
+                if (amountNeeded <= 0) break; // 필요량을 다 채웠으면 다음 재료로 넘어감
+                if (slot.IsEmpty || slot.Item == null) continue;
+
+                // 취소 시 반환을 위해 인벤토리 출처와 원본 아이템 기억
+                CacheInventorySource(slot);
+                model.CacheItem(reqId, slot.Item);
+
+                // 슬롯이 가진 갯수와 필요한 갯수 중 더 '작은' 값을 투입량으로 결정
+                int amountToTake = Mathf.Min(slot.Count, amountNeeded);
+
+                // 모델에 투입 시도 (선생님의 TryAddIngredient는 이미 amount 처리가 완벽하게 되어 있습니다!)
+                int consumedAmount = model.TryAddIngredient(reqId, amountToTake);
+
+                if (consumedAmount > 0)
+                {
+                    // UI와 인벤토리 슬롯에서 갯수 차감
+                    ApplyIngredientConsumption(slot, reqId, consumedAmount);
+
+                    // 남은 필요량 갱신
+                    amountNeeded -= consumedAmount;
+                }
+            }
+        }
+    }
+    
+    
+    private List<Slot> FindIngredientSlots(int ingredientId)
+    {
+        List<Slot> result = new List<Slot>();
+
+        // 1. 육류 인벤토리 뒤지기
+        Inventory meatInven = InventoryManager.Instance.GetInventory(InventoryType.IngredientsButMeatOnly);
+        if (meatInven != null)
+        {
+            // 빈 슬롯이 아니고, 아이템 ID가 찾는 ID와 같은 슬롯들만 추출
+            result.AddRange(meatInven.Slots.Where(s => !s.IsEmpty && s.Item.ID == ingredientId));
+        }
+
+        // 2. 일반 재료 인벤토리 뒤지기
+        Inventory otherInven = InventoryManager.Instance.GetInventory(InventoryType.Ingredients);
+        if (otherInven != null)
+        {
+            result.AddRange(otherInven.Slots.Where(s => !s.IsEmpty && s.Item.ID == ingredientId));
+        }
+
+        return result;
     }
 }

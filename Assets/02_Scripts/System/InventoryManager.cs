@@ -242,7 +242,7 @@ public class InventoryManager : Singleton<InventoryManager>, IInitializable
             inv.ResetData();
         }
 
-        CreateInitItems();
+        //CreateInitItems();
     }
     
     public void SetCommonInventoryRoot()
@@ -273,6 +273,7 @@ public class InventoryManager : Singleton<InventoryManager>, IInitializable
         CommonInvenInitPos = commonInventoryRoot.GetComponent<RectTransform>().anchoredPosition;
     }
     
+    /* ResetData의 CreateInitItems도 같이 끔.
     private void CreateInitItems()
     {
         List<Constants.IngredientType> ingredientTypes = new List<Constants.IngredientType>();
@@ -286,12 +287,16 @@ public class InventoryManager : Singleton<InventoryManager>, IInitializable
             foreach (var ingredientData in ingredientList)
             {
                 Item item = ItemFactory.Instance.CreateItem(ingredientData.id);
-                
-                if(ingredientData.type == Constants.IngredientType.Meats)
-                    InventoryManager.Instance.GetInventory(InventoryType.IngredientsButMeatOnly).GetItem(item, 10);
+
+                if (ingredientData.type == Constants.IngredientType.Meats)
+                {
+                    //InventoryManager.Instance.GetInventory(InventoryType.IngredientsButMeatOnly).GetItem(item, 10);
+
+                }
                 else
                     InventoryManager.Instance.GetInventory(InventoryType.Ingredients).GetItem(item, 20);
             }
         }
     }
+    */
 }
