@@ -18,6 +18,8 @@ public class GuestAnimation : MonoBehaviour
     private static readonly int STANDUP_TRIGGER  = Animator.StringToHash("StandUp");
     private static readonly int HANDUP_TRIGGER   = Animator.StringToHash("HandUp");
     private static readonly int HANDDOWN_TRIGGER = Animator.StringToHash("HandDown");
+    private static readonly int CATCHED_TRIGGER = Animator.StringToHash("Catched");
+    
 
     // ★ Animator State 이름 상수 (Animator Controller의 State 이름과 정확히 일치해야 함)
     private const string STATE_SITDOWN  = "Guest_SitDown";
@@ -25,6 +27,7 @@ public class GuestAnimation : MonoBehaviour
     private const string STATE_HANDDOWN = "Guest_HandDown";
     private const string STATE_STANDUP  = "Guest_StandUp";
     private const string STATE_ANGRY    = "Guest_Angry";
+    private const string STATE_CATCHED = "Guest_Catched";
 
     // 애니메이션 완료 콜백
     public event Action OnSitDownFinished;
@@ -32,6 +35,7 @@ public class GuestAnimation : MonoBehaviour
     public event Action OnHandUpFinished;
     public event Action OnHandDownFinished;
     public event Action OnAngryFinished;
+    public event Action OnCatchedFinished;
 
     private Coroutine waitCoroutine;
 
@@ -138,6 +142,18 @@ public class GuestAnimation : MonoBehaviour
             OnAngryFinished?.Invoke();
         }));
     }
+    
+    public void PlayCatched()
+    {
+        StopWait();
+        anim.SetBool(IS_WALKING, false); // 걷기 상태 해제
+        anim.SetTrigger(CATCHED_TRIGGER);
+    
+        waitCoroutine = StartCoroutine(WaitForAnimation(STATE_CATCHED, () =>
+        {
+            OnCatchedFinished?.Invoke();
+        }));
+    }
 
     // ── 애니메이션 완료 대기 코루틴 ──
 
@@ -198,6 +214,7 @@ public class GuestAnimation : MonoBehaviour
         OnHandUpFinished   = null;
         OnHandDownFinished = null;
         OnAngryFinished    = null;
+        OnCatchedFinished  = null;
     }
 
     private void ResetAll()
@@ -210,5 +227,6 @@ public class GuestAnimation : MonoBehaviour
         anim.ResetTrigger(STANDUP_TRIGGER);
         anim.ResetTrigger(HANDUP_TRIGGER);
         anim.ResetTrigger(HANDDOWN_TRIGGER);
+        anim.ResetTrigger(CATCHED_TRIGGER);
     }
 }

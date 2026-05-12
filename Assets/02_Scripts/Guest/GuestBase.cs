@@ -18,10 +18,10 @@ public abstract class GuestBase : MonoBehaviour
     [Header("데이터 연결")]
     [SerializeField] private GuestRewardData rewardData;
 
-    private GuestMover mover;
+    protected GuestMover mover;
     private GuestManager guestManager;
     private GuestBubbleUI bubbleUI;
-    private GuestAnimation guestAnim;
+    protected GuestAnimation guestAnim;
     
     protected RecipeUnlockManager recipeUnlockManager;
 
@@ -43,8 +43,8 @@ public abstract class GuestBase : MonoBehaviour
     // 애니메이션 진행 플래그
     private bool isAngryExiting = false;
     public bool IsAngryExiting => isAngryExiting;
-    private bool isPlayingHandDown = false;
-    private bool isPlayingStandUp = false;
+    protected bool isPlayingHandDown = false;
+    protected bool isPlayingStandUp = false;
     private bool hasShownPayUI = false;
     private bool hasProcessedPayment = false;
 
@@ -240,6 +240,7 @@ public abstract class GuestBase : MonoBehaviour
 
     private void HandleEnterState()
     {
+        Debug.Log("<color=yellow>Guest.cs : HandleEnterState</color>");        
         if (!isEnterPathSet)
         {
             myChair = SeatManager.Instance.FindEmptyChair();
@@ -286,6 +287,9 @@ public abstract class GuestBase : MonoBehaviour
 
     private void HandleWaitingState()
     {
+        Debug.Log("<color=yellow>Guest.cs : HandleWaitingState</color>");        
+
+        
         myChair = SeatManager.Instance.FindEmptyChair();
 
         if (myChair != null)
@@ -302,6 +306,8 @@ public abstract class GuestBase : MonoBehaviour
 
     protected virtual void HandleWaitOrderState()
     {
+        Debug.Log("<color=yellow>Guest.cs : HandleWaitOrderState</color>");
+        
         if (isAngryExiting) return;
 
         stateTimer += Time.deltaTime;
@@ -329,6 +335,9 @@ public abstract class GuestBase : MonoBehaviour
 
     protected virtual void HandleWaitFoodState()
     {
+        Debug.Log("<color=yellow>Guest.cs : HandleWaitFoodState</color>");
+
+        
         if (isAngryExiting) return;
 
         stateTimer += Time.deltaTime;
@@ -344,6 +353,8 @@ public abstract class GuestBase : MonoBehaviour
 
     protected virtual void HandleEatState()
     {
+        Debug.Log("<color=yellow>Guest.cs : HandleEatState</color>");
+        
         if (isAngryExiting) return;
 
         stateTimer += Time.deltaTime;
@@ -359,6 +370,9 @@ public abstract class GuestBase : MonoBehaviour
 
     protected virtual void HandlePayState()
     {
+        Debug.Log("<color=yellow>Guest.cs : HandlePayState</color>");
+
+        
         if (isAngryExiting) return;
 
         // 1단계: HandDown 재생 중 → 대기
@@ -407,6 +421,9 @@ public abstract class GuestBase : MonoBehaviour
 
     private void HandleExitState()
     {
+        Debug.Log("<color=yellow>Guest.cs : HandleExitState</color>");
+
+        
         if (!isExitPathSet)
         {
             OnGuestExited?.Invoke();
