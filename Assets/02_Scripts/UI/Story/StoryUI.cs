@@ -414,16 +414,18 @@ public class StoryUI : MonoBehaviour
 
     public void ChangeIllustration(Sprite sprite, float duration)
     {
+        isTransitioning = true;
+        
         if (illustrationCoroutine != null)
             StopCoroutine(illustrationCoroutine);
 
         illustrationCoroutine = StartCoroutine(CrossFadeIllustration(sprite, duration));
+        
+        isTransitioning = false;
     }
     
     private IEnumerator CrossFadeIllustration(Sprite sprite, float duration)
     {
-        isTransitioning = true;
-        
         nextIllust.sprite = sprite;
         nextIllust.gameObject.SetActive(true);
         
@@ -450,8 +452,6 @@ public class StoryUI : MonoBehaviour
 
         (currentIllust, nextIllust) = (nextIllust, currentIllust); // Swap
         (currentGroup, nextGroup) = (nextGroup, currentGroup); // Swap
-        
-        isTransitioning = false;
     }
     
     public void PlayIllustrationSequence(List<IllustrationFrame> frames)
@@ -514,19 +514,11 @@ public class StoryUI : MonoBehaviour
     
     private IEnumerator FlashIllustration(Sprite sprite, float duration)
     {
-        float flashIn = duration * 0.2f;
-        float flashOut = duration * 0.8f;
-        
-        screenEffectUI.FlashWhite(duration);
-
-        // 화면이 하얘질 때까지 기다림
-        yield return new WaitForSeconds(flashIn);
-
-        // 여기서 교체
-        currentIllust.sprite = sprite;
-
-        // flash 사라질 때까지 대기
-        yield return new WaitForSeconds(flashOut);
+        yield return StartCoroutine(
+            screenEffectUI.FlashWhiteRoutine(duration, () =>
+            {
+                currentIllust.sprite = sprite;
+            }));
     }
     
     public void HideIllustration()
