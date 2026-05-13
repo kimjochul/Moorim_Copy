@@ -53,7 +53,7 @@ public class ScreenEffectUI : MonoBehaviour
             });
     }
 
-    public void FlashWhite(float duration = 0.15f)
+    public void FlashWhite(float duration = 0.75f)
     {
         fadeImage.DOKill();
         fadeImage.gameObject.SetActive(true);

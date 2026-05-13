@@ -21,6 +21,9 @@ public class CharacterSlot : MonoBehaviour
     private RectTransform rt;
     public Vector2 SlotPos => rt.anchoredPosition;
 
+    private Coroutine motionCoroutine;
+    public bool IsPlayingMotion { get; private set; }
+    
     public Emotion CurrentEmotion { get; private set; }
 
     private void Awake()
@@ -205,6 +208,23 @@ public class CharacterSlot : MonoBehaviour
         nextImage.DOColor(next, duration);
     }
     
+    public void PlayMotion(IEnumerator routine)
+    {
+        if (motionCoroutine != null)
+            StopCoroutine(motionCoroutine);
+
+        motionCoroutine = StartCoroutine(MotionWrapper(routine));
+    }
+
+    private IEnumerator MotionWrapper(IEnumerator routine)
+    {
+        IsPlayingMotion = true;
+
+        yield return StartCoroutine(routine);
+
+        IsPlayingMotion = false;
+    }
+    
     IEnumerator AppearRoutine(Vector2 targetPos)
     {
         Vector2 start = targetPos + Vector2.left * 200f;
@@ -243,22 +263,21 @@ public class CharacterSlot : MonoBehaviour
         gameObject.SetActive(false);
     }
     
-    public void Exit(Vector2 direction, float distance, float duration)
+    public IEnumerator ExitRoutine(Vector2 direction, float distance, float duration)
     {
         transform.DOKill();
 
         Vector2 start = rt.anchoredPosition;
         Vector2 target = start + direction * distance;
 
-        rt.DOAnchorPos(target, duration)
-            .SetEase(Ease.InOutQuad)
-            .OnComplete(() =>
-            {
-                Disappear(target);
-            });
+        Tween tween = rt.DOAnchorPos(target, duration).SetEase(Ease.InOutQuad);
+        
+        yield return tween.WaitForCompletion();
+        
+        Disappear(target);
     }
     
-    public void Enter(Vector2 targetPos, Vector2 direction, float distance, float duration, bool isUnknown)
+    public IEnumerator EnterRoutine(Vector2 targetPos, Vector2 direction, float distance, float duration, bool isUnknown)
     {
         gameObject.SetActive(true);
         transform.DOKill();
@@ -279,10 +298,10 @@ public class CharacterSlot : MonoBehaviour
         seq.Append(rt.DOAnchorPos(targetPos, duration).SetEase(Ease.OutCubic));
         seq.Join(currentImage.DOFade(1f, duration));
 
-        seq.OnComplete(() =>{ });
+        yield return seq.WaitForCompletion();
     }
     
-    public void PlayAttack(Vector2 dir, float power = 80f, float duration = 0.15f)
+    public IEnumerator PlayAttack(Vector2 dir, float power = 80f, float duration = 0.15f)
     {
         Vector2 origin = rt.anchoredPosition;
         
@@ -291,12 +310,14 @@ public class CharacterSlot : MonoBehaviour
         Sequence seq = DOTween.Sequence();
         seq.Append(rt.DOAnchorPos(forward, duration).SetEase(Ease.OutQuad));
         seq.Append(rt.DOAnchorPos(origin, duration).SetEase(Ease.InQuad));
+        
+        yield return seq.WaitForCompletion();
     }
     
-    public void PlayHit(Vector2 dir, float power = 30f, float duration = 0.2f)
+    public IEnumerator PlayHit(Vector2 dir, float power = 30f, float duration = 0.2f)
     {
         Vector2 origin = rt.anchoredPosition;
-
+        Debug.Log("Hit");
         Sequence seq = DOTween.Sequence();
 
         seq.Append(rt.DOAnchorPos(origin + dir * power, duration * 0.3f));
@@ -304,16 +325,22 @@ public class CharacterSlot : MonoBehaviour
 
         // 흔들림
         rt.DOShakeAnchorPos(duration, 10f, 20, 90, false, true);
+        
+        yield return seq.WaitForCompletion();
     }
     
-    public void Emphasis(float strength = 0.2f)
+    public IEnumerator EmphasisRoutine(float strength = 0.2f)
     {
-        rt.DOPunchScale(Vector3.one * strength, 0.3f, 10, 1);
+        Tween tween = rt.DOPunchScale(Vector3.one * strength, 0.3f, 10, 1);
+        
+        yield return tween.WaitForCompletion();
     }
     
-    public void NervousShake()
+    public IEnumerator NervousRoutine()
     {
-        rt.DOShakeAnchorPos(0.5f, 5f, 30);
+        Tween tween = rt.DOShakeAnchorPos(0.5f, 5f, 30);
+        
+        yield return tween.WaitForCompletion();
     }
     
     public void ClearImmediate()

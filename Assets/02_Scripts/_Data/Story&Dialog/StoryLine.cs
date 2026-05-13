@@ -24,14 +24,15 @@ public class StoryLine
     public List<MotionCommand> motions;
     
     [Header("스크린 이펙트 관련")]
-    public ScreenEffectType screenEffect;
-    public float effectDuration = 0.3f;
-    public float effectPower = 30f;
+    public ScreenEffectData screenEffect;
     
     
     [Header("대사 본문")]
     [TextArea(3, 10)]
     public string line;
+    
+    [Header("연출")]
+    public bool useTypingSound = true;
     
     [Header("생각인지 발화인지")]
     public bool isInnerThought;
@@ -94,6 +95,15 @@ public class IllustrationFrame
     public IllustrationTransitionType transitionType;
 }
 
+[Serializable]
+public class ScreenEffectData
+{
+    public ScreenEffectType effectType = ScreenEffectType.None;
+
+    public float effectDuration = 0.3f;
+    public float effectPower = 30f;
+}
+
 public enum MotionType
 {
     None,
@@ -149,7 +159,8 @@ public enum TransitionSpeed
     Default,
     Fast,
     Slow,
-    Dramatic
+    Dramatic,
+    NoTerm
 }
 
 public enum IllustrationTransitionType { Fade, Flash, }

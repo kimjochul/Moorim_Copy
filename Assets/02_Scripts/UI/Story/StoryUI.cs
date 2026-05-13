@@ -34,6 +34,7 @@ public class StoryUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI contentText;
 
     [SerializeField] private GameObject root;
+    [SerializeField] private GameObject screenRoot;
     [SerializeField] private GameObject characterNameRoot;
     [SerializeField] private GameObject darkBackGround;
     [SerializeField] private DialogueLogUI dialogueLogUI;
@@ -139,6 +140,7 @@ public class StoryUI : MonoBehaviour
     public void Show()
     {
         root.SetActive(true);
+        screenRoot.SetActive(true);
         currentBg.gameObject.SetActive(true);
         ResetBackgroundState();
     }
@@ -146,6 +148,7 @@ public class StoryUI : MonoBehaviour
     public void Hide()
     {
         root.SetActive(false);
+        screenRoot.SetActive(false);
         currentBg.gameObject.SetActive(false);
     }
     
@@ -271,7 +274,8 @@ public class StoryUI : MonoBehaviour
 
                 contentText.text = text[..visibleCount]; 
                 
-                if (!char.IsPunctuation(c) &&
+                if (currentLine.useTypingSound &&
+                    !char.IsPunctuation(c) &&
                     !char.IsWhiteSpace(c) &&
                     visibleCharCount % 2 == 0)
                 {

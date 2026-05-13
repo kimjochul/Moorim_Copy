@@ -223,6 +223,7 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         // 🔥 씬 끝났을 때
         if (currentIndex >= currentScene.lines.Count)
         {
+            ApplyScreenEffect(currentScene.endEffect);
             currentSceneIndex++;
 
             if (currentSceneIndex >= currentStory.scenes.Count)
@@ -250,15 +251,6 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
             characterUI.SetUnknown(line.characterID, line.isUnknown);
             characterUI.SetExpression(line.characterID, line.emotion);
             
-            if (line.isUnknown)
-            {
-                characterUI.Focus(-1); // 강조 없음
-            }
-            else
-            {
-                characterUI.Focus(line.characterID);
-            }
-            
             // 1. 새로운 방식 우선
             if (line.motions != null && line.motions.Count > 0)
             {
@@ -277,6 +269,15 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
             }
             
             characterUI.ShowEmotionIcon(line.characterID, line.emotion);
+            
+            if (line.isUnknown)
+            {
+                characterUI.Focus(-1); // 강조 없음
+            }
+            else
+            {
+                characterUI.Focus(line.characterID);
+            }
         }
         else // ⭐ 나레이션
         {
@@ -285,7 +286,8 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         }
 
         storyUI.ShowLine(line);
-        ApplyScreenEffect(line);
+        ApplyScreenEffect(line.screenEffect);
+        ApplyCharacterFocusEffect(line);
     }
 
     private void EndStory(int storyId = -1)
@@ -445,6 +447,7 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
             TransitionSpeed.Slow => 1.5f,
             TransitionSpeed.Dramatic => 2f,
             TransitionSpeed.Default => fadeDuration,
+            TransitionSpeed.NoTerm => 0.05f,
             _ => fadeDuration
         };
     }
@@ -494,49 +497,65 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         seq.OnKill(()=> transitionTween = null);
     }
     
-    private void ApplyScreenEffect(StoryLine line)
+    private void ApplyScreenEffect(ScreenEffectData effect)
     {
+        if (effect == null)
+            return;
+
         var effectUI = screenEffectUI;
-        var slot = characterUI.FindSlot(line.characterID);
-        
-        switch (line.screenEffect)
+
+        switch (effect.effectType)
         {
+            case ScreenEffectType.None:
+                break;
+
             case ScreenEffectType.FadeBlack:
-                effectUI.FadeBlack(line.effectDuration);
+                effectUI.FadeBlack(effect.effectDuration);
                 break;
 
             case ScreenEffectType.FadeFromBlack:
-                effectUI.FadeFromBlack(line.effectDuration);
+                effectUI.FadeFromBlack(effect.effectDuration);
                 break;
 
             case ScreenEffectType.FlashWhite:
-                effectUI.FlashWhite(line.effectDuration);
+                effectUI.FlashWhite(effect.effectDuration);
                 break;
 
             case ScreenEffectType.Shake:
-                effectUI.ShakeScreen(line.effectPower, line.effectDuration);
+                effectUI.ShakeScreen(effect.effectPower, effect.effectDuration);
                 break;
 
+            case ScreenEffectType.VignetteDark:
+                effectUI.SetVignette(0.45f, effect.effectDuration);
+                break;
+
+            case ScreenEffectType.VignetteClear:
+                effectUI.SetVignette(0f, effect.effectDuration);
+                break;
+
+            case ScreenEffectType.FlashWithShake:
+                effectUI.PlayImpact(effect.effectPower, effect.effectDuration, hitSE);
+                break;
+        }
+    }
+    
+    private void ApplyCharacterFocusEffect(StoryLine line)
+    {
+        var slot = characterUI.FindSlot(line.characterID);
+
+        if (slot == null)
+            return;
+
+        switch (line.screenEffect.effectType)
+        {
             case ScreenEffectType.ZoomIn:
-                effectUI.ZoomTo(slot.SlotPos, 1.1f, line.effectDuration);
+                screenEffectUI.ZoomTo(slot.SlotPos, 1.1f, line.screenEffect.effectDuration);
                 storyUI.FocusMode(true);
                 break;
 
             case ScreenEffectType.ZoomOut:
-                effectUI.ResetZoom(line.effectDuration);
+                screenEffectUI.ResetZoom(line.screenEffect.effectDuration);
                 storyUI.FocusMode(false);
-                break;
-
-            case ScreenEffectType.VignetteDark:
-                effectUI.SetVignette(0.45f, line.effectDuration);
-                break;
-
-            case ScreenEffectType.VignetteClear:
-                effectUI.SetVignette(0f, line.effectDuration);
-                break;
-            
-            case ScreenEffectType.FlashWithShake :
-                effectUI.PlayImpact(line.effectPower, line.effectDuration, hitSE);
                 break;
         }
     }

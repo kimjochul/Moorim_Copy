@@ -84,6 +84,9 @@ public class CharacterUI : MonoBehaviour
         // 1. 새로 등장 or 유지
         foreach (var info in newChars)
         {
+            if (!info.useSlotUI)
+                continue;
+            
             if (info.slotIndex < 0 || info.slotIndex >= slots.Count)
             {
                 Debug.LogError($"slotIndex 오류: {info.slotIndex}"); 
@@ -178,6 +181,9 @@ public class CharacterUI : MonoBehaviour
     {
         foreach (var slot in slots)
         {
+            if (slot.IsPlayingMotion)
+                continue;
+            
             int id = slot.CurrentCharacterID;
             if (id == -1) continue;
             
@@ -203,9 +209,11 @@ public class CharacterUI : MonoBehaviour
     public void PlayMotion(int characterID, MotionData motion, bool isUnknown)
     {
         var slot = FindSlot(characterID);
+        
+        if (slot == null || motion == null) return;
+        
         var preset = presets[slot.slotIndex];
         //Debug.Log($"{slot.slotIndex}, {preset.position}");
-        if (slot == null || motion == null) return;
 
         switch (motion.type)
         {
@@ -222,31 +230,31 @@ public class CharacterUI : MonoBehaviour
                 break;
 
             case MotionType.ExitLeft:
-                slot.Exit(Vector3.left, motion.value, motion.duration);
+                slot.PlayMotion( slot.ExitRoutine(Vector2.left, motion.value, motion.duration) );
                 break;
 
             case MotionType.ExitRight:
-                slot.Exit(Vector3.right, motion.value, motion.duration);
+                slot.PlayMotion( slot.ExitRoutine(Vector2.right, motion.value, motion.duration) );
                 break;
             
             case MotionType.EnterLeft:
-                slot.Enter(preset.position, Vector3.left, motion.value, motion.duration, isUnknown);
+                slot.PlayMotion(slot.EnterRoutine(preset.position, Vector3.left, motion.value, motion.duration, isUnknown));
                 break;
 
             case MotionType.EnterRight:
-                slot.Enter(preset.position, Vector3.right, motion.value, motion.duration, isUnknown);
+                slot.PlayMotion(slot.EnterRoutine(preset.position, Vector3.right, motion.value, motion.duration, isUnknown));
                 break;
             
             case MotionType.Shake: 
-                StartCoroutine(slot.Shake(motion.duration, motion.value));
+                slot.PlayMotion( slot.Shake(motion.duration, motion.value) );
                 break;
             
             case MotionType.Emphasis:
-                slot.Emphasis();
+                slot.PlayMotion( slot.EmphasisRoutine() );
                 break;
             
             case MotionType.Nervous:
-                slot.NervousShake();
+                slot.PlayMotion( slot.NervousRoutine() );
                 break;
         }
     }
@@ -265,7 +273,7 @@ public class CharacterUI : MonoBehaviour
                 var target = FindSlot(cmd.targetID);
                 if (target == null)
                 {
-                    actor.PlayAttack(Vector2.right); // fallback
+                    actor.PlayMotion(actor.PlayAttack(Vector2.right)); // fallback
                     return;
                 }
 
@@ -273,12 +281,12 @@ public class CharacterUI : MonoBehaviour
                 Vector2 dir = GetDirection(actor, target);
 
                 // 공격자
-                actor.PlayAttack(dir);
+                actor.PlayMotion(actor.PlayAttack(dir));
 
                 // 피격자 (약간 딜레이)
                 DOVirtual.DelayedCall(0.1f, () =>
                 {
-                    target.PlayHit(-dir);
+                    target.PlayMotion(target.PlayHit(-dir));
                 });
 
                 break;
@@ -289,7 +297,7 @@ public class CharacterUI : MonoBehaviour
                 var target = FindSlot(cmd.targetID);
                 Vector2 dir = target != null ? GetDirection(target, actor) : Vector2.left;
 
-                actor.PlayHit(dir);
+                actor.PlayMotion(actor.PlayHit(dir));
                 break;
             }
 
