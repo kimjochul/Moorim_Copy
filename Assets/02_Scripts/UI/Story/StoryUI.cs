@@ -38,7 +38,8 @@ public class StoryUI : MonoBehaviour
     [SerializeField] private GameObject darkBackGround;
     [SerializeField] private DialogueLogUI dialogueLogUI;
     
-    [SerializeField] private Image bgImage;
+    [SerializeField] private Image bgImageA;
+    [SerializeField] private Image bgImageB;
     [SerializeField] private Image illustrationA;
     [SerializeField] private Image illustrationB;
     
@@ -51,6 +52,8 @@ public class StoryUI : MonoBehaviour
     
     [SerializeField] private ScreenEffectUI screenEffectUI;
     
+    [SerializeField] private float illustrationZoomScale = 1.02f;
+    [SerializeField] private float illustrationZoomDuration = 8f;
     
     [Header("Dialogue Motion")]
     [SerializeField] private RectTransform dialogueRoot;
@@ -66,6 +69,7 @@ public class StoryUI : MonoBehaviour
     
     private Coroutine illustrationCoroutine;
     private Coroutine illustrationSequenceCoroutine;
+    private Coroutine illustrationZoomCoroutine;
 
     private bool isTyping; // 현재 글자 나오고 있는 상황인지
     private bool isLogOpen;
@@ -90,6 +94,11 @@ public class StoryUI : MonoBehaviour
     private float defaultContentFontSize;
     private float accentFontSize;
     
+    private Image currentBg;
+    private Image nextBg;
+
+    private CanvasGroup currentBgGroup;
+    private CanvasGroup nextBgGroup;
     
     private Image currentIllust;
     private Image nextIllust;
@@ -103,16 +112,9 @@ public class StoryUI : MonoBehaviour
         defaultContentFontSize = UIManager.Instance.GetTextScale();
         accentFontSize = UIManager.Instance.GetTextScale() * 1.3f;
         UIManager.Instance.OnFontSizeChanged += SetFontSize;
-        
-        currentIllust = illustrationA;
-        nextIllust = illustrationB;
-        currentGroup = currentIllust.GetComponent<CanvasGroup>();
-        nextGroup = nextIllust.GetComponent<CanvasGroup>();
-        currentGroup.alpha = 1f;
-        nextGroup.alpha = 0f;
 
-        currentIllust.gameObject.SetActive(false);
-        nextIllust.gameObject.SetActive(false);
+        InitBackGround();
+        InitIllustration();
     }
 
     private void OnEnable()
@@ -137,14 +139,14 @@ public class StoryUI : MonoBehaviour
     public void Show()
     {
         root.SetActive(true);
-        bgImage.gameObject.SetActive(true);
+        currentBg.gameObject.SetActive(true);
         ResetBackgroundState();
     }
 
     public void Hide()
     {
         root.SetActive(false);
-        bgImage.gameObject.SetActive(false);
+        currentBg.gameObject.SetActive(false);
     }
     
     public void SetDialogueUIVisible(bool visible)
@@ -354,11 +356,31 @@ public class StoryUI : MonoBehaviour
     
     #region 뒷 배경 관련
 
+    private void InitBackGround()
+    {
+        currentBg = bgImageA;
+        nextBg = bgImageB;
+        currentBgGroup = currentBg.GetComponent<CanvasGroup>();
+        nextBgGroup = nextBg.GetComponent<CanvasGroup>();
+        currentBgGroup.alpha = 1f;
+        nextBgGroup.alpha = 0f;
+        
+        currentBg.gameObject.SetActive(false);
+        nextBg.gameObject.SetActive(false);
+    }
+    
     public void ChangeBackground(Sprite bg, float duration)
     {
         if (isFirstBackground)
         {
-            bgImage.sprite = bg;
+            currentBg.gameObject.SetActive(true);
+            
+            currentBg.sprite = bg;
+            currentBgGroup.alpha = 1f;
+
+            nextBg.gameObject.SetActive(false);
+            nextBgGroup.alpha = 0f;
+            
             isFirstBackground = false;
             return;
         }
@@ -366,43 +388,71 @@ public class StoryUI : MonoBehaviour
         if (bgCoroutine != null)
             StopCoroutine(bgCoroutine);
 
-        bgCoroutine = StartCoroutine(FadeBackground(bg, duration));
+        bgCoroutine = StartCoroutine(CrossFadeBackground(bg, duration));
     }
     
-    public IEnumerator FadeBackground(Sprite newBg, float duration)
+    private IEnumerator CrossFadeBackground(Sprite newBg, float duration)
     {
+        nextBg.sprite = newBg;
+        nextBg.gameObject.SetActive(true);
+
+        nextBgGroup.alpha = 0f;
+        
         float time = 0;
 
         while (time < duration)
         {
             time += Time.deltaTime;
-            bgImage.color = new Color(1,1,1,1 - time / duration);
+            
+            float t = Mathf.SmoothStep(0f, 1f, time / duration);
+            
+            currentBgGroup.alpha = 1f - t;
+            nextBgGroup.alpha = t;
+            
             yield return null;
         }
 
-        bgImage.sprite = newBg;
-
-        time = 0;
-
-        while (time < duration)
-        {
-            time += Time.deltaTime;
-            bgImage.color = new Color(1,1,1,time / duration);
-            yield return null;
-        }
+        currentBgGroup.alpha = 0f;
+        nextBgGroup.alpha = 1f;
+        
+        currentBg.gameObject.SetActive(false);
+        
+        // swap
+        (currentBg, nextBg) = (nextBg, currentBg);
+        (currentBgGroup, nextBgGroup) = (nextBgGroup, currentBgGroup);
     }
     
     private void ResetBackgroundState()
     {
         isFirstBackground = true;
-        bgImage.sprite = null;
-        bgImage.color = Color.white;
+
+        currentBg.sprite = null;
+        nextBg.sprite = null;
+
+        currentBgGroup.alpha = 1f;
+        nextBgGroup.alpha = 0f;
+        
+        currentBg.rectTransform.localScale = Vector3.one;
+        nextBg.rectTransform.localScale = Vector3.one;
     }
 
     #endregion
     
     #region 일러스트 스토리 진행 화면
 
+    private void InitIllustration()
+    {
+        currentIllust = illustrationA;
+        nextIllust = illustrationB;
+        currentGroup = currentIllust.GetComponent<CanvasGroup>();
+        nextGroup = nextIllust.GetComponent<CanvasGroup>();
+        currentGroup.alpha = 1f;
+        nextGroup.alpha = 0f;
+
+        currentIllust.gameObject.SetActive(false);
+        nextIllust.gameObject.SetActive(false);
+    }
+    
     public void ShowIllustration(Sprite sprite)
     {
         currentIllust.gameObject.SetActive(true);
@@ -410,8 +460,21 @@ public class StoryUI : MonoBehaviour
         currentIllust.sprite = sprite;
 
         currentGroup.alpha = 1f;
+        
+        PlaySlowZoom(currentIllust);
     }
 
+    private void PlaySlowZoom(Image target)
+    {
+        target.transform.DOKill();
+
+        target.transform.localScale = Vector3.one;
+
+        target.transform
+            .DOScale(Vector3.one * illustrationZoomScale, illustrationZoomDuration)
+            .SetEase(Ease.Linear);
+    }
+    
     public void ChangeIllustration(Sprite sprite, float duration)
     {
         isTransitioning = true;
@@ -437,10 +500,11 @@ public class StoryUI : MonoBehaviour
         {
             time += Time.deltaTime;
 
-            float t = Mathf.SmoothStep(0f, 1f, time / duration);
+            float t = time / duration;
 
-            nextGroup.alpha = t;
-            currentGroup.alpha = 1f - t;
+            currentGroup.alpha = 1f - Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(t * 1.1f));
+
+            nextGroup.alpha = Mathf.SmoothStep(0f, 1f, t);
 
             yield return null;
         }
@@ -452,6 +516,8 @@ public class StoryUI : MonoBehaviour
 
         (currentIllust, nextIllust) = (nextIllust, currentIllust); // Swap
         (currentGroup, nextGroup) = (nextGroup, currentGroup); // Swap
+        
+        PlaySlowZoom(currentIllust);
     }
     
     public void PlayIllustrationSequence(List<IllustrationFrame> frames)
@@ -482,7 +548,7 @@ public class StoryUI : MonoBehaviour
 
             if (isFirstFrame)
             {
-                yield return StartCoroutine(screenEffectUI.FlashWhiteRoutine(1f, () => ShowIllustration(frame.sprite)));
+                yield return StartCoroutine(screenEffectUI.FlashWhiteRoutine(2f, 1f, () => ShowIllustration(frame.sprite)));
 
                 isFirstFrame = false;
             }
@@ -515,10 +581,12 @@ public class StoryUI : MonoBehaviour
     private IEnumerator FlashIllustration(Sprite sprite, float duration)
     {
         yield return StartCoroutine(
-            screenEffectUI.FlashWhiteRoutine(duration, () =>
+            screenEffectUI.FlashWhiteRoutine(duration, duration/2, () =>
             {
                 currentIllust.sprite = sprite;
             }));
+        
+        PlaySlowZoom(currentIllust);
     }
     
     public void HideIllustration()
