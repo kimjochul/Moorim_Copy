@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
@@ -237,7 +238,17 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         }
         
         var line = currentScene.lines[currentIndex++];
+        StartCoroutine(ShowLineRoutine(line));
+    }
+
+    private IEnumerator ShowLineRoutine(StoryLine line)
+    {
+        
         float transitionDuration = GetTransitionDuration(line.transitionSpeed);
+        
+        storyUI.ShowLine(line);
+        ApplyScreenEffect(line.screenEffect);
+        ApplyCharacterFocusEffect(line);
         
         if (line.illustrationSequence != null && line.illustrationSequence.Count > 0)
             storyUI.PlayIllustrationSequence(line.illustrationSequence);
@@ -251,21 +262,24 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
             characterUI.SetUnknown(line.characterID, line.isUnknown);
             characterUI.SetExpression(line.characterID, line.emotion);
             
-            // 1. 새로운 방식 우선
             if (line.motions != null && line.motions.Count > 0)
             {
                 foreach (var cmd in line.motions)
                 {
-                    if (cmd.motion.type == MotionType.Attack)
-                        characterUI.PlayMotionWithTarget(cmd); // 관계형
-                    else
-                        characterUI.PlayMotion(cmd.characterID, cmd.motion, line.isUnknown); // 기존 방식
+                    yield return StartCoroutine(
+                        characterUI.PlayMotionRoutine(cmd, line.isUnknown)
+                    );
                 }
             }
-            // 2. 기존 방식 fallback
             else if (line.motion != null && line.motion.type != MotionType.None)
             {
-                characterUI.PlayMotion(line.characterID, line.motion, line.isUnknown);
+                yield return StartCoroutine(
+                    characterUI.PlayMotionRoutine(
+                        line.characterID,
+                        line.motion,
+                        line.isUnknown
+                    )
+                );
             }
             
             characterUI.ShowEmotionIcon(line.characterID, line.emotion);
@@ -284,12 +298,8 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
             storyUI.HideCharacterName();
             characterUI.Focus(-1); // 아무도 강조 안함
         }
-
-        storyUI.ShowLine(line);
-        ApplyScreenEffect(line.screenEffect);
-        ApplyCharacterFocusEffect(line);
     }
-
+    
     private void EndStory(int storyId = -1)
     {
         PlaySceneTransition(() =>

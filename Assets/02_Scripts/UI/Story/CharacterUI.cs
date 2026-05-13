@@ -195,25 +195,25 @@ public class CharacterUI : MonoBehaviour
             
             if (id == speakerID)
             {
-                rt.localScale = Vector3.one * preset.focusScale;
+                rt.DOScale(Vector3.one * preset.focusScale, 0.2f);
                 slot.SetColor(Color.white);
             }
             else
             {
-                rt.localScale = Vector3.one * preset.scale;
+                rt.DOScale(Vector3.one * preset.scale, 0.2f);
                 slot.SetColor(new Color(0.7f, 0.7f, 0.7f, 1f));
             }
         }
     }
 
-    public void PlayMotion(int characterID, MotionData motion, bool isUnknown)
+    public IEnumerator PlayMotionRoutine(int characterID, MotionData motion, bool isUnknown)
     {
         var slot = FindSlot(characterID);
-        
-        if (slot == null || motion == null) return;
-        
+
+        if (slot == null || motion == null)
+            yield break;
+
         var preset = presets[slot.slotIndex];
-        //Debug.Log($"{slot.slotIndex}, {preset.position}");
 
         switch (motion.type)
         {
@@ -228,41 +228,43 @@ public class CharacterUI : MonoBehaviour
             case MotionType.Jump:
                 StartCoroutine(Jump(slot.transform, motion));
                 break;
-
+            
             case MotionType.ExitLeft:
-                slot.PlayMotion( slot.ExitRoutine(Vector2.left, motion.value, motion.duration) );
+                yield return slot.ExitRoutine(Vector2.left, motion.value, motion.duration);
                 break;
 
             case MotionType.ExitRight:
-                slot.PlayMotion( slot.ExitRoutine(Vector2.right, motion.value, motion.duration) );
+                yield return slot.ExitRoutine(Vector2.right, motion.value, motion.duration);
                 break;
-            
+
             case MotionType.EnterLeft:
-                slot.PlayMotion(slot.EnterRoutine(preset.position, Vector3.left, motion.value, motion.duration, isUnknown));
+                yield return slot.EnterRoutine(preset.position, Vector2.left, motion.value, motion.duration, isUnknown);
                 break;
 
             case MotionType.EnterRight:
-                slot.PlayMotion(slot.EnterRoutine(preset.position, Vector3.right, motion.value, motion.duration, isUnknown));
+                yield return slot.EnterRoutine(preset.position, Vector2.right, motion.value, motion.duration, isUnknown);
                 break;
-            
-            case MotionType.Shake: 
-                slot.PlayMotion( slot.Shake(motion.duration, motion.value) );
+
+            case MotionType.Shake:
+                yield return slot.Shake(motion.duration, motion.value);
                 break;
-            
+
             case MotionType.Emphasis:
-                slot.PlayMotion( slot.EmphasisRoutine() );
+                yield return slot.EmphasisRoutine();
                 break;
-            
+
             case MotionType.Nervous:
-                slot.PlayMotion( slot.NervousRoutine() );
+                yield return slot.NervousRoutine();
                 break;
         }
     }
     
-    public void PlayMotionWithTarget(MotionCommand cmd)
+    public IEnumerator PlayMotionRoutine(MotionCommand cmd, bool isUnknown)
     {
         var actor = FindSlot(cmd.characterID);
-        if (actor == null) return;
+
+        if (actor == null)
+            yield break;
 
         var motion = cmd.motion;
 
@@ -271,23 +273,17 @@ public class CharacterUI : MonoBehaviour
             case MotionType.Attack:
             {
                 var target = FindSlot(cmd.targetID);
-                if (target == null)
+
+                Vector2 dir = target != null ? GetDirection(actor, target) : Vector2.right;
+
+                // 공격 먼저
+                yield return actor.PlayAttack(dir, motion.value, motion.duration * 0.5f);
+
+                // 피격
+                if (target != null)
                 {
-                    actor.PlayMotion(actor.PlayAttack(Vector2.right)); // fallback
-                    return;
+                    yield return target.PlayHit(-dir, motion.value * 0.5f, motion.duration * 0.5f);
                 }
-
-                // 방향 계산
-                Vector2 dir = GetDirection(actor, target);
-
-                // 공격자
-                actor.PlayMotion(actor.PlayAttack(dir));
-
-                // 피격자 (약간 딜레이)
-                DOVirtual.DelayedCall(0.1f, () =>
-                {
-                    target.PlayMotion(target.PlayHit(-dir));
-                });
 
                 break;
             }
@@ -295,16 +291,21 @@ public class CharacterUI : MonoBehaviour
             case MotionType.Hit:
             {
                 var target = FindSlot(cmd.targetID);
+
                 Vector2 dir = target != null ? GetDirection(target, actor) : Vector2.left;
 
-                actor.PlayMotion(actor.PlayHit(dir));
+                yield return actor.PlayHit(dir, motion.value, motion.duration);
+
                 break;
             }
 
             default:
             {
-                // 기존 로직
-                PlayMotion(cmd.characterID, motion, false);
+                yield return PlayMotionRoutine(
+                    cmd.characterID,
+                    motion,
+                    isUnknown);
+
                 break;
             }
         }

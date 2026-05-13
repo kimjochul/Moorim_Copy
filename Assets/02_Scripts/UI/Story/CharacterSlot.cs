@@ -208,23 +208,6 @@ public class CharacterSlot : MonoBehaviour
         nextImage.DOColor(next, duration);
     }
     
-    public void PlayMotion(IEnumerator routine)
-    {
-        if (motionCoroutine != null)
-            StopCoroutine(motionCoroutine);
-
-        motionCoroutine = StartCoroutine(MotionWrapper(routine));
-    }
-
-    private IEnumerator MotionWrapper(IEnumerator routine)
-    {
-        IsPlayingMotion = true;
-
-        yield return StartCoroutine(routine);
-
-        IsPlayingMotion = false;
-    }
-    
     IEnumerator AppearRoutine(Vector2 targetPos)
     {
         Vector2 start = targetPos + Vector2.left * 200f;
