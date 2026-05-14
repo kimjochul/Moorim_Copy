@@ -53,7 +53,7 @@ public class ScreenEffectUI : MonoBehaviour
             });
     }
 
-    public void FlashWhite(float duration = 0.15f)
+    public void FlashWhite(float duration = 0.75f)
     {
         fadeImage.DOKill();
         fadeImage.gameObject.SetActive(true);
@@ -71,7 +71,7 @@ public class ScreenEffectUI : MonoBehaviour
         });
     }
 
-    public IEnumerator FlashWhiteRoutine(float duration, Action onMid = null)
+    public IEnumerator FlashWhiteRoutine(float duration, float midTerm, Action onMid = null)
     {
         fadeImage.DOKill();
         fadeImage.gameObject.SetActive(true);
@@ -79,6 +79,7 @@ public class ScreenEffectUI : MonoBehaviour
 
         yield return fadeImage.DOFade(1f, duration * 0.2f).WaitForCompletion();
 
+        yield return new WaitForSeconds(midTerm);
         onMid?.Invoke();
         
         yield return fadeImage.DOFade(0f, duration * 0.8f).WaitForCompletion();
