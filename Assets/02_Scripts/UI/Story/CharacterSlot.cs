@@ -21,8 +21,6 @@ public class CharacterSlot : MonoBehaviour
     private RectTransform rt;
     public Vector2 SlotPos => rt.anchoredPosition;
 
-    public Emotion CurrentEmotion { get; private set; }
-
     private void Awake()
     {
         rt = GetComponent<RectTransform>();
@@ -35,8 +33,6 @@ public class CharacterSlot : MonoBehaviour
     {
         currentCharacterID = characterID;
         currentImage.sprite = sprite;
-        CurrentEmotion = Emotion.Neutral;
-        
         currentImage.color = Color.white;
 
         nextImage.color = new Color(1,1,1,0);
@@ -100,13 +96,7 @@ public class CharacterSlot : MonoBehaviour
             currentImage.color = keepColor;
             nextImage.color = new Color(keepColor.r, keepColor.g, keepColor.b, 0f);
             
-            rt.DOScale(1.03f, 0.25f)
-                .SetEase(Ease.OutQuad)
-                .OnComplete(() =>
-                {
-                    rt.DOScale(1f, 0.25f)
-                        .SetEase(Ease.InOutQuad);
-                });
+            rt.DOPunchScale(Vector3.one * 0.05f, 0.2f, 5, 0.5f);
         });
     }
     
@@ -325,10 +315,5 @@ public class CharacterSlot : MonoBehaviour
         nextImage.sprite = null;
         nextImage.color = new Color(1,1,1,0);
         HideEmotionIcon();
-    }
-    
-    public void SetEmotion(Emotion emotion)
-    {
-        CurrentEmotion = emotion;
     }
 }

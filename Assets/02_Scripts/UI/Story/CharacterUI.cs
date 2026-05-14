@@ -150,15 +150,11 @@ public class CharacterUI : MonoBehaviour
         var slot = FindSlot(characterID);
         if (slot == null) return;
 
-        if (slot.CurrentEmotion == emotion)
-            return;
-        
         if (!dataDict.TryGetValue(characterID, out var data)) return;
 
         var emo = data.emotions.Find(e => e.emotion == emotion);
         if (emo != null)
         {
-            slot.SetEmotion(emotion);
             slot.ChangeExpression(emo.sprite);
         }
     }

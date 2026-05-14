@@ -47,10 +47,8 @@ public class StoryUI : MonoBehaviour
     [SerializeField] private Image nextIndicator;
     
     [SerializeField] private float autoPlayDelay = 1.5f;
+    [SerializeField] private float fadeDuration = 0.45f;
     private readonly WaitForSeconds typingWait = new(0.03f);
-    
-    [SerializeField] private ScreenEffectUI screenEffectUI;
-    
     
     [Header("Dialogue Motion")]
     [SerializeField] private RectTransform dialogueRoot;
@@ -63,9 +61,7 @@ public class StoryUI : MonoBehaviour
     private Coroutine typingCoroutine;
     private Coroutine autoCoroutine;
     private Coroutine autoPlayCoroutine;
-    
     private Coroutine illustrationCoroutine;
-    private Coroutine illustrationSequenceCoroutine;
 
     private bool isTyping; // 현재 글자 나오고 있는 상황인지
     private bool isLogOpen;
@@ -96,7 +92,6 @@ public class StoryUI : MonoBehaviour
 
     private CanvasGroup currentGroup;
     private CanvasGroup nextGroup;
-
     
     public void Init()
     {
@@ -106,8 +101,10 @@ public class StoryUI : MonoBehaviour
         
         currentIllust = illustrationA;
         nextIllust = illustrationB;
+
         currentGroup = currentIllust.GetComponent<CanvasGroup>();
         nextGroup = nextIllust.GetComponent<CanvasGroup>();
+
         currentGroup.alpha = 1f;
         nextGroup.alpha = 0f;
 
@@ -454,81 +451,6 @@ public class StoryUI : MonoBehaviour
         isTransitioning = false;
     }
     
-    public void PlayIllustrationSequence(List<IllustrationFrame> frames)
-    {
-        if (illustrationSequenceCoroutine != null)
-            StopCoroutine(illustrationSequenceCoroutine);
-
-        illustrationSequenceCoroutine =
-            StartCoroutine(PlayIllustrationSequenceRoutine(frames));
-    }
-    
-    private IEnumerator PlayIllustrationSequenceRoutine(
-        List<IllustrationFrame> frames)
-    {
-        if (frames == null || frames.Count == 0)
-            yield break;
-
-        isTransitioning = true;
-        
-        currentIllust.gameObject.SetActive(false);
-        nextIllust.gameObject.SetActive(false);
-        
-        bool isFirstFrame = true;
-        
-        foreach (var frame in frames)
-        {
-            float duration = StoryManager.Instance.GetTransitionDuration(frame.transitionSpeed);
-
-            if (isFirstFrame)
-            {
-                yield return StartCoroutine(screenEffectUI.FlashWhiteRoutine(1f, () => ShowIllustration(frame.sprite)));
-
-                isFirstFrame = false;
-            }
-            else
-            {
-                // 두 번째 컷부터 transition
-                yield return PlayIllustrationTransition(frame.sprite, duration, frame.transitionType);
-            }
-            
-            yield return new WaitForSeconds(frame.duration);
-        }
-        
-        isTransitioning = false;
-    }
-    
-    private IEnumerator PlayIllustrationTransition(Sprite sprite, float duration, IllustrationTransitionType type)
-    {
-        switch (type)
-        {
-            case IllustrationTransitionType.Fade:
-                yield return CrossFadeIllustration(sprite, duration);
-                break;
-
-            case IllustrationTransitionType.Flash:
-                yield return FlashIllustration(sprite, duration);
-                break;
-        }
-    }
-    
-    private IEnumerator FlashIllustration(Sprite sprite, float duration)
-    {
-        float flashIn = duration * 0.2f;
-        float flashOut = duration * 0.8f;
-        
-        screenEffectUI.FlashWhite(duration);
-
-        // 화면이 하얘질 때까지 기다림
-        yield return new WaitForSeconds(flashIn);
-
-        // 여기서 교체
-        currentIllust.sprite = sprite;
-
-        // flash 사라질 때까지 대기
-        yield return new WaitForSeconds(flashOut);
-    }
-    
     public void HideIllustration()
     {
         currentIllust.gameObject.SetActive(false);
@@ -641,17 +563,13 @@ public class StoryUI : MonoBehaviour
         while (timer < line.autoDelay)
         {
             // 로그 열려있으면 시간 멈춤
-            if (!dialogueLogUI.gameObject.activeSelf && !isTransitioning)
+            if (!dialogueLogUI.gameObject.activeSelf)
             {
                 timer += Time.deltaTime;
             }
 
             yield return null;
         }
-        
-        while (isTransitioning)
-            yield return null;
-        
         StoryManager.Instance.ShowNextLine();
         isCutSceneAuto = false;
     }
@@ -695,18 +613,7 @@ public class StoryUI : MonoBehaviour
             while (!CanAdvance())
                 yield return null;
 
-            float timer = 0f;
-
-            while (timer < autoPlayDelay)
-            {
-                // 중간에 막히면 시간 멈춤
-                if (CanAdvance())
-                {
-                    timer += Time.deltaTime;
-                }
-
-                yield return null;
-            }
+            yield return new WaitForSeconds(autoPlayDelay);
 
             // 다시 한번 체크
             if (!CanAdvance())
