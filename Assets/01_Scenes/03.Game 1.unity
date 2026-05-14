@@ -17975,7 +17975,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SoundManager
   bgmSource: {fileID: 504334859}
   sfxSource: {fileID: 1264232433}
-  typingSource: {fileID: 0}
   soundList: {fileID: 11400000, guid: 9ae5149beb5942c46b28a982f01b31ba, type: 2}
   masterVolume: 1
   bgmVolume: 1
@@ -25337,7 +25336,7 @@ GameObject:
   - component: {fileID: 1331288239}
   - component: {fileID: 1331288238}
   - component: {fileID: 1331288241}
-  - component: {fileID: 1331288243}
+  - component: {fileID: 1331288242}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -25386,7 +25385,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60.000004
+  field of view: 62
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -25412,8 +25411,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1331288237}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.5, y: 1, z: 0}
+  m_LocalRotation: {x: 0.38268322, y: -0, z: -0, w: 0.9238797}
+  m_LocalPosition: {x: 6.55, y: 9.34, z: -11.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -25463,7 +25462,7 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
---- !u!114 &1331288243
+--- !u!114 &1331288242
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -25472,29 +25471,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 1331288237}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 72ece51f2901e7445ab60da3685d6b5f, type: 3}
+  m_Script: {fileID: 11500000, guid: c42e8b7e3def91542924058cc49962d4, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineBrain
-  ShowDebugText: 0
-  ShowCameraFrustum: 1
-  IgnoreTimeScale: 0
-  WorldUpOverride: {fileID: 0}
-  ChannelMask: -1
-  UpdateMethod: 2
-  BlendUpdateMethod: 1
-  LensModeOverride:
-    Enabled: 0
-    DefaultMode: 2
-  DefaultBlend:
-    Style: 1
-    Time: 2
-    CustomCurve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-  CustomBlends: {fileID: 0}
+  m_EditorClassIdentifier: Assembly-CSharp::CameraController
+  startOrbitRotationY: 45
+  startOrbitRotationX: 45
+  startHeight: 10
+  moveSpeed: 10
+  orbitSpeed: 5
+  minOrbitAngleY: 10
+  maxOrbitAngleY: 85
+  zoomSpeed: 10
+  minOrbitDistance: 2
+  maxOrbitDistance: 30
+  maxCameraOverhang: 5
+  groundCollider: {fileID: 229412024}
 --- !u!1 &1339591191
 GameObject:
   m_ObjectHideFlags: 0
@@ -26648,7 +26639,6 @@ MonoBehaviour:
   - so: {fileID: 11400000, guid: 04bb069dbee32284689b87ebfb9cda7a, type: 2}
     isActive: 1
   economy: {fileID: 11400000, guid: 6e01e380d3117bf41af394a1b93ef6ac, type: 2}
-  hitSE: {fileID: 0}
   characterNames:
   - id: 0
     name: Myungwol
@@ -28500,10 +28490,6 @@ PrefabInstance:
     - target: {fileID: 9099468297539940314, guid: 0e40a06e87d662147afa4e282620bece, type: 3}
       propertyPath: m_Name
       value: Wall Sconce (2)
-      objectReference: {fileID: 0}
-    - target: {fileID: 9099468297539940314, guid: 0e40a06e87d662147afa4e282620bece, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -50890,63 +50876,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 85
   m_IsActive: 1
---- !u!1001 &6723018465201559255
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 3249737966616102316, guid: e9f8427d5d336bc46b66661d9dcc2578, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3249737966616102316, guid: e9f8427d5d336bc46b66661d9dcc2578, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3249737966616102316, guid: e9f8427d5d336bc46b66661d9dcc2578, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3249737966616102316, guid: e9f8427d5d336bc46b66661d9dcc2578, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3249737966616102316, guid: e9f8427d5d336bc46b66661d9dcc2578, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3249737966616102316, guid: e9f8427d5d336bc46b66661d9dcc2578, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3249737966616102316, guid: e9f8427d5d336bc46b66661d9dcc2578, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3249737966616102316, guid: e9f8427d5d336bc46b66661d9dcc2578, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3249737966616102316, guid: e9f8427d5d336bc46b66661d9dcc2578, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3249737966616102316, guid: e9f8427d5d336bc46b66661d9dcc2578, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6455910119912900007, guid: e9f8427d5d336bc46b66661d9dcc2578, type: 3}
-      propertyPath: m_Name
-      value: Ground
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: e9f8427d5d336bc46b66661d9dcc2578, type: 3}
 --- !u!224 &6739491094782146149
 RectTransform:
   m_ObjectHideFlags: 0
@@ -54438,4 +54367,3 @@ SceneRoots:
   - {fileID: 907896187}
   - {fileID: 1960399345}
   - {fileID: 1015665196}
-  - {fileID: 6723018465201559255}
