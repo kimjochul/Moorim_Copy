@@ -38,6 +38,7 @@ public class StoryUI : MonoBehaviour
     [SerializeField] private GameObject characterNameRoot;
     [SerializeField] private GameObject darkBackGround;
     [SerializeField] private DialogueLogUI dialogueLogUI;
+    [SerializeField] private GameObject defaultIllustBG;
     
     [SerializeField] private Image bgImageA;
     [SerializeField] private Image bgImageB;
@@ -141,6 +142,7 @@ public class StoryUI : MonoBehaviour
     {
         root.SetActive(true);
         screenRoot.SetActive(true);
+        defaultIllustBG.SetActive(true);
         currentBg.gameObject.SetActive(true);
         ResetBackgroundState();
     }
@@ -149,10 +151,11 @@ public class StoryUI : MonoBehaviour
     {
         root.SetActive(false);
         screenRoot.SetActive(false);
+        defaultIllustBG.SetActive(false);
         currentBg.gameObject.SetActive(false);
     }
     
-    public void SetDialogueUIVisible(bool visible)
+    private void SetDialogueUIVisible(bool visible)
     {
         root.SetActive(visible);
     }
@@ -166,6 +169,16 @@ public class StoryUI : MonoBehaviour
     {
         characterNameRoot.SetActive(false);
     }
+
+    private void ShowDialogue()
+    {
+        dialogueRoot.gameObject.SetActive(true);
+    }
+
+    private void HideDialogue()
+    {
+        dialogueRoot.gameObject.SetActive(false);
+    }
     
     private void Update()
     {
@@ -173,7 +186,6 @@ public class StoryUI : MonoBehaviour
 
         HandleKeyboardInput();
         HandleMouseInput();
-        HandleScrollInput();
     }
 
     #region 대사 관련
@@ -228,6 +240,7 @@ public class StoryUI : MonoBehaviour
 
     private void ApplyLineUI(StoryLine line)
     {
+        ShowDialogue();
         if (line.lineType == LineType.Narration)
         {
             speakerText.text = "";
@@ -305,34 +318,20 @@ public class StoryUI : MonoBehaviour
         ShowIndicator();
     }
 
-    private void ShowPrevious()
+    public void ClearCurrentLine()
     {
-        if (isTyping) return;
-        if (historyIndex <= 0) return;
-        
-        historyIndex--;
-        var line = history[historyIndex];
-
-        ApplyLineUI(line); 
-        contentText.text = line.line;
-    }
-    
-    private void ShowNext()
-    {
-        if (isTyping) return;
-        
-        if (historyIndex >= history.Count - 1)
+        if (typingCoroutine != null)
         {
-            // 최신이면 다음 라인 진행
-            StoryManager.Instance.ShowNextLine();
-            return;
+            StopCoroutine(typingCoroutine);
+            typingCoroutine = null;
         }
 
-        historyIndex++;
-        var line = history[historyIndex];
+        contentText.text = "";
+        speakerText.text = "";
 
-        ApplyLineUI(line);
-        contentText.text = line.line;
+        HideCharacterName();
+        HideDialogue();
+        HideIndicator();
     }
 
     private void ApplyInnerThought(bool isInner)
@@ -372,27 +371,28 @@ public class StoryUI : MonoBehaviour
         currentBg.gameObject.SetActive(false);
         nextBg.gameObject.SetActive(false);
     }
+
+    public void SetBackground(Sprite bg)
+    {
+        currentBg.gameObject.SetActive(true);
+            
+        currentBg.sprite = bg;
+        currentBgGroup.alpha = 1f;
+
+        nextBg.gameObject.SetActive(false);
+        nextBgGroup.alpha = 0f;
+            
+        isFirstBackground = false;
+    }
     
-    public void ChangeBackground(Sprite bg, float duration)
+    public IEnumerator ChangeBackgroundRoutine(Sprite bg, float duration)
     {
         if (isFirstBackground)
         {
-            currentBg.gameObject.SetActive(true);
-            
-            currentBg.sprite = bg;
-            currentBgGroup.alpha = 1f;
-
-            nextBg.gameObject.SetActive(false);
-            nextBgGroup.alpha = 0f;
-            
-            isFirstBackground = false;
-            return;
+            SetBackground(bg);
         }
         
-        if (bgCoroutine != null)
-            StopCoroutine(bgCoroutine);
-
-        bgCoroutine = StartCoroutine(CrossFadeBackground(bg, duration));
+        yield return CrossFadeBackground(bg, duration);
     }
     
     private IEnumerator CrossFadeBackground(Sprite newBg, float duration)
@@ -464,30 +464,14 @@ public class StoryUI : MonoBehaviour
         currentIllust.sprite = sprite;
 
         currentGroup.alpha = 1f;
-        
-        PlaySlowZoom(currentIllust);
     }
 
-    private void PlaySlowZoom(Image target)
-    {
-        target.transform.DOKill();
-
-        target.transform.localScale = Vector3.one;
-
-        target.transform
-            .DOScale(Vector3.one * illustrationZoomScale, illustrationZoomDuration)
-            .SetEase(Ease.Linear);
-    }
-    
-    public void ChangeIllustration(Sprite sprite, float duration)
+    public IEnumerator ChangeIllustrationRoutine(Sprite sprite, float duration)
     {
         isTransitioning = true;
-        
-        if (illustrationCoroutine != null)
-            StopCoroutine(illustrationCoroutine);
 
-        illustrationCoroutine = StartCoroutine(CrossFadeIllustration(sprite, duration));
-        
+        yield return CrossFadeIllustration(sprite, duration);
+
         isTransitioning = false;
     }
     
@@ -520,8 +504,6 @@ public class StoryUI : MonoBehaviour
 
         (currentIllust, nextIllust) = (nextIllust, currentIllust); // Swap
         (currentGroup, nextGroup) = (nextGroup, currentGroup); // Swap
-        
-        PlaySlowZoom(currentIllust);
     }
     
     public void PlayIllustrationSequence(List<IllustrationFrame> frames)
@@ -533,8 +515,7 @@ public class StoryUI : MonoBehaviour
             StartCoroutine(PlayIllustrationSequenceRoutine(frames));
     }
     
-    private IEnumerator PlayIllustrationSequenceRoutine(
-        List<IllustrationFrame> frames)
+    private IEnumerator PlayIllustrationSequenceRoutine(List<IllustrationFrame> frames)
     {
         if (frames == null || frames.Count == 0)
             yield break;
@@ -552,14 +533,33 @@ public class StoryUI : MonoBehaviour
 
             if (isFirstFrame)
             {
-                yield return StartCoroutine(screenEffectUI.FlashWhiteRoutine(2f, 1f, () => ShowIllustration(frame.sprite)));
+                yield return StartCoroutine(screenEffectUI.FlashWhiteRoutine(2f, 1f, () =>
+                {
+                    ShowIllustration(frame.illustration);
+                    SetBackground(frame.background);
+                }));
 
                 isFirstFrame = false;
             }
             else
             {
+                Coroutine bgRoutine = null;
+                Coroutine illustRoutine = null;
+
                 // 두 번째 컷부터 transition
-                yield return PlayIllustrationTransition(frame.sprite, duration, frame.transitionType);
+                if (!frame.keepPreviousBG && frame.background != null)
+                {
+                    bgRoutine = StartCoroutine(ChangeBackgroundRoutine(frame.background, duration));
+                }
+
+                illustRoutine =
+                    StartCoroutine(PlayIllustrationTransitionRoutine(frame.illustration, duration, frame.transitionType));
+                
+                if (bgRoutine != null)
+                    yield return bgRoutine;
+
+                if (illustRoutine != null)
+                    yield return illustRoutine;
             }
             
             yield return new WaitForSeconds(frame.duration);
@@ -568,7 +568,7 @@ public class StoryUI : MonoBehaviour
         isTransitioning = false;
     }
     
-    private IEnumerator PlayIllustrationTransition(Sprite sprite, float duration, IllustrationTransitionType type)
+    private IEnumerator PlayIllustrationTransitionRoutine(Sprite sprite, float duration, IllustrationTransitionType type)
     {
         switch (type)
         {
@@ -589,8 +589,6 @@ public class StoryUI : MonoBehaviour
             {
                 currentIllust.sprite = sprite;
             }));
-        
-        PlaySlowZoom(currentIllust);
     }
     
     public void HideIllustration()
@@ -892,23 +890,6 @@ public class StoryUI : MonoBehaviour
         }
 
         StoryManager.Instance.ShowNextLine();
-    }
-    
-    private void HandleScrollInput()
-    {
-        if (!CanScrollHistory())
-            return;
-
-        float scroll = Input.mouseScrollDelta.y;
-
-        if (scroll > 0)
-        {
-            ShowPrevious();
-        }
-        else if (scroll < 0)
-        {
-            ShowNext();
-        }
     }
     
     public void SetPointerBlock(bool value)

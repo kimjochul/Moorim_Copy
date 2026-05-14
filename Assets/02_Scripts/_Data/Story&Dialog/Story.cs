@@ -24,6 +24,9 @@ public class StoryScene
     
     [Header("씬 종료 연출")]
     public ScreenEffectData endEffect;
+    
+    [Header("씬 전환")]
+    public SceneTransitionType transitionType = SceneTransitionType.Fade;
 }
 
 [Serializable]
@@ -42,4 +45,10 @@ public enum SceneVisualType
 {
     CharacterSlots, // 기존 방식
     Illustration    // CG 컷씬 방식
+}
+
+public enum SceneTransitionType
+{
+    None,
+    Fade
 }

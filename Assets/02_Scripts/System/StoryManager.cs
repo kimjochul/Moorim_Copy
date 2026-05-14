@@ -178,20 +178,34 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
 
         DOVirtual.DelayedCall(0f, () =>
         {
-            PlaySceneTransition(SetupSceneInternal);
+            StartCoroutine(PlaySceneTransition(()=>SetupSceneInternal(false)));
         });
     }
     
-    private void SetupSceneInternal()
+    private IEnumerator SetupSceneInternal(bool useCrossFadeTransition) // 암전하는 fade를 사용 안하면 true
     {
         currentScene = currentStory.scenes[currentSceneIndex];
         currentIndex = 0;
             
+        Coroutine illustRoutine = null;
+        Coroutine bgRoutine = null;
+        
+        float duration = GetTransitionDuration(TransitionSpeed.Dramatic);
+        
         if (currentScene.visualType == SceneVisualType.Illustration)
         {
             characterUI.Hide();
-
-            storyUI.ShowIllustration(currentScene.illustration);
+            
+            if (useCrossFadeTransition)
+            {
+                illustRoutine = StartCoroutine(
+                    storyUI.ChangeIllustrationRoutine(currentScene.illustration, duration)
+                );
+            }
+            else
+            {
+                storyUI.ShowIllustration(currentScene.illustration);
+            }
         }
         else
         {
@@ -208,9 +222,19 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         // Debug.Log($"{currentStory.id}");
         // foreach(var currentCharacter in currentScene.characters)
         //     Debug.Log(currentCharacter.characterID);
+
+        if (useCrossFadeTransition)
+        {
+            bgRoutine = StartCoroutine(storyUI.ChangeBackgroundRoutine(currentScene.background, duration));
+        }
+        else
+            storyUI.SetBackground(currentScene.background);
         
-        characterUI.SetupScene(currentScene.characters);
-        storyUI.ChangeBackground(currentScene.background, GetTransitionDuration(TransitionSpeed.Default));
+        if (illustRoutine != null)
+            yield return illustRoutine;
+
+        if (bgRoutine != null)
+            yield return bgRoutine;
     }
 
     public void ShowNextLine()
@@ -224,23 +248,14 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         // 🔥 씬 끝났을 때
         if (currentIndex >= currentScene.lines.Count)
         {
-            ApplyScreenEffect(currentScene.endEffect);
-            currentSceneIndex++;
-
-            if (currentSceneIndex >= currentStory.scenes.Count)
-            {
-                EndStory();
-                return;
-            }
-
-            StartScene();
+            StartCoroutine(HandleSceneEndRoutine());
             return;
         }
         
         var line = currentScene.lines[currentIndex++];
         StartCoroutine(ShowLineRoutine(line));
     }
-
+    
     private IEnumerator ShowLineRoutine(StoryLine line)
     {
         
@@ -253,7 +268,7 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         if (line.illustrationSequence != null && line.illustrationSequence.Count > 0)
             storyUI.PlayIllustrationSequence(line.illustrationSequence);
         else if (line.illustrationOverride != null)
-            storyUI.ChangeIllustration(line.illustrationOverride, transitionDuration);
+            StartCoroutine(storyUI.ChangeIllustrationRoutine(line.illustrationOverride, transitionDuration));
         
         if (line.lineType == LineType.Dialogue)
         {
@@ -299,45 +314,76 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
             characterUI.Focus(-1); // 아무도 강조 안함
         }
     }
+
+    private IEnumerator HandleSceneEndRoutine()
+    {
+        yield return ApplyScreenEffectRoutine(currentScene.endEffect);
+            
+        SceneTransitionType transitionType = currentScene.transitionType;
+            
+        currentSceneIndex++;
+
+        if (currentSceneIndex >= currentStory.scenes.Count)
+        {
+            EndStory();
+            yield break;
+        }
+
+        switch (transitionType)
+        {
+            case SceneTransitionType.Fade:
+                StartCoroutine(PlaySceneTransition(()=>SetupSceneInternal(false)));
+                break;
+
+            case SceneTransitionType.None:
+                storyUI.ClearCurrentLine();
+                yield return StartCoroutine(SetupSceneInternal(true));
+                ShowNextLine();
+                break;
+        }
+    }
     
     private void EndStory(int storyId = -1)
     {
-        PlaySceneTransition(() =>
+        StartCoroutine(PlaySceneTransition(EndStoryRoutine, false));
+    }
+
+    private IEnumerator EndStoryRoutine()
+    {
+        if (currentTrigger != null && !string.IsNullOrEmpty(currentTrigger.addFlagOnComplete))
         {
-            if (currentTrigger != null && !string.IsNullOrEmpty(currentTrigger.addFlagOnComplete))
-            {
-                flags.Add(currentTrigger.addFlagOnComplete);
-            }
+            flags.Add(currentTrigger.addFlagOnComplete);
+        }
 
-            isPlaying = false;
-            storyUI.Hide();
-            characterUI.Hide();
+        isPlaying = false;
+        storyUI.Hide();
+        characterUI.Hide();
             
-            currentScene = null;
+        currentScene = null;
 
-            if (currentStory.rewardQuest != null)
-            {
-                var quest = new Quest(currentStory.rewardQuest, InventoryManager.Instance.GetInventory(InventoryType.Fridge));
-                QuestManager.Instance.AcceptQuest(quest);
-            }
+        if (currentStory.rewardQuest != null)
+        {
+            var quest = new Quest(currentStory.rewardQuest, InventoryManager.Instance.GetInventory(InventoryType.Fridge));
+            QuestManager.Instance.AcceptQuest(quest);
+        }
             
-            if (currentTrigger != null && currentTrigger.unlockRecipeIds != null)
+        if (currentTrigger != null && currentTrigger.unlockRecipeIds != null)
+        {
+            foreach (var recipeId in currentTrigger.unlockRecipeIds)
             {
-                foreach (var recipeId in currentTrigger.unlockRecipeIds)
-                {
-                    recipeUnlockManager.Unlock(recipeId);
-                }
+                recipeUnlockManager.Unlock(recipeId);
             }
-            if (currentTrigger.unlockIngredientIds != null)
+        }
+        if (currentTrigger.unlockIngredientIds != null)
+        {
+            foreach (var id in currentTrigger.unlockIngredientIds)
             {
-                foreach (var id in currentTrigger.unlockIngredientIds)
-                {
-                    ingredientUnlockManager.Unlock(id);
-                }
+                ingredientUnlockManager.Unlock(id);
             }
+        }
             
-            PlayNextQueuedStory();
-        });
+        PlayNextQueuedStory();
+        yield break;
     }
     
     public void SkipCurrentScene()
@@ -462,49 +508,34 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         };
     }
     
-    public void PlaySceneTransition(Action onMid)
+    private IEnumerator PlaySceneTransition(Func<IEnumerator> onMid, bool autoNextLine = true)
     {
-        transitionTween?.Kill();
-        
         isTransitioning = true; // ⭐ 잠금
         
         fadePanel.canvasGroup.gameObject.SetActive(true);
         fadePanel.canvasGroup.blocksRaycasts = true;
 
-        Sequence seq = DOTween.Sequence();
-        transitionTween = seq;
-
-        if (fadePanel.canvasGroup.alpha < 1f)
-        {
-            seq.Append(fadePanel.canvasGroup.DOFade(1f, fadeDuration).SetEase(Ease.InOutQuad));
-        }
+        storyUI.ClearCurrentLine();
+        yield return fadePanel.canvasGroup.DOFade(1f, fadeDuration).SetEase(Ease.InOutBack).WaitForCompletion();
         
-        seq.AppendInterval(0.2f);
-
-        seq.AppendCallback(() =>
-        {
-            onMid?.Invoke();
-        });
-
-        seq.AppendInterval(0.05f);
+        if (onMid != null)
+            yield return StartCoroutine(onMid());
         
-        seq.AppendCallback(() =>
-        {
-            isTransitioning = false;
+        Canvas.ForceUpdateCanvases();
+
+        yield return null;
+        
+
+        yield return fadePanel.canvasGroup.DOFade(0f, fadeDuration).SetEase(Ease.InOutQuad).WaitForCompletion();
+        
+
+        fadePanel.canvasGroup.blocksRaycasts = false;
+        fadePanel.canvasGroup.gameObject.SetActive(false);
+        
+        isTransitioning = false;
+        
+        if (autoNextLine)
             ShowNextLine();
-        });
-        
-        seq.Append(fadePanel.canvasGroup.DOFade(0f, fadeDuration).SetEase(Ease.InOutQuad));
-
-        seq.OnComplete(() =>
-        {
-            fadePanel.canvasGroup.blocksRaycasts = false;
-            fadePanel.canvasGroup.gameObject.SetActive(false);
-            
-            transitionTween =  null;
-        });
-        
-        seq.OnKill(()=> transitionTween = null);
     }
     
     private void ApplyScreenEffect(ScreenEffectData effect)
@@ -547,6 +578,49 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
                 effectUI.PlayImpact(effect.effectPower, effect.effectDuration, hitSE);
                 break;
         }
+    }
+    
+    private IEnumerator ApplyScreenEffectRoutine(ScreenEffectData effect)
+    {
+        if (effect == null)
+            yield break;
+
+        var effectUI = screenEffectUI;
+
+        switch (effect.effectType)
+        {
+            case ScreenEffectType.None:
+                yield break;
+
+            case ScreenEffectType.FadeBlack:
+                effectUI.FadeBlack(effect.effectDuration);
+                break;
+
+            case ScreenEffectType.FadeFromBlack:
+                effectUI.FadeFromBlack(effect.effectDuration);
+                break;
+
+            case ScreenEffectType.FlashWhite:
+                effectUI.FlashWhite(effect.effectDuration);
+                break;
+
+            case ScreenEffectType.Shake:
+                effectUI.ShakeScreen(effect.effectPower, effect.effectDuration);
+                break;
+
+            case ScreenEffectType.VignetteDark:
+                effectUI.SetVignette(0.45f, effect.effectDuration);
+                break;
+
+            case ScreenEffectType.VignetteClear:
+                effectUI.SetVignette(0f, effect.effectDuration);
+                break;
+
+            case ScreenEffectType.FlashWithShake:
+                effectUI.PlayImpact(effect.effectPower, effect.effectDuration, hitSE);
+                break;
+        }
+        yield return new WaitForSeconds(effect.effectDuration);
     }
     
     private void ApplyCharacterFocusEffect(StoryLine line)

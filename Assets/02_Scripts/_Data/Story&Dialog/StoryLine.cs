@@ -89,10 +89,19 @@ public class MotionData
 [Serializable]
 public class IllustrationFrame
 {
-    public Sprite sprite;
+    [Header("Visual")]
+    public Sprite illustration;
+    public Sprite background;
+    
+    [Header("Timing")]
     public float duration = 1f;
+    
+    [Header("Transition")]
     public TransitionSpeed transitionSpeed;
     public IllustrationTransitionType transitionType;
+
+    [Header("Option")] 
+    public bool keepPreviousBG;
 }
 
 [Serializable]
