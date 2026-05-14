@@ -55,7 +55,7 @@ public class SaveManager : Singleton<SaveManager>
     {
         Time.timeScale = 1f;
         isLoadedGame = false;
-        SceneLoader.Instance.LoadScene("01_Scenes/03.Game 2", () =>
+        SceneLoader.Instance.LoadScene("01_Scenes/03.Game", () =>
         {
             InitAll();
             InitializeNewGameData();
@@ -113,7 +113,7 @@ public class SaveManager : Singleton<SaveManager>
         loadSlotIndex = slotIndex;
         loadType = type;
         
-        SceneLoader.Instance.LoadScene("01_Scenes/03.Game 2", () =>
+        SceneLoader.Instance.LoadScene("01_Scenes/03.Game", () =>
         {
             InitAll();
             
