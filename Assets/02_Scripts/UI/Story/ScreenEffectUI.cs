@@ -87,6 +87,59 @@ public class ScreenEffectUI : MonoBehaviour
         fadeImage.gameObject.SetActive(false);
     }
     
+    public void FlashBlack(float duration = 0.5f)
+    {
+        fadeImage.DOKill();
+
+        fadeImage.gameObject.SetActive(true);
+
+        // 검은색 + 투명 시작
+        fadeImage.color = new Color(0f, 0f, 0f, 0f);
+
+        Sequence seq = DOTween.Sequence();
+
+        // 빠르게 검게
+        seq.Append(fadeImage.DOFade(1f, duration * 0.3f));
+
+        seq.AppendInterval(duration * 0.4f);
+            
+        // 다시 복귀
+        seq.Append(fadeImage.DOFade(0f, duration * 0.3f));
+
+        seq.OnComplete(() =>
+        {
+            fadeImage.gameObject.SetActive(false);
+        });
+    }
+    
+    public IEnumerator FlashBlackRoutine(
+        float duration,
+        float holdTime,
+        Action onMid = null)
+    {
+        fadeImage.DOKill();
+
+        fadeImage.gameObject.SetActive(true);
+        fadeImage.color = new Color(0f, 0f, 0f, 0f);
+
+        // 검게
+        yield return fadeImage
+            .DOFade(1f, duration * 0.3f)
+            .WaitForCompletion();
+
+        // 여기서 장면 교체
+        onMid?.Invoke();
+
+        yield return new WaitForSeconds(holdTime);
+
+        // 다시 밝게
+        yield return fadeImage
+            .DOFade(0f, duration * 0.7f)
+            .WaitForCompletion();
+
+        fadeImage.gameObject.SetActive(false);
+    }
+    
     #endregion
 
     #region Shake Effect

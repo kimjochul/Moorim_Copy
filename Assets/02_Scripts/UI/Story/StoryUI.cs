@@ -187,7 +187,7 @@ public class StoryUI : MonoBehaviour
         HandleKeyboardInput();
         HandleMouseInput();
     }
-
+    
     #region 대사 관련
 
     public void ShowLine(StoryLine line)

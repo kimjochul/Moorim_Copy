@@ -147,7 +147,9 @@ public enum ScreenEffectType
     ZoomOut,
 
     VignetteDark,
-    VignetteClear
+    VignetteClear,
+    
+    FlashBlack
 }
 
 public static class DialogueStyle

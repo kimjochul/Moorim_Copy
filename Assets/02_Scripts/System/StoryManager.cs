@@ -120,42 +120,33 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
                 playedStoryIds.Add(trigger.storyId);
         }
 
-        PlayNextQueuedStory();
+        Debug.Log($"{triggerQueue.Count} stories played");
+        
+        StartCoroutine(PlaySceneTransition(PlayQueuedStory));
     }
     
-    private void PlayNextQueuedStory()
+    private IEnumerator PlayQueuedStory()
     {
         if (triggerQueue.Count == 0)
         {
             Debug.Log("스토리 없음 → NPC로 넘김");
             SoundManager.Instance.PlayRandomBGM();
             GameManager.Instance.CompleteState(GameFlowState.Story);
-            return;
+            yield break;
         }
+
         SoundManager.Instance.StopBGM();
+
         currentTrigger = triggerQueue.Dequeue();
-        PlayStory(currentTrigger.storyId);
-    }
-    
-    public void PlayStory(int id)
-    {
-        currentStory = storySO.stories.Find(s => s.id == id);
+
+        currentStory = storySO.stories.Find(s => s.id == currentTrigger.storyId);
+
         storyUI.ClearLogs();
-        
+
         storyUI.AddLogHeader(
             DayManager.Instance.DayData.day,
             currentStory.storyName
         );
-        
-        if (currentStory == null)
-        {
-            Debug.LogError("스토리 없음");
-            return;
-        }
-        
-        fadePanel.canvasGroup.gameObject.SetActive(true);
-        fadePanel.canvasGroup.alpha = 1f;
-        fadePanel.canvasGroup.blocksRaycasts = true;
 
         currentSceneIndex = 0;
         currentIndex = 0;
@@ -167,19 +158,8 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
             characterUI.Show();
         else
             characterUI.Hide();
-        
-        StartScene();
-    }
 
-    private void StartScene()
-    {
-        if (currentStory == null || currentSceneIndex >= currentStory.scenes.Count)
-            return;
-
-        DOVirtual.DelayedCall(0f, () =>
-        {
-            StartCoroutine(PlaySceneTransition(()=>SetupSceneInternal(false)));
-        });
+        yield return StartCoroutine(SetupSceneInternal(false));
     }
     
     private IEnumerator SetupSceneInternal(bool useCrossFadeTransition) // 암전하는 fade를 사용 안하면 true
@@ -345,7 +325,7 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
     
     private void EndStory(int storyId = -1)
     {
-        StartCoroutine(PlaySceneTransition(EndStoryRoutine, false));
+        StartCoroutine(PlaySceneTransition(EndStoryRoutine));
     }
 
     private IEnumerator EndStoryRoutine()
@@ -382,8 +362,7 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
             }
         }
             
-        PlayNextQueuedStory();
-        yield break;
+        yield return StartCoroutine(PlayQueuedStory());
     }
     
     public void SkipCurrentScene()
@@ -508,7 +487,7 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         };
     }
     
-    private IEnumerator PlaySceneTransition(Func<IEnumerator> onMid, bool autoNextLine = true)
+    private IEnumerator PlaySceneTransition(Func<IEnumerator> onMid)
     {
         isTransitioning = true; // ⭐ 잠금
         
@@ -534,8 +513,7 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         
         isTransitioning = false;
         
-        if (autoNextLine)
-            ShowNextLine();
+        ShowNextLine();
     }
     
     private void ApplyScreenEffect(ScreenEffectData effect)
@@ -560,6 +538,10 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
 
             case ScreenEffectType.FlashWhite:
                 effectUI.FlashWhite(effect.effectDuration);
+                break;
+            
+            case ScreenEffectType.FlashBlack:
+                effectUI.FlashBlack(effect.effectDuration);
                 break;
 
             case ScreenEffectType.Shake:
@@ -604,6 +586,10 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
                 effectUI.FlashWhite(effect.effectDuration);
                 break;
 
+            case ScreenEffectType.FlashBlack:
+                effectUI.FlashBlack(effect.effectDuration);
+                break;
+            
             case ScreenEffectType.Shake:
                 effectUI.ShakeScreen(effect.effectPower, effect.effectDuration);
                 break;
