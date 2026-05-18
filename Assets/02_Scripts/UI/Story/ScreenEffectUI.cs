@@ -140,6 +140,19 @@ public class ScreenEffectUI : MonoBehaviour
         fadeImage.gameObject.SetActive(false);
     }
     
+    public void SetBlackImmediate(bool active)
+    {
+        fadeImage.gameObject.SetActive(active);
+        
+        Color c = fadeImage.color;
+        c.r = 0f;
+        c.g = 0f;
+        c.b = 0f;
+        c.a = active ? 1f : 0f;
+
+        fadeImage.color = c;
+    }
+    
     #endregion
 
     #region Shake Effect
@@ -208,9 +221,11 @@ public class ScreenEffectUI : MonoBehaviour
     public void PlayImpact(
         float shakePower,
         float shakeDuration,
-        AudioClip se)
+        AudioClip se,
+        bool useFlash)
     {
-        FlashWhite();
+        if (useFlash)
+            FlashWhite();
 
         ShakeScreen(shakePower, shakeDuration);
 

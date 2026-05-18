@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using NUnit.Framework.Constraints;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "StoryScenes", menuName = "Story/StoryScenes")]
@@ -27,6 +28,7 @@ public class StoryScene
     
     [Header("씬 전환")]
     public SceneTransitionType transitionType = SceneTransitionType.Fade;
+    public bool startWithBlack = false;
 }
 
 [Serializable]

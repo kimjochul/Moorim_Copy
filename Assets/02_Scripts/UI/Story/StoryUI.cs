@@ -506,16 +506,16 @@ public class StoryUI : MonoBehaviour
         (currentGroup, nextGroup) = (nextGroup, currentGroup); // Swap
     }
     
-    public void PlayIllustrationSequence(List<IllustrationFrame> frames)
+    public void PlayIllustrationSequence(List<IllustrationFrame> frames, bool useFlashTransition)
     {
         if (illustrationSequenceCoroutine != null)
             StopCoroutine(illustrationSequenceCoroutine);
 
         illustrationSequenceCoroutine =
-            StartCoroutine(PlayIllustrationSequenceRoutine(frames));
+            StartCoroutine(PlayIllustrationSequenceRoutine(frames, useFlashTransition));
     }
     
-    private IEnumerator PlayIllustrationSequenceRoutine(List<IllustrationFrame> frames)
+    private IEnumerator PlayIllustrationSequenceRoutine(List<IllustrationFrame> frames, bool useFlashTransition)
     {
         if (frames == null || frames.Count == 0)
             yield break;
@@ -531,7 +531,7 @@ public class StoryUI : MonoBehaviour
         {
             float duration = StoryManager.Instance.GetTransitionDuration(frame.transitionSpeed);
 
-            if (isFirstFrame)
+            if (isFirstFrame && useFlashTransition)
             {
                 yield return StartCoroutine(screenEffectUI.FlashWhiteRoutine(2f, 1f, () =>
                 {

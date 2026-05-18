@@ -167,6 +167,15 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         currentScene = currentStory.scenes[currentSceneIndex];
         currentIndex = 0;
             
+        if (currentScene.startWithBlack)
+        {
+            screenEffectUI.SetBlackImmediate(true);
+        }
+        else
+        {
+            screenEffectUI.SetBlackImmediate(false);
+        }
+        
         Coroutine illustRoutine = null;
         Coroutine bgRoutine = null;
         
@@ -246,7 +255,7 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         ApplyCharacterFocusEffect(line);
         
         if (line.illustrationSequence != null && line.illustrationSequence.Count > 0)
-            storyUI.PlayIllustrationSequence(line.illustrationSequence);
+            storyUI.PlayIllustrationSequence(line.illustrationSequence, line.illustrationSequence[0].useFlashTransition);
         else if (line.illustrationOverride != null)
             StartCoroutine(storyUI.ChangeIllustrationRoutine(line.illustrationOverride, transitionDuration));
         
@@ -505,8 +514,7 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         yield return null;
         
 
-        yield return fadePanel.canvasGroup.DOFade(0f, fadeDuration).SetEase(Ease.InOutQuad).WaitForCompletion();
-        
+        yield return fadePanel.canvasGroup.DOFade(0f, fadeDuration).SetEase(Ease.InQuad).WaitForCompletion();
 
         fadePanel.canvasGroup.blocksRaycasts = false;
         fadePanel.canvasGroup.gameObject.SetActive(false);
@@ -557,7 +565,11 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
                 break;
 
             case ScreenEffectType.FlashWithShake:
-                effectUI.PlayImpact(effect.effectPower, effect.effectDuration, hitSE);
+                effectUI.PlayImpact(effect.effectPower, effect.effectDuration, hitSE, true);
+                break;
+            
+            case ScreenEffectType.ShakeAndSound:
+                effectUI.PlayImpact(effect.effectPower, effect.effectDuration, hitSE, false);
                 break;
         }
     }
@@ -603,7 +615,11 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
                 break;
 
             case ScreenEffectType.FlashWithShake:
-                effectUI.PlayImpact(effect.effectPower, effect.effectDuration, hitSE);
+                effectUI.PlayImpact(effect.effectPower, effect.effectDuration, hitSE, true);
+                break;
+            
+            case  ScreenEffectType.ShakeAndSound:
+                effectUI.PlayImpact(effect.effectPower, effect.effectDuration, hitSE, false);
                 break;
         }
         yield return new WaitForSeconds(effect.effectDuration);

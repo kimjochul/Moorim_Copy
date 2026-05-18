@@ -102,6 +102,7 @@ public class IllustrationFrame
 
     [Header("Option")] 
     public bool keepPreviousBG;
+    public bool useFlashTransition = true;
 }
 
 [Serializable]
@@ -149,7 +150,9 @@ public enum ScreenEffectType
     VignetteDark,
     VignetteClear,
     
-    FlashBlack
+    FlashBlack,
+    
+    ShakeAndSound
 }
 
 public static class DialogueStyle
