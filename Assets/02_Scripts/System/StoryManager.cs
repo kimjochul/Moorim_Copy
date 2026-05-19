@@ -187,13 +187,21 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
             
             if (useCrossFadeTransition)
             {
-                illustRoutine = StartCoroutine(
-                    storyUI.ChangeIllustrationRoutine(currentScene.illustration, duration)
-                );
+                if(currentScene.illustrationOverlay != null)
+                    illustRoutine = StartCoroutine(
+                    storyUI.ChangeIllustrationRoutine(currentScene.illustration, currentScene.illustrationOverlay, false, false, duration)
+                    );
+                else
+                    illustRoutine = StartCoroutine(
+                        storyUI.ChangeIllustrationRoutine(currentScene.illustration, duration)
+                    );
             }
             else
             {
-                storyUI.ShowIllustration(currentScene.illustration);
+                if(currentScene.illustrationOverlay != null)
+                    storyUI.ShowIllustration(currentScene.illustration, currentScene.illustrationOverlay);
+                else
+                    storyUI.ShowIllustration(currentScene.illustration);
             }
         }
         else
@@ -257,7 +265,15 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         if (line.illustrationSequence != null && line.illustrationSequence.Count > 0)
             storyUI.PlayIllustrationSequence(line.illustrationSequence, line.illustrationSequence[0].useFlashTransition);
         else if (line.illustrationOverride != null)
-            StartCoroutine(storyUI.ChangeIllustrationRoutine(line.illustrationOverride, transitionDuration));
+        {
+            StartCoroutine(
+                storyUI.ChangeIllustrationRoutine(
+                    line.illustrationOverride,
+                    line.illustrationOverlay,
+                    line.resetIllustration,
+                    line.resetOverlay,
+                    transitionDuration));
+        }
         
         if (line.lineType == LineType.Dialogue)
         {
@@ -627,16 +643,31 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
     
     private void ApplyCharacterFocusEffect(StoryLine line)
     {
-        var slot = characterUI.FindSlot(line.characterID);
-
-        if (slot == null)
+        if (line.screenEffect == null)
             return;
+
+        var slot = characterUI.FindSlot(line.characterID);
+        
+        if (currentScene.visualType == SceneVisualType.CharacterSlots)
+        {
+            if (slot == null)
+                return;
+        }
+        
 
         switch (line.screenEffect.effectType)
         {
             case ScreenEffectType.ZoomIn:
-                screenEffectUI.ZoomTo(slot.SlotPos, 1.1f, line.screenEffect.effectDuration);
-                storyUI.FocusMode(true);
+                if(currentScene.visualType == SceneVisualType.CharacterSlots)
+                {
+                    screenEffectUI.ZoomTo(slot.SlotPos, 1.1f, line.screenEffect.effectDuration);
+                    storyUI.FocusMode(true);
+                }
+                else if (currentScene.visualType == SceneVisualType.Illustration)
+                {
+                    screenEffectUI.ZoomTo(new Vector2(0.5f, 0.5f), 1.1f, line.screenEffect.effectDuration);
+                    storyUI.FocusMode(true);
+                }
                 break;
 
             case ScreenEffectType.ZoomOut:

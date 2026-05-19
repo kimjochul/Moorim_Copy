@@ -23,6 +23,9 @@ public class StoryScene
     public Sprite background; 
     public Sprite illustration;
     
+    [Header("추가 오버레이 일러스트")]
+    public Sprite illustrationOverlay;
+    
     [Header("씬 종료 연출")]
     public ScreenEffectData endEffect;
     

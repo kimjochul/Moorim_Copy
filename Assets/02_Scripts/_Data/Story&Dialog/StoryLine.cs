@@ -13,6 +13,13 @@ public class StoryLine
     [Header("일러스트 단일 그림 화면인 경우")]
     public Sprite illustrationOverride;
     
+    [Header("추가 오버레이 일러스트")]
+    public Sprite illustrationOverlay;
+    
+    [Header("일러스트 리셋 여부")]
+    public bool resetIllustration;
+    public bool resetOverlay;
+    
     [Header("일러스트 다중 그림 시퀀스의 경우")]
     public List<IllustrationFrame> illustrationSequence;
     
@@ -93,6 +100,9 @@ public class IllustrationFrame
     public Sprite illustration;
     public Sprite background;
     
+    [Header("Overlay")]
+    public Sprite overlayIllustration;
+    
     [Header("Timing")]
     public float duration = 1f;
     
@@ -102,7 +112,7 @@ public class IllustrationFrame
 
     [Header("Option")] 
     public bool keepPreviousBG;
-    public bool useFlashTransition = true;
+    public bool useFlashTransition = false;
 }
 
 [Serializable]

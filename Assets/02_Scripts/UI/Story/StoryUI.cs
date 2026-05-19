@@ -44,6 +44,8 @@ public class StoryUI : MonoBehaviour
     [SerializeField] private Image bgImageB;
     [SerializeField] private Image illustrationA;
     [SerializeField] private Image illustrationB;
+    [SerializeField] private Image overlayIllustA;
+    [SerializeField] private Image overlayIllustB;
     
     [SerializeField] private Button dialogueButton;
     [SerializeField] private Button autoPlayButton;
@@ -53,9 +55,6 @@ public class StoryUI : MonoBehaviour
     private readonly WaitForSeconds typingWait = new(0.03f);
     
     [SerializeField] private ScreenEffectUI screenEffectUI;
-    
-    [SerializeField] private float illustrationZoomScale = 1.02f;
-    [SerializeField] private float illustrationZoomDuration = 8f;
     
     [Header("Dialogue Motion")]
     [SerializeField] private RectTransform dialogueRoot;
@@ -108,6 +107,11 @@ public class StoryUI : MonoBehaviour
     private CanvasGroup currentGroup;
     private CanvasGroup nextGroup;
 
+    private Image currentOverlay;
+    private Image nextOverlay;
+
+    private CanvasGroup currentOverlayGroup;
+    private CanvasGroup nextOverlayGroup;
     
     public void Init()
     {
@@ -145,6 +149,7 @@ public class StoryUI : MonoBehaviour
         defaultIllustBG.SetActive(true);
         currentBg.gameObject.SetActive(true);
         ResetBackgroundState();
+        ResetIllustrationState();
     }
 
     public void Hide()
@@ -390,6 +395,7 @@ public class StoryUI : MonoBehaviour
         if (isFirstBackground)
         {
             SetBackground(bg);
+            yield break;
         }
         
         yield return CrossFadeBackground(bg, duration);
@@ -452,35 +458,117 @@ public class StoryUI : MonoBehaviour
         nextGroup = nextIllust.GetComponent<CanvasGroup>();
         currentGroup.alpha = 1f;
         nextGroup.alpha = 0f;
-
         currentIllust.gameObject.SetActive(false);
         nextIllust.gameObject.SetActive(false);
+        
+        currentOverlay = overlayIllustA;
+        nextOverlay = overlayIllustB;
+        currentOverlayGroup = currentOverlay.GetComponent<CanvasGroup>();
+        nextOverlayGroup = nextOverlay.GetComponent<CanvasGroup>();
+        currentOverlayGroup.alpha = 1f;
+        nextOverlayGroup.alpha = 0f;
+        currentOverlay.gameObject.SetActive(false);
+        nextOverlay.gameObject.SetActive(false);
     }
     
     public void ShowIllustration(Sprite sprite)
     {
-        currentIllust.gameObject.SetActive(true);
+        if (sprite != null)
+        {
+            currentIllust.gameObject.SetActive(true);
+            currentIllust.sprite = sprite;
+            currentGroup.alpha = 1f;
+        }
+        else
+        {
+            currentIllust.gameObject.SetActive(false);
+        }
+    }
+    
+    public void ShowIllustration(Sprite sprite, Sprite overlay)
+    {
+        if (sprite != null)
+        {
+            currentIllust.gameObject.SetActive(true);
+            currentIllust.sprite = sprite;
+            currentGroup.alpha = 1f;
+        }
+        else
+        {
+            currentIllust.gameObject.SetActive(false);
+        }
 
-        currentIllust.sprite = sprite;
-
-        currentGroup.alpha = 1f;
+        if (overlay != null)
+        {
+            currentOverlay.gameObject.SetActive(true);
+            currentOverlay.sprite = overlay;
+            currentOverlayGroup.alpha = 1f;
+        }
+        else
+        {
+            currentOverlay.gameObject.SetActive(false);
+        }
     }
 
     public IEnumerator ChangeIllustrationRoutine(Sprite sprite, float duration)
     {
         isTransitioning = true;
 
-        yield return CrossFadeIllustration(sprite, duration);
+        yield return CrossFadeIllustration(sprite, null, false, true , duration);
 
         isTransitioning = false;
     }
     
-    private IEnumerator CrossFadeIllustration(Sprite sprite, float duration)
+    public IEnumerator ChangeIllustrationRoutine(
+        Sprite sprite,
+        Sprite overlay,
+        bool resetBase,
+        bool resetOverlay,
+        float duration)
     {
-        nextIllust.sprite = sprite;
-        nextIllust.gameObject.SetActive(true);
+        isTransitioning = true;
+
+        yield return CrossFadeIllustration(sprite, overlay, resetBase, resetOverlay, duration);
+
+        isTransitioning = false;
+    }
+    
+    private IEnumerator CrossFadeIllustration(
+        Sprite sprite,
+        Sprite overlay,
+        bool resetBase,
+        bool resetOverlay,
+        float duration)
+    {
+        if (resetBase)
+        {
+            currentIllust.gameObject.SetActive(false);
+            currentGroup.alpha = 0f;
+
+            nextIllust.gameObject.SetActive(false);
+            nextGroup.alpha = 0f;
+        }
+        else if (sprite != null)
+        {
+            nextIllust.sprite = sprite;
+            nextIllust.gameObject.SetActive(true);
+            nextGroup.alpha = 0f;
+        }
         
-        nextGroup.alpha = 0f;
+        if (resetOverlay)
+        {
+            currentOverlay.gameObject.SetActive(false);
+            currentOverlayGroup.alpha = 0f;
+
+            nextOverlay.gameObject.SetActive(false);
+            nextOverlayGroup.alpha = 0f;
+        }
+        else if (overlay != null)
+        {
+            nextOverlay.sprite = overlay;
+            nextOverlay.gameObject.SetActive(true);
+            nextOverlayGroup.alpha = 0f;
+        }
         
         float time = 0f;
 
@@ -490,20 +578,40 @@ public class StoryUI : MonoBehaviour
 
             float t = time / duration;
 
-            currentGroup.alpha = 1f - Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(t * 1.1f));
-
-            nextGroup.alpha = Mathf.SmoothStep(0f, 1f, t);
+            if(!resetBase)
+            {
+                currentGroup.alpha = 1f - Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(t * 1.1f));
+                nextGroup.alpha = Mathf.SmoothStep(0f, 1f, t);
+            }
+            if (!resetOverlay)
+            {
+                currentOverlayGroup.alpha = 1f - Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(t * 1.1f));
+                nextOverlayGroup.alpha = Mathf.SmoothStep(0f, 1f, t);
+            }
 
             yield return null;
         }
         
-        nextGroup.alpha = 1f;
-        currentGroup.alpha = 0f;
+        if (!resetBase && sprite != null)
+        {
+            nextGroup.alpha = 1f;
 
-        currentIllust.gameObject.SetActive(false);
+            currentGroup.alpha = 0f;
+            currentIllust.gameObject.SetActive(false);
 
-        (currentIllust, nextIllust) = (nextIllust, currentIllust); // Swap
-        (currentGroup, nextGroup) = (nextGroup, currentGroup); // Swap
+            (currentIllust, nextIllust) = (nextIllust, currentIllust);
+            (currentGroup, nextGroup) = (nextGroup, currentGroup);
+        }
+        
+        if (!resetOverlay && overlay != null)
+        {
+            nextOverlayGroup.alpha = 1f;
+            currentOverlayGroup.alpha = 0f;
+            currentOverlay.gameObject.SetActive(false);
+
+            (currentOverlay, nextOverlay) = (nextOverlay, currentOverlay);
+            (currentOverlayGroup, nextOverlayGroup) = (nextOverlayGroup, currentOverlayGroup);
+        }
     }
     
     public void PlayIllustrationSequence(List<IllustrationFrame> frames, bool useFlashTransition)
@@ -535,7 +643,7 @@ public class StoryUI : MonoBehaviour
             {
                 yield return StartCoroutine(screenEffectUI.FlashWhiteRoutine(2f, 1f, () =>
                 {
-                    ShowIllustration(frame.illustration);
+                    ShowIllustration(frame.illustration, frame.overlayIllustration);
                     SetBackground(frame.background);
                 }));
 
@@ -553,7 +661,7 @@ public class StoryUI : MonoBehaviour
                 }
 
                 illustRoutine =
-                    StartCoroutine(PlayIllustrationTransitionRoutine(frame.illustration, duration, frame.transitionType));
+                    StartCoroutine(PlayIllustrationTransitionRoutine(frame.illustration, frame.overlayIllustration, duration, frame.transitionType));
                 
                 if (bgRoutine != null)
                     yield return bgRoutine;
@@ -568,33 +676,104 @@ public class StoryUI : MonoBehaviour
         isTransitioning = false;
     }
     
-    private IEnumerator PlayIllustrationTransitionRoutine(Sprite sprite, float duration, IllustrationTransitionType type)
+    private IEnumerator PlayIllustrationTransitionRoutine(Sprite sprite, Sprite overlay, float duration, IllustrationTransitionType type)
     {
         switch (type)
         {
             case IllustrationTransitionType.Fade:
-                yield return CrossFadeIllustration(sprite, duration);
+                yield return CrossFadeIllustration(
+                    sprite,
+                    overlay,
+                    false,
+                    false,
+                    duration
+                );
                 break;
 
             case IllustrationTransitionType.Flash:
-                yield return FlashIllustration(sprite, duration);
+                yield return FlashIllustration(sprite, overlay, duration);
                 break;
         }
     }
     
-    private IEnumerator FlashIllustration(Sprite sprite, float duration)
+    private IEnumerator FlashIllustration(Sprite sprite, Sprite overlay, float duration)
     {
         yield return StartCoroutine(
             screenEffectUI.FlashWhiteRoutine(duration, duration/2, () =>
             {
+                currentIllust.gameObject.SetActive(true);
                 currentIllust.sprite = sprite;
+                currentGroup.alpha = 1f;
+                
+                if (overlay != null)
+                {
+                    currentOverlay.gameObject.SetActive(true);
+                    currentOverlay.sprite = overlay;
+                    currentOverlayGroup.alpha = 1f;
+                }
+                else
+                {
+                    currentOverlay.gameObject.SetActive(false);
+                }
             }));
     }
-    
+
     public void HideIllustration()
     {
         currentIllust.gameObject.SetActive(false);
         nextIllust.gameObject.SetActive(false);
+
+        currentOverlay.gameObject.SetActive(false);
+        nextOverlay.gameObject.SetActive(false);
+    }
+    
+    private void ResetIllustrationState()
+    {
+        currentIllust = illustrationA;
+        nextIllust = illustrationB;
+
+        currentGroup = currentIllust.GetComponent<CanvasGroup>();
+        nextGroup = nextIllust.GetComponent<CanvasGroup>();
+
+        currentOverlay = overlayIllustA;
+        nextOverlay = overlayIllustB;
+
+        currentOverlayGroup = currentOverlay.GetComponent<CanvasGroup>();
+        nextOverlayGroup = nextOverlay.GetComponent<CanvasGroup>();
+        
+        // 메인
+        currentIllust.sprite = null;
+        nextIllust.sprite = null;
+
+        currentGroup.alpha = 1f;
+        nextGroup.alpha = 0f;
+
+        currentIllust.gameObject.SetActive(false);
+        nextIllust.gameObject.SetActive(false);
+
+        // 오버레이
+        currentOverlay.sprite = null;
+        nextOverlay.sprite = null;
+
+        currentOverlayGroup.alpha = 0f;
+        nextOverlayGroup.alpha = 0f;
+
+        currentOverlay.gameObject.SetActive(false);
+        nextOverlay.gameObject.SetActive(false);
+
+        // scale 초기화
+        currentIllust.rectTransform.localScale = Vector3.one;
+        nextIllust.rectTransform.localScale = Vector3.one;
+        
+        // 코루틴 초기화
+        if (illustrationSequenceCoroutine != null)
+            StopCoroutine(illustrationSequenceCoroutine);
+
+        if (illustrationCoroutine != null)
+            StopCoroutine(illustrationCoroutine);
+
+        if (illustrationZoomCoroutine != null)
+            StopCoroutine(illustrationZoomCoroutine);
     }
 
     #endregion
