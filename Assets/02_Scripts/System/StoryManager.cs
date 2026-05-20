@@ -264,7 +264,7 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         
         if (line.illustrationSequence != null && line.illustrationSequence.Count > 0)
             storyUI.PlayIllustrationSequence(line.illustrationSequence, line.illustrationSequence[0].useFlashTransition);
-        else if (line.illustrationOverride != null)
+        else if (line.illustrationOverride != null || line.illustrationOverlay != null || line.resetIllustration || line.resetOverlay)
         {
             StartCoroutine(
                 storyUI.ChangeIllustrationRoutine(
@@ -518,9 +518,13 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         
         fadePanel.canvasGroup.gameObject.SetActive(true);
         fadePanel.canvasGroup.blocksRaycasts = true;
-
+        
         storyUI.ClearCurrentLine();
         yield return fadePanel.canvasGroup.DOFade(1f, fadeDuration).SetEase(Ease.InOutBack).WaitForCompletion();
+        
+        storyUI.ApplyInnerThought(false);
+        storyUI.ResetIllustrationState();
+        screenEffectUI.ResetZoom(0.5f);
         
         if (onMid != null)
             yield return StartCoroutine(onMid());
@@ -665,7 +669,7 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
                 }
                 else if (currentScene.visualType == SceneVisualType.Illustration)
                 {
-                    screenEffectUI.ZoomTo(new Vector2(0.5f, 0.5f), 1.1f, line.screenEffect.effectDuration);
+                    screenEffectUI.ZoomTo(new Vector2(0.5f, 0.5f), 1.2f, line.screenEffect.effectDuration);
                     storyUI.FocusMode(true);
                 }
                 break;

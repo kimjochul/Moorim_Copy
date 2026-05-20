@@ -37,6 +37,7 @@ public class StoryUI : MonoBehaviour
     [SerializeField] private GameObject screenRoot;
     [SerializeField] private GameObject characterNameRoot;
     [SerializeField] private GameObject darkBackGround;
+    [SerializeField] private CanvasGroup darkBackgroundGroup;
     [SerializeField] private DialogueLogUI dialogueLogUI;
     [SerializeField] private GameObject defaultIllustBG;
     
@@ -150,6 +151,9 @@ public class StoryUI : MonoBehaviour
         currentBg.gameObject.SetActive(true);
         ResetBackgroundState();
         ResetIllustrationState();
+        
+        darkBackgroundGroup.alpha = 0f;
+        darkBackGround.SetActive(false);
     }
 
     public void Hide()
@@ -339,17 +343,24 @@ public class StoryUI : MonoBehaviour
         HideIndicator();
     }
 
-    private void ApplyInnerThought(bool isInner)
+    public void ApplyInnerThought(bool isInner)
     {
+        darkBackgroundGroup.DOKill();
+        
         if (isInner)
         {
-            contentText.color = Color.gray;
+            contentText.color = Color.gray2;
             darkBackGround.SetActive(true);
+            darkBackgroundGroup.DOFade(0.96f, 0.5f).SetEase(Ease.OutCubic);
         }
         else
         {
             contentText.color = Color.black;
-            darkBackGround.SetActive(false);
+            darkBackgroundGroup.DOFade(0f, 0.5f).SetEase(Ease.OutCubic)
+                .OnComplete(() =>
+                {
+                    darkBackGround.SetActive(false);
+                });
         }
     }
 
@@ -540,6 +551,9 @@ public class StoryUI : MonoBehaviour
         bool resetOverlay,
         float duration)
     {
+        bool changeBase = !resetBase && sprite != null;
+        bool changeOverlay = !resetOverlay && overlay != null;
+        
         if (resetBase)
         {
             currentIllust.gameObject.SetActive(false);
@@ -548,7 +562,7 @@ public class StoryUI : MonoBehaviour
             nextIllust.gameObject.SetActive(false);
             nextGroup.alpha = 0f;
         }
-        else if (sprite != null)
+        else if (changeBase)
         {
             nextIllust.sprite = sprite;
             nextIllust.gameObject.SetActive(true);
@@ -563,7 +577,7 @@ public class StoryUI : MonoBehaviour
             nextOverlay.gameObject.SetActive(false);
             nextOverlayGroup.alpha = 0f;
         }
-        else if (overlay != null)
+        else if (changeOverlay)
         {
             nextOverlay.sprite = overlay;
             nextOverlay.gameObject.SetActive(true);
@@ -578,12 +592,12 @@ public class StoryUI : MonoBehaviour
 
             float t = time / duration;
 
-            if(!resetBase)
+            if(changeBase)
             {
                 currentGroup.alpha = 1f - Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(t * 1.1f));
                 nextGroup.alpha = Mathf.SmoothStep(0f, 1f, t);
             }
-            if (!resetOverlay)
+            if (changeOverlay)
             {
                 currentOverlayGroup.alpha = 1f - Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(t * 1.1f));
                 nextOverlayGroup.alpha = Mathf.SmoothStep(0f, 1f, t);
@@ -592,7 +606,7 @@ public class StoryUI : MonoBehaviour
             yield return null;
         }
         
-        if (!resetBase && sprite != null)
+        if (changeBase)
         {
             nextGroup.alpha = 1f;
 
@@ -603,7 +617,7 @@ public class StoryUI : MonoBehaviour
             (currentGroup, nextGroup) = (nextGroup, currentGroup);
         }
         
-        if (!resetOverlay && overlay != null)
+        if (changeOverlay)
         {
             nextOverlayGroup.alpha = 1f;
             currentOverlayGroup.alpha = 0f;
@@ -727,7 +741,7 @@ public class StoryUI : MonoBehaviour
         nextOverlay.gameObject.SetActive(false);
     }
     
-    private void ResetIllustrationState()
+    public void ResetIllustrationState()
     {
         currentIllust = illustrationA;
         nextIllust = illustrationB;

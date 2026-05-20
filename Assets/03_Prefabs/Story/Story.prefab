@@ -1327,6 +1327,7 @@ GameObject:
   - component: {fileID: 5411706717692577259}
   - component: {fileID: 2309470349367018528}
   - component: {fileID: 7756880892612672656}
+  - component: {fileID: 4449143916274052332}
   m_Layer: 5
   m_Name: DarkBackGround
   m_TagString: Untagged
@@ -1374,7 +1375,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.95686275}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1391,6 +1392,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!225 &4449143916274052332
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3610013905770956741}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 0
+  m_BlocksRaycasts: 0
+  m_IgnoreParentGroups: 0
 --- !u!1 &4028592093296616566
 GameObject:
   m_ObjectHideFlags: 0
@@ -1926,6 +1939,7 @@ MonoBehaviour:
   screenRoot: {fileID: 5095229873546849862}
   characterNameRoot: {fileID: 952915048727020762}
   darkBackGround: {fileID: 3610013905770956741}
+  darkBackgroundGroup: {fileID: 4449143916274052332}
   dialogueLogUI: {fileID: 6549910654475061744}
   defaultIllustBG: {fileID: 3214871995758190920}
   bgImageA: {fileID: 5849150489515698526}
@@ -1939,8 +1953,6 @@ MonoBehaviour:
   nextIndicator: {fileID: 3978921582703580491}
   autoPlayDelay: 1.5
   screenEffectUI: {fileID: 8892238635675893536}
-  illustrationZoomScale: 1.02
-  illustrationZoomDuration: 8
   dialogueRoot: {fileID: 2629280970723207892}
   dialogueCanvasGroup: {fileID: 8943496114814644622}
   focusFade: 0.85
