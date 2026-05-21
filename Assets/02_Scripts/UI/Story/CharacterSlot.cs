@@ -7,6 +7,7 @@ public class CharacterSlot : MonoBehaviour
 {
     public int slotIndex; // 0, 1, 2, 3
 
+    [SerializeField] private RectTransform visualRoot;
     [SerializeField] private Image currentImage;
     [SerializeField] private Image nextImage;
     
@@ -16,19 +17,35 @@ public class CharacterSlot : MonoBehaviour
     private int currentCharacterID = -1;
     public int CurrentCharacterID => currentCharacterID;
 
+    private float currentBaseScale = 1f;
+    
     private Coroutine iconCoroutine;
     
-    private RectTransform rt;
-    public Vector2 SlotPos => rt.anchoredPosition;
+    private RectTransform slotRoot;
+    private RectTransform SlotRoot
+    {
+        get
+        {
+            if (slotRoot == null)
+                slotRoot = GetComponent<RectTransform>();
+
+            return slotRoot;
+        }
+    }
+    public Vector2 SlotPos => SlotRoot.anchoredPosition;
 
     private Coroutine motionCoroutine;
     public bool IsPlayingMotion { get; private set; }
+    
+    private bool isUnknown;
+    private bool isFocused;
+
     
     public Emotion CurrentEmotion { get; private set; }
 
     private void Awake()
     {
-        rt = GetComponent<RectTransform>();
+        slotRoot = GetComponent<RectTransform>();
         
         currentImage.color = Color.white;
         nextImage.color = new Color(1,1,1,0);
@@ -36,6 +53,10 @@ public class CharacterSlot : MonoBehaviour
     
     public void SetCharacter(int characterID, Sprite sprite)
     {
+        HideEmotionIcon();
+        
+        visualRoot.DOKill();
+        
         currentCharacterID = characterID;
         currentImage.sprite = sprite;
         CurrentEmotion = Emotion.Neutral;
@@ -44,9 +65,9 @@ public class CharacterSlot : MonoBehaviour
 
         nextImage.color = new Color(1,1,1,0);
         
-        gameObject.SetActive(true);
+        visualRoot.localScale = Vector3.one * currentBaseScale;
         
-        HideEmotionIcon();
+        gameObject.SetActive(true);
     }
     
     public void SetHidden(int characterID, Sprite sprite)
@@ -54,9 +75,16 @@ public class CharacterSlot : MonoBehaviour
         currentCharacterID = characterID;
         currentImage.sprite = sprite;
         nextImage.color = new Color(1,1,1,0);
+        visualRoot.localScale = Vector3.one * currentBaseScale;
         gameObject.SetActive(false);
     }
 
+    public void SetBaseScale(float scale)
+    {
+        currentBaseScale = scale;
+        visualRoot.localScale = Vector3.one * scale;
+    }
+    
     public void Clear()
     {
         currentCharacterID = -1;
@@ -67,6 +95,7 @@ public class CharacterSlot : MonoBehaviour
     
     public void Appear(int characterID, Sprite sprite, Vector2 targetPos)
     {
+        HideEmotionIcon();
         SetCharacter(characterID, sprite);
         
         StopAllCoroutines();
@@ -81,9 +110,18 @@ public class CharacterSlot : MonoBehaviour
         StartCoroutine(DisappearRoutine(startPos));
     }
     
+    public void SetFocusScale(float focusMultiplier, float duration = 0.25f)
+    {
+        visualRoot.DOKill();
+
+        visualRoot.DOScale(
+            Vector3.one * currentBaseScale * focusMultiplier,
+            duration);
+    }
+    
     public void ChangeExpression(Sprite sprite, float duration = 0.2f)
     {
-        rt.DOKill();
+        SlotRoot.DOKill();
         currentImage.DOKill();
         nextImage.DOKill();
         
@@ -103,11 +141,11 @@ public class CharacterSlot : MonoBehaviour
             currentImage.color = keepColor;
             nextImage.color = new Color(keepColor.r, keepColor.g, keepColor.b, 0f);
             
-            rt.DOScale(1.03f, 0.25f)
+            visualRoot.DOScale(currentBaseScale * 1.03f, 0.25f)
                 .SetEase(Ease.OutQuad)
                 .OnComplete(() =>
                 {
-                    rt.DOScale(1f, 0.25f)
+                    visualRoot.DOScale(currentBaseScale, 0.25f)
                         .SetEase(Ease.InOutQuad);
                 });
         });
@@ -174,7 +212,7 @@ public class CharacterSlot : MonoBehaviour
     // 흔들기 (캐릭터)
     public IEnumerator Shake(float duration = 0.3f, float power = 0.1f)
     {
-        Vector3 origin = rt.anchoredPosition;
+        Vector3 origin = slotRoot.anchoredPosition;
         float time = 0;
 
         while (time < duration)
@@ -184,35 +222,69 @@ public class CharacterSlot : MonoBehaviour
             float x = Random.Range(-power, power);
             float y = Random.Range(-power, power);
 
-            rt.anchoredPosition = origin + new Vector3(x, y, 0);
+            slotRoot.anchoredPosition = origin + new Vector3(x, y, 0);
 
             yield return null;
         }
 
-        rt.anchoredPosition = origin;
+        slotRoot.anchoredPosition = origin;
     }
     
     public void HideEmotionIcon()
     {
+        if (iconCoroutine != null)
+        {
+            StopCoroutine(iconCoroutine);
+            iconCoroutine = null;
+        }
+
         emotionIcon.gameObject.SetActive(false);
     }
 
-    public void SetColor(Color target, float duration = 0.2f)
+    public void SetUnknown(bool value)
     {
-        currentImage.DOColor(target, duration);
+        isUnknown = value;
+        RefreshColor();
+    }
+    
+    public void SetFocused(bool value)
+    {
+        isFocused = value;
+        RefreshColor();
+    }
+
+    private void RefreshColor()
+    {
+        Color target;
+
+        if (isUnknown)
+        {
+            target = new Color(0.1f, 0.1f, 0.1f, 1f);
+        }
+        else if (!isFocused)
+        {
+            target = new Color(0.7f, 0.7f, 0.7f, 1f);
+        }
+        else
+        {
+            target = Color.white;
+        }
+
+        currentImage.DOColor(target, 0.2f);
 
         Color next = nextImage.color;
         next.r = target.r;
         next.g = target.g;
         next.b = target.b;
-        nextImage.DOColor(next, duration);
+
+        nextImage.DOColor(next, 0.2f);
     }
     
     IEnumerator AppearRoutine(Vector2 targetPos)
     {
         Vector2 start = targetPos + Vector2.left * 200f;
 
-        rt.anchoredPosition = start;
+        slotRoot.anchoredPosition = start;
 
         float time = 0;
 
@@ -221,11 +293,11 @@ public class CharacterSlot : MonoBehaviour
             time += Time.deltaTime;
             float t = time / 0.3f;
 
-            rt.anchoredPosition = Vector2.Lerp(start, targetPos, t);
+            slotRoot.anchoredPosition = Vector2.Lerp(start, targetPos, t);
             yield return null;
         }
 
-        rt.anchoredPosition = targetPos;
+        slotRoot.anchoredPosition = targetPos;
     }
     
     IEnumerator DisappearRoutine(Vector2 startPos)
@@ -239,7 +311,7 @@ public class CharacterSlot : MonoBehaviour
             time += Time.deltaTime;
             float t = time / 0.3f;
 
-            rt.anchoredPosition = Vector2.Lerp(startPos, end, t);
+            slotRoot.anchoredPosition = Vector2.Lerp(startPos, end, t);
             yield return null;
         }
 
@@ -250,10 +322,10 @@ public class CharacterSlot : MonoBehaviour
     {
         transform.DOKill();
 
-        Vector2 start = rt.anchoredPosition;
+        Vector2 start = slotRoot.anchoredPosition;
         Vector2 target = start + direction * distance;
 
-        Tween tween = rt.DOAnchorPos(target, duration).SetEase(Ease.InOutQuad);
+        Tween tween = slotRoot.DOAnchorPos(target, duration).SetEase(Ease.InOutQuad);
         
         yield return tween.WaitForCompletion();
         
@@ -269,16 +341,13 @@ public class CharacterSlot : MonoBehaviour
         
         // 시작 위치 (화면 밖)
         Vector3 start = targetPos + direction * distance;
-        rt.anchoredPosition = start;
+        slotRoot.anchoredPosition = start;
 
-        if (isUnknown)
-            SetColor(new Color(0.1f, 0.1f, 0.1f, 1f));
-        else
-            SetColor(Color.white);
+        SetUnknown(isUnknown);
         
         Sequence seq = DOTween.Sequence();
 
-        seq.Append(rt.DOAnchorPos(targetPos, duration).SetEase(Ease.OutCubic));
+        seq.Append(slotRoot.DOAnchorPos(targetPos, duration).SetEase(Ease.OutCubic));
         seq.Join(currentImage.DOFade(1f, duration));
 
         yield return seq.WaitForCompletion();
@@ -286,42 +355,42 @@ public class CharacterSlot : MonoBehaviour
     
     public IEnumerator PlayAttack(Vector2 dir, float power = 80f, float duration = 0.15f)
     {
-        Vector2 origin = rt.anchoredPosition;
+        Vector2 origin = slotRoot.anchoredPosition;
         
         Vector2 forward = origin + dir * power;
 
         Sequence seq = DOTween.Sequence();
-        seq.Append(rt.DOAnchorPos(forward, duration).SetEase(Ease.OutQuad));
-        seq.Append(rt.DOAnchorPos(origin, duration).SetEase(Ease.InQuad));
+        seq.Append(slotRoot.DOAnchorPos(forward, duration).SetEase(Ease.OutQuad));
+        seq.Append(slotRoot.DOAnchorPos(origin, duration).SetEase(Ease.InQuad));
         
         yield return seq.WaitForCompletion();
     }
     
     public IEnumerator PlayHit(Vector2 dir, float power = 30f, float duration = 0.2f)
     {
-        Vector2 origin = rt.anchoredPosition;
+        Vector2 origin = slotRoot.anchoredPosition;
         Debug.Log("Hit");
         Sequence seq = DOTween.Sequence();
 
-        seq.Append(rt.DOAnchorPos(origin + dir * power, duration * 0.3f));
-        seq.Append(rt.DOAnchorPos(origin, duration * 0.7f));
+        seq.Append(slotRoot.DOAnchorPos(origin + dir * power, duration * 0.3f));
+        seq.Append(slotRoot.DOAnchorPos(origin, duration * 0.7f));
 
         // 흔들림
-        rt.DOShakeAnchorPos(duration, 10f, 20, 90, false, true);
+        slotRoot.DOShakeAnchorPos(duration, 10f, 20, 90, false, true);
         
         yield return seq.WaitForCompletion();
     }
     
     public IEnumerator EmphasisRoutine(float strength = 0.2f)
     {
-        Tween tween = rt.DOPunchScale(Vector3.one * strength, 0.3f, 10, 1);
+        Tween tween = slotRoot.DOPunchScale(Vector3.one * strength, 0.3f, 10, 1);
         
         yield return tween.WaitForCompletion();
     }
     
     public IEnumerator NervousRoutine()
     {
-        Tween tween = rt.DOShakeAnchorPos(0.5f, 5f, 30);
+        Tween tween = slotRoot.DOShakeAnchorPos(0.5f, 5f, 30);
         
         yield return tween.WaitForCompletion();
     }

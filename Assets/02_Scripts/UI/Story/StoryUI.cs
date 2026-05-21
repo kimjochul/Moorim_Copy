@@ -158,6 +158,8 @@ public class StoryUI : MonoBehaviour
 
     public void Hide()
     {
+        StopAllAutoPlay();
+        
         root.SetActive(false);
         screenRoot.SetActive(false);
         defaultIllustBG.SetActive(false);
@@ -201,6 +203,8 @@ public class StoryUI : MonoBehaviour
 
     public void ShowLine(StoryLine line)
     {
+        StopAllAutoPlay();
+        
         if (typingCoroutine != null)
             StopCoroutine(typingCoroutine);
 
@@ -334,6 +338,8 @@ public class StoryUI : MonoBehaviour
             StopCoroutine(typingCoroutine);
             typingCoroutine = null;
         }
+
+        StopAllAutoPlay();
 
         contentText.text = "";
         speakerText.text = "";
@@ -988,6 +994,24 @@ public class StoryUI : MonoBehaviour
             StopAutoPlay();
         }
     }
+    
+    private void StopAllAutoPlay()
+    {
+        if (autoCoroutine != null)
+        {
+            StopCoroutine(autoCoroutine);
+            autoCoroutine = null;
+        }
+
+        if (autoPlayCoroutine != null)
+        {
+            StopCoroutine(autoPlayCoroutine);
+            autoPlayCoroutine = null;
+        }
+
+        isCutSceneAuto = false;
+        isAutoPlayEnabled = false;
+    }
     #endregion
 
     #region 대사창에 효과
@@ -1062,6 +1086,9 @@ public class StoryUI : MonoBehaviour
     private void HandleMouseInput()
     {
         if (!Input.GetMouseButtonDown(0))
+            return;
+        
+        if (StoryManager.Instance.IsInputLocked)
             return;
         
         if (isPointerBlocking)

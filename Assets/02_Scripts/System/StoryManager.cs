@@ -65,6 +65,9 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
 
     private bool isPlaying;
     private bool isTransitioning;
+    private bool isInputLocked;
+    public bool IsInputLocked => isInputLocked;
+    private bool canAdvance = true;
 
     private Queue<StoryTrigger> triggerQueue = new();
     
@@ -236,21 +239,42 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
 
     public void ShowNextLine()
     {
+        if (!canAdvance)
+            return;
+        
+        canAdvance = false;
+
+        StartCoroutine(ShowNextLineRoutine());
+    }
+    
+    private IEnumerator ShowNextLineRoutine()
+    {
         if (!isPlaying || currentScene == null)
-            return;
-        
-        if (isTransitioning) 
-            return;
-        
-        // 🔥 씬 끝났을 때
+        {
+            canAdvance = true;
+            yield break;
+        }
+
+        if (isTransitioning)
+        {
+            canAdvance = true;
+            yield break;
+        }
+
         if (currentIndex >= currentScene.lines.Count)
         {
-            StartCoroutine(HandleSceneEndRoutine());
-            return;
+            yield return StartCoroutine(HandleSceneEndRoutine());
+            canAdvance = true;
+            yield break;
         }
-        
+
         var line = currentScene.lines[currentIndex++];
-        StartCoroutine(ShowLineRoutine(line));
+
+        yield return StartCoroutine(ShowLineRoutine(line));
+
+        yield return null; // ← 중요
+
+        canAdvance = true;
     }
     
     private IEnumerator ShowLineRoutine(StoryLine line)
@@ -302,7 +326,8 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
                 );
             }
             
-            characterUI.ShowEmotionIcon(line.characterID, line.emotion);
+            if(line.showEmotionIcon)
+                characterUI.ShowEmotionIcon(line.characterID, line.emotion);
             
             if (line.isUnknown)
             {
@@ -337,7 +362,7 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         switch (transitionType)
         {
             case SceneTransitionType.Fade:
-                StartCoroutine(PlaySceneTransition(()=>SetupSceneInternal(false)));
+                yield return StartCoroutine(PlaySceneTransition(()=>SetupSceneInternal(false)));
                 break;
 
             case SceneTransitionType.None:
@@ -515,6 +540,7 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
     private IEnumerator PlaySceneTransition(Func<IEnumerator> onMid)
     {
         isTransitioning = true; // ⭐ 잠금
+        isInputLocked = true;
         
         fadePanel.canvasGroup.gameObject.SetActive(true);
         fadePanel.canvasGroup.blocksRaycasts = true;
@@ -540,8 +566,15 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         fadePanel.canvasGroup.gameObject.SetActive(false);
         
         isTransitioning = false;
+
+        yield return null;
         
         ShowNextLine();
+
+        yield return null;
+        yield return null;
+        
+        isInputLocked = false;
     }
     
     private void ApplyScreenEffect(ScreenEffectData effect)

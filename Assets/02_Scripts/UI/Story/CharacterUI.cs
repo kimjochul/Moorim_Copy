@@ -99,9 +99,19 @@ public class CharacterUI : MonoBehaviour
             var preset = presets[info.slotIndex];
 
             RectTransform rt = slot.GetComponent<RectTransform>();
+            
+            
+            Vector2 finalPos = preset.position;
+            float finalScale = preset.scale;
 
-            rt.anchoredPosition = preset.position;
-            rt.localScale = Vector3.one * preset.scale;
+            if (dataDict[info.characterID] != null && dataDict[info.characterID].visual != null)
+            {
+                finalPos += dataDict[info.characterID].visual.offset;
+                finalScale *= dataDict[info.characterID].visual.baseScale;
+            }
+
+            rt.anchoredPosition = finalPos;
+            slot.SetBaseScale(finalScale);
 
             // 이미 같은 슬롯에 있으면 유지
             if (currentSlotMap.TryGetValue(info.characterID, out int prevSlot))
@@ -171,10 +181,7 @@ public class CharacterUI : MonoBehaviour
         var slot = FindSlot(characterID);
         if (slot == null) return;
 
-        if (isUnknown)
-            slot.SetColor(new Color(0.1f, 0.1f, 0.1f, 1f));
-        else
-            slot.SetColor(Color.white);
+        slot.SetUnknown(isUnknown);
     }
 
     public void Focus(int speakerID)
@@ -191,17 +198,16 @@ public class CharacterUI : MonoBehaviour
             var preset = presets[slotIndex];
             
             RectTransform rt = slot.GetComponent<RectTransform>();
-            var cg = slot.GetComponent<CanvasGroup>();
             
             if (id == speakerID)
             {
-                rt.DOScale(Vector3.one * preset.focusScale, 0.2f);
-                slot.SetColor(Color.white);
+                slot.SetFocusScale(preset.focusScale, 0.2f);
+                slot.SetFocused(true);
             }
             else
             {
-                rt.DOScale(Vector3.one * preset.scale, 0.2f);
-                slot.SetColor(new Color(0.7f, 0.7f, 0.7f, 1f));
+                slot.SetFocusScale(preset.scale, 0.2f);
+                slot.SetFocused(false);
             }
         }
     }
@@ -215,6 +221,14 @@ public class CharacterUI : MonoBehaviour
 
         var preset = presets[slot.slotIndex];
 
+        Vector2 finalPos = preset.position;
+        if (dataDict[characterID] != null && dataDict[characterID].visual != null)
+        {
+            finalPos += dataDict[characterID].visual.offset;
+        }
+        
+        Debug.Log($"{slot.slotIndex}, {slot.SlotPos} , {finalPos}");
+        
         switch (motion.type)
         {
             case MotionType.MoveLeft:
@@ -238,11 +252,11 @@ public class CharacterUI : MonoBehaviour
                 break;
 
             case MotionType.EnterLeft:
-                yield return slot.EnterRoutine(preset.position, Vector2.left, motion.value, motion.duration, isUnknown);
+                yield return slot.EnterRoutine(finalPos, Vector2.left, motion.value, motion.duration, isUnknown);
                 break;
 
             case MotionType.EnterRight:
-                yield return slot.EnterRoutine(preset.position, Vector2.right, motion.value, motion.duration, isUnknown);
+                yield return slot.EnterRoutine(finalPos, Vector2.right, motion.value, motion.duration, isUnknown);
                 break;
 
             case MotionType.Shake:
