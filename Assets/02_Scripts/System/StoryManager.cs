@@ -42,6 +42,7 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
     private StoryUI storyUI;
     public StoryUI StoryUI => storyUI;
     private CharacterUI characterUI;
+    public CharacterUI CharacterUI => characterUI;
     private StoryFadePanel fadePanel;
     private ScreenEffectUI screenEffectUI;
 
@@ -60,6 +61,7 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
     private int currentIndex; // 한 스토리 뭉치 내에서 대사 인덱스
     private int currentSceneIndex;
     private StoryScene currentScene;
+    public StoryScene CurrentScene => currentScene;
     private StoryTrigger currentTrigger; // 현재 트리거
 
 
@@ -306,29 +308,6 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
             characterUI.SetUnknown(line.characterID, line.isUnknown);
             characterUI.SetExpression(line.characterID, line.emotion);
             
-            if (line.motions != null && line.motions.Count > 0)
-            {
-                foreach (var cmd in line.motions)
-                {
-                    yield return StartCoroutine(
-                        characterUI.PlayMotionRoutine(cmd, line.isUnknown)
-                    );
-                }
-            }
-            else if (line.motion != null && line.motion.type != MotionType.None)
-            {
-                yield return StartCoroutine(
-                    characterUI.PlayMotionRoutine(
-                        line.characterID,
-                        line.motion,
-                        line.isUnknown
-                    )
-                );
-            }
-            
-            if(line.showEmotionIcon)
-                characterUI.ShowEmotionIcon(line.characterID, line.emotion);
-            
             if (line.isUnknown)
             {
                 characterUI.Focus(-1); // 강조 없음
@@ -343,6 +322,30 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
             storyUI.HideCharacterName();
             characterUI.Focus(-1); // 아무도 강조 안함
         }
+        
+        
+        if (line.motions != null && line.motions.Count > 0)
+        {
+            foreach (var cmd in line.motions)
+            {
+                yield return StartCoroutine(
+                    characterUI.PlayMotionRoutine(cmd, line.isUnknown)
+                );
+            }
+        }
+        else if (line.motion != null && line.motion.type != MotionType.None)
+        {
+            yield return StartCoroutine(
+                characterUI.PlayMotionRoutine(
+                    line.characterID,
+                    line.motion,
+                    line.isUnknown
+                )
+            );
+        }
+            
+        if(line.showEmotionIcon)
+            characterUI.ShowEmotionIcon(line.characterID, line.emotion);
     }
 
     private IEnumerator HandleSceneEndRoutine()
@@ -363,11 +366,14 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         {
             case SceneTransitionType.Fade:
                 yield return StartCoroutine(PlaySceneTransition(()=>SetupSceneInternal(false)));
+                canAdvance = true;
+                ShowNextLine();
                 break;
 
             case SceneTransitionType.None:
                 storyUI.ClearCurrentLine();
                 yield return StartCoroutine(SetupSceneInternal(true));
+                canAdvance = true;
                 ShowNextLine();
                 break;
         }
@@ -548,7 +554,9 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         storyUI.ClearCurrentLine();
         yield return fadePanel.canvasGroup.DOFade(1f, fadeDuration).SetEase(Ease.InOutBack).WaitForCompletion();
         
-        storyUI.ApplyInnerThought(false);
+        SceneVisualType visualType = currentScene?.visualType ?? SceneVisualType.CharacterSlots;
+        storyUI.ApplyInnerThought(false, visualType, -1);
+        
         storyUI.ResetIllustrationState();
         screenEffectUI.ResetZoom(0.5f);
         
@@ -567,6 +575,7 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         
         isTransitioning = false;
 
+        yield return null;
         yield return null;
         
         ShowNextLine();

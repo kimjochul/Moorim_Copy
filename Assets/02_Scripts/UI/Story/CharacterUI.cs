@@ -9,6 +9,7 @@ public class SlotPreset
 {
     public Vector2 position;
     public float scale;
+    public int sortingOrder;
     
     [Header("연출용")]
     public float focusScale;   // 강조 시 크기
@@ -22,6 +23,9 @@ public class CharacterUI : MonoBehaviour
 
     [Header("캐릭터 데이터")]
     [SerializeField] private List<Character> characterDatas;
+    
+    [Header("Inner Thought")]
+    [SerializeField] private GameObject dimObject;
 
     private Dictionary<int, Character> dataDict; // 캐릭터 id -> 객체
 
@@ -96,8 +100,10 @@ public class CharacterUI : MonoBehaviour
             newIDs.Add(info.characterID);
 
             var slot = slots[info.slotIndex];
+            
             var preset = presets[info.slotIndex];
-
+            slot.transform.SetSiblingIndex(preset.sortingOrder);
+            
             RectTransform rt = slot.GetComponent<RectTransform>();
             
             
@@ -202,6 +208,7 @@ public class CharacterUI : MonoBehaviour
             if (id == speakerID)
             {
                 slot.SetFocusScale(preset.focusScale, 0.2f);
+                slot.transform.SetAsLastSibling();
                 slot.SetFocused(true);
             }
             else
@@ -212,6 +219,51 @@ public class CharacterUI : MonoBehaviour
         }
     }
 
+    public void ApplyInnerThoughtFocus(int thinkerID, bool enable)
+    {
+        if (dimObject == null)
+            return;
+
+        dimObject.SetActive(enable);
+
+        if (!enable)
+            return;
+
+        foreach (var slot in slots)
+        {
+            if (slot.CurrentCharacterID == -1)
+                continue;
+
+            int id = slot.CurrentCharacterID;
+
+            if (!currentSlotMap.TryGetValue(id, out int slotIndex))
+                continue;
+
+            var preset = presets[slotIndex];
+
+            if (enable)
+            {
+                if (id == thinkerID)
+                {
+                    // dim보다 위
+                    slot.transform.SetAsLastSibling();
+                }
+                else
+                {
+                    // dim보다 아래
+                    slot.transform.SetSiblingIndex(
+                        Mathf.Min(preset.sortingOrder, dimObject.transform.GetSiblingIndex() - 1)
+                    );
+                }
+            }
+            else
+            {
+                // 원래 정렬 복구
+                slot.transform.SetSiblingIndex(preset.sortingOrder);
+            }
+        }
+    }
+    
     public IEnumerator PlayMotionRoutine(int characterID, MotionData motion, bool isUnknown)
     {
         var slot = FindSlot(characterID);
@@ -232,15 +284,47 @@ public class CharacterUI : MonoBehaviour
         switch (motion.type)
         {
             case MotionType.MoveLeft:
-                slot.transform.position += Vector3.left * motion.value;
+                yield return slot.MoveRoutine(Vector2.left, motion.value, motion.duration);
                 break;
 
             case MotionType.MoveRight:
-                slot.transform.position += Vector3.right * motion.value;
+                yield return slot.MoveRoutine(Vector2.right, motion.value, motion.duration);
                 break;
+            
+            case MotionType.MoveToTarget:
+            {
+                if (motion.targetSlotIndex < 0 ||
+                    motion.targetSlotIndex >= slots.Count)
+                    yield break;
+
+                var target = slots[motion.targetSlotIndex];
+
+                Vector2 targetPos = target.SlotPos;
+                Vector2 dir = GetDirection(slot, target);
+
+                Vector2 destination = targetPos - dir * motion.stopDistance;
+                
+                yield return slot.MoveToPosition(destination, motion.duration);
+
+                break;
+            }
+            
+            case MotionType.ReturnSlot:
+            {
+                Vector2 originalPos = presets[slot.slotIndex].position;
+
+                if (dataDict[characterID] != null && dataDict[characterID].visual != null)
+                {
+                    originalPos += dataDict[characterID].visual.offset;
+                }
+                yield return slot.MoveToPosition(originalPos, motion.duration); 
+
+                slot.transform.SetSiblingIndex(preset.sortingOrder);
+                break;
+            }
 
             case MotionType.Jump:
-                StartCoroutine(Jump(slot.transform, motion));
+                yield return slot.JumpRoutine(motion.value, motion.duration);
                 break;
             
             case MotionType.ExitLeft:
@@ -336,26 +420,6 @@ public class CharacterUI : MonoBehaviour
     public CharacterSlot FindSlot(int characterID)
     {
         return slots.Find(s => s.CurrentCharacterID == characterID);
-    }
-
-    
-    IEnumerator Jump(Transform t, MotionData motion)
-    {
-        Vector3 start = t.position;
-        Vector3 peak = start + Vector3.up * motion.value;
-
-        float time = 0;
-
-        while (time < motion.duration)
-        {
-            time += Time.deltaTime;
-            float t01 = time / motion.duration;
-
-            t.position = Vector3.Lerp(start, peak, Mathf.Sin(t01 * Mathf.PI));
-            yield return null;
-        }
-
-        t.position = start;
     }
     
     public void ShowEmotionIcon(int characterID, Emotion emotion)

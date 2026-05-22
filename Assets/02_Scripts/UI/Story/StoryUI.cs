@@ -267,7 +267,7 @@ public class StoryUI : MonoBehaviour
             ShowCharacterName();
         }
 
-        ApplyInnerThought(line.isInnerThought);
+        ApplyInnerThought(line.isInnerThought, StoryManager.Instance.CurrentScene.visualType, line.characterID);
     }
     
     IEnumerator TypeLine(string text)
@@ -349,24 +349,36 @@ public class StoryUI : MonoBehaviour
         HideIndicator();
     }
 
-    public void ApplyInnerThought(bool isInner)
+    public void ApplyInnerThought(bool isInner, SceneVisualType visualType, int thinkerID)
     {
         darkBackgroundGroup.DOKill();
         
-        if (isInner)
+        bool useIllustrationDim = visualType == SceneVisualType.Illustration;
+
+        if (useIllustrationDim)
         {
-            contentText.color = Color.gray2;
-            darkBackGround.SetActive(true);
-            darkBackgroundGroup.DOFade(0.96f, 0.5f).SetEase(Ease.OutCubic);
+            if (isInner)
+            {
+                contentText.color = Color.gray2;
+                darkBackGround.SetActive(true);
+                darkBackgroundGroup.DOFade(0.96f, 0.5f).SetEase(Ease.OutCubic);
+            }
+            else
+            {
+                contentText.color = Color.black;
+                darkBackgroundGroup.DOFade(0f, 0.5f).SetEase(Ease.OutCubic)
+                    .OnComplete(() => { darkBackGround.SetActive(false); });
+            }
+            StoryManager.Instance.CharacterUI.ApplyInnerThoughtFocus(-1,false);
         }
         else
         {
-            contentText.color = Color.black;
-            darkBackgroundGroup.DOFade(0f, 0.5f).SetEase(Ease.OutCubic)
-                .OnComplete(() =>
-                {
-                    darkBackGround.SetActive(false);
-                });
+            darkBackGround.SetActive(false);
+            contentText.color = isInner
+                ? Color.gray2
+                : Color.black;
+
+            StoryManager.Instance.CharacterUI.ApplyInnerThoughtFocus(thinkerID, isInner);
         }
     }
 

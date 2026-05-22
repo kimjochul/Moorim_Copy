@@ -91,6 +91,8 @@ public class MotionData
     public MotionType type;
     public float duration = 0.5f;
     public float value = 1f; // 이동 거리 or 점프 높이
+    public int targetSlotIndex = -1;
+    public float stopDistance = 100f;
 }
 
 [Serializable]
@@ -141,6 +143,8 @@ public enum MotionType
     Hit,      // 추가
     Emphasis,    // 강조
     Nervous,  // 떨림
+    MoveToTarget,
+    ReturnSlot
 }
 
 public enum ScreenEffectType

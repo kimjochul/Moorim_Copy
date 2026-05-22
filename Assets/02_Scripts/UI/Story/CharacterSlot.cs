@@ -7,6 +7,7 @@ public class CharacterSlot : MonoBehaviour
 {
     public int slotIndex; // 0, 1, 2, 3
 
+    [SerializeField] private RectTransform motionRoot;
     [SerializeField] private RectTransform visualRoot;
     [SerializeField] private Image currentImage;
     [SerializeField] private Image nextImage;
@@ -32,10 +33,14 @@ public class CharacterSlot : MonoBehaviour
             return slotRoot;
         }
     }
+    public RectTransform MotionRoot => motionRoot;
     public Vector2 SlotPos => SlotRoot.anchoredPosition;
 
     private Coroutine motionCoroutine;
-    public bool IsPlayingMotion { get; private set; }
+    
+    private int motionLock = 0;
+    public bool IsPlayingMotion => motionLock > 0;
+
     
     private bool isUnknown;
     private bool isFocused;
@@ -121,9 +126,9 @@ public class CharacterSlot : MonoBehaviour
     
     public void ChangeExpression(Sprite sprite, float duration = 0.2f)
     {
-        SlotRoot.DOKill();
         currentImage.DOKill();
         nextImage.DOKill();
+        visualRoot.DOKill();
         
         Color keepColor = currentImage.color;
         nextImage.sprite = sprite;
@@ -212,7 +217,8 @@ public class CharacterSlot : MonoBehaviour
     // 흔들기 (캐릭터)
     public IEnumerator Shake(float duration = 0.3f, float power = 0.1f)
     {
-        Vector3 origin = slotRoot.anchoredPosition;
+        BeginMotion();
+        
         float time = 0;
 
         while (time < duration)
@@ -222,12 +228,14 @@ public class CharacterSlot : MonoBehaviour
             float x = Random.Range(-power, power);
             float y = Random.Range(-power, power);
 
-            slotRoot.anchoredPosition = origin + new Vector3(x, y, 0);
+            motionRoot.anchoredPosition = new Vector2(x, y);
 
             yield return null;
         }
 
-        slotRoot.anchoredPosition = origin;
+        motionRoot.anchoredPosition = Vector2.zero;
+        
+        EndMotion();
     }
     
     public void HideEmotionIcon()
@@ -282,9 +290,10 @@ public class CharacterSlot : MonoBehaviour
     
     IEnumerator AppearRoutine(Vector2 targetPos)
     {
-        Vector2 start = targetPos + Vector2.left * 200f;
-
-        slotRoot.anchoredPosition = start;
+        BeginMotion();
+        
+        Vector2 startOffset = Vector2.left * 200f;
+        motionRoot.anchoredPosition = startOffset;
 
         float time = 0;
 
@@ -293,16 +302,20 @@ public class CharacterSlot : MonoBehaviour
             time += Time.deltaTime;
             float t = time / 0.3f;
 
-            slotRoot.anchoredPosition = Vector2.Lerp(start, targetPos, t);
+            motionRoot.anchoredPosition = Vector2.Lerp(startOffset, Vector2.zero, t);
             yield return null;
         }
 
-        slotRoot.anchoredPosition = targetPos;
+        motionRoot.anchoredPosition = Vector2.zero;
+        EndMotion();
     }
     
     IEnumerator DisappearRoutine(Vector2 startPos)
     {
-        Vector2  end = startPos + Vector2.right * 200f;
+        BeginMotion();
+        
+        motionRoot.anchoredPosition = Vector2.zero;
+        Vector2 endOffset = Vector2.right * 200f;
 
         float time = 0;
 
@@ -311,88 +324,164 @@ public class CharacterSlot : MonoBehaviour
             time += Time.deltaTime;
             float t = time / 0.3f;
 
-            slotRoot.anchoredPosition = Vector2.Lerp(startPos, end, t);
+            motionRoot.anchoredPosition = Vector2.Lerp(startPos, endOffset, t);
             yield return null;
         }
-
-        gameObject.SetActive(false);
+        
+        EndMotion();
     }
+    
+    public IEnumerator MoveRoutine(Vector2 dir, float distance, float duration)
+    {
+        BeginMotion();
+
+        Vector2 target = dir * distance;
+
+        Tween tween = motionRoot
+            .DOAnchorPos(target, duration)
+            .SetEase(Ease.OutQuad);
+
+        yield return tween.WaitForCompletion();
+
+        motionRoot.anchoredPosition = Vector2.zero;
+
+        EndMotion();
+    }
+    
+    public IEnumerator MoveToPosition(Vector2 targetPos, float duration)
+    {
+        BeginMotion();
+
+        Debug.Log($"{slotIndex}번 슬롯 {targetPos}로 이동");
+        Tween tween = slotRoot.DOAnchorPos(targetPos, duration).SetEase(Ease.InOutQuad);
+
+        yield return tween.WaitForCompletion();
+
+        EndMotion();
+    }
+    
+    
     
     public IEnumerator ExitRoutine(Vector2 direction, float distance, float duration)
     {
-        transform.DOKill();
+        BeginMotion();
+        
+        motionRoot.DOKill();
+        
+        Vector2 targetOffset = direction * distance;
 
-        Vector2 start = slotRoot.anchoredPosition;
-        Vector2 target = start + direction * distance;
-
-        Tween tween = slotRoot.DOAnchorPos(target, duration).SetEase(Ease.InOutQuad);
+        Tween tween = motionRoot.DOAnchorPos(targetOffset, duration).SetEase(Ease.InOutQuad);
         
         yield return tween.WaitForCompletion();
         
-        Disappear(target);
+        EndMotion();
+        gameObject.SetActive(false);
     }
     
     public IEnumerator EnterRoutine(Vector2 targetPos, Vector2 direction, float distance, float duration, bool isUnknown)
     {
         gameObject.SetActive(true);
-        transform.DOKill();
+        BeginMotion();
+        motionRoot.DOKill();
 
         nextImage.color = new Color(1,1,1,0);
         
+        slotRoot.anchoredPosition = targetPos;
         // 시작 위치 (화면 밖)
-        Vector3 start = targetPos + direction * distance;
-        slotRoot.anchoredPosition = start;
+        Vector2 startOffset = direction * distance;
+        motionRoot.anchoredPosition = startOffset;
 
         SetUnknown(isUnknown);
         
         Sequence seq = DOTween.Sequence();
 
-        seq.Append(slotRoot.DOAnchorPos(targetPos, duration).SetEase(Ease.OutCubic));
+        seq.Append(motionRoot.DOAnchorPos(Vector2.zero, duration).SetEase(Ease.OutCubic));
         seq.Join(currentImage.DOFade(1f, duration));
 
         yield return seq.WaitForCompletion();
+        
+        motionRoot.anchoredPosition = Vector2.zero;
+        EndMotion();
     }
     
     public IEnumerator PlayAttack(Vector2 dir, float power = 80f, float duration = 0.15f)
     {
-        Vector2 origin = slotRoot.anchoredPosition;
+        BeginMotion();
         
-        Vector2 forward = origin + dir * power;
+        Vector2 forward = dir * power;
 
         Sequence seq = DOTween.Sequence();
-        seq.Append(slotRoot.DOAnchorPos(forward, duration).SetEase(Ease.OutQuad));
-        seq.Append(slotRoot.DOAnchorPos(origin, duration).SetEase(Ease.InQuad));
+        seq.Append(motionRoot.DOAnchorPos(forward, duration).SetEase(Ease.OutQuad));
+        seq.Append(motionRoot.DOAnchorPos(Vector2.zero, duration).SetEase(Ease.InQuad));
         
         yield return seq.WaitForCompletion();
+        
+        motionRoot.anchoredPosition = Vector2.zero;
+        EndMotion();
     }
     
     public IEnumerator PlayHit(Vector2 dir, float power = 30f, float duration = 0.2f)
     {
-        Vector2 origin = slotRoot.anchoredPosition;
+        BeginMotion();
+        
         Debug.Log("Hit");
         Sequence seq = DOTween.Sequence();
 
-        seq.Append(slotRoot.DOAnchorPos(origin + dir * power, duration * 0.3f));
-        seq.Append(slotRoot.DOAnchorPos(origin, duration * 0.7f));
+        seq.Append(motionRoot.DOAnchorPos(dir * power, duration * 0.3f));
+        seq.Append(motionRoot.DOAnchorPos(Vector2.zero, duration * 0.7f));
 
         // 흔들림
-        slotRoot.DOShakeAnchorPos(duration, 10f, 20, 90, false, true);
+        motionRoot.DOShakeAnchorPos(duration, 10f, 20, 90, false, true);
         
         yield return seq.WaitForCompletion();
+        
+        motionRoot.anchoredPosition = Vector2.zero;
+        EndMotion();
+    }
+    
+    public IEnumerator JumpRoutine(float height, float duration)
+    {
+        BeginMotion();
+
+        float time = 0;
+
+        while (time < duration)
+        {
+            time += Time.deltaTime;
+
+            float t = time / duration;
+
+            float y = Mathf.Sin(t * Mathf.PI) * height;
+
+            motionRoot.anchoredPosition =
+                new Vector2(0, y);
+
+            yield return null;
+        }
+
+        motionRoot.anchoredPosition = Vector2.zero;
+
+        EndMotion();
     }
     
     public IEnumerator EmphasisRoutine(float strength = 0.2f)
     {
-        Tween tween = slotRoot.DOPunchScale(Vector3.one * strength, 0.3f, 10, 1);
+        BeginMotion();
+        Tween tween = visualRoot.DOPunchScale(Vector3.one * strength, 0.3f, 10, 1);
         
         yield return tween.WaitForCompletion();
+        EndMotion();
     }
     
     public IEnumerator NervousRoutine()
     {
-        Tween tween = slotRoot.DOShakeAnchorPos(0.5f, 5f, 30);
+        BeginMotion();
+        Tween tween = motionRoot.DOShakeAnchorPos(0.5f, 5f, 30);
         
         yield return tween.WaitForCompletion();
+        
+        motionRoot.anchoredPosition = Vector2.zero;
+        EndMotion();
     }
     
     public void ClearImmediate()
@@ -409,5 +498,15 @@ public class CharacterSlot : MonoBehaviour
     public void SetEmotion(Emotion emotion)
     {
         CurrentEmotion = emotion;
+    }
+    
+    private void BeginMotion()
+    {
+        motionLock++;
+    }
+
+    private void EndMotion()
+    {
+        motionLock = Mathf.Max(0, motionLock - 1);
     }
 }
