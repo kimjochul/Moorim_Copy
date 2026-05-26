@@ -95,6 +95,7 @@ public class StoryUI : MonoBehaviour
     
     private float defaultContentFontSize;
     private float accentFontSize;
+    private float smallFontSize;
     
     private Image currentBg;
     private Image nextBg;
@@ -118,6 +119,7 @@ public class StoryUI : MonoBehaviour
     {
         defaultContentFontSize = UIManager.Instance.GetTextScale();
         accentFontSize = UIManager.Instance.GetTextScale() * 1.3f;
+        smallFontSize = UIManager.Instance.GetTextScale() * 0.7f;
         UIManager.Instance.OnFontSizeChanged += SetFontSize;
 
         InitBackGround();
@@ -214,8 +216,11 @@ public class StoryUI : MonoBehaviour
         
         defaultContentFontSize = UIManager.Instance.GetTextScale();
         accentFontSize = UIManager.Instance.GetTextScale() * 1.3f;
+        smallFontSize = UIManager.Instance.GetTextScale() * 0.7f;
         if (line.useAccentFontSize)
             SetFontSize(accentFontSize);
+        else if (line.useSmallFontSize)
+            SetFontSize(smallFontSize);
         else
             SetFontSize(defaultContentFontSize);
         

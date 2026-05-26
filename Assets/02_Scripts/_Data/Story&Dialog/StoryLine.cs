@@ -49,6 +49,7 @@ public class StoryLine
     
     [Header("강조 대사인지")]
     public bool useAccentFontSize;
+    public bool useSmallFontSize;
     
     [Header("대사 창을 내릴 지(대사 없이 그림만 나올 때 사용 가능)")]
     public bool hideDialogueUI;

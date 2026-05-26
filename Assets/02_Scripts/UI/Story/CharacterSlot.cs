@@ -350,7 +350,9 @@ public class CharacterSlot : MonoBehaviour
     
     public IEnumerator MoveToPosition(Vector2 targetPos, float duration)
     {
+        gameObject.SetActive(true);
         BeginMotion();
+        motionRoot.DOKill();
 
         Debug.Log($"{slotIndex}번 슬롯 {targetPos}로 이동");
         Tween tween = slotRoot.DOAnchorPos(targetPos, duration).SetEase(Ease.InOutQuad);

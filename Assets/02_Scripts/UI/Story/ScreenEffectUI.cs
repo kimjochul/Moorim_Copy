@@ -37,8 +37,7 @@ public class ScreenEffectUI : MonoBehaviour
 
         fadeImage.color = new Color(0,0,0,0);
 
-        fadeImage
-            .DOFade(1f, duration);
+        fadeImage.DOFade(1f, duration).SetEase(Ease.InSine);
     }
 
     public void FadeFromBlack(float duration)
@@ -50,7 +49,7 @@ public class ScreenEffectUI : MonoBehaviour
             .OnComplete(() =>
             {
                 fadeImage.gameObject.SetActive(false);
-            });
+            }).SetEase(Ease.InSine);
     }
 
     public void FlashWhite(float duration = 0.75f)
