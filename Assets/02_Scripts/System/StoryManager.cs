@@ -172,6 +172,8 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         currentScene = currentStory.scenes[currentSceneIndex];
         currentIndex = 0;
             
+        storyUI.SetRecallDim(currentScene.isRecallScene);
+        
         if (currentScene.startWithBlack)
         {
             screenEffectUI.SetBlackImmediate(true);
@@ -219,6 +221,8 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
                 characterUI.Show();
 
             characterUI.SetupScene(currentScene.characters);
+
+            yield return null;
         }
             
         // Debug.Log($"{currentStory.id}");

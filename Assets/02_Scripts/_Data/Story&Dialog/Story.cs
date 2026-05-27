@@ -22,6 +22,8 @@ public class StoryScene
     public List<StoryLine> lines;
     public Sprite background; 
     public Sprite illustration;
+
+    public bool isRecallScene;
     
     [Header("추가 오버레이 일러스트")]
     public Sprite illustrationOverlay;

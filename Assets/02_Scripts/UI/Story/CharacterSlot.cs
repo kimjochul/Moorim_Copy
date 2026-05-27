@@ -23,7 +23,7 @@ public class CharacterSlot : MonoBehaviour
     private Coroutine iconCoroutine;
     
     private RectTransform slotRoot;
-    private RectTransform SlotRoot
+    public RectTransform SlotRoot
     {
         get
         {
@@ -109,6 +109,9 @@ public class CharacterSlot : MonoBehaviour
 
     public void Disappear(Vector2 startPos)
     {
+        if (!gameObject.activeInHierarchy)
+            return;
+        
         Clear();
         
         StopAllCoroutines();
@@ -329,6 +332,7 @@ public class CharacterSlot : MonoBehaviour
         }
         
         EndMotion();
+        gameObject.SetActive(false);
     }
     
     public IEnumerator MoveRoutine(Vector2 dir, float distance, float duration)

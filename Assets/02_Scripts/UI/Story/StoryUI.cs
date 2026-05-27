@@ -38,6 +38,7 @@ public class StoryUI : MonoBehaviour
     [SerializeField] private GameObject characterNameRoot;
     [SerializeField] private GameObject darkBackGround;
     [SerializeField] private CanvasGroup darkBackgroundGroup;
+    [SerializeField] private GameObject recallSceneDim;
     [SerializeField] private DialogueLogUI dialogueLogUI;
     [SerializeField] private GameObject defaultIllustBG;
     
@@ -166,6 +167,7 @@ public class StoryUI : MonoBehaviour
         screenRoot.SetActive(false);
         defaultIllustBG.SetActive(false);
         currentBg.gameObject.SetActive(false);
+        SetRecallDim(false);
     }
     
     private void SetDialogueUIVisible(bool visible)
@@ -480,6 +482,14 @@ public class StoryUI : MonoBehaviour
         nextBg.rectTransform.localScale = Vector3.one;
     }
 
+    public void SetRecallDim(bool isRecallScene)
+    {
+        if (isRecallScene)
+            recallSceneDim.gameObject.SetActive(true);
+        else
+            recallSceneDim.gameObject.SetActive(false);
+    }
+    
     #endregion
     
     #region 일러스트 스토리 진행 화면
