@@ -29,6 +29,9 @@ public class StoryLine
     public Emotion emotion;
     public MotionData motion;
     public List<MotionCommand> motions;
+    public bool playTogether;
+    public string changeDisplayName;
+    public bool resetDisplayName;
     
     [Header("스크린 이펙트 관련")]
     public ScreenEffectData screenEffect;
@@ -76,6 +79,10 @@ public enum Emotion
     Neutral,
     Happy,
     Anger,
+    Sad,
+    Embarrassed,
+    Surprised,
+    HidingIdentity,
 }
 
 [Serializable]
@@ -145,7 +152,9 @@ public enum MotionType
     Emphasis,    // 강조
     Nervous,  // 떨림
     MoveToTarget,
-    ReturnSlot
+    ReturnSlot,
+    Sit,
+    Stand,
 }
 
 public enum ScreenEffectType

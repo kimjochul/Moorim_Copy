@@ -38,6 +38,7 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
     
     [Header("사운드")]
     [SerializeField] private AudioClip hitSE;
+    public AudioClip HitSE => hitSE;
     
     private StoryUI storyUI;
     public StoryUI StoryUI => storyUI;
@@ -45,9 +46,11 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
     public CharacterUI CharacterUI => characterUI;
     private StoryFadePanel fadePanel;
     private ScreenEffectUI screenEffectUI;
+    public ScreenEffectUI ScreenEffectUI => screenEffectUI;
 
     [SerializeField] private List<CharacterName> characterNames;
     private Dictionary<int, string> nameDict;
+    private Dictionary<int, string> runtimeNameOverrides = new();
 
     [SerializeField] private float fadeDuration;
     
@@ -285,8 +288,17 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
     
     private IEnumerator ShowLineRoutine(StoryLine line)
     {
-        
         float transitionDuration = GetTransitionDuration(line.transitionSpeed);
+     
+        if (!string.IsNullOrEmpty(line.changeDisplayName))
+        {
+            OverrideCharacterName(line.characterID, line.changeDisplayName);
+        }
+
+        if (line.resetDisplayName)
+        {
+            ResetCharacterName(line.characterID);
+        }
         
         storyUI.ShowLine(line);
         ApplyScreenEffect(line.screenEffect);
@@ -309,9 +321,6 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         {
             storyUI.ShowCharacterName();
             
-            characterUI.SetUnknown(line.characterID, line.isUnknown);
-            characterUI.SetExpression(line.characterID, line.emotion);
-            
             if (line.isUnknown)
             {
                 characterUI.Focus(-1); // 강조 없음
@@ -327,14 +336,23 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
             characterUI.Focus(-1); // 아무도 강조 안함
         }
         
+        characterUI.SetUnknown(line.characterID, line.isUnknown);
+        characterUI.SetExpression(line.characterID, line.emotion);
         
         if (line.motions != null && line.motions.Count > 0)
         {
-            foreach (var cmd in line.motions)
+            if (line.playTogether)
             {
-                yield return StartCoroutine(
-                    characterUI.PlayMotionRoutine(cmd, line.isUnknown)
-                );
+                yield return StartCoroutine(characterUI.PlayMotionsParallel(line.motions, line.isUnknown));
+            }
+            else
+            {
+                foreach (var cmd in line.motions)
+                {
+                    yield return StartCoroutine(
+                        characterUI.PlayMotionRoutine(cmd, line.isUnknown)
+                    );
+                }
             }
         }
         else if (line.motion != null && line.motion.type != MotionType.None)
@@ -449,10 +467,23 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
     
     public string GetCharacterName(int id)
     {
+        if (runtimeNameOverrides.TryGetValue(id, out var overrideName))
+            return overrideName;
+
         if (nameDict.TryGetValue(id, out var name))
             return name;
 
         return "???";
+    }
+    
+    public void OverrideCharacterName(int id, string newName)
+    {
+        runtimeNameOverrides[id] = newName;
+    }
+    
+    public void ResetCharacterName(int id)
+    {
+        runtimeNameOverrides.Remove(id);
     }
     
     private bool HasAnyCharacter(Story story)

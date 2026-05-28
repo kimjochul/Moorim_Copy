@@ -153,8 +153,7 @@ public class CharacterSlot : MonoBehaviour
                 .SetEase(Ease.OutQuad)
                 .OnComplete(() =>
                 {
-                    visualRoot.DOScale(currentBaseScale, 0.25f)
-                        .SetEase(Ease.InOutQuad);
+                    visualRoot.DOScale(currentBaseScale, 0.25f).SetEase(Ease.InOutQuad);
                 });
         });
     }
@@ -487,6 +486,28 @@ public class CharacterSlot : MonoBehaviour
         yield return tween.WaitForCompletion();
         
         motionRoot.anchoredPosition = Vector2.zero;
+        EndMotion();
+    }
+    
+    public IEnumerator SitRoutine(float distance = 80f, float duration = 0.25f)
+    {
+        BeginMotion();
+        motionRoot.DOKill();
+
+        Tween tween = motionRoot.DOAnchorPosY(-distance, duration).SetEase(Ease.OutQuad);
+        yield return tween.WaitForCompletion();
+
+        EndMotion();
+    }
+
+    public IEnumerator StandRoutine(float duration = 0.25f)
+    {
+        BeginMotion();
+        motionRoot.DOKill();
+
+        Tween tween = motionRoot.DOAnchorPosY(0f, duration).SetEase(Ease.OutQuad);
+        yield return tween.WaitForCompletion();
+
         EndMotion();
     }
     

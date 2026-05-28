@@ -217,6 +217,7 @@ public class ScreenEffectUI : MonoBehaviour
 
 
     #region Combined Effect
+
     public void PlayImpact(
         float shakePower,
         float shakeDuration,

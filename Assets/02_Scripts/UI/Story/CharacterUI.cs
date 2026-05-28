@@ -187,6 +187,8 @@ public class CharacterUI : MonoBehaviour
                         data.emotions[0].sprite);
                 }
                 currentSlotMap[info.characterID] = info.slotIndex;
+                Debug.Log($"SETUP character:{info.characterID} -> slot:{info.slotIndex}");
+                Debug.Log($"REAL SLOT OBJECT : {slot.name}");
                 continue;
             }
 
@@ -200,7 +202,11 @@ public class CharacterUI : MonoBehaviour
                 slot.SetHidden(info.characterID, data.emotions[0].sprite);
             }
             currentSlotMap[info.characterID] = info.slotIndex;
+            
+            Debug.Log($"SETUP character:{info.characterID} -> slot:{info.slotIndex}");
+            Debug.Log($"REAL SLOT OBJECT : {slot.name}");
         }
+        Debug.Log("-------------------------");
     }
 
     public void SetExpression(int characterID, Emotion emotion)
@@ -295,11 +301,6 @@ public class CharacterUI : MonoBehaviour
                     );
                 }
             }
-            else
-            {
-                // 원래 정렬 복구
-                slot.transform.SetSiblingIndex(preset.sortingOrder);
-            }
         }
     }
     
@@ -393,6 +394,24 @@ public class CharacterUI : MonoBehaviour
             case MotionType.Nervous:
                 yield return slot.NervousRoutine();
                 break;
+            
+            case MotionType.Sit:
+                yield return slot.SitRoutine(motion.value, motion.duration);
+                break;
+
+            case MotionType.Stand:
+                yield return slot.StandRoutine(motion.duration);
+                break;
+            
+            case MotionType.Attack:
+            {
+                var target = FindSlot(motion.targetSlotIndex);
+                Vector2 dir = target != null ? GetDirection(slot, target) : Vector2.right;
+                AudioClip hitSe = StoryManager.Instance.HitSE;
+                StoryManager.Instance.ScreenEffectUI.PlayImpact(motion.value, motion.duration, hitSe, false);
+                yield return slot.PlayAttack(dir, motion.value, motion.duration * 0.5f);
+                break;
+            }
         }
     }
     
@@ -410,42 +429,56 @@ public class CharacterUI : MonoBehaviour
             case MotionType.Attack:
             {
                 var target = FindSlot(cmd.targetID);
-
                 Vector2 dir = target != null ? GetDirection(actor, target) : Vector2.right;
-
                 // 공격 먼저
                 yield return actor.PlayAttack(dir, motion.value, motion.duration * 0.5f);
-
                 // 피격
                 if (target != null)
                 {
                     yield return target.PlayHit(-dir, motion.value * 0.5f, motion.duration * 0.5f);
                 }
-
                 break;
             }
 
             case MotionType.Hit:
             {
                 var target = FindSlot(cmd.targetID);
-
                 Vector2 dir = target != null ? GetDirection(target, actor) : Vector2.left;
-
                 yield return actor.PlayHit(dir, motion.value, motion.duration);
-
                 break;
             }
 
             default:
             {
-                yield return PlayMotionRoutine(
-                    cmd.characterID,
-                    motion,
-                    isUnknown);
-
+                yield return PlayMotionRoutine(cmd.characterID, motion, isUnknown);
                 break;
             }
         }
+    }
+    
+    
+    public IEnumerator PlayMotionsParallel(List<MotionCommand> motions, bool isUnknown)
+    {
+        if (motions == null || motions.Count == 0)
+            yield break;
+
+        int completeCount = 0;
+
+        foreach (var cmd in motions)
+        {
+            StartCoroutine(ParallelMotionRoutine(cmd, isUnknown, () =>
+            {
+                completeCount++;
+            }));
+        }
+
+        yield return new WaitUntil(() => completeCount >= motions.Count);
+    }
+
+    private IEnumerator ParallelMotionRoutine(MotionCommand cmd, bool isUnknown, Action onComplete)
+    {
+        yield return StartCoroutine(PlayMotionRoutine(cmd, isUnknown));
+        onComplete?.Invoke();
     }
     
     private Vector2 GetDirection(CharacterSlot from, CharacterSlot to)
@@ -458,7 +491,13 @@ public class CharacterUI : MonoBehaviour
     
     public CharacterSlot FindSlot(int characterID)
     {
-        return slots.Find(s => s.CurrentCharacterID == characterID);
+        if (!currentSlotMap.TryGetValue(characterID, out int slotIndex))
+            return null;
+
+        if (slotIndex < 0 || slotIndex >= slots.Count)
+            return null;
+
+        return slots[slotIndex];
     }
     
     public void ShowEmotionIcon(int characterID, Emotion emotion)
