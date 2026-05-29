@@ -401,11 +401,36 @@ public class CharacterSlot : MonoBehaviour
         Sequence seq = DOTween.Sequence();
 
         seq.Append(motionRoot.DOAnchorPos(Vector2.zero, duration).SetEase(Ease.OutCubic));
-        seq.Join(currentImage.DOFade(1f, duration));
+        //seq.Join(currentImage.DOFade(1f, duration));
 
         yield return seq.WaitForCompletion();
         
         motionRoot.anchoredPosition = Vector2.zero;
+        EndMotion();
+    }
+    
+    public IEnumerator EnterMoveRoutine(float startOffset, Vector2 targetPos, float duration, bool isUnknown)
+    {
+        gameObject.SetActive(true);
+        BeginMotion();
+        slotRoot.DOKill();
+        
+        slotRoot.anchoredPosition = targetPos;
+        Vector2 startPos = new Vector2(targetPos.x + startOffset, motionRoot.anchoredPosition.y);
+        motionRoot.anchoredPosition = startPos;
+
+        Color c = currentImage.color;
+        c.a = 0f;
+        currentImage.color = c;
+
+        SetUnknown(isUnknown);
+        
+        Sequence seq = DOTween.Sequence();
+
+        seq.Append(motionRoot.DOAnchorPos(Vector2.zero, duration).SetEase(Ease.OutCubic));
+        //seq.Join(currentImage.DOFade(1f, duration));
+
+        yield return seq.WaitForCompletion();
         EndMotion();
     }
     

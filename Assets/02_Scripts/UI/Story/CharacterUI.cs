@@ -407,9 +407,19 @@ public class CharacterUI : MonoBehaviour
             {
                 var target = FindSlot(motion.targetSlotIndex);
                 Vector2 dir = target != null ? GetDirection(slot, target) : Vector2.right;
-                AudioClip hitSe = StoryManager.Instance.HitSE;
-                StoryManager.Instance.ScreenEffectUI.PlayImpact(motion.value, motion.duration, hitSe, false);
+                if (motion.value >= 50f)
+                {
+                    AudioClip hitSe = StoryManager.Instance.HitSE;
+                    StoryManager.Instance.ScreenEffectUI.PlayImpact(motion.value, motion.duration, hitSe, false);
+                }
                 yield return slot.PlayAttack(dir, motion.value, motion.duration * 0.5f);
+                break;
+            }
+            
+            case MotionType.EnterMove:
+            {
+                Vector2 targetPos = new Vector2(motion.targetValue, slot.SlotRoot.anchoredPosition.y);
+                yield return slot.EnterMoveRoutine(motion.value, targetPos, motion.duration, isUnknown);
                 break;
             }
         }

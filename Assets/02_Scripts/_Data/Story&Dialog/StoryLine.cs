@@ -97,10 +97,11 @@ public class MotionCommand
 public class MotionData
 {
     public MotionType type;
-    public float duration = 0.5f;
-    public float value = 1f; // 이동 거리 or 점프 높이
+    public float duration;
+    public float value; // 이동 거리 or 점프 높이
     public int targetSlotIndex = -1;
     public float stopDistance = 100f;
+    public float targetValue;
 }
 
 [Serializable]
@@ -155,6 +156,7 @@ public enum MotionType
     ReturnSlot,
     Sit,
     Stand,
+    EnterMove,
 }
 
 public enum ScreenEffectType
