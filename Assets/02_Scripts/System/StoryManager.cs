@@ -177,6 +177,15 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
             
         storyUI.SetRecallDim(currentScene.isRecallScene);
         
+        if (currentScene.sceneBGM != null)
+        {
+            SoundManager.Instance.PlayBGM(currentScene.sceneBGM);
+        }
+        else
+        {
+            SoundManager.Instance.StopBGM();
+        }
+        
         if (currentScene.startWithBlack)
         {
             screenEffectUI.SetBlackImmediate(true);
@@ -300,6 +309,17 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
             ResetCharacterName(line.characterID);
         }
         
+        if(line.stopBGM)
+            SoundManager.Instance.StopBGM();
+
+        if(line.stopAllSFX)
+            SoundManager.Instance.StopSFX();
+        
+        if (line.playSFX != null)
+        {
+            SoundManager.Instance.PlaySFX(line.playSFX);
+        }
+        
         storyUI.ShowLine(line);
         ApplyScreenEffect(line.screenEffect);
         ApplyCharacterFocusEffect(line);
@@ -338,6 +358,11 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         
         characterUI.SetUnknown(line.characterID, line.isUnknown);
         characterUI.SetExpression(line.characterID, line.emotion);
+        
+        foreach(var exp in line.extraExpressions)
+        {
+            characterUI.SetExpression(exp.characterID, exp.emotion);
+        }
         
         if (line.motions != null && line.motions.Count > 0)
         {
@@ -452,6 +477,8 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
             return;
         
         isSkipLocked = true;
+        
+        AddSkippedLinesToLog();
 
         // 현재 씬 끝으로 이동
         currentIndex = currentScene.lines.Count;
@@ -463,6 +490,19 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         {
             isSkipLocked = false;
         });
+    }
+    
+    private void AddSkippedLinesToLog()
+    {
+        for (int i = currentIndex; i < currentScene.lines.Count; i++)
+        {
+            var line = currentScene.lines[i];
+
+            if (line.hideFromLog)
+                continue;
+
+            storyUI.AddDialogueLog(line);
+        }
     }
     
     public string GetCharacterName(int id)
@@ -504,8 +544,7 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         if (dayData.day < t.requiredDay)
             return false;
 
-        if (t.requiredDayOfWeek.HasValue &&
-            dayData.dayOfWeek != t.requiredDayOfWeek.Value)
+        if (t.requiredDayOfWeek is { Count: > 0 } && !t.requiredDayOfWeek.Contains(dayData.dayOfWeek))
             return false;
 
         if (economy.Money < t.requiredMoney)

@@ -33,6 +33,9 @@ public class StoryLine
     public string changeDisplayName;
     public bool resetDisplayName;
     
+    [Header("현재 화자 외에 추가 표정 변경")]
+    public List<ExpressionChange> extraExpressions;
+    
     [Header("스크린 이펙트 관련")]
     public ScreenEffectData screenEffect;
     
@@ -40,6 +43,11 @@ public class StoryLine
     [Header("대사 본문")]
     [TextArea(3, 10)]
     public string line;
+    
+    [Header("사운드")]
+    public SFXData playSFX;
+    public bool stopBGM;
+    public bool stopAllSFX;
     
     [Header("연출")]
     public bool useTypingSound = true;
@@ -124,6 +132,14 @@ public class IllustrationFrame
     [Header("Option")] 
     public bool keepPreviousBG;
     public bool useFlashTransition = false;
+}
+
+[Serializable]
+public class ExpressionChange
+{
+    public int characterID;
+    public Emotion emotion;
+    public bool isUnknown;
 }
 
 [Serializable]

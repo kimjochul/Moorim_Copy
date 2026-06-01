@@ -232,15 +232,8 @@ public class StoryUI : MonoBehaviour
         {
             history.Add(line);
             historyIndex = history.Count - 1;
-            
-            dialogueLogs.Add(new DialogueLog
-            {
-                logType = LogType.Dialogue,
-                speaker = line.lineType == LineType.Narration ? "" : (line.isUnknown ? "???" : StoryManager.Instance.GetCharacterName(line.characterID)),
-                content = line.line,
-                isNarration = line.lineType == LineType.Narration,
-                isInnerThought = line.isInnerThought
-            });
+
+            AddDialogueLog(line);
         }
         
         SetDialogueUIVisible(!line.hideDialogueUI);
@@ -870,6 +863,18 @@ public class StoryUI : MonoBehaviour
             logType = LogType.Header,
             day = day,
             title = storyTitle,
+        });
+    }
+    
+    public void AddDialogueLog(StoryLine line)
+    {
+        dialogueLogs.Add(new DialogueLog
+        {
+            logType = LogType.Dialogue,
+            speaker = line.lineType == LineType.Narration ? "" : (line.isUnknown ? "???" : StoryManager.Instance.GetCharacterName(line.characterID)),
+            content = line.line,
+            isNarration = line.lineType == LineType.Narration,
+            isInnerThought = line.isInnerThought
         });
     }
     

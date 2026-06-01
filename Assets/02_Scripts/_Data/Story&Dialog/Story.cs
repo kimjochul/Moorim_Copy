@@ -34,6 +34,10 @@ public class StoryScene
     [Header("씬 전환")]
     public SceneTransitionType transitionType = SceneTransitionType.Fade;
     public bool startWithBlack = false;
+    
+    [Header("사운드")]
+    public BGMData sceneBGM;
+    public bool changeBGM = false;
 }
 
 [Serializable]
