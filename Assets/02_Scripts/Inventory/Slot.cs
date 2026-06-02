@@ -83,11 +83,20 @@ public class Slot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDropHandler
 
     private void OnClickSlotAction()
     {
+        if (Owner.IsReadOnly)
+        {
+            // 인연 아이템용 
+            return;
+        }
+        
         OnSlotClick?.Invoke(this);
     }
 
     public void OnBeginDrag(PointerEventData eventData)  // 드래그 시작
     {
+        if (Owner.IsReadOnly)
+            return;
+        
         if (IsEmpty)
             return;
 
@@ -97,11 +106,17 @@ public class Slot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDropHandler
 
     public void OnDrag(PointerEventData eventData) // 드래그 중
     {
+        if (Owner.IsReadOnly)
+            return;
+        
         DragUI.Instance.UpdatePosition(eventData.position);
     }
     
     public void OnDrop(PointerEventData eventData) // 놓은 경우
     {
+        if (Owner.IsReadOnly)
+            return;
+        
         if (dragSlot == null || dragSlot == this)
             return;
         

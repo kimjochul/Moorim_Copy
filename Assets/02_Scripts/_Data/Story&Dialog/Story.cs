@@ -12,6 +12,12 @@ public class Story:ScriptableObject
     public List<StoryScene> scenes;
     
     public QuestData rewardQuest;
+    
+    [Header("스토리 보상")]
+    public int rewardMoney;
+    public int rewardFame;
+
+    public List<ItemReward> rewardItems;
 }
 
 [Serializable]
@@ -62,4 +68,12 @@ public enum SceneTransitionType
 {
     None,
     Fade
+}
+
+[Serializable]
+public class ItemReward
+{
+    public ItemData item;
+    public int count = 1;
+    public Constants.InventoryType inventoryType;
 }

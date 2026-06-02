@@ -450,6 +450,33 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
             QuestManager.Instance.AcceptQuest(quest);
         }
             
+        // 돈 보상
+        if (currentStory.rewardMoney > 0)
+        {
+            EconomyManager.Instance.AddMoney(currentStory.rewardMoney);
+        }
+
+        // 명성 보상
+        if (currentStory.rewardFame > 0)
+        {
+            EconomyManager.Instance.AddFame(currentStory.rewardFame);
+        }
+
+        // 아이템 보상
+        if (currentStory.rewardItems != null)
+        {
+            foreach (var reward in currentStory.rewardItems)
+            {
+                if (reward.item == null)
+                    continue;
+
+                Inventory inventory = InventoryManager.Instance.GetInventory(reward.inventoryType);
+                
+                IItem item = ItemFactory.Instance.CreateItem(reward.item.id);
+                inventory.GetItem(item, reward.count);
+            }
+        }
+        
         if (currentTrigger != null && currentTrigger.unlockRecipeIds != null)
         {
             foreach (var recipeId in currentTrigger.unlockRecipeIds)

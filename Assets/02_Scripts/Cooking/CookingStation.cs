@@ -12,6 +12,7 @@ public class CookingStation : MonoBehaviour, IInteractable
  
     [Header("조리 설정")]
     [SerializeField] private float cookTime = 15f;
+    [SerializeField] private float minimumCookTime = 3f;
  
     // ── 이벤트 ──
     /// <summary>
@@ -76,7 +77,10 @@ public class CookingStation : MonoBehaviour, IInteractable
  
     private IEnumerator CookingRoutine()
     {
-        yield return new WaitForSeconds(cookTime);
+        float speedBonus = BondManager.Instance.GetModifier(BondEffectType.CookingSpeed);
+        float finalCookTime = Mathf.Max(minimumCookTime, cookTime * (1f - speedBonus));
+        
+        yield return new WaitForSeconds(finalCookTime);
  
         // PlayerManager.Instance.StopCurrentPlayer();
         SetState(CookingState.Done);
