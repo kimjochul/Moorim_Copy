@@ -51,6 +51,8 @@ public class StoryUI : MonoBehaviour
     
     [SerializeField] private Button dialogueButton;
     [SerializeField] private Button autoPlayButton;
+    [SerializeField] private Button sceneSkipButton;
+    [SerializeField] private Button storySkipButton;
     [SerializeField] private Image nextIndicator;
     
     [SerializeField] private float autoPlayDelay = 1.5f;
@@ -132,6 +134,8 @@ public class StoryUI : MonoBehaviour
         StoryManager.Instance.SetStoryUI(this);
         dialogueButton.onClick.AddListener(ToggleLogUI);
         autoPlayButton.onClick.AddListener(ToggleAutoPlay);
+        sceneSkipButton.onClick.AddListener(StoryManager.Instance.SkipCurrentScene);
+        storySkipButton.onClick.AddListener(StoryManager.Instance.SkipCurrentStory);
     }
     
     private void OnDisable()
@@ -142,6 +146,12 @@ public class StoryUI : MonoBehaviour
         if (autoPlayButton != null)
             autoPlayButton.onClick.RemoveListener(ToggleAutoPlay);
 
+        if(sceneSkipButton != null && StoryManager.Instance != null)
+            sceneSkipButton.onClick.RemoveListener(StoryManager.Instance.SkipCurrentScene);
+        
+        if (storySkipButton != null && StoryManager.Instance != null)
+            storySkipButton.onClick.RemoveListener(StoryManager.Instance.SkipCurrentStory);
+        
         if (UIManager.Instance != null)
             UIManager.Instance.OnFontSizeChanged -= SetFontSize;
     }
@@ -909,11 +919,15 @@ public class StoryUI : MonoBehaviour
     
     private void CloseLogUI()
     {
+        //Debug.Log($"닫기 전 isTyping = {isTyping}");
         isLogOpen = false;
-
         dialogueLogUI.Close();
+        //Debug.Log($"닫기 후 isTyping = {isTyping}");
 
         ShowIndicator();
+        
+        SetPointerBlock(true);
+        StartReleasePointerBlock();
     }
     #endregion
 
@@ -1103,14 +1117,27 @@ public class StoryUI : MonoBehaviour
             if (isLogOpen)
             {
                 CloseLogUI();
+                return;
+            }
+        }
+        
+        if (Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.LeftControl))
+        {
+            Debug.Log("스토리 스킵");
+            if (CanSkip())
+            {
+                StoryManager.Instance.SkipCurrentStory();
+                return;
             }
         }
 
         if (Input.GetKeyDown(KeyCode.LeftControl))
         {
+            Debug.Log("씬 스킵");
             if (CanSkip())
             {
                 StoryManager.Instance.SkipCurrentScene();
+                return;
             }
         }
     }

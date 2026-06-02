@@ -519,6 +519,29 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         });
     }
     
+    public void SkipCurrentStory()
+    {
+        if (!isPlaying || currentStory == null)
+            return;
+
+        if (isTransitioning || isSkipLocked)
+            return;
+
+        isSkipLocked = true;
+        StartCoroutine(SkipCurrentStoryRoutine());
+    }
+    
+    private IEnumerator SkipCurrentStoryRoutine()
+    {
+        storyUI.ClearCurrentLine();
+
+        yield return StartCoroutine(
+            PlaySceneTransition(EndStoryRoutine)
+        );
+        
+        isSkipLocked = false;
+    }
+    
     private void AddSkippedLinesToLog()
     {
         for (int i = currentIndex; i < currentScene.lines.Count; i++)

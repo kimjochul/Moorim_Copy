@@ -30,6 +30,7 @@ public class LogItem : MonoBehaviour
             dialogueUI.SetActive(false);
 
             headerText.text = $"{log.day}일 - {log.title}";
+            headerText.color = Color.black;
 
             StartCoroutine(RefreshLayout(headerRoot));
         }
@@ -70,8 +71,8 @@ public class LogItem : MonoBehaviour
             }
             else
             {
-                speakerText.color = Color.white;
-                contentText.color = Color.white;
+                speakerText.color = Color.black;
+                contentText.color = Color.black;
             }
 
             StartCoroutine(RefreshLayout(dialogueRoot));
