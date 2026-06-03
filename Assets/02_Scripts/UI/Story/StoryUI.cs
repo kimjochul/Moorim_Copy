@@ -37,6 +37,8 @@ public class StoryUI : MonoBehaviour
     [SerializeField] private GameObject screenRoot;
     [SerializeField] private GameObject characterNameRoot;
     [SerializeField] private GameObject darkBackGround;
+    [SerializeField] private CanvasGroup darkBackgroundGroup;
+    [SerializeField] private GameObject recallSceneDim;
     [SerializeField] private DialogueLogUI dialogueLogUI;
     [SerializeField] private GameObject defaultIllustBG;
     
@@ -44,18 +46,19 @@ public class StoryUI : MonoBehaviour
     [SerializeField] private Image bgImageB;
     [SerializeField] private Image illustrationA;
     [SerializeField] private Image illustrationB;
+    [SerializeField] private Image overlayIllustA;
+    [SerializeField] private Image overlayIllustB;
     
     [SerializeField] private Button dialogueButton;
     [SerializeField] private Button autoPlayButton;
+    [SerializeField] private Button sceneSkipButton;
+    [SerializeField] private Button storySkipButton;
     [SerializeField] private Image nextIndicator;
     
     [SerializeField] private float autoPlayDelay = 1.5f;
     private readonly WaitForSeconds typingWait = new(0.03f);
     
     [SerializeField] private ScreenEffectUI screenEffectUI;
-    
-    [SerializeField] private float illustrationZoomScale = 1.02f;
-    [SerializeField] private float illustrationZoomDuration = 8f;
     
     [Header("Dialogue Motion")]
     [SerializeField] private RectTransform dialogueRoot;
@@ -95,6 +98,7 @@ public class StoryUI : MonoBehaviour
     
     private float defaultContentFontSize;
     private float accentFontSize;
+    private float smallFontSize;
     
     private Image currentBg;
     private Image nextBg;
@@ -108,11 +112,17 @@ public class StoryUI : MonoBehaviour
     private CanvasGroup currentGroup;
     private CanvasGroup nextGroup;
 
+    private Image currentOverlay;
+    private Image nextOverlay;
+
+    private CanvasGroup currentOverlayGroup;
+    private CanvasGroup nextOverlayGroup;
     
     public void Init()
     {
         defaultContentFontSize = UIManager.Instance.GetTextScale();
         accentFontSize = UIManager.Instance.GetTextScale() * 1.3f;
+        smallFontSize = UIManager.Instance.GetTextScale() * 0.7f;
         UIManager.Instance.OnFontSizeChanged += SetFontSize;
 
         InitBackGround();
@@ -124,6 +134,8 @@ public class StoryUI : MonoBehaviour
         StoryManager.Instance.SetStoryUI(this);
         dialogueButton.onClick.AddListener(ToggleLogUI);
         autoPlayButton.onClick.AddListener(ToggleAutoPlay);
+        sceneSkipButton.onClick.AddListener(StoryManager.Instance.SkipCurrentScene);
+        storySkipButton.onClick.AddListener(StoryManager.Instance.SkipCurrentStory);
     }
     
     private void OnDisable()
@@ -134,6 +146,12 @@ public class StoryUI : MonoBehaviour
         if (autoPlayButton != null)
             autoPlayButton.onClick.RemoveListener(ToggleAutoPlay);
 
+        if(sceneSkipButton != null && StoryManager.Instance != null)
+            sceneSkipButton.onClick.RemoveListener(StoryManager.Instance.SkipCurrentScene);
+        
+        if (storySkipButton != null && StoryManager.Instance != null)
+            storySkipButton.onClick.RemoveListener(StoryManager.Instance.SkipCurrentStory);
+        
         if (UIManager.Instance != null)
             UIManager.Instance.OnFontSizeChanged -= SetFontSize;
     }
@@ -145,14 +163,21 @@ public class StoryUI : MonoBehaviour
         defaultIllustBG.SetActive(true);
         currentBg.gameObject.SetActive(true);
         ResetBackgroundState();
+        ResetIllustrationState();
+        
+        darkBackgroundGroup.alpha = 0f;
+        darkBackGround.SetActive(false);
     }
 
     public void Hide()
     {
+        StopAllAutoPlay();
+        
         root.SetActive(false);
         screenRoot.SetActive(false);
         defaultIllustBG.SetActive(false);
         currentBg.gameObject.SetActive(false);
+        SetRecallDim(false);
     }
     
     private void SetDialogueUIVisible(bool visible)
@@ -187,11 +212,13 @@ public class StoryUI : MonoBehaviour
         HandleKeyboardInput();
         HandleMouseInput();
     }
-
+    
     #region 대사 관련
 
     public void ShowLine(StoryLine line)
     {
+        StopAllAutoPlay();
+        
         if (typingCoroutine != null)
             StopCoroutine(typingCoroutine);
 
@@ -201,8 +228,11 @@ public class StoryUI : MonoBehaviour
         
         defaultContentFontSize = UIManager.Instance.GetTextScale();
         accentFontSize = UIManager.Instance.GetTextScale() * 1.3f;
+        smallFontSize = UIManager.Instance.GetTextScale() * 0.7f;
         if (line.useAccentFontSize)
             SetFontSize(accentFontSize);
+        else if (line.useSmallFontSize)
+            SetFontSize(smallFontSize);
         else
             SetFontSize(defaultContentFontSize);
         
@@ -212,15 +242,8 @@ public class StoryUI : MonoBehaviour
         {
             history.Add(line);
             historyIndex = history.Count - 1;
-            
-            dialogueLogs.Add(new DialogueLog
-            {
-                logType = LogType.Dialogue,
-                speaker = line.lineType == LineType.Narration ? "" : (line.isUnknown ? "???" : StoryManager.Instance.GetCharacterName(line.characterID)),
-                content = line.line,
-                isNarration = line.lineType == LineType.Narration,
-                isInnerThought = line.isInnerThought
-            });
+
+            AddDialogueLog(line);
         }
         
         SetDialogueUIVisible(!line.hideDialogueUI);
@@ -254,7 +277,7 @@ public class StoryUI : MonoBehaviour
             ShowCharacterName();
         }
 
-        ApplyInnerThought(line.isInnerThought);
+        ApplyInnerThought(line.isInnerThought, StoryManager.Instance.CurrentScene.visualType, line.characterID);
     }
     
     IEnumerator TypeLine(string text)
@@ -326,6 +349,8 @@ public class StoryUI : MonoBehaviour
             typingCoroutine = null;
         }
 
+        StopAllAutoPlay();
+
         contentText.text = "";
         speakerText.text = "";
 
@@ -334,17 +359,36 @@ public class StoryUI : MonoBehaviour
         HideIndicator();
     }
 
-    private void ApplyInnerThought(bool isInner)
+    public void ApplyInnerThought(bool isInner, SceneVisualType visualType, int thinkerID)
     {
-        if (isInner)
+        darkBackgroundGroup.DOKill();
+        
+        bool useIllustrationDim = visualType == SceneVisualType.Illustration;
+
+        if (useIllustrationDim)
         {
-            contentText.color = Color.gray;
-            darkBackGround.SetActive(true);
+            if (isInner)
+            {
+                contentText.color = Color.gray2;
+                darkBackGround.SetActive(true);
+                darkBackgroundGroup.DOFade(0.96f, 0.5f).SetEase(Ease.OutCubic);
+            }
+            else
+            {
+                contentText.color = Color.black;
+                darkBackgroundGroup.DOFade(0f, 0.5f).SetEase(Ease.OutCubic)
+                    .OnComplete(() => { darkBackGround.SetActive(false); });
+            }
+            StoryManager.Instance.CharacterUI.ApplyInnerThoughtFocus(-1,false);
         }
         else
         {
-            contentText.color = Color.black;
             darkBackGround.SetActive(false);
+            contentText.color = isInner
+                ? Color.gray2
+                : Color.black;
+
+            StoryManager.Instance.CharacterUI.ApplyInnerThoughtFocus(thinkerID, isInner);
         }
     }
 
@@ -390,6 +434,7 @@ public class StoryUI : MonoBehaviour
         if (isFirstBackground)
         {
             SetBackground(bg);
+            yield break;
         }
         
         yield return CrossFadeBackground(bg, duration);
@@ -440,6 +485,14 @@ public class StoryUI : MonoBehaviour
         nextBg.rectTransform.localScale = Vector3.one;
     }
 
+    public void SetRecallDim(bool isRecallScene)
+    {
+        if (isRecallScene)
+            recallSceneDim.gameObject.SetActive(true);
+        else
+            recallSceneDim.gameObject.SetActive(false);
+    }
+    
     #endregion
     
     #region 일러스트 스토리 진행 화면
@@ -452,35 +505,120 @@ public class StoryUI : MonoBehaviour
         nextGroup = nextIllust.GetComponent<CanvasGroup>();
         currentGroup.alpha = 1f;
         nextGroup.alpha = 0f;
-
         currentIllust.gameObject.SetActive(false);
         nextIllust.gameObject.SetActive(false);
+        
+        currentOverlay = overlayIllustA;
+        nextOverlay = overlayIllustB;
+        currentOverlayGroup = currentOverlay.GetComponent<CanvasGroup>();
+        nextOverlayGroup = nextOverlay.GetComponent<CanvasGroup>();
+        currentOverlayGroup.alpha = 1f;
+        nextOverlayGroup.alpha = 0f;
+        currentOverlay.gameObject.SetActive(false);
+        nextOverlay.gameObject.SetActive(false);
     }
     
     public void ShowIllustration(Sprite sprite)
     {
-        currentIllust.gameObject.SetActive(true);
+        if (sprite != null)
+        {
+            currentIllust.gameObject.SetActive(true);
+            currentIllust.sprite = sprite;
+            currentGroup.alpha = 1f;
+        }
+        else
+        {
+            currentIllust.gameObject.SetActive(false);
+        }
+    }
+    
+    public void ShowIllustration(Sprite sprite, Sprite overlay)
+    {
+        if (sprite != null)
+        {
+            currentIllust.gameObject.SetActive(true);
+            currentIllust.sprite = sprite;
+            currentGroup.alpha = 1f;
+        }
+        else
+        {
+            currentIllust.gameObject.SetActive(false);
+        }
 
-        currentIllust.sprite = sprite;
-
-        currentGroup.alpha = 1f;
+        if (overlay != null)
+        {
+            currentOverlay.gameObject.SetActive(true);
+            currentOverlay.sprite = overlay;
+            currentOverlayGroup.alpha = 1f;
+        }
+        else
+        {
+            currentOverlay.gameObject.SetActive(false);
+        }
     }
 
     public IEnumerator ChangeIllustrationRoutine(Sprite sprite, float duration)
     {
         isTransitioning = true;
 
-        yield return CrossFadeIllustration(sprite, duration);
+        yield return CrossFadeIllustration(sprite, null, false, true , duration);
 
         isTransitioning = false;
     }
     
-    private IEnumerator CrossFadeIllustration(Sprite sprite, float duration)
+    public IEnumerator ChangeIllustrationRoutine(
+        Sprite sprite,
+        Sprite overlay,
+        bool resetBase,
+        bool resetOverlay,
+        float duration)
     {
-        nextIllust.sprite = sprite;
-        nextIllust.gameObject.SetActive(true);
+        isTransitioning = true;
+
+        yield return CrossFadeIllustration(sprite, overlay, resetBase, resetOverlay, duration);
+
+        isTransitioning = false;
+    }
+    
+    private IEnumerator CrossFadeIllustration(
+        Sprite sprite,
+        Sprite overlay,
+        bool resetBase,
+        bool resetOverlay,
+        float duration)
+    {
+        bool changeBase = !resetBase && sprite != null;
+        bool changeOverlay = !resetOverlay && overlay != null;
         
-        nextGroup.alpha = 0f;
+        if (resetBase)
+        {
+            currentIllust.gameObject.SetActive(false);
+            currentGroup.alpha = 0f;
+
+            nextIllust.gameObject.SetActive(false);
+            nextGroup.alpha = 0f;
+        }
+        else if (changeBase)
+        {
+            nextIllust.sprite = sprite;
+            nextIllust.gameObject.SetActive(true);
+            nextGroup.alpha = 0f;
+        }
+        
+        if (resetOverlay)
+        {
+            currentOverlay.gameObject.SetActive(false);
+            currentOverlayGroup.alpha = 0f;
+
+            nextOverlay.gameObject.SetActive(false);
+            nextOverlayGroup.alpha = 0f;
+        }
+        else if (changeOverlay)
+        {
+            nextOverlay.sprite = overlay;
+            nextOverlay.gameObject.SetActive(true);
+            nextOverlayGroup.alpha = 0f;
+        }
         
         float time = 0f;
 
@@ -490,32 +628,52 @@ public class StoryUI : MonoBehaviour
 
             float t = time / duration;
 
-            currentGroup.alpha = 1f - Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(t * 1.1f));
-
-            nextGroup.alpha = Mathf.SmoothStep(0f, 1f, t);
+            if(changeBase)
+            {
+                currentGroup.alpha = 1f - Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(t * 1.1f));
+                nextGroup.alpha = Mathf.SmoothStep(0f, 1f, t);
+            }
+            if (changeOverlay)
+            {
+                currentOverlayGroup.alpha = 1f - Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(t * 1.1f));
+                nextOverlayGroup.alpha = Mathf.SmoothStep(0f, 1f, t);
+            }
 
             yield return null;
         }
         
-        nextGroup.alpha = 1f;
-        currentGroup.alpha = 0f;
+        if (changeBase)
+        {
+            nextGroup.alpha = 1f;
 
-        currentIllust.gameObject.SetActive(false);
+            currentGroup.alpha = 0f;
+            currentIllust.gameObject.SetActive(false);
 
-        (currentIllust, nextIllust) = (nextIllust, currentIllust); // Swap
-        (currentGroup, nextGroup) = (nextGroup, currentGroup); // Swap
+            (currentIllust, nextIllust) = (nextIllust, currentIllust);
+            (currentGroup, nextGroup) = (nextGroup, currentGroup);
+        }
+        
+        if (changeOverlay)
+        {
+            nextOverlayGroup.alpha = 1f;
+            currentOverlayGroup.alpha = 0f;
+            currentOverlay.gameObject.SetActive(false);
+
+            (currentOverlay, nextOverlay) = (nextOverlay, currentOverlay);
+            (currentOverlayGroup, nextOverlayGroup) = (nextOverlayGroup, currentOverlayGroup);
+        }
     }
     
-    public void PlayIllustrationSequence(List<IllustrationFrame> frames)
+    public void PlayIllustrationSequence(List<IllustrationFrame> frames, bool useFlashTransition)
     {
         if (illustrationSequenceCoroutine != null)
             StopCoroutine(illustrationSequenceCoroutine);
 
         illustrationSequenceCoroutine =
-            StartCoroutine(PlayIllustrationSequenceRoutine(frames));
+            StartCoroutine(PlayIllustrationSequenceRoutine(frames, useFlashTransition));
     }
     
-    private IEnumerator PlayIllustrationSequenceRoutine(List<IllustrationFrame> frames)
+    private IEnumerator PlayIllustrationSequenceRoutine(List<IllustrationFrame> frames, bool useFlashTransition)
     {
         if (frames == null || frames.Count == 0)
             yield break;
@@ -531,11 +689,11 @@ public class StoryUI : MonoBehaviour
         {
             float duration = StoryManager.Instance.GetTransitionDuration(frame.transitionSpeed);
 
-            if (isFirstFrame)
+            if (isFirstFrame && useFlashTransition)
             {
                 yield return StartCoroutine(screenEffectUI.FlashWhiteRoutine(2f, 1f, () =>
                 {
-                    ShowIllustration(frame.illustration);
+                    ShowIllustration(frame.illustration, frame.overlayIllustration);
                     SetBackground(frame.background);
                 }));
 
@@ -553,7 +711,7 @@ public class StoryUI : MonoBehaviour
                 }
 
                 illustRoutine =
-                    StartCoroutine(PlayIllustrationTransitionRoutine(frame.illustration, duration, frame.transitionType));
+                    StartCoroutine(PlayIllustrationTransitionRoutine(frame.illustration, frame.overlayIllustration, duration, frame.transitionType));
                 
                 if (bgRoutine != null)
                     yield return bgRoutine;
@@ -568,33 +726,104 @@ public class StoryUI : MonoBehaviour
         isTransitioning = false;
     }
     
-    private IEnumerator PlayIllustrationTransitionRoutine(Sprite sprite, float duration, IllustrationTransitionType type)
+    private IEnumerator PlayIllustrationTransitionRoutine(Sprite sprite, Sprite overlay, float duration, IllustrationTransitionType type)
     {
         switch (type)
         {
             case IllustrationTransitionType.Fade:
-                yield return CrossFadeIllustration(sprite, duration);
+                yield return CrossFadeIllustration(
+                    sprite,
+                    overlay,
+                    false,
+                    false,
+                    duration
+                );
                 break;
 
             case IllustrationTransitionType.Flash:
-                yield return FlashIllustration(sprite, duration);
+                yield return FlashIllustration(sprite, overlay, duration);
                 break;
         }
     }
     
-    private IEnumerator FlashIllustration(Sprite sprite, float duration)
+    private IEnumerator FlashIllustration(Sprite sprite, Sprite overlay, float duration)
     {
         yield return StartCoroutine(
             screenEffectUI.FlashWhiteRoutine(duration, duration/2, () =>
             {
+                currentIllust.gameObject.SetActive(true);
                 currentIllust.sprite = sprite;
+                currentGroup.alpha = 1f;
+                
+                if (overlay != null)
+                {
+                    currentOverlay.gameObject.SetActive(true);
+                    currentOverlay.sprite = overlay;
+                    currentOverlayGroup.alpha = 1f;
+                }
+                else
+                {
+                    currentOverlay.gameObject.SetActive(false);
+                }
             }));
     }
-    
+
     public void HideIllustration()
     {
         currentIllust.gameObject.SetActive(false);
         nextIllust.gameObject.SetActive(false);
+
+        currentOverlay.gameObject.SetActive(false);
+        nextOverlay.gameObject.SetActive(false);
+    }
+    
+    public void ResetIllustrationState()
+    {
+        currentIllust = illustrationA;
+        nextIllust = illustrationB;
+
+        currentGroup = currentIllust.GetComponent<CanvasGroup>();
+        nextGroup = nextIllust.GetComponent<CanvasGroup>();
+
+        currentOverlay = overlayIllustA;
+        nextOverlay = overlayIllustB;
+
+        currentOverlayGroup = currentOverlay.GetComponent<CanvasGroup>();
+        nextOverlayGroup = nextOverlay.GetComponent<CanvasGroup>();
+        
+        // 메인
+        currentIllust.sprite = null;
+        nextIllust.sprite = null;
+
+        currentGroup.alpha = 1f;
+        nextGroup.alpha = 0f;
+
+        currentIllust.gameObject.SetActive(false);
+        nextIllust.gameObject.SetActive(false);
+
+        // 오버레이
+        currentOverlay.sprite = null;
+        nextOverlay.sprite = null;
+
+        currentOverlayGroup.alpha = 0f;
+        nextOverlayGroup.alpha = 0f;
+
+        currentOverlay.gameObject.SetActive(false);
+        nextOverlay.gameObject.SetActive(false);
+
+        // scale 초기화
+        currentIllust.rectTransform.localScale = Vector3.one;
+        nextIllust.rectTransform.localScale = Vector3.one;
+        
+        // 코루틴 초기화
+        if (illustrationSequenceCoroutine != null)
+            StopCoroutine(illustrationSequenceCoroutine);
+
+        if (illustrationCoroutine != null)
+            StopCoroutine(illustrationCoroutine);
+
+        if (illustrationZoomCoroutine != null)
+            StopCoroutine(illustrationZoomCoroutine);
     }
 
     #endregion
@@ -647,6 +876,18 @@ public class StoryUI : MonoBehaviour
         });
     }
     
+    public void AddDialogueLog(StoryLine line)
+    {
+        dialogueLogs.Add(new DialogueLog
+        {
+            logType = LogType.Dialogue,
+            speaker = line.lineType == LineType.Narration ? "" : (line.isUnknown ? "???" : StoryManager.Instance.GetCharacterName(line.characterID)),
+            content = line.line,
+            isNarration = line.lineType == LineType.Narration,
+            isInnerThought = line.isInnerThought
+        });
+    }
+    
     public void ClearLogs()
     {
         dialogueLogs.Clear();
@@ -678,11 +919,15 @@ public class StoryUI : MonoBehaviour
     
     private void CloseLogUI()
     {
+        //Debug.Log($"닫기 전 isTyping = {isTyping}");
         isLogOpen = false;
-
         dialogueLogUI.Close();
+        //Debug.Log($"닫기 후 isTyping = {isTyping}");
 
         ShowIndicator();
+        
+        SetPointerBlock(true);
+        StartReleasePointerBlock();
     }
     #endregion
 
@@ -795,6 +1040,24 @@ public class StoryUI : MonoBehaviour
             StopAutoPlay();
         }
     }
+    
+    private void StopAllAutoPlay()
+    {
+        if (autoCoroutine != null)
+        {
+            StopCoroutine(autoCoroutine);
+            autoCoroutine = null;
+        }
+
+        if (autoPlayCoroutine != null)
+        {
+            StopCoroutine(autoPlayCoroutine);
+            autoPlayCoroutine = null;
+        }
+
+        isCutSceneAuto = false;
+        isAutoPlayEnabled = false;
+    }
     #endregion
 
     #region 대사창에 효과
@@ -854,14 +1117,27 @@ public class StoryUI : MonoBehaviour
             if (isLogOpen)
             {
                 CloseLogUI();
+                return;
+            }
+        }
+        
+        if (Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.LeftControl))
+        {
+            Debug.Log("스토리 스킵");
+            if (CanSkip())
+            {
+                StoryManager.Instance.SkipCurrentStory();
+                return;
             }
         }
 
         if (Input.GetKeyDown(KeyCode.LeftControl))
         {
+            Debug.Log("씬 스킵");
             if (CanSkip())
             {
                 StoryManager.Instance.SkipCurrentScene();
+                return;
             }
         }
     }
@@ -869,6 +1145,9 @@ public class StoryUI : MonoBehaviour
     private void HandleMouseInput()
     {
         if (!Input.GetMouseButtonDown(0))
+            return;
+        
+        if (StoryManager.Instance.IsInputLocked)
             return;
         
         if (isPointerBlocking)

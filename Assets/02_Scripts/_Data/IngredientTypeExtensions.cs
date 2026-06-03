@@ -7,12 +7,14 @@ public static class IngredientTypeExtensions
     {
         switch (type)
         {
-            case IngredientType.Vegetable: return "Ã¤¼Ò";
-            case IngredientType.Meats: return "°í±â";
-            case IngredientType.Dairy: return "À¯Á¦Ç°";
-            case IngredientType.Spices: return "Á¶¹Ì·á";
-            case IngredientType.Processed: return "°¡°ø½ÄÀç·á";
-            default: return "ºĞ·ù ¹Ì»ó";
+            case IngredientType.Vegetable: return "ì±„ì†Œ";
+            case IngredientType.Meats: return "ìœ¡ë¥˜";
+            case IngredientType.Dairy: return "ìœ ì œí’ˆ";
+            case IngredientType.Spices: return "í–¥ì‹ ë£Œ";
+            case IngredientType.Processed: return "ê°€ê³µí’ˆ";
+            case IngredientType.Buff: return "ì¥ì‹í’ˆ";
+            case IngredientType.Recipe: return "ì¡°ë¦¬ë¹„ê¸‰";
+            default: return "ì—ëŸ¬ ë°œìƒ";
         }
     }
 }

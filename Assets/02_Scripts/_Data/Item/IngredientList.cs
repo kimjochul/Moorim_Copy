@@ -8,4 +8,5 @@ using UnityEngine;
 public class IngredientList : ScriptableObject
 {
     public List<IngredientData> ingredients;
+    public List<BondItemData> bondItems;
 }

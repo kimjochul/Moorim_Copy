@@ -25,6 +25,22 @@ public class ShopProductInfo : MonoBehaviour
 
         this.gameObject.SetActive(true);
     }
+    
+    public void ShowInfo(RecipeData data)
+    {
+        this.imageIcon.sprite = data.icon;
+        this.txtName.text = data.recipeName;
+
+        string description = $"{data.description}";
+        foreach (IngredientAmount ingredient in data.ingredients)
+        {
+            description += $"\n{ingredient.ingredient.itemName} {ingredient.amount}개";
+        }
+        this.txtDescription.text = description;
+
+        this.gameObject.SetActive(true);
+    }
+    
     public void HideInfo()
     {
         this.gameObject.SetActive(false);

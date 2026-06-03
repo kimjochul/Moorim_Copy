@@ -13,6 +13,13 @@ public class StoryLine
     [Header("일러스트 단일 그림 화면인 경우")]
     public Sprite illustrationOverride;
     
+    [Header("추가 오버레이 일러스트")]
+    public Sprite illustrationOverlay;
+    
+    [Header("일러스트 리셋 여부")]
+    public bool resetIllustration;
+    public bool resetOverlay;
+    
     [Header("일러스트 다중 그림 시퀀스의 경우")]
     public List<IllustrationFrame> illustrationSequence;
     
@@ -22,6 +29,12 @@ public class StoryLine
     public Emotion emotion;
     public MotionData motion;
     public List<MotionCommand> motions;
+    public bool playTogether;
+    public string changeDisplayName;
+    public bool resetDisplayName;
+    
+    [Header("현재 화자 외에 추가 표정 변경")]
+    public List<ExpressionChange> extraExpressions;
     
     [Header("스크린 이펙트 관련")]
     public ScreenEffectData screenEffect;
@@ -30,6 +43,11 @@ public class StoryLine
     [Header("대사 본문")]
     [TextArea(3, 10)]
     public string line;
+    
+    [Header("사운드")]
+    public SFXData playSFX;
+    public bool stopBGM;
+    public bool stopAllSFX;
     
     [Header("연출")]
     public bool useTypingSound = true;
@@ -42,6 +60,7 @@ public class StoryLine
     
     [Header("강조 대사인지")]
     public bool useAccentFontSize;
+    public bool useSmallFontSize;
     
     [Header("대사 창을 내릴 지(대사 없이 그림만 나올 때 사용 가능)")]
     public bool hideDialogueUI;
@@ -68,6 +87,10 @@ public enum Emotion
     Neutral,
     Happy,
     Anger,
+    Sad,
+    Embarrassed,
+    Surprised,
+    HidingIdentity,
 }
 
 [Serializable]
@@ -82,8 +105,11 @@ public class MotionCommand
 public class MotionData
 {
     public MotionType type;
-    public float duration = 0.5f;
-    public float value = 1f; // 이동 거리 or 점프 높이
+    public float duration;
+    public float value; // 이동 거리 or 점프 높이
+    public int targetSlotIndex = -1;
+    public float stopDistance = 100f;
+    public float targetValue;
 }
 
 [Serializable]
@@ -92,6 +118,9 @@ public class IllustrationFrame
     [Header("Visual")]
     public Sprite illustration;
     public Sprite background;
+    
+    [Header("Overlay")]
+    public Sprite overlayIllustration;
     
     [Header("Timing")]
     public float duration = 1f;
@@ -102,6 +131,15 @@ public class IllustrationFrame
 
     [Header("Option")] 
     public bool keepPreviousBG;
+    public bool useFlashTransition = false;
+}
+
+[Serializable]
+public class ExpressionChange
+{
+    public int characterID;
+    public Emotion emotion;
+    public bool isUnknown;
 }
 
 [Serializable]
@@ -130,6 +168,11 @@ public enum MotionType
     Hit,      // 추가
     Emphasis,    // 강조
     Nervous,  // 떨림
+    MoveToTarget,
+    ReturnSlot,
+    Sit,
+    Stand,
+    EnterMove,
 }
 
 public enum ScreenEffectType
@@ -147,7 +190,11 @@ public enum ScreenEffectType
     ZoomOut,
 
     VignetteDark,
-    VignetteClear
+    VignetteClear,
+    
+    FlashBlack,
+    
+    ShakeAndSound
 }
 
 public static class DialogueStyle

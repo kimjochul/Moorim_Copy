@@ -30,6 +30,7 @@ public class LogItem : MonoBehaviour
             dialogueUI.SetActive(false);
 
             headerText.text = $"{log.day}일 - {log.title}";
+            headerText.color = Color.black;
 
             StartCoroutine(RefreshLayout(headerRoot));
         }
@@ -37,11 +38,18 @@ public class LogItem : MonoBehaviour
         {
             headerUI.SetActive(false);
             dialogueUI.SetActive(true);
-
-            speakerText.text = string.IsNullOrEmpty(log.speaker)
-                ? ""
-                : $"{log.speaker} :";
-
+            
+            if (string.IsNullOrEmpty(log.speaker))
+            {
+                speakerText.text = "";
+            }
+            else
+            {
+                speakerText.text = log.isInnerThought
+                    ? $"{log.speaker} (속마음) :"
+                    : $"{log.speaker} :";
+            }
+            
             contentText.text = log.content;
 
             if (log.isNarration)
@@ -58,11 +66,13 @@ public class LogItem : MonoBehaviour
 
             if (log.isInnerThought)
             {
+                speakerText.color = Color.gray;
                 contentText.color = Color.gray;
             }
             else
             {
-                contentText.color = Color.white;
+                speakerText.color = Color.black;
+                contentText.color = Color.black;
             }
 
             StartCoroutine(RefreshLayout(dialogueRoot));

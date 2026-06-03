@@ -57,8 +57,11 @@ public class EconomyManager : Singleton<EconomyManager>, IInitializable
     /// <param name="amount"></param>
     public void AddMoney(int amount)
     {
-        _todayMoneyIncome += amount;
-        RestaurantEconomy.Money += amount;
+        float bonus = BondManager.Instance.GetModifier(BondEffectType.FameGainRate);
+        int change = Mathf.RoundToInt(amount * (1f + bonus));
+        
+        _todayMoneyIncome += change;
+        RestaurantEconomy.Money += change;
         
         TodayEconomyChanged?.Invoke();
         RestaurantEconomyChanged?.Invoke();
@@ -70,8 +73,12 @@ public class EconomyManager : Singleton<EconomyManager>, IInitializable
     /// <param name="amount"></param>
     public void AddFame(int amount)
     {
-        _todayFameIncome += amount;
-        RestaurantEconomy.Fame += amount;
+        float bonus = BondManager.Instance.GetModifier(BondEffectType.FameGainRate);
+        int change = Mathf.RoundToInt(amount * (1f + bonus));
+
+        
+        _todayFameIncome += change;
+        RestaurantEconomy.Fame += change;
         
         TodayEconomyChanged?.Invoke();
         RestaurantEconomyChanged?.Invoke();
