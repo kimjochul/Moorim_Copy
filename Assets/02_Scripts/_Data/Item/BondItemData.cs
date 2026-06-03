@@ -6,7 +6,7 @@ using UnityEngine;
 public class BondItemData : ItemData
 {
     public int bondWithWhom;
-
+    public bool haveThisItem = false;
     public List<StatModifier> modifiers;
 }
 

@@ -470,10 +470,14 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
                 if (reward.item == null)
                     continue;
 
-                Inventory inventory = InventoryManager.Instance.GetInventory(reward.inventoryType);
-                
-                IItem item = ItemFactory.Instance.CreateItem(reward.item.id);
-                inventory.GetItem(item, reward.count);
+                if(reward.item is BondItemData bondItemData)
+                    BondManager.Instance.AcquireBondItem(bondItemData);
+                else
+                {
+                    Inventory inventory = InventoryManager.Instance.GetInventory(reward.inventoryType);
+                    IItem item = ItemFactory.Instance.CreateItem(reward.item.id);
+                    inventory.GetItem(item, reward.count);
+                }
             }
         }
         

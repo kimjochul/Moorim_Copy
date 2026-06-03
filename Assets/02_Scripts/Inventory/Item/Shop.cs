@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using NUnit.Framework;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -34,6 +35,7 @@ public class Shop : MonoBehaviour
     private List<GameObject> listProduct = new List<GameObject>();
 
     public Action<ItemData> OnProductClicked;
+    public Action<RecipeData> OnRecipeClicked;
 
     [SerializeField]
     private ShopProductInfo infoPanel;
@@ -100,6 +102,7 @@ public class Shop : MonoBehaviour
         else if (item.Data is BondItemData bondItemData)
         {
             Debug.Log($"{bondItemData.name} is a bondItem");
+            BondManager.Instance.AcquireBondItem(bondItemData);
         }
         else
         {
@@ -123,10 +126,10 @@ public class Shop : MonoBehaviour
 
             category.onToggleEvent = (bool isOn) =>
             {
-                if (isOn)
-                {
-                    UpdateProductList(type);
-                }
+                if (!isOn)
+                    return;
+
+                UpdateProductList(type);
             };
 
             this.dicCategory.Add(type, category);
@@ -146,10 +149,91 @@ public class Shop : MonoBehaviour
     }
 
     // 카테고리 클릭시 카테고리에 해당되는 상점 요소로 바꾸기
-    private void UpdateProductList(IngredientType type)
+    public void UpdateProductList(IngredientType type)
     {
-        List<IngredientData> targetDataList = DataManager.Instance.GetIngredientList(type);
+        switch(type)
+        {
+            case IngredientType.Recipe:
+                UpdateRecipeProductList();
+                break;
 
+            case IngredientType.Buff:
+                UpdateBuffProductList();
+                break;
+
+            default:
+                UpdateIngredientProductList(type);
+                break;
+        }
+    }
+    private void UpdateIngredientProductList(IngredientType type)
+    {
+        List<ItemData> targetDataList = DataManager.Instance.GetIngredientList(type).Cast<ItemData>().ToList();
+
+        RefreshProducts(targetDataList);
+    }
+    
+    private void UpdateBuffProductList()
+    {
+        List<ItemData> targetDataList = DataManager.Instance.GetBondItemList(IngredientType.Buff).Where(x => !x.haveThisItem).Cast<ItemData>().ToList();
+
+        RefreshProducts(targetDataList);
+    }
+    
+    private void UpdateRecipeProductList()
+    {
+        List<RecipeData> recipes =
+            DataManager.Instance.RecipeList.recipes
+                .Where(x => !RecipeUnlockManager.Instance.IsUnlocked(x.id))
+                .ToList();
+
+        int minSlotCount = 3;
+        int displayCount = Mathf.Max(recipes.Count, minSlotCount);
+
+        for (int i = 0; i < displayCount; i++)
+        {
+            if (i >= listProduct.Count)
+            {
+                GameObject newGo = Instantiate(objProduct, tsProduct);
+                listProduct.Add(newGo);
+            }
+
+            listProduct[i].SetActive(true);
+            ShopProduct product = listProduct[i].GetComponent<ShopProduct>();
+
+            if (i < recipes.Count)
+            {
+                product.Init(recipes[i]);
+
+                product.onClickRecipeBuy = null;
+                product.onClickRecipeBuy += (recipe) =>
+                {
+                    OnRecipeClicked?.Invoke(recipe);
+                };
+                
+                product.onHoverRecipeEnter = (recipe) => {
+                    this.infoPanel.ShowInfo(recipe);
+                };
+                product.onHoverExit = () => {
+                    this.infoPanel.HideInfo();
+                };
+            }
+            else
+            {
+                product.Clear();
+                product.onClickRecipeBuy = null;
+                product.onHoverRecipeEnter  = null;
+            }
+        }
+
+        for (int i = displayCount; i < listProduct.Count; i++)
+        {
+            listProduct[i].SetActive(false);
+        }
+    }
+    
+    private void RefreshProducts(List<ItemData> targetDataList)
+    {
         int minSlotCount = 3; // 3개의 슬롯 유지
         int displayCount = Mathf.Max(targetDataList.Count, minSlotCount);
 

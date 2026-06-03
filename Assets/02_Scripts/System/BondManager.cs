@@ -37,6 +37,7 @@ public class BondManager : Singleton<BondManager>, IInitializable
         if (ownedBondItems.Contains(item.id))
             return;
 
+        item.haveThisItem = true;
         RegisterBondItem(item);
         AddToBondInventory(item);
     }
@@ -54,7 +55,7 @@ public class BondManager : Singleton<BondManager>, IInitializable
         {
             if (!cachedModifiers.ContainsKey(modifier.type))
                 cachedModifiers[modifier.type] = 0;
-
+            
             cachedModifiers[modifier.type] += modifier.value;
         }
     }

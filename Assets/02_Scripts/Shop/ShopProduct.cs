@@ -8,6 +8,7 @@ using System;
 public class ShopProduct : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     private ItemData itemData;
+    private RecipeData recipeData;
     [SerializeField]
     private Image iconBg;
     [SerializeField]
@@ -31,11 +32,16 @@ public class ShopProduct : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     private Button btnBuy;
 
     public UnityAction<ItemData> onClickBuy;
+    public Action<RecipeData> onClickRecipeBuy;
     public Action<ItemData> onHoverEnter;
+    public Action<RecipeData> onHoverRecipeEnter;
+    
     public Action onHoverExit;
 
     public void Init(ItemData itemData)
     {
+        recipeData = null;
+        
         this.itemData = itemData;
 
         this.icon.sprite = this.itemData.icon;
@@ -52,21 +58,58 @@ public class ShopProduct : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
         Background();
     }
+    
+    public void Init(RecipeData data)
+    {
+        itemData = null;
+        
+        recipeData = data;
+        itemName.text = data.recipeName;
+        icon.sprite = data.icon;
+        this.amount.text = "1";
+        price.text = data.price.ToString();
+        
+        this.btnBuy.onClick.RemoveAllListeners();
+
+        this.btnBuy.onClick.AddListener(() =>
+        {
+            this.onClickRecipeBuy?.Invoke(recipeData);
+        });
+        
+        Background();
+    }
+    
     public void Clear()
     {
         this.onClickBuy = null;
+        this.onClickRecipeBuy = null;
         this.itemData = null;
+        this.recipeData = null;
         this.itemName.text = "";
         this.amount.text = "";
         this.price.text = "";
         this.onHoverEnter = null;
+        this.onHoverRecipeEnter = null;
         this.onHoverExit = null;
 
         Background();
     }
+    
+    public void OnClick()
+    {
+        if(itemData != null)
+        {
+            onClickBuy?.Invoke(itemData);
+        }
+        else if(recipeData != null)
+        {
+            onClickRecipeBuy?.Invoke(recipeData);
+        }
+    }
+    
     private void Background()
     {
-        if (this.itemData)
+        if (this.itemData != null || recipeData != null)
         {
             this.imageBg.sprite = this.spriteFilled;
             this.iconBg.gameObject.SetActive(true);
@@ -86,6 +129,8 @@ public class ShopProduct : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     {
         if (this.itemData)
             this.onHoverEnter?.Invoke(this.itemData);
+        else if (this.recipeData)
+            this.onHoverRecipeEnter?.Invoke(this.recipeData);
     }
 
     public void OnPointerExit(PointerEventData eventData)

@@ -6,6 +6,7 @@ using UnityEngine.Events;
 public class AmountPopup : PopupController
 {
     private ItemData itemData;
+    private RecipeData recipeData;
 
     [SerializeField]
     private TextMeshProUGUI amount;
@@ -31,6 +32,15 @@ public class AmountPopup : PopupController
     {
         this.itemData = itemData;
         this.maxAmount = itemData.maxCapacity;
+        this.currentAmount = 1;
+
+        UpdateUI();
+    }
+    
+    public void Init(RecipeData recipeData)
+    {
+        this.recipeData = recipeData;
+        this.maxAmount = 1;
         this.currentAmount = 1;
 
         UpdateUI();

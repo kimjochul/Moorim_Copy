@@ -214,6 +214,15 @@ public class UIManager : Singleton<UIManager>
 
         return popup;
     }
+    public AmountPopup CreateAmountPopup(string message, RecipeData recipeData, UnityAction<int> onOk, UnityAction onCancel)
+    {
+        var popup = Instantiate(amountPopupObj, _canvas.transform).GetComponent<AmountPopup>();
+        popup.Init(recipeData);
+        popup.ButtonOk(onOk);
+        popup.ButtonCancel(onCancel);
+
+        return popup;
+    }
     // 설명을 띄워줄 팝업
     public OkPopup CreateOkPopup(string message, UnityAction onOk)
     {
