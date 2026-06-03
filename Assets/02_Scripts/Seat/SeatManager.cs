@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,6 +8,8 @@ public class SeatManager : Singleton<SeatManager>
     private List<Chair> allChairs = new List<Chair>(); // 식당 내 모든 의자
     private HashSet<Chair> emptyChairSet = new HashSet<Chair>(); // 빈자리 검색,추가,제거
     private List<Chair> emptyChairList = new List<Chair>(); // 랜덤 뽑기용 (HashSet은 인덱스 접근 불가)
+    
+    public event Action<Chair> OnSeatFreed; // 빈자리가 생겼을 때 발생할 이벤트
 
     // 의자가 처음 설치되거나 게임이 켜질 때 명단에 등록
     public void RegisterChair(Chair chair)
@@ -44,7 +47,10 @@ public class SeatManager : Singleton<SeatManager>
     public void FreeChair(Chair chair)
     {
         if (chair.IsEmpty && emptyChairSet.Add(chair)) // Add가 성공하면 true 반환 (중복이면 false)
+        {
             emptyChairList.Add(chair);
+            OnSeatFreed?.Invoke(chair);
+        }
 
 
     }

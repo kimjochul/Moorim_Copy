@@ -53,7 +53,7 @@
     { Normal, Rich, Thief }
 
     public enum GuestAppearance 
-    { NormalMaleA, NormalMaleB, NormalFemaleA, NormalFemaleB, RichMan, ThiefGuy }
+    { NormalMaleA, NormalMaleB, NormalFemaleA, NormalFemaleB, RichMan, ThiefGuy, BadGuest, ViolenceGuest }
 
     public enum FoodQuality 
     { Normal, Fine, Good }

@@ -78,6 +78,12 @@ public class PlayerController : MonoBehaviour, IControllable
 
     public virtual void MoveTo(Vector3 destination, UnityAction onArrived = null)
     {
+        // 갈 수 있는 가장 가까운 위치로 목적지 수정
+        if (NavMesh.SamplePosition(destination, out NavMeshHit navHit, 2.0f, NavMesh.AllAreas))
+        {
+            destination = navHit.position; 
+        }
+        
         agent.ResetPath();
         agent.velocity = Vector3.zero;
         agent.SetDestination(destination);
@@ -119,4 +125,21 @@ public class PlayerController : MonoBehaviour, IControllable
     public virtual void OnSelected() {}
 
     public virtual void OnDeselected() {}
+    
+    public void PauseMovement()
+    {
+        if (agent != null && agent.enabled && agent.isOnNavMesh)
+        {
+            agent.isStopped = true;
+            agent.velocity = Vector3.zero; 
+        }
+    }
+
+    public void ResumeMovement()
+    {
+        if (agent != null && agent.enabled && agent.isOnNavMesh)
+        {
+            agent.isStopped = false;
+        }
+    }
 }

@@ -96,6 +96,8 @@ public class PlayerInput : MonoBehaviour
         Ray ray = this.mainCamera.ScreenPointToRay(Input.mousePosition);
         if (!Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity))
             return;
+        
+        Debug.Log($"Raycast Hit: {hit.collider.gameObject.name}", hit.collider.gameObject);
 
         IInteractable interactable = hit.collider.GetComponentInParent<IInteractable>();
  
