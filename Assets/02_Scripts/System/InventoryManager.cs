@@ -20,7 +20,7 @@ public class InventoryManager : Singleton<InventoryManager>, IInitializable
     [SerializeField] private Inventory meatIngredientInventory; // 고기 재료용 인벤토리
     [SerializeField] private Inventory otherIngredientInventory; // 다른 재료용 인벤토리
 
-    //[SerializeField] private Inventory bondItemInventory; // 인연 아이템
+    [SerializeField] private Inventory bondItemInventory; // 인연 아이템
 
     [SerializeField] private Inventory chefInventory; // 소월이용 인벤토리
     [SerializeField] private Inventory serverInventory; // 명월이용 인벤토리
@@ -217,6 +217,10 @@ public class InventoryManager : Singleton<InventoryManager>, IInitializable
 
             case InventoryType.Fridge:
                 fridgeInventory = inventory;
+                break;
+            
+            case InventoryType.BondItem:
+                bondItemInventory = inventory;
                 break;
 
             default:

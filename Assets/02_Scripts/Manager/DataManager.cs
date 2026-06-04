@@ -28,8 +28,10 @@ public class DataManager : Singleton<DataManager>
     // Book
     private AffinityNPCList affinityList;
     private RecipeList recipeList;
+    public RecipeList RecipeList => recipeList;
 
     private Dictionary<IngredientType, List<IngredientData>> dicIngredient = new Dictionary<IngredientType, List<IngredientData>>();
+    private Dictionary<IngredientType, List<BondItemData>> dicBuff = new Dictionary<IngredientType, List<BondItemData>>();
     private Dictionary<FoodType, List<RecipeMastery>> dicRecipe = new Dictionary<FoodType, List<RecipeMastery>>();
 
     protected override void Awake()
@@ -71,6 +73,7 @@ public class DataManager : Singleton<DataManager>
         foreach (IngredientType type in System.Enum.GetValues(typeof(IngredientType)))
         {
             this.dicIngredient[type] = new List<IngredientData>();
+            dicBuff[type] = new List<BondItemData>();
         }
 
         foreach (IngredientData data in this.ingredientList.ingredients)
@@ -81,6 +84,13 @@ public class DataManager : Singleton<DataManager>
             {
                 this.dicIngredient[targetType].Add(data);
             }
+        }
+
+        foreach (BondItemData data in ingredientList.bondItems)
+        {
+            IngredientType targetType = IngredientType.Buff;
+            if (this.dicIngredient.ContainsKey(targetType))
+                dicBuff[targetType].Add(data);
         }
     }
     // ������ �з�
@@ -117,6 +127,12 @@ public class DataManager : Singleton<DataManager>
     {
         return this.dicIngredient[type];
     }
+
+    public List<BondItemData> GetBondItemList(IngredientType type)
+    {
+        return this.dicBuff[type];
+    }
+    
     // id�� �˻��ؼ� ��� ������ ��ȯ
     public IngredientData GetIngredientData(int id)
     {
@@ -126,10 +142,23 @@ public class DataManager : Singleton<DataManager>
 
         return findData;
     }
+    public BondItemData GetBondItemData(int id)
+    {
+        BondItemData findData = dicBuff.Values
+            .SelectMany(list => list)
+            .FirstOrDefault(data => data.id == id);
+        
+        return findData;
+    }
+    
     // id�� �˻��ؼ� ��� ������ �̸� ��ȯ
     public string GetIngredientName(int id)
     {
         return GetIngredientData(id).itemName;
+    }
+    public string GetBondItemName(int id)
+    {
+        return GetBondItemData(id).itemName;
     }
     // �ο� ĳ���� ����Ʈ ��ȯ
     public List<AffinityNPCData> GetAffinityNPCList()

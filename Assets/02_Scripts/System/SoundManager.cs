@@ -99,7 +99,15 @@ public class SoundManager : Singleton<SoundManager>
         this.bgmSource.volume = data.volume * this.bgmVolume * this.masterVolume;
         this.bgmSource.Play();
     }
+    
+    public void PlayBGM(BGMData data)
+    {
+        if (data == null)
+            return;
 
+        PlayBGM(data.soundName);
+    }
+    
     /// <summary>
     /// ������ �̸��� SFX�� ���
     /// </summary>
@@ -111,6 +119,14 @@ public class SoundManager : Singleton<SoundManager>
         this.sfxSource.PlayOneShot(data.clip, data.volume * this.sfxVolume * this.masterVolume);
     }
 
+    public void PlaySFX(SFXData data)
+    {
+        if (data == null)
+            return;
+
+        PlaySFX(data.soundName);
+    }
+    
     /// <summary>
     /// Ư�� ������Ʈ�� ��ġ���� ȿ������ ���
     /// </summary>

@@ -18,6 +18,7 @@ public class SaveData
     public EconomySaveData economy;
     public DailyResultSaveData dailyResult;
     public List<InventorySaveData> inventories;
+    public BondSaveData bond;
 }
 
 public enum SaveSlotType
@@ -182,6 +183,7 @@ public class SaveManager : Singleton<SaveManager>
         InventoryManager.Instance.Init();
         StoryManager.Instance.Init();
         QuestManager.Instance.Init();
+        BondManager.Instance.Init();
     }
     
     // ------------------------
@@ -196,6 +198,7 @@ public class SaveManager : Singleton<SaveManager>
 
         if (InventoryManager.Instance)
             data.inventories = InventoryManager.Instance.GetAll()
+                .Where(inv => inv.Type != Constants.InventoryType.BondItem)
                 .Select(inv => inv.GetSaveData()).ToList();
 
         if (RecipeUnlockManager.Instance)
@@ -215,6 +218,9 @@ public class SaveManager : Singleton<SaveManager>
 
         if (QuestManager.Instance)
             data.quest = QuestManager.Instance.GetSaveData();
+        
+        if (BondManager.Instance)
+            data.bond = BondManager.Instance.GetSaveData();
 
         return data;
     }
@@ -231,6 +237,9 @@ public class SaveManager : Singleton<SaveManager>
         {
             foreach (var invData in data.inventories)
             {
+                if (invData.type == Constants.InventoryType.BondItem)
+                    continue;
+                
                 Debug.Log($"로드 시도 타입: {invData.type}");
                 var inv = InventoryManager.Instance.GetInventory(invData.type);
                 Debug.Log($"찾은 인벤토리: {inv}");
@@ -263,6 +272,10 @@ public class SaveManager : Singleton<SaveManager>
             }
         }
         QuestManager.Instance.LoadFromData(data.quest);
+        if (data.bond != null)
+        {
+            BondManager.Instance.LoadFromData(data.bond);
+        }
     }
 
     private void InitializeNewGameData()
@@ -274,6 +287,7 @@ public class SaveManager : Singleton<SaveManager>
         StoryManager.Instance.ResetData();
         EconomyManager.Instance.ResetData();
         QuestManager.Instance.ResetData();
+        BondManager.Instance.ResetData();
     }
     
     public void SaveAndQuit()
@@ -384,4 +398,10 @@ public class SlotSaveData
 
     public float spoilTimer;
     public int fridgeSpoilTimer;
+}
+
+[Serializable]
+public class BondSaveData
+{
+    public List<int> ownedBondItemIds = new();
 }

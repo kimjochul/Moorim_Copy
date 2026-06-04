@@ -38,15 +38,19 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
     
     [Header("사운드")]
     [SerializeField] private AudioClip hitSE;
+    public AudioClip HitSE => hitSE;
     
     private StoryUI storyUI;
     public StoryUI StoryUI => storyUI;
     private CharacterUI characterUI;
+    public CharacterUI CharacterUI => characterUI;
     private StoryFadePanel fadePanel;
     private ScreenEffectUI screenEffectUI;
+    public ScreenEffectUI ScreenEffectUI => screenEffectUI;
 
     [SerializeField] private List<CharacterName> characterNames;
     private Dictionary<int, string> nameDict;
+    private Dictionary<int, string> runtimeNameOverrides = new();
 
     [SerializeField] private float fadeDuration;
     
@@ -60,11 +64,15 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
     private int currentIndex; // 한 스토리 뭉치 내에서 대사 인덱스
     private int currentSceneIndex;
     private StoryScene currentScene;
+    public StoryScene CurrentScene => currentScene;
     private StoryTrigger currentTrigger; // 현재 트리거
 
 
     private bool isPlaying;
     private bool isTransitioning;
+    private bool isInputLocked;
+    public bool IsInputLocked => isInputLocked;
+    private bool canAdvance = true;
 
     private Queue<StoryTrigger> triggerQueue = new();
     
@@ -120,42 +128,33 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
                 playedStoryIds.Add(trigger.storyId);
         }
 
-        PlayNextQueuedStory();
+        Debug.Log($"{triggerQueue.Count} stories played");
+        
+        StartCoroutine(PlaySceneTransition(PlayQueuedStory));
     }
     
-    private void PlayNextQueuedStory()
+    private IEnumerator PlayQueuedStory()
     {
         if (triggerQueue.Count == 0)
         {
             Debug.Log("스토리 없음 → NPC로 넘김");
             SoundManager.Instance.PlayRandomBGM();
             GameManager.Instance.CompleteState(GameFlowState.Story);
-            return;
+            yield break;
         }
+
         SoundManager.Instance.StopBGM();
+
         currentTrigger = triggerQueue.Dequeue();
-        PlayStory(currentTrigger.storyId);
-    }
-    
-    public void PlayStory(int id)
-    {
-        currentStory = storySO.stories.Find(s => s.id == id);
+
+        currentStory = storySO.stories.Find(s => s.id == currentTrigger.storyId);
+
         storyUI.ClearLogs();
-        
+
         storyUI.AddLogHeader(
             DayManager.Instance.DayData.day,
             currentStory.storyName
         );
-        
-        if (currentStory == null)
-        {
-            Debug.LogError("스토리 없음");
-            return;
-        }
-        
-        fadePanel.canvasGroup.gameObject.SetActive(true);
-        fadePanel.canvasGroup.alpha = 1f;
-        fadePanel.canvasGroup.blocksRaycasts = true;
 
         currentSceneIndex = 0;
         currentIndex = 0;
@@ -167,19 +166,8 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
             characterUI.Show();
         else
             characterUI.Hide();
-        
-        StartScene();
-    }
 
-    private void StartScene()
-    {
-        if (currentStory == null || currentSceneIndex >= currentStory.scenes.Count)
-            return;
-
-        DOVirtual.DelayedCall(0f, () =>
-        {
-            StartCoroutine(PlaySceneTransition(()=>SetupSceneInternal(false)));
-        });
+        yield return StartCoroutine(SetupSceneInternal(false));
     }
     
     private IEnumerator SetupSceneInternal(bool useCrossFadeTransition) // 암전하는 fade를 사용 안하면 true
@@ -187,6 +175,26 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         currentScene = currentStory.scenes[currentSceneIndex];
         currentIndex = 0;
             
+        storyUI.SetRecallDim(currentScene.isRecallScene);
+        
+        if (currentScene.sceneBGM != null)
+        {
+            SoundManager.Instance.PlayBGM(currentScene.sceneBGM);
+        }
+        else
+        {
+            SoundManager.Instance.StopBGM();
+        }
+        
+        if (currentScene.startWithBlack)
+        {
+            screenEffectUI.SetBlackImmediate(true);
+        }
+        else
+        {
+            screenEffectUI.SetBlackImmediate(false);
+        }
+        
         Coroutine illustRoutine = null;
         Coroutine bgRoutine = null;
         
@@ -198,13 +206,21 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
             
             if (useCrossFadeTransition)
             {
-                illustRoutine = StartCoroutine(
-                    storyUI.ChangeIllustrationRoutine(currentScene.illustration, duration)
-                );
+                if(currentScene.illustrationOverlay != null)
+                    illustRoutine = StartCoroutine(
+                    storyUI.ChangeIllustrationRoutine(currentScene.illustration, currentScene.illustrationOverlay, false, false, duration)
+                    );
+                else
+                    illustRoutine = StartCoroutine(
+                        storyUI.ChangeIllustrationRoutine(currentScene.illustration, duration)
+                    );
             }
             else
             {
-                storyUI.ShowIllustration(currentScene.illustration);
+                if(currentScene.illustrationOverlay != null)
+                    storyUI.ShowIllustration(currentScene.illustration, currentScene.illustrationOverlay);
+                else
+                    storyUI.ShowIllustration(currentScene.illustration);
             }
         }
         else
@@ -217,6 +233,8 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
                 characterUI.Show();
 
             characterUI.SetupScene(currentScene.characters);
+
+            yield return null;
         }
             
         // Debug.Log($"{currentStory.id}");
@@ -239,65 +257,89 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
 
     public void ShowNextLine()
     {
+        if (!canAdvance)
+            return;
+        
+        canAdvance = false;
+
+        StartCoroutine(ShowNextLineRoutine());
+    }
+    
+    private IEnumerator ShowNextLineRoutine()
+    {
         if (!isPlaying || currentScene == null)
-            return;
-        
-        if (isTransitioning) 
-            return;
-        
-        // 🔥 씬 끝났을 때
+        {
+            canAdvance = true;
+            yield break;
+        }
+
+        if (isTransitioning)
+        {
+            canAdvance = true;
+            yield break;
+        }
+
         if (currentIndex >= currentScene.lines.Count)
         {
-            StartCoroutine(HandleSceneEndRoutine());
-            return;
+            yield return StartCoroutine(HandleSceneEndRoutine());
+            canAdvance = true;
+            yield break;
         }
-        
+
         var line = currentScene.lines[currentIndex++];
-        StartCoroutine(ShowLineRoutine(line));
+
+        yield return StartCoroutine(ShowLineRoutine(line));
+
+        yield return null; // ← 중요
+
+        canAdvance = true;
     }
     
     private IEnumerator ShowLineRoutine(StoryLine line)
     {
-        
         float transitionDuration = GetTransitionDuration(line.transitionSpeed);
+     
+        if (!string.IsNullOrEmpty(line.changeDisplayName))
+        {
+            OverrideCharacterName(line.characterID, line.changeDisplayName);
+        }
+
+        if (line.resetDisplayName)
+        {
+            ResetCharacterName(line.characterID);
+        }
+        
+        if(line.stopBGM)
+            SoundManager.Instance.StopBGM();
+
+        if(line.stopAllSFX)
+            SoundManager.Instance.StopSFX();
+        
+        if (line.playSFX != null)
+        {
+            SoundManager.Instance.PlaySFX(line.playSFX);
+        }
         
         storyUI.ShowLine(line);
         ApplyScreenEffect(line.screenEffect);
         ApplyCharacterFocusEffect(line);
         
         if (line.illustrationSequence != null && line.illustrationSequence.Count > 0)
-            storyUI.PlayIllustrationSequence(line.illustrationSequence);
-        else if (line.illustrationOverride != null)
-            StartCoroutine(storyUI.ChangeIllustrationRoutine(line.illustrationOverride, transitionDuration));
+            storyUI.PlayIllustrationSequence(line.illustrationSequence, line.illustrationSequence[0].useFlashTransition);
+        else if (line.illustrationOverride != null || line.illustrationOverlay != null || line.resetIllustration || line.resetOverlay)
+        {
+            StartCoroutine(
+                storyUI.ChangeIllustrationRoutine(
+                    line.illustrationOverride,
+                    line.illustrationOverlay,
+                    line.resetIllustration,
+                    line.resetOverlay,
+                    transitionDuration));
+        }
         
         if (line.lineType == LineType.Dialogue)
         {
             storyUI.ShowCharacterName();
-            
-            characterUI.SetUnknown(line.characterID, line.isUnknown);
-            characterUI.SetExpression(line.characterID, line.emotion);
-            
-            if (line.motions != null && line.motions.Count > 0)
-            {
-                foreach (var cmd in line.motions)
-                {
-                    yield return StartCoroutine(
-                        characterUI.PlayMotionRoutine(cmd, line.isUnknown)
-                    );
-                }
-            }
-            else if (line.motion != null && line.motion.type != MotionType.None)
-            {
-                yield return StartCoroutine(
-                    characterUI.PlayMotionRoutine(
-                        line.characterID,
-                        line.motion,
-                        line.isUnknown
-                    )
-                );
-            }
-            
-            characterUI.ShowEmotionIcon(line.characterID, line.emotion);
             
             if (line.isUnknown)
             {
@@ -313,6 +355,44 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
             storyUI.HideCharacterName();
             characterUI.Focus(-1); // 아무도 강조 안함
         }
+        
+        characterUI.SetUnknown(line.characterID, line.isUnknown);
+        characterUI.SetExpression(line.characterID, line.emotion);
+        
+        foreach(var exp in line.extraExpressions)
+        {
+            characterUI.SetExpression(exp.characterID, exp.emotion);
+        }
+        
+        if (line.motions != null && line.motions.Count > 0)
+        {
+            if (line.playTogether)
+            {
+                yield return StartCoroutine(characterUI.PlayMotionsParallel(line.motions, line.isUnknown));
+            }
+            else
+            {
+                foreach (var cmd in line.motions)
+                {
+                    yield return StartCoroutine(
+                        characterUI.PlayMotionRoutine(cmd, line.isUnknown)
+                    );
+                }
+            }
+        }
+        else if (line.motion != null && line.motion.type != MotionType.None)
+        {
+            yield return StartCoroutine(
+                characterUI.PlayMotionRoutine(
+                    line.characterID,
+                    line.motion,
+                    line.isUnknown
+                )
+            );
+        }
+            
+        if(line.showEmotionIcon)
+            characterUI.ShowEmotionIcon(line.characterID, line.emotion);
     }
 
     private IEnumerator HandleSceneEndRoutine()
@@ -332,12 +412,15 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         switch (transitionType)
         {
             case SceneTransitionType.Fade:
-                StartCoroutine(PlaySceneTransition(()=>SetupSceneInternal(false)));
+                yield return StartCoroutine(PlaySceneTransition(()=>SetupSceneInternal(false)));
+                canAdvance = true;
+                ShowNextLine();
                 break;
 
             case SceneTransitionType.None:
                 storyUI.ClearCurrentLine();
                 yield return StartCoroutine(SetupSceneInternal(true));
+                canAdvance = true;
                 ShowNextLine();
                 break;
         }
@@ -345,7 +428,7 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
     
     private void EndStory(int storyId = -1)
     {
-        StartCoroutine(PlaySceneTransition(EndStoryRoutine, false));
+        StartCoroutine(PlaySceneTransition(EndStoryRoutine));
     }
 
     private IEnumerator EndStoryRoutine()
@@ -367,6 +450,37 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
             QuestManager.Instance.AcceptQuest(quest);
         }
             
+        // 돈 보상
+        if (currentStory.rewardMoney > 0)
+        {
+            EconomyManager.Instance.AddMoney(currentStory.rewardMoney);
+        }
+
+        // 명성 보상
+        if (currentStory.rewardFame > 0)
+        {
+            EconomyManager.Instance.AddFame(currentStory.rewardFame);
+        }
+
+        // 아이템 보상
+        if (currentStory.rewardItems != null)
+        {
+            foreach (var reward in currentStory.rewardItems)
+            {
+                if (reward.item == null)
+                    continue;
+
+                if(reward.item is BondItemData bondItemData)
+                    BondManager.Instance.AcquireBondItem(bondItemData);
+                else
+                {
+                    Inventory inventory = InventoryManager.Instance.GetInventory(reward.inventoryType);
+                    IItem item = ItemFactory.Instance.CreateItem(reward.item.id);
+                    inventory.GetItem(item, reward.count);
+                }
+            }
+        }
+        
         if (currentTrigger != null && currentTrigger.unlockRecipeIds != null)
         {
             foreach (var recipeId in currentTrigger.unlockRecipeIds)
@@ -382,8 +496,7 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
             }
         }
             
-        PlayNextQueuedStory();
-        yield break;
+        yield return StartCoroutine(PlayQueuedStory());
     }
     
     public void SkipCurrentScene()
@@ -395,6 +508,8 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
             return;
         
         isSkipLocked = true;
+        
+        AddSkippedLinesToLog();
 
         // 현재 씬 끝으로 이동
         currentIndex = currentScene.lines.Count;
@@ -408,12 +523,61 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         });
     }
     
+    public void SkipCurrentStory()
+    {
+        if (!isPlaying || currentStory == null)
+            return;
+
+        if (isTransitioning || isSkipLocked)
+            return;
+
+        isSkipLocked = true;
+        StartCoroutine(SkipCurrentStoryRoutine());
+    }
+    
+    private IEnumerator SkipCurrentStoryRoutine()
+    {
+        storyUI.ClearCurrentLine();
+
+        yield return StartCoroutine(
+            PlaySceneTransition(EndStoryRoutine)
+        );
+        
+        isSkipLocked = false;
+    }
+    
+    private void AddSkippedLinesToLog()
+    {
+        for (int i = currentIndex; i < currentScene.lines.Count; i++)
+        {
+            var line = currentScene.lines[i];
+
+            if (line.hideFromLog)
+                continue;
+
+            storyUI.AddDialogueLog(line);
+        }
+    }
+    
     public string GetCharacterName(int id)
     {
+        if (runtimeNameOverrides.TryGetValue(id, out var overrideName))
+            return overrideName;
+
         if (nameDict.TryGetValue(id, out var name))
             return name;
 
         return "???";
+    }
+    
+    public void OverrideCharacterName(int id, string newName)
+    {
+        runtimeNameOverrides[id] = newName;
+    }
+    
+    public void ResetCharacterName(int id)
+    {
+        runtimeNameOverrides.Remove(id);
     }
     
     private bool HasAnyCharacter(Story story)
@@ -434,8 +598,7 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         if (dayData.day < t.requiredDay)
             return false;
 
-        if (t.requiredDayOfWeek.HasValue &&
-            dayData.dayOfWeek != t.requiredDayOfWeek.Value)
+        if (t.requiredDayOfWeek is { Count: > 0 } && !t.requiredDayOfWeek.Contains(dayData.dayOfWeek))
             return false;
 
         if (economy.Money < t.requiredMoney)
@@ -508,15 +671,22 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         };
     }
     
-    private IEnumerator PlaySceneTransition(Func<IEnumerator> onMid, bool autoNextLine = true)
+    private IEnumerator PlaySceneTransition(Func<IEnumerator> onMid)
     {
         isTransitioning = true; // ⭐ 잠금
+        isInputLocked = true;
         
         fadePanel.canvasGroup.gameObject.SetActive(true);
         fadePanel.canvasGroup.blocksRaycasts = true;
-
+        
         storyUI.ClearCurrentLine();
         yield return fadePanel.canvasGroup.DOFade(1f, fadeDuration).SetEase(Ease.InOutBack).WaitForCompletion();
+        
+        SceneVisualType visualType = currentScene?.visualType ?? SceneVisualType.CharacterSlots;
+        storyUI.ApplyInnerThought(false, visualType, -1);
+        
+        storyUI.ResetIllustrationState();
+        screenEffectUI.ResetZoom(0.5f);
         
         if (onMid != null)
             yield return StartCoroutine(onMid());
@@ -526,16 +696,22 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         yield return null;
         
 
-        yield return fadePanel.canvasGroup.DOFade(0f, fadeDuration).SetEase(Ease.InOutQuad).WaitForCompletion();
-        
+        yield return fadePanel.canvasGroup.DOFade(0f, fadeDuration).SetEase(Ease.InQuad).WaitForCompletion();
 
         fadePanel.canvasGroup.blocksRaycasts = false;
         fadePanel.canvasGroup.gameObject.SetActive(false);
         
         isTransitioning = false;
+
+        yield return null;
+        yield return null;
         
-        if (autoNextLine)
-            ShowNextLine();
+        ShowNextLine();
+
+        yield return null;
+        yield return null;
+        
+        isInputLocked = false;
     }
     
     private void ApplyScreenEffect(ScreenEffectData effect)
@@ -561,6 +737,10 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
             case ScreenEffectType.FlashWhite:
                 effectUI.FlashWhite(effect.effectDuration);
                 break;
+            
+            case ScreenEffectType.FlashBlack:
+                effectUI.FlashBlack(effect.effectDuration);
+                break;
 
             case ScreenEffectType.Shake:
                 effectUI.ShakeScreen(effect.effectPower, effect.effectDuration);
@@ -575,7 +755,11 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
                 break;
 
             case ScreenEffectType.FlashWithShake:
-                effectUI.PlayImpact(effect.effectPower, effect.effectDuration, hitSE);
+                effectUI.PlayImpact(effect.effectPower, effect.effectDuration, hitSE, true);
+                break;
+            
+            case ScreenEffectType.ShakeAndSound:
+                effectUI.PlayImpact(effect.effectPower, effect.effectDuration, hitSE, false);
                 break;
         }
     }
@@ -604,6 +788,10 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
                 effectUI.FlashWhite(effect.effectDuration);
                 break;
 
+            case ScreenEffectType.FlashBlack:
+                effectUI.FlashBlack(effect.effectDuration);
+                break;
+            
             case ScreenEffectType.Shake:
                 effectUI.ShakeScreen(effect.effectPower, effect.effectDuration);
                 break;
@@ -617,7 +805,11 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
                 break;
 
             case ScreenEffectType.FlashWithShake:
-                effectUI.PlayImpact(effect.effectPower, effect.effectDuration, hitSE);
+                effectUI.PlayImpact(effect.effectPower, effect.effectDuration, hitSE, true);
+                break;
+            
+            case  ScreenEffectType.ShakeAndSound:
+                effectUI.PlayImpact(effect.effectPower, effect.effectDuration, hitSE, false);
                 break;
         }
         yield return new WaitForSeconds(effect.effectDuration);
@@ -625,16 +817,31 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
     
     private void ApplyCharacterFocusEffect(StoryLine line)
     {
-        var slot = characterUI.FindSlot(line.characterID);
-
-        if (slot == null)
+        if (line.screenEffect == null)
             return;
+
+        var slot = characterUI.FindSlot(line.characterID);
+        
+        if (currentScene.visualType == SceneVisualType.CharacterSlots)
+        {
+            if (slot == null)
+                return;
+        }
+        
 
         switch (line.screenEffect.effectType)
         {
             case ScreenEffectType.ZoomIn:
-                screenEffectUI.ZoomTo(slot.SlotPos, 1.1f, line.screenEffect.effectDuration);
-                storyUI.FocusMode(true);
+                if(currentScene.visualType == SceneVisualType.CharacterSlots)
+                {
+                    screenEffectUI.ZoomTo(slot.SlotPos, 1.1f, line.screenEffect.effectDuration);
+                    storyUI.FocusMode(true);
+                }
+                else if (currentScene.visualType == SceneVisualType.Illustration)
+                {
+                    screenEffectUI.ZoomTo(new Vector2(0.5f, 0.5f), 1.2f, line.screenEffect.effectDuration);
+                    storyUI.FocusMode(true);
+                }
                 break;
 
             case ScreenEffectType.ZoomOut:

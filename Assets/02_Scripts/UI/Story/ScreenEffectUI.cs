@@ -37,8 +37,7 @@ public class ScreenEffectUI : MonoBehaviour
 
         fadeImage.color = new Color(0,0,0,0);
 
-        fadeImage
-            .DOFade(1f, duration);
+        fadeImage.DOFade(1f, duration).SetEase(Ease.InSine);
     }
 
     public void FadeFromBlack(float duration)
@@ -50,7 +49,7 @@ public class ScreenEffectUI : MonoBehaviour
             .OnComplete(() =>
             {
                 fadeImage.gameObject.SetActive(false);
-            });
+            }).SetEase(Ease.InSine);
     }
 
     public void FlashWhite(float duration = 0.75f)
@@ -85,6 +84,72 @@ public class ScreenEffectUI : MonoBehaviour
         yield return fadeImage.DOFade(0f, duration * 0.8f).WaitForCompletion();
 
         fadeImage.gameObject.SetActive(false);
+    }
+    
+    public void FlashBlack(float duration = 0.5f)
+    {
+        fadeImage.DOKill();
+
+        fadeImage.gameObject.SetActive(true);
+
+        // 검은색 + 투명 시작
+        fadeImage.color = new Color(0f, 0f, 0f, 0f);
+
+        Sequence seq = DOTween.Sequence();
+
+        // 빠르게 검게
+        seq.Append(fadeImage.DOFade(1f, duration * 0.3f));
+
+        seq.AppendInterval(duration * 0.4f);
+            
+        // 다시 복귀
+        seq.Append(fadeImage.DOFade(0f, duration * 0.3f));
+
+        seq.OnComplete(() =>
+        {
+            fadeImage.gameObject.SetActive(false);
+        });
+    }
+    
+    public IEnumerator FlashBlackRoutine(
+        float duration,
+        float holdTime,
+        Action onMid = null)
+    {
+        fadeImage.DOKill();
+
+        fadeImage.gameObject.SetActive(true);
+        fadeImage.color = new Color(0f, 0f, 0f, 0f);
+
+        // 검게
+        yield return fadeImage
+            .DOFade(1f, duration * 0.3f)
+            .WaitForCompletion();
+
+        // 여기서 장면 교체
+        onMid?.Invoke();
+
+        yield return new WaitForSeconds(holdTime);
+
+        // 다시 밝게
+        yield return fadeImage
+            .DOFade(0f, duration * 0.7f)
+            .WaitForCompletion();
+
+        fadeImage.gameObject.SetActive(false);
+    }
+    
+    public void SetBlackImmediate(bool active)
+    {
+        fadeImage.gameObject.SetActive(active);
+        
+        Color c = fadeImage.color;
+        c.r = 0f;
+        c.g = 0f;
+        c.b = 0f;
+        c.a = active ? 1f : 0f;
+
+        fadeImage.color = c;
     }
     
     #endregion
@@ -152,12 +217,15 @@ public class ScreenEffectUI : MonoBehaviour
 
 
     #region Combined Effect
+
     public void PlayImpact(
         float shakePower,
         float shakeDuration,
-        AudioClip se)
+        AudioClip se,
+        bool useFlash)
     {
-        FlashWhite();
+        if (useFlash)
+            FlashWhite();
 
         ShakeScreen(shakePower, shakeDuration);
 

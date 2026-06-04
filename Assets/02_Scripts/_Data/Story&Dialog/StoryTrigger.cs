@@ -11,7 +11,7 @@ public class StoryTrigger
 
     [Header("조건")]
     public int requiredDay;
-    public DayOfWeek? requiredDayOfWeek;
+    public List<DayOfWeek> requiredDayOfWeek;
 
     public int requiredMoney;
     public int requiredFame;

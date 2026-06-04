@@ -59,13 +59,13 @@ public class DebtPanel : MonoBehaviour
 
         if (amount <= 0)
         {
-            talkPanel.ChangeText("얼마를 갚으실 거에요?");
+            talkPanel.ChangeText("얼마를 갚을 거야?");
             return;
         }
 
         if (!EconomyManager.Instance.CanSpend(amount))
         {
-            talkPanel.ChangeText("그만큼 돈은 없으신 것 같은데요...");
+            talkPanel.ChangeText("갖고 있는 돈보다 많이 부른 거 같아...");
             return;
         }
         
@@ -77,7 +77,7 @@ public class DebtPanel : MonoBehaviour
         }
         else
         {
-            talkPanel.ChangeText($"좋아요. {amount}만큼 갚으셨습니다.");
+            talkPanel.ChangeText($"좋아. {amount}만큼 갚은 거야.");
         }
 
         EconomyManager.Instance.SpendMoney(amount);
@@ -88,11 +88,11 @@ public class DebtPanel : MonoBehaviour
         {
             if (isOverPay)
             {
-                talkPanel.ChangeText($"후하게 주시네요. 하지만 {amount}원 정도면 충분합니다. 빚은 전부 갚으셨어요!");
+                talkPanel.ChangeText($"너무 많이 줬어. {amount}원 정도면 충분해. 빚은 전부 갚았어!");
             }
             else
             {
-                talkPanel.ChangeText("빚을 전부 갚으셨네요. 훌륭합니다! 이제 빚은 없으세요");
+                talkPanel.ChangeText("빚을 전부 갚았어. 좋아! 이제 빚은 없어.");
             }
             FullPayDebt?.Invoke();
         }
@@ -102,7 +102,7 @@ public class DebtPanel : MonoBehaviour
 
     private void OnCancelButtonClicked()
     {
-        talkPanel.ChangeText("돈은 나중에 갚으세요");
+        talkPanel.ChangeText("돈은 나중에 갚아도 돼");
         gameObject.SetActive(false);
     }
 }

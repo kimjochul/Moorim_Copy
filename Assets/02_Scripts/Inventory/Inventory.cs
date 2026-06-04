@@ -28,7 +28,7 @@ public class Inventory : MonoBehaviour, IInitializable
     public UnityAction OnCloseRequested;
 
     private bool isInit = false;
-    
+    public bool IsReadOnly => type == InventoryType.BondItem;
     private void Awake()
     {
         if (closeButton != null)

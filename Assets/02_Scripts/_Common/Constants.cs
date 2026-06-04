@@ -29,6 +29,9 @@
         Dairy, // 우유, 치즈 같은 유제품
         Spices, // 소금, 후추 같은 조미료
         Processed, // 두부, 어묵, 밀가루, 오일 같은 가공식재료
+        
+        Buff, // 가게 버프 아이템
+        Recipe, // 레시피
     }
     public enum FoodType
     {

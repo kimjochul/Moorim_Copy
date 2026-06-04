@@ -16,7 +16,6 @@ public class MerchantUI : MonoBehaviour
     [SerializeField] private NPCQuestUI npcQuestUI;
     
     [SerializeField] private Shop shop;
-    private Inventory inventory;
     
     [SerializeField] private Button shopButton;
     [SerializeField] private Button questButton;
@@ -70,9 +69,13 @@ public class MerchantUI : MonoBehaviour
 
         if (debtPanel != null)
             debtPanel.FullPayDebt -= FullyRepayDebt;
-        
+
         if (shop != null)
+        {
             shop.OnProductClicked -= HandleProductClicked;
+            shop.OnRecipeClicked -= HandleRecipeClicked;
+        }
+        
     }
 
     public void Init(Merchant merchant)
@@ -88,8 +91,7 @@ public class MerchantUI : MonoBehaviour
             merchant.DayManager.OnDayStart += ResetDialogue;
         
         shop.OnProductClicked += HandleProductClicked;
-        
-        inventory = InventoryManager.Instance.GetInventory(InventoryType.Fridge);
+        shop.OnRecipeClicked += HandleRecipeClicked;
         
         shopButton.onClick.AddListener(OpenShop);
         questButton.onClick.AddListener(OpenQuest);
@@ -131,7 +133,40 @@ public class MerchantUI : MonoBehaviour
                 {
                     talkPanel.ChangeText("좋은 선택야!");
                     UIManager.Instance.CreateOkPopup("구매 완료!", () => {});
+                    if(itemData is BondItemData bondItemData)
+                    {
+                        shop.UpdateProductList(IngredientType.Buff);
+                    }
                 }
+            },
+            () =>
+            {
+                talkPanel.ChangeText("천천히 골라도 돼");
+                Debug.Log("취소 버튼 눌림");
+            });
+    }
+
+    private void HandleRecipeClicked(RecipeData recipeData)
+    {
+        talkPanel.ChangeText($"{recipeData.recipeName} 비급을 사고 싶어?");
+        UIManager.Instance.CreateAmountPopup($"{recipeData.recipeName} 조리법을 구매하시겠습니까?", recipeData,
+            (amount) =>
+            {
+                int totalPrice = recipeData.price * amount;
+                
+                if (!EconomyManager.Instance.CanSpend(recipeData.price))
+                {
+                    talkPanel.ChangeText("돈이 부족한 것 같은데?");
+                    UIManager.Instance.CreateOkPopup("돈이 부족합니다!", () => {});
+                    return;
+                }
+
+                EconomyManager.Instance.SpendMoney(recipeData.price);
+                RecipeUnlockManager.Instance.Unlock(recipeData.id);
+
+                talkPanel.ChangeText("좋은 선택이야!");
+                UIManager.Instance.CreateOkPopup("레시피 해금!", ()=>{});
+                shop.UpdateProductList(IngredientType.Recipe);
             },
             () =>
             {
