@@ -39,6 +39,9 @@ public class PlayerController : MonoBehaviour, IControllable
     private NavMeshAgent agent;
 
     private UnityAction onArrived; // 콜백
+    
+    // 플레이어 속도 배율
+    public virtual float SpeedMultiplier => 1.0f;
 
     void Awake()
     {

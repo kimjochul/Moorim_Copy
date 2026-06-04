@@ -1597,6 +1597,7 @@ GameObject:
   - component: {fileID: 4820367964941539116}
   - component: {fileID: 8605892893733275369}
   - component: {fileID: 4869434827882766404}
+  - component: {fileID: 486214440869979138}
   m_Layer: 2
   m_Name: Myungwol
   m_TagString: Untagged
@@ -1614,8 +1615,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 14.41, y: 0, z: 5.32}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.07, y: 0.07, z: 0.07}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 8888559253909095075}
   - {fileID: 6030069204443009078}
@@ -1638,7 +1639,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -1756,6 +1757,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAnimation
   player: {fileID: 4820367964941539116}
   animator: {fileID: 163535216979995436}
+--- !u!114 &486214440869979138
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8425698951559616205}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de297f50812821045959f3aab65ee715, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GhostEffect
+  SMR_Body: {fileID: 2952996844091549480}
+  SMR_Head: {fileID: 3071676639673548916}
+  MeshTrailPrefab: {fileID: 4453479496826068926, guid: e4e19e17456acec469ab5bd98638f74b, type: 3}
+  TrailCount: 10
+  TrailGap: 0.02
+  frontColor: {r: 1, g: 0, b: 0, a: 0}
+  backColor: {r: 1, g: 0.9130435, b: 0, a: 0}
+  frontColor_Inner: {r: 0, g: 0.018627167, b: 1, a: 0}
+  backColor_Inner: {r: 0.12300229, g: 1, b: 0, a: 0}
 --- !u!1 &8861656109169639470
 GameObject:
   m_ObjectHideFlags: 0
