@@ -9,8 +9,9 @@ using static Constants;
 /// </summary>
 public class GuestManager : MonoBehaviour
 {
-    [Header("테스트용, 삭제 필수")]
-    public bool isTest;
+    public enum SpawnType { All, Normal, Thief, BadGuest, Rich, Violence }
+    [Header("테스트용 스폰 설정")]
+    public SpawnType currentSpawnType = SpawnType.All;
     
     [Header("연결해야할 외부 정보")]
     [SerializeField] private GuestResultTracker resultTracker;
@@ -38,6 +39,8 @@ public class GuestManager : MonoBehaviour
     [SerializeField] private GuestPrefabEntry[] normalGuestPrefabs;
     public GameObject richGuestPrefab;
     public GameObject thiefGuestPrefab;
+    public GameObject badGuestPrefab;
+    public GameObject violenceGuestPrefab;
 
     public static event Action OnGuestServed;
     private int GuestCount = 0;
@@ -68,6 +71,20 @@ public class GuestManager : MonoBehaviour
 
         if (thiefGuestPrefab != null)
             PoolManager.Instance.Register(GuestAppearance.ThiefGuy.ToString(), thiefGuestPrefab, 1);
+        
+        if (badGuestPrefab != null)
+            PoolManager.Instance.Register(GuestAppearance.BadGuest.ToString(), badGuestPrefab, 1);
+
+        if (violenceGuestPrefab != null)
+            PoolManager.Instance.Register(GuestAppearance.ViolenceGuest.ToString(), violenceGuestPrefab, 1);
+    }
+    
+    void Start()
+    {
+        if (SeatManager.Instance != null)
+        {
+            SeatManager.Instance.OnSeatFreed += HandleSeatFreed;
+        }
     }
 
     void OnDisable()
@@ -77,38 +94,56 @@ public class GuestManager : MonoBehaviour
             DayManager.Instance.OnDayStart -= StartSpawn;
             DayManager.Instance.OnDayEnd -= StopSpawn;
         }
+        
+        if (SeatManager.Instance != null)
+        {
+            SeatManager.Instance.OnSeatFreed -= HandleSeatFreed;
+        }
     }
 
     private void StartSpawn()
     {
         //InvokeRepeating(nameof(SpawnGuset), startSpawnTime, spawnInterval);
-        Invoke(nameof(SpawnGuset), startSpawnTime);
+        //Invoke(nameof(SpawnGuset), startSpawnTime);
     }
-
-    public void SpawnGuset()
+    
+    public GuestBase SpawnGuset()
     {
-        // 빈자리도 없고 웨이팅도 꽉 차면 스폰 중지
         bool hasEmptyChair = SeatManager.Instance.FindEmptyChair() != null;
-
-        if (!hasEmptyChair && waitingGuests.Count >= maxWaitingCount) return;
+        if (!hasEmptyChair && waitingGuests.Count >= maxWaitingCount) return null;
         
-        globalIDCounter++; // 스폰될 때마다 고유 id 1씩 증가
-
         GuestAppearance appearance = GuestAppearance.NormalMaleA;
 
-
-        if (isTest)
+        if (currentSpawnType != SpawnType.All)
         {
-            appearance = GuestAppearance.ThiefGuy;
+            switch (currentSpawnType)
+            {
+                case SpawnType.Normal:
+                    appearance = GuestAppearance.NormalFemaleA;
+                    break;
+                case SpawnType.Thief:
+                    appearance = GuestAppearance.ThiefGuy;
+                    break;
+                case SpawnType.BadGuest:
+                    appearance = GuestAppearance.BadGuest; 
+                    break;
+                case SpawnType.Rich:
+                    appearance = GuestAppearance.RichMan;
+                    break;
+                case SpawnType.Violence:
+                    appearance = GuestAppearance.ViolenceGuest;
+                    break;
+            }
         }
         else
         {
-            // 확률 돌려서 손님 타입과 외형 결정 (0~1사이 랜덤)
             float rand = UnityEngine.Random.value;
             if (rand < 0.05f)
                 appearance = GuestAppearance.ThiefGuy;
             else if (rand < 0.1f)
                 appearance = GuestAppearance.RichMan;
+            else if (rand < 0.15f) 
+                appearance = GuestAppearance.BadGuest;
             else
             {
                 int randomIndex = UnityEngine.Random.Range(0, normalGuestPrefabs.Length);
@@ -116,7 +151,48 @@ public class GuestManager : MonoBehaviour
             }
         }
 
-        // 풀에서 타입에 맞는 오브젝트 꺼냄
+        return InstantiateAndSetupGuest(appearance);
+    }
+
+    public GuestBase SpawnGuset(SpawnType spawnType)
+    {
+        bool hasEmptyChair = SeatManager.Instance.FindEmptyChair() != null;
+        if (!hasEmptyChair && waitingGuests.Count >= maxWaitingCount) return null;
+
+        GuestAppearance appearance = GuestAppearance.NormalMaleA;
+
+        switch (spawnType)
+        {
+            case SpawnType.Normal:
+                if (normalGuestPrefabs.Length > 0)
+                    appearance = normalGuestPrefabs[0].appearance;
+                break;
+            case SpawnType.Thief:
+                appearance = GuestAppearance.ThiefGuy;
+                break;
+            case SpawnType.BadGuest:
+                appearance = GuestAppearance.BadGuest; 
+                break;
+            case SpawnType.Rich:
+                appearance = GuestAppearance.RichMan;
+                break;
+            case SpawnType.Violence:
+                appearance = GuestAppearance.ViolenceGuest;
+                break;
+            case SpawnType.All:
+            default:
+                if (normalGuestPrefabs.Length > 0)
+                    appearance = normalGuestPrefabs[0].appearance;
+                break;
+        }
+
+        return InstantiateAndSetupGuest(appearance);
+    }
+
+    private GuestBase InstantiateAndSetupGuest(GuestAppearance appearance)
+    {
+        globalIDCounter++; 
+
         GameObject guestObj = PoolManager.Instance.Get(appearance.ToString());
         
         if (guestObj != null)
@@ -135,31 +211,44 @@ public class GuestManager : MonoBehaviour
 
                 guest.OnGuestPaid += () =>
                 {
-                    GuestCount++; // 서빙 완료된 손님 수 +1
-                    OnGuestServed?.Invoke(); // 외부에 손님 한 명 끝났다고 알림
+                    GuestCount++; 
+                    OnGuestServed?.Invoke(); 
                 };
 
                 guest.OnGuestExited += () =>
                 {
-                    resultTracker.RecordGuest(guest.CurrentMood); // 기분별 집계
+                    resultTracker.RecordGuest(guest.CurrentMood); 
                     activeGuests.Remove(guest);
                 };
 
-                guest.OnOrderPlaced += (g, order) =>
-                {
-                    orderPopup.AddOrder(g, order);
-                };
-
-                guest.OnOrderServed += (g) =>
-                {
-                    orderPopup.RemoveOrder(g);  // 서빙 완료 시 제거
-                };
-
-                guest.OnGuestAngryExited += (g) =>
+                guest.OnOrderPlaced += (g, order) => { orderPopup.AddOrder(g, order); };
+                guest.OnOrderChanged += (g, order) =>
                 {
                     orderPopup.RemoveOrder(g);
+                    orderPopup.AddOrder(g, order);
                 };
+                guest.OnOrderServed += (g) => { orderPopup.RemoveOrder(g); };
+                guest.OnGuestAngryExited += (g) => { orderPopup.RemoveOrder(g); };
+
+                return guest; // 세팅 끝난 손님 반환
             }
+        }
+        
+        return null;
+    }
+    
+    private void HandleSeatFreed(Chair freedChair)
+    {
+        // 대기 중인 손님이 있다면
+        if (waitingGuests.Count > 0)
+        {
+            GuestBase firstWaitingGuest = waitingGuests[0];
+            
+            // 대기열에서 제거
+            LeaveWaiting(firstWaitingGuest);
+            
+            // 손님에게 빈자리 할당 후 입장 상태로 변경
+            firstWaitingGuest.AssignChairAndEnter(freedChair);
         }
     }
 

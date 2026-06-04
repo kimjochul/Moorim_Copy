@@ -7,6 +7,7 @@ using static Constants;
 public class Myungwol : PlayerController
 {
     private Inventory inventory;
+    public override float SpeedMultiplier => 1.5f;
     
     // 인벤토리 (인벤토리 담당자가 구현 시 타입 교체)
     // TODO: 인벤토리 담당자와 협의 후 실제 Inventory 컴포넌트로 교체

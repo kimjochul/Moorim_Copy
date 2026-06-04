@@ -66,6 +66,7 @@ public abstract class GuestBase : MonoBehaviour
     public event Action OnGuestPaid;
     public event Action OnGuestExited;
     public event Action<GuestBase> OnGuestAngryExited;
+    public event Action<GuestBase, GuestOrderData> OnOrderChanged;
 
     void Awake()
     {
@@ -182,26 +183,19 @@ public abstract class GuestBase : MonoBehaviour
 
     private void BindAnimCallbacks()
     {
-        // HandUp 완료 → (Eating Bool은 GuestAnimation 내부에서 켜짐)
-        guestAnim.OnHandUpFinished += () =>
-        {
-            // 필요 시 로그
-        };
+        guestAnim.OnHandUpFinished += () => { };
 
-        // HandDown 완료 → Pay 상태의 다음 단계(결제 UI 표시)로 넘어감
         guestAnim.OnHandDownFinished += () =>
         {
             isPlayingHandDown = false;
         };
 
-        // StandUp 완료 → Exit 상태 전환
         guestAnim.OnStandUpFinished += () =>
         {
             isPlayingStandUp = false;
             ChangeState(GuestState.Exit);
         };
 
-        // Angry 완료 → StandUp 재생
         guestAnim.OnAngryFinished += () =>
         {
             if (isAngryExiting)
@@ -240,7 +234,6 @@ public abstract class GuestBase : MonoBehaviour
 
     private void HandleEnterState()
     {
-        Debug.Log("<color=yellow>Guest.cs : HandleEnterState</color>");        
         if (!isEnterPathSet)
         {
             myChair = SeatManager.Instance.FindEmptyChair();
@@ -273,7 +266,6 @@ public abstract class GuestBase : MonoBehaviour
             transform.position = myChair.sitPoint.position;
             transform.rotation = myChair.sitPoint.rotation;
 
-            // 앉기 애니메이션 재생 후 완료 콜백에서 WaitOrder 진입
             guestAnim.PlaySitDown();
             guestAnim.OnSitDownFinished += OnSitDownComplete;
         }
@@ -287,27 +279,22 @@ public abstract class GuestBase : MonoBehaviour
 
     private void HandleWaitingState()
     {
-        Debug.Log("<color=yellow>Guest.cs : HandleWaitingState</color>");        
+    }
+    
+    public void AssignChairAndEnter(Chair chair)
+    {
+        myChair = chair;
+        myChair.Reserve(this);
 
+        mover.MoveTo(myChair.sitPoint.position);
         
-        myChair = SeatManager.Instance.FindEmptyChair();
-
-        if (myChair != null)
-        {
-            myChair.Reserve(this);
-            guestManager.LeaveWaiting(this);
-
-            mover.MoveTo(myChair.sitPoint.position);
-            isEnterPathSet = true;
-
-            ChangeState(GuestState.Enter);
-        }
+        isEnterPathSet = true;
+        
+        ChangeState(GuestState.Enter);
     }
 
     protected virtual void HandleWaitOrderState()
     {
-        Debug.Log("<color=yellow>Guest.cs : HandleWaitOrderState</color>");
-        
         if (isAngryExiting) return;
 
         stateTimer += Time.deltaTime;
@@ -335,9 +322,6 @@ public abstract class GuestBase : MonoBehaviour
 
     protected virtual void HandleWaitFoodState()
     {
-        Debug.Log("<color=yellow>Guest.cs : HandleWaitFoodState</color>");
-
-        
         if (isAngryExiting) return;
 
         stateTimer += Time.deltaTime;
@@ -353,15 +337,12 @@ public abstract class GuestBase : MonoBehaviour
 
     protected virtual void HandleEatState()
     {
-        Debug.Log("<color=yellow>Guest.cs : HandleEatState</color>");
-        
         if (isAngryExiting) return;
 
         stateTimer += Time.deltaTime;
 
         if (stateTimer >= foodEatLimit)
         {
-            // HandDown 애니메이션 재생 + Pay 상태 진입
             isPlayingHandDown = true;
             guestAnim.PlayHandDown();
             ChangeState(GuestState.Pay);
@@ -370,16 +351,11 @@ public abstract class GuestBase : MonoBehaviour
 
     protected virtual void HandlePayState()
     {
-        Debug.Log("<color=yellow>Guest.cs : HandlePayState</color>");
-
-        
         if (isAngryExiting) return;
 
-        // 1단계: HandDown 재생 중 → 대기
         if (isPlayingHandDown)
             return;
 
-        // 2단계: HandDown 완료됨 → 결제 UI 표시 (한 번만)
         if (!hasShownPayUI)
         {
             if (foodQuality == FoodQuality.Good && CurrentMood == GuestMood.Neutral)
@@ -393,7 +369,6 @@ public abstract class GuestBase : MonoBehaviour
             return;
         }
 
-        // 3단계: payWaitTime 동안 결제 UI 보여주기
         stateTimer += Time.deltaTime;
 
         if (stateTimer >= payWaitTime && !hasProcessedPayment)
@@ -413,17 +388,13 @@ public abstract class GuestBase : MonoBehaviour
                 currentFoodModel = null;
             }
 
-            // 4단계: StandUp 재생 → 완료 콜백에서 Exit 전환
             isPlayingStandUp = true;
             guestAnim.PlayStandUp();
         }
     }
 
-    private void HandleExitState()
+    protected virtual void HandleExitState()
     {
-        Debug.Log("<color=yellow>Guest.cs : HandleExitState</color>");
-
-        
         if (!isExitPathSet)
         {
             OnGuestExited?.Invoke();
@@ -444,11 +415,13 @@ public abstract class GuestBase : MonoBehaviour
 
         if (isExitPathSet && mover.HasArrived(2.0f))
         {
-            PoolManager.Instance.Return(myApperance.ToString(), gameObject);
+            if (Vector3.Distance(transform.position, exitDoor.position) <= 3.0f)
+            {
+                PoolManager.Instance.Return(myApperance.ToString(), gameObject);
+            }
         }
     }
 
-    // 플레이어 상호작용 - 주문 받기
     public void TakeOrder()
     {
         if (isAngryExiting) return;
@@ -460,10 +433,8 @@ public abstract class GuestBase : MonoBehaviour
         ChangeState(GuestState.WaitFood);
     }
 
-    // 플레이어 상호작용 - 음식 전달
     public void ReceiveFood(FoodData deliveredFood, FoodQuality quality)
     {
-        // 분노 퇴장 중이면 음식 수령 거부
         if (isAngryExiting) return;
         if (currentState != GuestState.WaitFood) return;
 
@@ -507,7 +478,6 @@ public abstract class GuestBase : MonoBehaviour
         }
     }
 
-    // VeryBad 분노 퇴장 (돈 없이 명성만 깎고 퇴장)
     private void TriggerAngryExit(int penaltyLevel)
     {
         if (isAngryExiting) return;
@@ -518,11 +488,9 @@ public abstract class GuestBase : MonoBehaviour
         
         OnGuestAngryExited?.Invoke(this);
         
-        // Angry → StandUp → Exit 흐름 시작
         guestAnim.PlayAngry();
     }
 
-    // 기분 변경 + 이벤트 발사
     protected void SetMood(GuestMood newMood)
     {
         CurrentMood = newMood;
@@ -538,9 +506,6 @@ public abstract class GuestBase : MonoBehaviour
             EconomyManager.Instance.AddFame(result.reputation);
     }
 
-    /// <summary>
-    /// 영업 끝나면 강제로 exit
-    /// </summary>
     public void ForceExit()
     {
         if (!gameObject.activeSelf)
@@ -555,5 +520,19 @@ public abstract class GuestBase : MonoBehaviour
         guestManager?.LeaveWaiting(this);
 
         PoolManager.Instance.Return(myApperance.ToString(), gameObject);
+    }
+    
+    protected void InvokeOrderChanged()
+    {
+        OnOrderChanged?.Invoke(this, myOrder);
+    }
+    
+    public void TimeSetForTutorial()
+    {
+        orderMinWaitLimit = 99999f;
+        orderMaxWaitLimit = 99999f;
+        foodMinWaitLimit = 99999f;
+        foodMidWaitLimit = 99999f;
+        foodMaxWaitLimit = 99999f;
     }
 }

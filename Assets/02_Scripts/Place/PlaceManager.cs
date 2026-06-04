@@ -23,6 +23,7 @@ public class PlaceManager : MonoBehaviour
     {
         if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame)
         {
+            Debug.Log("Press R");
             guestManager.SpawnGuset();
         }
     }

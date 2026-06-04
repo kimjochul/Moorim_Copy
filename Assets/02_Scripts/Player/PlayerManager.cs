@@ -39,6 +39,9 @@ public class PlayerManager : Singleton<PlayerManager>
 
     private Dictionary<PlayerType, IInteractable> lastInteractables = new();
     
+    // 달리기 중인지 
+    public bool IsRunMode { get; private set; } = false;
+    
     protected override void Awake()
     {
         base.Awake();
@@ -112,9 +115,49 @@ public class PlayerManager : Singleton<PlayerManager>
     {
         if (selectedUnit == null)
             return;
-
-        selectedUnit.SetSpeed(moveSpeed, angularSpeed, accelerationSpeed);
+        
+        float currentMoveSpeed = IsRunMode ? moveSpeed * 1.5f : moveSpeed;
+        
+        selectedUnit.SetSpeed(currentMoveSpeed, angularSpeed, accelerationSpeed);
         selectedUnit.MoveTo(destination, onArrived);
+    }
+    
+    public void ToggleRunMode()
+    {
+        IsRunMode = !IsRunMode; 
+        
+        if (selectedUnit != null)
+        {
+            float currentMoveSpeed = IsRunMode ? moveSpeed * 1.5f : moveSpeed;
+            selectedUnit.SetSpeed(currentMoveSpeed, angularSpeed, accelerationSpeed);
+            
+            // 이동 중에 O키를 눌렀다면 애니메이션 즉시 갱신
+            if (selectedUnit.IsMoving)
+            {
+                if (IsRunMode)
+                    selectedUnit.ChangeState(PlayerState.Run);
+                else
+                    selectedUnit.ChangeState(PlayerState.Walk);
+            }
+        }
+    }
+    
+    public void TeleportSelectedUnit(Vector3 destination)
+    {
+        if (selectedUnit == null) return;
+
+        var agent = selectedUnit.GetComponent<UnityEngine.AI.NavMeshAgent>();
+        if (agent != null && agent.isOnNavMesh)
+        {
+            agent.ResetPath();
+            agent.velocity = Vector3.zero;
+            agent.Warp(destination);
+            selectedUnit.ChangeState(PlayerState.Idle);
+        }
+        else
+        {
+            selectedUnit.transform.position = destination;
+        }
     }
 
     public void StopCurrentPlayer()
