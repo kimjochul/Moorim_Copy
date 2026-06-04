@@ -44,6 +44,12 @@ public class PlayerInput : MonoBehaviour
  
         // 캐릭터 전환
         PlayerSelection();
+        
+        // O키를 누르면 달리기
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            PlayerManager.Instance.ToggleRunMode();
+        }
  
         // 마우스 클릭
         if (Input.GetMouseButtonDown(0))
@@ -102,6 +108,8 @@ public class PlayerInput : MonoBehaviour
         Ray ray = this.mainCamera.ScreenPointToRay(Input.mousePosition);
         if (!Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity))
             return;
+        
+        Debug.Log($"Raycast Hit: {hit.collider.gameObject.name}", hit.collider.gameObject);
 
         IInteractable interactable = hit.collider.GetComponentInParent<IInteractable>();
  
@@ -134,7 +142,18 @@ public class PlayerInput : MonoBehaviour
             return;
         }
 
-        // 트리거 밖 -> 예약 등록 후 이동
+        //  P키를 누른 상태라면 해당 위치로 순간이동
+        if (Input.GetKey(KeyCode.P))
+        {
+            Vector3 teleportPos = interactable.GetInteractPosition();
+            PlayerManager.Instance.TeleportSelectedUnit(teleportPos);
+            
+            // 순간이동 직후 바로 상호작용 실행되도록 설정
+            PlayerManager.Instance.SelectedUnit.ActiveInteractable = interactable;
+            PlayerManager.Instance.ExecuteInteract(interactable);
+            return;
+        }
+
         PlayerManager.Instance.ReservedInteractable = interactable;
         PlayerManager.Instance.MoveSelectedUnitTo(interactable.GetInteractPosition());
     }

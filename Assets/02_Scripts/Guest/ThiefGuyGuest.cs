@@ -1,9 +1,15 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class ThiefGuyGuest : GuestBase
 {
-    private bool isCaught = false; // 잡혔는지 체크용
-    private bool isEscape = false; // 도망치는 중인지 체크중
+    private bool isCaught = false; 
+    private bool isEscape = false; 
+
+    [Header("술래잡기 설정")]
+    public float fleeDetectRadius = 100f; 
+    public float fleeDistance = 100f;     
+    private float fleeTimer = 0f;       
 
     void Awake()
     {
@@ -15,12 +21,11 @@ public class ThiefGuyGuest : GuestBase
     {
         base.ResetState();
         recipeUnlockManager = RecipeUnlockManager.Instance;
-        isCaught = false; // 풀에서 다시 나올 때 잡힘 상태도 초기화
+        isCaught = false; 
         isEscape = false;
         
         if (guestAnim != null)
             guestAnim.OnCatchedFinished -= OnResumeEscape;
-        
     }
     
     protected override void HandleWaitOrderState()
@@ -40,63 +45,122 @@ public class ThiefGuyGuest : GuestBase
 
     protected override void HandlePayState()
     {
-        // 1. 손 내리기 애니메이션이 아직 재생 중이면 대기
         if (isPlayingHandDown) return;
 
-        // 2. 손을 다 내렸다면 결제 UI 띄우지 말고 냅다 일어납니다 (먹튀!)
         if (!isEscape)
         {
             isEscape = true;
             isPlayingStandUp = true;
             guestAnim.PlayStandUp();
-            // StandUp이 완료되면 부모(GuestBase)에 등록된 콜백이 알아서 Exit 상태로 바꿔줌.
         }
     }
 
-    // 플레이어가 도망가는 도둑과 상호작용(F키/클릭)했을 때 호출할 메소드
+    protected override void HandleExitState()
+    {
+        if (isCaught) return; 
+
+        base.HandleExitState(); 
+
+        fleeTimer -= Time.deltaTime;
+        if (fleeTimer > 0f) return;
+
+        PlayerController chaser = PlayerManager.Instance.SelectedUnit; 
+        if (chaser == null) return;
+
+        float distToPlayer = Vector3.Distance(transform.position, chaser.transform.position);
+
+        if (distToPlayer < fleeDetectRadius)
+        {
+            Vector3 bestPos = GetBestEscapePoint(chaser.transform.position);
+            
+            // 급브레이크를 거는 EnableAgent() 삭제! MoveTo만 호출해서 부드럽게 방향만 전환
+            mover.MoveTo(bestPos);
+            fleeTimer = 0.05f; 
+        }
+        else
+        {
+            if (Gate.isOpen)
+            {
+                if (exitDoor != null)
+                {
+                    mover.MoveTo(exitDoor.position);
+                }
+                fleeTimer = 1.0f; 
+            }
+            else
+            {
+                mover.StopAndDisable();
+                fleeTimer = 0.5f; 
+            }
+        }
+    }
+
+    private Vector3 GetBestEscapePoint(Vector3 chaserPos)
+    {
+        Vector3 bestPoint = transform.position;
+        float maxScore = -9999f;
+
+        Vector3 awayDir = (transform.position - chaserPos).normalized;
+        awayDir.y = 0; 
+
+        float[] angles = { 0f, 45f, -45f, 90f, -90f, 135f, -135f };
+
+        foreach (float angle in angles)
+        {
+            Vector3 checkDir = Quaternion.Euler(0, angle, 0) * awayDir;
+            Vector3 targetPos = transform.position + checkDir * fleeDistance;
+
+            NavMeshHit hit;
+            bool isBlocked = NavMesh.Raycast(transform.position, targetPos, out hit, NavMesh.AllAreas);
+            
+            Vector3 actualPos = isBlocked ? hit.position : targetPos;
+            float score = Vector3.Distance(actualPos, chaserPos);
+
+            if (isBlocked) 
+            {
+                score -= 10.0f; 
+            }
+
+            if (score > maxScore)
+            {
+                maxScore = score;
+                bestPoint = actualPos;
+            }
+        }
+
+        return bestPoint;
+    }
+
     public void CatchThief()
     {
-        Debug.Log("CatchThief 클릭됨");
-        
-        // 도망가는 중(Exit)일 때만 잡을 수 있음
         if (currentState == Constants.GuestState.Exit && !isCaught)
         {
             Debug.Log("<color=cyan>도둑 검거 성공!! 음식값을 받아냅니다.</color>");
             isCaught = true;
 
-            // Pay 상태로 돌려보내지 말고 여기서 즉시 돈과 명성을 올려줌
             if (myOrder != null && myOrder.orderedFood != null)
             {
-                EconomyManager.Instance.AddMoney(myOrder.orderedFood.price); // 음식값 징수
-                EconomyManager.Instance.AddFame(5); // 검거 보너스 명성치 
+                EconomyManager.Instance.AddMoney(myOrder.orderedFood.price); 
+                EconomyManager.Instance.AddFame(5); 
             }
             
-            // 1. 이동 즉시 정지 (NavMeshAgent 끄기)
             mover.StopAndDisable();
 
-            // 2. 애니메이션이 끝난 후 다시 도망가도록 이벤트 구독
             guestAnim.OnCatchedFinished += OnResumeEscape;
-
-            // 3. 잡히는 애니메이션 재생 (Guest_Catched 상태로 진입)
             guestAnim.PlayCatched();
         }
     }
     
     private void OnResumeEscape()
     {
-        // 이벤트 중복 실행 방지를 위해 구독 해제
         guestAnim.OnCatchedFinished -= OnResumeEscape;
 
-        // 다시 걷기 애니메이션 재생
         guestAnim.PlayWalk();
 
-        // NavMeshAgent 켜고 다시 출구로 이동
         if (exitDoor != null)
         {
-            mover.EnableAgent();
+            mover.EnableAgent(); 
             mover.MoveTo(exitDoor.position);
         }
     }
-    
-    
 }

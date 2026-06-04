@@ -42,6 +42,7 @@ public class GuestBubbleUI : MonoBehaviour
         guest.OnGuestReadyToOrder += ReadyToOrder;
         guest.OnOrderPlaced += OrderPlaced;
         guest.OnGuestReadyToPay += ReadyToPay;
+        guest.OnOrderChanged += OrderPlaced;
     }
 
     private void BubbleChanged(GuestBase g, GuestState state)

@@ -4,34 +4,38 @@ using UnityEngine.AI;
 public class GuestMover : MonoBehaviour
 {
     [Header("이동(A*) 설정")]
-    private NavMeshAgent agent; // 실제로 움직이는 객체
+    private NavMeshAgent agent; 
+    private Vector3 targetDestination; 
 
     void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
     }
 
-    // 목적지 설정하고 이동 시작
     public void MoveTo(Vector3 destination)
     {
+        targetDestination = destination;
         agent.enabled = true;
         agent.isStopped = false;
         agent.SetDestination(destination);
     }
 
-    // 도착했는지 판정
-    // threshold: 도착으로 인정할 거리 (기본값은 agent의 stoppingDistance 사용)
     public bool HasArrived(float threshold = -1f)
     {
-        if (!agent.enabled) return false;
+        if (!agent.enabled || !agent.isOnNavMesh) return false;
         if (agent.pathPending) return false;
-
+        if (agent.pathStatus != NavMeshPathStatus.PathComplete) return false;
+        
         float distance = threshold >= 0f ? threshold : agent.stoppingDistance;
+
+        if (Vector3.Distance(transform.position, targetDestination) > distance + 0.5f)
+        {
+            return false;
+        }
 
         return agent.remainingDistance <= distance;
     }
 
-    // 이동 멈추고 agent 끄기 (착석 시 사용)
     public void StopAndDisable()
     {
         if (agent.enabled)
@@ -41,13 +45,12 @@ public class GuestMover : MonoBehaviour
         }
     }
 
-    // agent 상태 초기화 (풀링 ResetState에서 호출)
     public void ResetAgent()
     {
         agent.enabled = false;
+        targetDestination = Vector3.zero;
     }
 
-    // agent 활성화 + 경로 초기화 (Init에서 호출)
     public void EnableAgent()
     {
         agent.enabled = true;
