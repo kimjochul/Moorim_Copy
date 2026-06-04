@@ -144,9 +144,14 @@ public class CharacterUI : MonoBehaviour
             {
                 currentSlotMap[info.characterID] = info.slotIndex;
 
-                // 숨김 상태 유지
-                if (!slot.gameObject.activeSelf && !info.startVisible)
+                if (!info.startVisible)
+                {
+                    slot.SetHidden(
+                        info.characterID,
+                        data.emotions[0].sprite);
+
                     continue;
+                }
 
                 // 이전엔 숨김이었는데 이번 씬에서 등장
                 if (!slot.gameObject.activeSelf && info.startVisible)
@@ -176,15 +181,11 @@ public class CharacterUI : MonoBehaviour
                 
                 if (info.startVisible)
                 {
-                    slot.SetCharacter(
-                        info.characterID,
-                        data.emotions[0].sprite);
+                    slot.SetCharacter(info.characterID, data.emotions[0].sprite);
                 }
                 else
                 {
-                    slot.SetHidden(
-                        info.characterID,
-                        data.emotions[0].sprite);
+                    slot.SetHidden(info.characterID, data.emotions[0].sprite);
                 }
                 currentSlotMap[info.characterID] = info.slotIndex;
                 Debug.Log($"SETUP character:{info.characterID} -> slot:{info.slotIndex}");
@@ -253,7 +254,7 @@ public class CharacterUI : MonoBehaviour
             if (id == speakerID)
             {
                 slot.SetFocusScale(preset.focusScale, 0.2f);
-                slot.transform.SetAsLastSibling();
+                //slot.transform.SetAsLastSibling();
                 slot.SetFocused(true);
             }
             else
@@ -272,7 +273,10 @@ public class CharacterUI : MonoBehaviour
         dimObject.SetActive(enable);
 
         if (!enable)
+        {
+            dimObject.transform.SetAsLastSibling();
             return;
+        }
 
         foreach (var slot in slots)
         {
@@ -307,7 +311,7 @@ public class CharacterUI : MonoBehaviour
     public IEnumerator PlayMotionRoutine(int characterID, MotionData motion, bool isUnknown)
     {
         var slot = FindSlot(characterID);
-
+        
         if (slot == null || motion == null)
             yield break;
 
@@ -324,10 +328,12 @@ public class CharacterUI : MonoBehaviour
         switch (motion.type)
         {
             case MotionType.MoveLeft:
+                slot.transform.SetAsLastSibling();
                 yield return slot.MoveRoutine(Vector2.left, motion.value, motion.duration);
                 break;
 
             case MotionType.MoveRight:
+                slot.transform.SetAsLastSibling();
                 yield return slot.MoveRoutine(Vector2.right, motion.value, motion.duration);
                 break;
             
@@ -336,10 +342,12 @@ public class CharacterUI : MonoBehaviour
                 if (motion.targetSlotIndex < 0 ||
                     motion.targetSlotIndex >= slots.Count)
                     yield break;
-
+                
+                slot.transform.SetAsLastSibling();
                 var target = slots[motion.targetSlotIndex];
 
                 Vector2 targetPos = target.SlotPos;
+                targetPos.y = slot.SlotPos.y; // 현재 높이 유지
                 Vector2 dir = GetDirection(slot, target);
 
                 Vector2 destination = targetPos - dir * motion.stopDistance;
@@ -368,18 +376,22 @@ public class CharacterUI : MonoBehaviour
                 break;
             
             case MotionType.ExitLeft:
+                slot.transform.SetAsLastSibling();
                 yield return slot.ExitRoutine(Vector2.left, motion.value, motion.duration);
                 break;
 
             case MotionType.ExitRight:
+                slot.transform.SetAsLastSibling();
                 yield return slot.ExitRoutine(Vector2.right, motion.value, motion.duration);
                 break;
 
             case MotionType.EnterLeft:
+                slot.transform.SetAsLastSibling();
                 yield return slot.EnterRoutine(finalPos, Vector2.left, motion.value, motion.duration, isUnknown);
                 break;
 
             case MotionType.EnterRight:
+                slot.transform.SetAsLastSibling();
                 yield return slot.EnterRoutine(finalPos, Vector2.right, motion.value, motion.duration, isUnknown);
                 break;
 
@@ -388,10 +400,12 @@ public class CharacterUI : MonoBehaviour
                 break;
 
             case MotionType.Emphasis:
+                slot.transform.SetAsLastSibling();
                 yield return slot.EmphasisRoutine();
                 break;
 
             case MotionType.Nervous:
+                slot.transform.SetAsLastSibling();
                 yield return slot.NervousRoutine();
                 break;
             
@@ -400,11 +414,13 @@ public class CharacterUI : MonoBehaviour
                 break;
 
             case MotionType.Stand:
+                slot.transform.SetAsLastSibling();
                 yield return slot.StandRoutine(motion.duration);
                 break;
             
             case MotionType.Attack:
             {
+                slot.transform.SetAsLastSibling();
                 var target = FindSlot(motion.targetSlotIndex);
                 Vector2 dir = target != null ? GetDirection(slot, target) : Vector2.right;
                 if (motion.value >= 50f)
@@ -418,6 +434,7 @@ public class CharacterUI : MonoBehaviour
             
             case MotionType.EnterMove:
             {
+                slot.transform.SetAsLastSibling();
                 Vector2 targetPos = new Vector2(motion.targetValue, slot.SlotRoot.anchoredPosition.y);
                 yield return slot.EnterMoveRoutine(motion.value, targetPos, motion.duration, isUnknown);
                 break;
@@ -496,7 +513,10 @@ public class CharacterUI : MonoBehaviour
         RectTransform a = from.GetComponent<RectTransform>();
         RectTransform b = to.GetComponent<RectTransform>();
 
-        return (b.anchoredPosition - a.anchoredPosition).normalized;
+        Vector2 result = (b.anchoredPosition - a.anchoredPosition);
+        result.y = 0;
+        
+        return result.normalized;
     }
     
     public CharacterSlot FindSlot(int characterID)
