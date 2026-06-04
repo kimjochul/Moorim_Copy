@@ -346,8 +346,8 @@ public class CharacterSlot : MonoBehaviour
 
         yield return tween.WaitForCompletion();
 
+        slotRoot.anchoredPosition += target; 
         motionRoot.anchoredPosition = Vector2.zero;
-
         EndMotion();
     }
     
