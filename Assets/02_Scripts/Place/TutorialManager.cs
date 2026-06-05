@@ -68,7 +68,7 @@ public class TutorialManager : MonoBehaviour
 
         
         
-        eventCount = 5;
+        //eventCount = 5;
     }
 
     public void StartTutorial()

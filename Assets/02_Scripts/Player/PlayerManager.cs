@@ -147,16 +147,26 @@ public class PlayerManager : Singleton<PlayerManager>
         if (selectedUnit == null) return;
 
         var agent = selectedUnit.GetComponent<UnityEngine.AI.NavMeshAgent>();
+        
+        // 1. 목표 지점에서 가장 가까운 NavMesh 위치 찾기 (반경 5f 이내 탐색)
+        Vector3 validPosition = destination;
+        if (UnityEngine.AI.NavMesh.SamplePosition(destination, out UnityEngine.AI.NavMeshHit navHit, 2.0f, UnityEngine.AI.NavMesh.AllAreas))
+        {
+            // 찾았다면 해당 NavMesh 좌표를 최종 목적지로 설정
+            validPosition = navHit.position; 
+        }
+
+        // 2. 검증된 위치(validPosition)로 순간이동
         if (agent != null && agent.isOnNavMesh)
         {
             agent.ResetPath();
             agent.velocity = Vector3.zero;
-            agent.Warp(destination);
+            agent.Warp(validPosition); 
             selectedUnit.ChangeState(PlayerState.Idle);
         }
         else
         {
-            selectedUnit.transform.position = destination;
+            selectedUnit.transform.position = validPosition;
         }
     }
 

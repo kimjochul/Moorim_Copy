@@ -85,6 +85,8 @@ public class GuestManager : MonoBehaviour
         {
             SeatManager.Instance.OnSeatFreed += HandleSeatFreed;
         }
+        
+        Gate.OnGateStateChanged += HandleGateStateChanged;
     }
 
     void OnDisable()
@@ -99,6 +101,8 @@ public class GuestManager : MonoBehaviour
         {
             SeatManager.Instance.OnSeatFreed -= HandleSeatFreed;
         }
+        
+        Gate.OnGateStateChanged -= HandleGateStateChanged;
     }
 
     private void StartSpawn()
@@ -109,8 +113,10 @@ public class GuestManager : MonoBehaviour
     
     public GuestBase SpawnGuset()
     {
-        bool hasEmptyChair = SeatManager.Instance.FindEmptyChair() != null;
-        if (!hasEmptyChair && waitingGuests.Count >= maxWaitingCount) return null;
+        bool canEnterDirectly = Gate.isOpen && (SeatManager.Instance.FindEmptyChair() != null);
+        
+        if (!canEnterDirectly && waitingGuests.Count >= maxWaitingCount) 
+            return null;
         
         GuestAppearance appearance = GuestAppearance.NormalMaleA;
 
@@ -156,8 +162,10 @@ public class GuestManager : MonoBehaviour
 
     public GuestBase SpawnGuset(SpawnType spawnType)
     {
-        bool hasEmptyChair = SeatManager.Instance.FindEmptyChair() != null;
-        if (!hasEmptyChair && waitingGuests.Count >= maxWaitingCount) return null;
+        bool canEnterDirectly = Gate.isOpen && (SeatManager.Instance.FindEmptyChair() != null);
+        
+        if (!canEnterDirectly && waitingGuests.Count >= maxWaitingCount) 
+            return null;
 
         GuestAppearance appearance = GuestAppearance.NormalMaleA;
 
@@ -239,18 +247,37 @@ public class GuestManager : MonoBehaviour
     
     private void HandleSeatFreed(Chair freedChair)
     {
-        // 대기 중인 손님이 있다면
-        if (waitingGuests.Count > 0)
+        ProcessWaitingQueue();
+    }
+
+    // 문이 열리거나 닫혔을 때
+    private void HandleGateStateChanged(bool isOpen)
+    {
+        if (isOpen)
         {
-            GuestBase firstWaitingGuest = waitingGuests[0];
-            
-            // 대기열에서 제거
-            LeaveWaiting(firstWaitingGuest);
-            
-            // 손님에게 빈자리 할당 후 입장 상태로 변경
-            firstWaitingGuest.AssignChairAndEnter(freedChair);
+            ProcessWaitingQueue();
         }
     }
+
+    // 대기열 손님들을 조건에 맞춰 빈자리로 들여보내는 핵심 로직
+    private void ProcessWaitingQueue()
+    {
+        // 문이 닫혀있으면 아무도 들여보낼 수 없음
+        if (!Gate.isOpen) return;
+
+        // 대기 인원이 있고 빈 자리가 있는 동안 반복해서 입장
+        while (waitingGuests.Count > 0)
+        {
+            Chair emptyChair = SeatManager.Instance.FindEmptyChair();
+            if (emptyChair == null) break; // 더 이상 빈 자리가 없으면 중단
+
+            // 대기열 첫 번째 손님을 빼서 자리 할당
+            GuestBase firstWaitingGuest = waitingGuests[0];
+            LeaveWaiting(firstWaitingGuest);
+            firstWaitingGuest.AssignChairAndEnter(emptyChair);
+        }
+    }
+    
 
     public bool JoinWaiting(GuestBase guest, out Vector3 waitPosition)
     {
