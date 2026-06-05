@@ -323,6 +323,7 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         storyUI.ShowLine(line);
         ApplyScreenEffect(line.screenEffect);
         ApplyCharacterFocusEffect(line);
+        ApplyFlip(line);
         
         if (line.illustrationSequence != null && line.illustrationSequence.Count > 0)
             storyUI.PlayIllustrationSequence(line.illustrationSequence, line.illustrationSequence[0].useFlashTransition);
@@ -848,6 +849,17 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
                 screenEffectUI.ResetZoom(line.screenEffect.effectDuration);
                 storyUI.FocusMode(false);
                 break;
+        }
+    }
+    
+    private void ApplyFlip(StoryLine line)
+    {
+        if (line.flips == null)
+            return;
+
+        foreach (var flip in line.flips)
+        {
+            characterUI.SetFlip(flip.characterID, flip.flip);
         }
     }
     
