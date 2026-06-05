@@ -164,8 +164,13 @@ public class PlayerInput : MonoBehaviour
         if (PlayerManager.Instance.CurrentPlayer == PlayerType.Sowol) return;
 
         PlayerManager.Instance.ReservedInteractable = null;
-        PlayerManager.Instance.MoveSelectedUnitTo(point);
-
+        
+        // P키 누르면 순간이동, 아니면 그냥 이동
+        if (Input.GetKey(KeyCode.P))
+            PlayerManager.Instance.TeleportSelectedUnit(point);
+        else
+            PlayerManager.Instance.MoveSelectedUnitTo(point);
+        
         // 마우스 클릭 이펙트 : 만약 기존에 이미 코루틴이 실행되고 있었다면 취소하고 다시 실행.
         if (clickCoroutine != null)
             StopCoroutine(clickCoroutine);

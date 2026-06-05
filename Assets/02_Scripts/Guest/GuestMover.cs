@@ -35,6 +35,18 @@ public class GuestMover : MonoBehaviour
 
         return agent.remainingDistance <= distance;
     }
+    
+    public void RecalculatePath()
+    {
+        if (agent != null && agent.enabled && !agent.isStopped)
+        {
+            if (!HasArrived())
+            {
+                agent.SetDestination(targetDestination);
+            }
+        }
+    }
+    
 
     public void StopAndDisable()
     {
