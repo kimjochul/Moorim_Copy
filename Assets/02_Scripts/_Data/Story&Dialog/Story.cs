@@ -55,6 +55,8 @@ public class CharacterInScene
     
     [Header("캐릭터 슬롯 UI에는 등장 안함")]
     public bool useSlotUI = true;
+    
+    public bool startFlip;
 }
 
 [Serializable]

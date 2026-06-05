@@ -32,6 +32,7 @@ public class StoryLine
     public bool playTogether;
     public string changeDisplayName;
     public bool resetDisplayName;
+    public List<FlipCommand> flips;
     
     [Header("현재 화자 외에 추가 표정 변경")]
     public List<ExpressionChange> extraExpressions;
@@ -110,6 +111,13 @@ public class MotionData
     public int targetSlotIndex = -1;
     public float stopDistance = 100f;
     public float targetValue;
+}
+
+[Serializable]
+public class FlipCommand
+{
+    public int characterID;
+    public bool flip;
 }
 
 [Serializable]

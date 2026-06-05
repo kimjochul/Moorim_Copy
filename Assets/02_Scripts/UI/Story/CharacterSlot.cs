@@ -18,7 +18,9 @@ public class CharacterSlot : MonoBehaviour
     private int currentCharacterID = -1;
     public int CurrentCharacterID => currentCharacterID;
 
+    private bool isFlipped;
     private float currentBaseScale = 1f;
+    private float currentScaleMultiplier = 1f;
     
     private Coroutine iconCoroutine;
     
@@ -41,7 +43,6 @@ public class CharacterSlot : MonoBehaviour
     private int motionLock = 0;
     public bool IsPlayingMotion => motionLock > 0;
 
-    
     private bool isUnknown;
     private bool isFocused;
 
@@ -70,7 +71,7 @@ public class CharacterSlot : MonoBehaviour
 
         nextImage.color = new Color(1,1,1,0);
         
-        visualRoot.localScale = Vector3.one * currentBaseScale;
+        RefreshScale();
         
         gameObject.SetActive(true);
     }
@@ -80,14 +81,30 @@ public class CharacterSlot : MonoBehaviour
         currentCharacterID = characterID;
         currentImage.sprite = sprite;
         nextImage.color = new Color(1,1,1,0);
-        visualRoot.localScale = Vector3.one * currentBaseScale;
+        RefreshScale();
         gameObject.SetActive(false);
     }
 
+    public void SetFlip(bool flip)
+    {
+        isFlipped = flip;
+        RefreshScale();
+    }
+    
     public void SetBaseScale(float scale)
     {
         currentBaseScale = scale;
-        visualRoot.localScale = Vector3.one * scale;
+        RefreshScale();
+    }
+    
+    private void RefreshScale()
+    {
+        float x = currentBaseScale * currentScaleMultiplier;
+
+        if (isFlipped)
+            x *= -1f;
+
+        visualRoot.localScale = new Vector3(x, currentBaseScale * currentScaleMultiplier, 1f);
     }
     
     public void Clear()
@@ -121,10 +138,14 @@ public class CharacterSlot : MonoBehaviour
     public void SetFocusScale(float focusMultiplier, float duration = 0.25f)
     {
         visualRoot.DOKill();
-
-        visualRoot.DOScale(
-            Vector3.one * currentBaseScale * focusMultiplier,
-            duration);
+        
+        currentScaleMultiplier = focusMultiplier;
+        float targetX = currentBaseScale * focusMultiplier;
+        
+        if (isFlipped)
+            targetX *= -1f;
+        
+        visualRoot.DOScale(new Vector3(targetX, currentBaseScale * focusMultiplier, 1f), duration);
     }
     
     public void ChangeExpression(Sprite sprite, float duration = 0.2f)
@@ -149,13 +170,27 @@ public class CharacterSlot : MonoBehaviour
             currentImage.color = keepColor;
             nextImage.color = new Color(keepColor.r, keepColor.g, keepColor.b, 0f);
             
-            visualRoot.DOScale(currentBaseScale * 1.03f, 0.25f)
-                .SetEase(Ease.OutQuad)
-                .OnComplete(() =>
-                {
-                    visualRoot.DOScale(currentBaseScale, 0.25f).SetEase(Ease.InOutQuad);
-                });
+            PlayExpressionScale();
         });
+    }
+    
+    private void PlayExpressionScale()
+    {
+        float scale = currentBaseScale * currentScaleMultiplier;
+
+        float x = isFlipped ? -scale : scale;
+
+        visualRoot.DOScale(
+                new Vector3(x * 1.03f, scale * 1.03f, 1f),
+                0.25f)
+            .SetEase(Ease.OutQuad)
+            .OnComplete(() =>
+            {
+                visualRoot.DOScale(
+                        new Vector3(x, scale, 1f),
+                        0.25f)
+                    .SetEase(Ease.InOutQuad);
+            });
     }
     
     public void PlayEmotionIcon(Sprite icon)
@@ -221,6 +256,8 @@ public class CharacterSlot : MonoBehaviour
     {
         BeginMotion();
         
+        Vector2 originalPos = motionRoot.anchoredPosition;
+        
         float time = 0;
 
         while (time < duration)
@@ -230,12 +267,12 @@ public class CharacterSlot : MonoBehaviour
             float x = Random.Range(-power, power);
             float y = Random.Range(-power, power);
 
-            motionRoot.anchoredPosition = new Vector2(x, y);
+            motionRoot.anchoredPosition = originalPos + new Vector2(x, y);
 
             yield return null;
         }
 
-        motionRoot.anchoredPosition = Vector2.zero;
+        motionRoot.anchoredPosition = originalPos;
         
         EndMotion();
     }
@@ -500,6 +537,7 @@ public class CharacterSlot : MonoBehaviour
         Tween tween = visualRoot.DOPunchScale(Vector3.one * strength, 0.3f, 10, 1);
         
         yield return tween.WaitForCompletion();
+        RefreshScale();
         EndMotion();
     }
     
@@ -545,6 +583,11 @@ public class CharacterSlot : MonoBehaviour
         nextImage.sprite = null;
         nextImage.color = new Color(1,1,1,0);
         HideEmotionIcon();
+        
+        isFlipped = false;
+        currentScaleMultiplier = 1f;
+        currentBaseScale = 1f;
+        RefreshScale();
     }
     
     public void SetEmotion(Emotion emotion)

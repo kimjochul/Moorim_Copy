@@ -133,7 +133,7 @@ public class CharacterUI : MonoBehaviour
             slot.transform.SetSiblingIndex(preset.sortingOrder);
             rt.anchoredPosition = finalPos;
             slot.SetBaseScale(finalScale);
-
+            slot.SetFlip(info.startFlip);
             // 같은 캐릭터 유지 여부
             bool existedBefore = oldMap.TryGetValue(info.characterID, out int prevSlot);
 
@@ -254,7 +254,6 @@ public class CharacterUI : MonoBehaviour
             if (id == speakerID)
             {
                 slot.SetFocusScale(preset.focusScale, 0.2f);
-                //slot.transform.SetAsLastSibling();
                 slot.SetFocused(true);
             }
             else
@@ -306,6 +305,16 @@ public class CharacterUI : MonoBehaviour
                 }
             }
         }
+    }
+    
+    public void SetFlip(int characterID, bool flip)
+    {
+        var slot = FindSlot(characterID);
+
+        if (slot == null)
+            return;
+
+        slot.SetFlip(flip);
     }
     
     public IEnumerator PlayMotionRoutine(int characterID, MotionData motion, bool isUnknown)
