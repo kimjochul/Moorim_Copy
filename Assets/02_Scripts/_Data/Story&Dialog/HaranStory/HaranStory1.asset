@@ -18,22 +18,69 @@ MonoBehaviour:
   - visualType: 0
     characters:
     - characterID: 0
-      slotIndex: 0
-      startVisible: 1
-      useSlotUI: 1
-    - characterID: 1
       slotIndex: 1
       startVisible: 1
       useSlotUI: 1
+      startFlip: 0
+    - characterID: 1
+      slotIndex: 0
+      startVisible: 1
+      useSlotUI: 1
+      startFlip: 1
     - characterID: 2
       slotIndex: 3
       startVisible: 0
       useSlotUI: 1
+      startFlip: 0
     - characterID: 11
       slotIndex: -1
       startVisible: 0
       useSlotUI: 0
+      startFlip: 0
     lines:
+    - id: 0
+      lineType: 1
+      illustrationOverride: {fileID: 0}
+      illustrationOverlay: {fileID: 0}
+      resetIllustration: 0
+      resetOverlay: 0
+      illustrationSequence: []
+      characterID: 0
+      isUnknown: 0
+      emotion: 0
+      motion:
+        type: 0
+        duration: 0
+        value: 0
+        targetSlotIndex: 0
+        stopDistance: 0
+        targetValue: 0
+      motions: []
+      playTogether: 0
+      changeDisplayName: 
+      resetDisplayName: 0
+      flips:
+      - characterID: 1
+        flip: 1
+      extraExpressions: []
+      screenEffect:
+        effectType: 0
+        effectDuration: 0
+        effectPower: 0
+      line: 
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
+      useTypingSound: 1
+      isInnerThought: 0
+      showEmotionIcon: 0
+      useAccentFontSize: 0
+      useSmallFontSize: 0
+      hideDialogueUI: 1
+      autoNext: 1
+      autoDelay: 0.2
+      hideFromLog: 1
+      transitionSpeed: 0
     - id: 0
       lineType: 0
       illustrationOverride: {fileID: 0}
@@ -50,15 +97,23 @@ MonoBehaviour:
         value: 1000
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips:
+      - characterID: 1
+        flip: 1
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uC5EC\uAE30 \uC601\uC5C5\uD569\uB2C8\uAE4C?"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -85,15 +140,23 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips:
+      - characterID: 0
+        flip: 1
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uC544! \uB124! \uC601\uC5C5\uD569\uB2C8\u3137.."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -120,10 +183,13 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
@@ -131,6 +197,9 @@ MonoBehaviour:
       line: "\uBC8C\uB5A1 \uC77C\uC5B4\uB09C \uBA85\uC6D4, \uD5C8\uB098 \uC775\uC219\uD55C
         \uC5BC\uAD74\uC5D0 \uC18C\uC6D4\uC740 \uB208\uC744 \uB9C8\uC8FC\uCE58\uBA70
         \uBAB8\uC774 \uAD73\uC5C8\uB2E4."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -157,15 +226,21 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uB108\u2026."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -192,10 +267,13 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
@@ -203,6 +281,9 @@ MonoBehaviour:
       line: "\uB610\uAC01\uAC70\uB9AC\uB294 \uAD6C\uB450, \uC798 \uD3B4\uC9C4 \uC11C\uBC29\uC758
         \uC758\uBCF5, \uADF8\uB9AC\uACE0 \uAE30\uB984\uC73C\uB85C \uBC88\uB4E4\uAC70\uB9AC\uB294
         \uC5BC\uAD74 \uC18D \uBD80\uC720\uD55C \uBBF8\uC18C."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -229,10 +310,13 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
@@ -241,6 +325,9 @@ MonoBehaviour:
         \uC8FC\uBCC0\uC73C\uB85C \uB0A0\uB9AC\uB294 \uD480\uD5A5\uACFC\uB294 \uC720\uB3C5
         \uB2E4\uB978 \uC815\uCDE8\uB97C \uD769\uB0A0\uB9AC\uBA70 \uB204\uAD70\uAC00
         \uBB38\uC744 \uC5F4\uC5C8\uB2E4."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -267,16 +354,22 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uC624\uB79C\uB9CC\uC774\uB124, \uC774\uAC8C \uC5BC\uB9C8\uB9CC\uC774\uC57C?
         \uC18C\uC6D4."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -303,15 +396,21 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uD558\uB780\uC774 \uC654\uC5B4?"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -338,10 +437,13 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
@@ -349,6 +451,9 @@ MonoBehaviour:
       line: "\uC751, \uC804\uC5D0\uB3C4 \uC640\uBD10\uC11C \uC54C\uC558\uC9C0\uB9CC
         \uACBD\uC0AC\uAC00 \uC774\uB807\uAC8C \uAC00\uD314\uB77C\uC11C\uC57C \uC190\uB2D8\uC774
         \uC624\uACA0\uC5B4?\r\n\uC8FD\uB294 \uC904 \uC54C\uC558\uB124."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -375,15 +480,21 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uC6B4\uB3D9\uB3C4 \uB418\uACE0 \uC88B\uC9C0 \uBB58!"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -410,15 +521,21 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uB108\uAC00 \uC5EC\uAE38 \uC804\uC5D0 \uC640\uBD24\uB2E4\uACE0?"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -445,16 +562,22 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uADF8\uB7FC~ \uD22C\uC790\uC790\uAC00 \uBAA9\uB3C4 \uC548\uBCF4\uACE0
         \uB3C8\uC744 \uC27D\uAC8C \uC904\uAE4C\uBD10?"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -481,10 +604,13 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
@@ -492,6 +618,9 @@ MonoBehaviour:
       line: "\uC811\uADFC\uC131\uC774 \uBCC4\uB85C\uC778\uAC74 \uD760\uC774\uC9C0\uB9CC
         \uC704\uCE58\uC801\uC73C\uB85C \uAD6D\uACBD\uC5D0 \uB9DE\uB2FF\uC544\uC788\uC73C\uB2C8\uAE4C\r\n\uD798
         \uC880 \uC368\uC900\uAC70\uC9C0."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -518,10 +647,13 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
@@ -529,6 +661,9 @@ MonoBehaviour:
       line: "\uC544! \uBB3C\uB860 \uBA85\uC6D4 \uB204\uB098\uB77C\uC11C \uBE4C\uB824\uC900\uAC83\uB3C4
         \uC788\uC5B4, \uADF8\uB807\uC9C0\uB9CC \uB3C8\uC740 \uC81C\uB54C\uC81C\uB54C
         \uAC1A\uC544\uC57C\uD558\uB294\uAC70 \uC54C\uC9C0 \uB204\uB098?"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -555,15 +690,21 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uB2E4. \uB2F9\uC5F0\uD788 \uC54C\uC9C0\uC774~\uD558\uD558\u2026."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -590,16 +731,22 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uD22C\uC790? \uB3C8? \uC9C0\uAE08 \uB300\uCCB4 \uBB34\uC2A8 \uC18C\uB9AC\uB97C
         \uD558\uB294\uAC70\uC57C?"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -626,16 +773,22 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uC751? \uB204\uB098 \uC560\uD55C\uD14C \uB9D0 \uC548\uD574\uC92C\uC5B4?
         \uB2C8 \uB204\uB098 \uB098\uD55C\uD14C \uB3C8 \uBE4C\u2026"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -662,15 +815,21 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: 3
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 4
         effectDuration: 1
         effectPower: 20
       line: "\uD558! \uD558\uD558! \uB0B4\uAC00 \uB9D0\uD574\uB3C4 \uB420\uAE4C \uB780\uC544?"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -697,16 +856,22 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uBA85\uC6D4\uC740 \uC3DC\uC0B4\uAC19\uC774 \uB2EC\uB824\uAC00 \uB780\uC758
         \uC785\uC744 \uD2C0\uC5B4\uB9C9\uC558\uB2E4."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -733,16 +898,22 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uC5B8\uB2C8, \uB3C8\uC774 \uC5B4\uB514\uC11C \uB0AC\uB098 \uD588\uB294\uB370..
         \uD639\uC2DC \uC598\uB294 \uC544\uB2C8\uC9C0?"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -769,10 +940,15 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips:
+      - characterID: 0
+        flip: 0
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
@@ -781,6 +957,9 @@ MonoBehaviour:
         \uC788\uB294\uB370 \uB780\uC774 \uCB10\uAE08, \uC9C4\uC9DC \uCB10~\uAE08
         \uB3C4\uC640\uC900 \uC815\uB3C4\uBC16\uC5D0 \uC5C6\uC5B4.\r\n\uC774\uC815\uB3C4
         \uBE5B\uC740 \uAE08\uBC29 \uAC1A\uACE0 \uB0A8\uC544~"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -807,15 +986,21 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uC5BC\uB9C8\uC815\uB3C4?"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -842,15 +1027,21 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uBB50\uC5B4~ \uADF8~\uC74C~"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -877,10 +1068,13 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
@@ -888,6 +1082,9 @@ MonoBehaviour:
       line: "\uBB50\uB784\uAE4C? \uC678\uC2DD \uBA87\uBC88 \uC548\uD558\uBA74 \uB418\uB294
         \uC218\uC900? \uC544\uB2D8 \uACFC\uC790\uB098 \uAD70\uAC83\uC9C8 \uC880 \uC548\uD558\uBA74
         \uAE08\uBC29 \uAC1A\uB294 \uC218\uC900?"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -914,15 +1111,21 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uC815\uB9D0 \uC2E0\uACBD \uC548\uC368\uB3C4 \uB418\uB294 \uC218\uC900\uC774\uC57C~\uC9C4\uC9DC\uC57C~"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -949,15 +1152,21 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uD558\uC544..\uCD1D \uC5BC\uB9C8\uC57C \uD558\uB780?"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -984,15 +1193,21 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "1,250,000\uD0C4."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -1019,15 +1234,21 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uBC31\uC774\uC2ED\uC624\uB9CC\uD0C4?!?!?!?"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -1054,15 +1275,21 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: " 1,250,000\uD0C4."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -1089,10 +1316,13 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
@@ -1101,6 +1331,9 @@ MonoBehaviour:
         \uAC04\uB2E8\uD55C \uC678\uC2DD , 200~300\uD0C4\uC740 \uD558\uB8E8 \uAE30\uBCF8
         \uC0DD\uD65C\uBE44 \r\n\uC0C1\uAE09 \uAC1D\uC794\uC758 \uD558\uB8FB\uBC24\uC740
         1000\uD0C4."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -1127,10 +1360,13 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
@@ -1139,6 +1375,9 @@ MonoBehaviour:
         \uAC80 \uD55C\uC790\uB8E8, \uC2ED\uB9CC\uD0C4\uC740 \uC791\uC740 \uAC1D\uC794
         \uC778\uC218 \uAC00\uB2A5.\r\n\uADF8\uB9AC\uACE0 \uADF8 \uBA87\uC2ED\uBC30\uB098
         \uB418\uB294 1,250,000\uD0C4\uC740\u2026"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -1165,16 +1404,22 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uBB34\uB9BC\uB9F9 \uADFC\uCC98 \uBC88\uB4EF\uD55C \uC9D1 \uD55C\uCC44\uB97C
         \uC0B4 \uC218 \uC788\uB294 \uB3C8\uC774\uB2E4."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -1201,10 +1446,13 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
@@ -1213,6 +1461,9 @@ MonoBehaviour:
         \uC774\uBCF4\uB2E8 \uD6E8\uC52C \uC800\uB834\uD588\uACA0\uC9C0\uB9CC \uBA85\uC6D4\uB204\uB098\uAC00
         \uAF2D \uC5EC\uAE30\uB85C \uD574\uC57C\uD558\uACA0\uB2E4\uACE0 \uD574\uC11C
         \uB9D0\uC774\uC57C."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -1239,15 +1490,21 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "(\uBA85\uC6D4\uC744 \uC9F8\uB824\uBCF8\uB2E4)\u2026.."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -1274,15 +1531,21 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\u2026\uD558\uD56B"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -1309,10 +1572,13 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
@@ -1322,6 +1588,9 @@ MonoBehaviour:
         \uAC70\uC758 \uC0C8\uB85C\uC9C0\uC5C8\uC73C\uB2C8\uAE4C.\r\n\uADF8\uB798\uB3C4
         \uBA85\uC6D4\uC5B8\uB2C8\uAC00 \uBBF8\uC801\uAC10\uAC01\uC774 \uC788\uC5B4\uC11C
         \uAE54\uB054\uD558\uAC8C \uC798 \uD588\uB124."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -1348,10 +1617,13 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
@@ -1359,6 +1631,9 @@ MonoBehaviour:
       line: "\uB9D0\uD588\uC796\uC544, \uD560\uAEBC\uBA74 \uD655 \uD06C\uAC8C \uC2DC\uC791\uD574\uC57C
         \uD06C\uAC8C \uBC8C \uC218 \uC788\uB2E4\uACE0.\r\n\uC5ED\uC2DC \uC0C8 \uC220\uC740
         \uC0C8 \uBD80\uB300\uC5D0 \uB2F4\uC544\uC57C\uD558\uC9C0 \uC54A\uACA0\uC5B4?"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -1385,20 +1660,26 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uBB58 \uADF8\uCE58\uC57C \uADF8\uCE58\uB294!!! \uC5B4\uB5BB\uAC8C \uD560\uAC70\uC57C
         \uC774\uC81C!!"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
-      useAccentFontSize: 0
+      useAccentFontSize: 1
       useSmallFontSize: 0
       hideDialogueUI: 0
       autoNext: 0
@@ -1421,15 +1702,21 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uB044\uC544\uC544\uC544!!!!"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -1456,6 +1743,7 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions:
       - characterID: 1
         targetID: 0
@@ -1463,8 +1751,9 @@ MonoBehaviour:
           type: 15
           duration: 1
           value: 0
-          targetSlotIndex: 0
+          targetSlotIndex: 1
           stopDistance: 50
+          targetValue: 0
       - characterID: 0
         targetID: 0
         motion:
@@ -1473,15 +1762,21 @@ MonoBehaviour:
           value: 20
           targetSlotIndex: 0
           stopDistance: 0
+          targetValue: 0
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uB300\uCCB4 \uC5B4\uCA4C\uC790\uACE0 \uADF8\uB7F0 \uAC70\uAE08\uC744
         \uB9C9 \uBE4C\uB838\uC5B4!!!"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -1508,16 +1803,22 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uADF8. \uADF8\uCE58\uB9CC \uC7A5\uC0AC\uAC00 \uC798 \uB418\uBA74 \uC5B4\uB828\uD788
         \uC798 \uAC1A\uC744\uAC70\uB77C\uACE0\u2026"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -1544,15 +1845,21 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uB204\uAC00 \uADF8\uB807\uAC8C \uB9D0\uD588\uB294\uB370?"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -1579,15 +1886,21 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\u3139.\uB780\uC774.."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -1614,16 +1927,22 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uC800 \uB188\uD33D\uC774 \uB9D0\uC744 \uACE7\uC774\uACE7\uB300\uB85C
         \uB4E4\uC5B4? \uC624\uB298 \uC9C4\uC9DC \uC8FD\uC5B4\uBCFC\uB798??"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -1650,15 +1969,21 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uADF8.\uADF8\uB9CC..\uB098 \uD1A0\uD560\uAC70 \uAC19\uC544\u2026"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -1685,15 +2010,21 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uD558\uC544..\uD558\uC544\u2026"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -1720,16 +2051,22 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uC18C\uC6D4\uC740 \uC774\uB9C8\uC5D0 \uB9FA\uD78C \uB540\uBC29\uC6B8\uC744
         \uD6D1\uC73C\uBA70 \uC228\uC744 \uAC00\uB2E4\uB4EC\uC5C8\uB2E4."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -1756,15 +2093,21 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uADF8\uB798\uC11C \uB0A9\uBD80 \uAE30\uD55C\uC740?"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -1791,16 +2134,22 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uADF8\uAC74 \uC870\uAE08 \uCC38\uC791\uD574\uC904\uAC8C, \uB204\uB098
         \uC9C0\uAE08 \uC5EC\uC720\uC790\uAE08\uC774 \uC5B4\uB290 \uC815\uB3C4 \uC788\uC9C0?"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -1827,16 +2176,22 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uADF8..\uB554\uAC10\uBE44\uB791 \uC7AC\uB8CC\uBE44 \uB2E4 \uB5BC\uBA74..
         \uC9C0\uAE08\uC740 \uAC70\uC758 \uC5C6\uC744\uAC70 \uAC19\uC740\uB370\uC5D0.."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -1863,16 +2218,22 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uADF8\uB7FC \uC774\uB807\uAC8C \uD558\uC790. \uC5B8\uC81C \uB2EC\uB77C\uACE0
         \uB3C5\uCD09\uC740 \uC548\uD560\uAC8C."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -1899,15 +2260,23 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips:
+      - characterID: 0
+        flip: 1
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uC815\uB9D0?"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -1934,10 +2303,13 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
@@ -1945,6 +2317,9 @@ MonoBehaviour:
       line: "\uBB58 \uC815\uB9D0\uC740 \uC815\uB9D0\uC774\uC57C\u2026 \uB098 \uC9C4\uC9DC
         \uB3CC\uC544\uBC84\uB9AC\uACA0\uB124..\r\n\uC774 \uB3C8\uC774\uBA74 \uB0A9\uBD80\uAE30\uD55C\uC774
         \uBB38\uC81C\uAC00 \uC544\uB2C8\uB77C \uC8FD\uC744 \uB54C\uAE4C\uC9C0 \uC77C\uB9CC\uD574\uC57C\uD55C\uB2E4\uACE0."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -1971,10 +2346,13 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
@@ -1983,6 +2361,9 @@ MonoBehaviour:
         \uB3C5\uC810\uC801\uC73C\uB85C \uB0A9\uD488\uD558\uACA0\uC5B4. \uC774 \uC870\uAC74\uC73C\uB85C
         \uBCF8\uB798 1\uB144\uC548\uC5D0 \uC804\uC561 \uD658\uC218\uB97C \uC880 \uB354
         \uBBF8\uB904\uC904\uAC8C."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -2009,16 +2390,22 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uBC14\uAC00\uC9C0 \uC50C\uC6B0\uB824\uACE0? \uADF8\uB7F4 \uBC14\uC5D4
         \uB2E4\uB978 \uB354 \uC88B\uC740 \uC0C1\uD68C\uC5D0\uC11C \uB0A9\uD488\uBC1B\uC744\uAC70\uC57C."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -2045,10 +2432,13 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
@@ -2057,6 +2447,9 @@ MonoBehaviour:
         \uB2F9\uC5F0\uD788 \uCD5C\uC800\uAC00\uB85C \uB9DE\uCDB0\uC8FC\uC9C0.\r\n\uC5EC\uAE30
         \uAC00\uACA9\uD45C, \uB2E4\uB978 \uC0C1\uD68C\uAC00\uB3C4 \uC774 \uAC00\uACA9
         \uBABB\uBC1B\uB294\uB2E4?"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -2083,10 +2476,13 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
@@ -2094,6 +2490,9 @@ MonoBehaviour:
       line: "\uD558\uB780\uC740 \uC815\uC7A5 \uC790\uCF13 \uC0AC\uC774\uB85C \uC190\uC744
         \uB123\uB354\uB2C8 \uAE00\uC528\uAC00 \uBE7C\uACE1\uD558\uAC8C \uC801\uD78C
         \uC885\uC774\uB97C \uC18C\uC6D4\uC5D0\uAC8C \uAC74\uB138\uB2E4."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -2120,15 +2519,21 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uC815\uB9D0 \uC774 \uAC00\uACA9\uB300\uB85C \uC900\uB2E4\uACE0?"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -2155,10 +2560,13 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
@@ -2167,6 +2575,9 @@ MonoBehaviour:
         \uC544\uB2C8\uB2E4? \uC18D\uACE0\uB9CC \uC0B4\uC558\uC5B4 \uC18D\uACE0\uB9CC.\r\n\uBA85\uC6D4\uB204\uB098\uC758
         \uD0C1\uC6D4\uD55C \uC548\uBAA9\uC744 \uC880 \uBBFF\uC5B4\uBD10. \uB204\uB098\uAC00
         \uD655\uC2E4\uD788 \uC0AC\uC5C5\uAC10\uAC01\uC774 \uC788\uB2E4\uB2C8\uAE4C?"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -2193,15 +2604,21 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uADF8\uB798? "
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -2228,15 +2645,21 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uBB58 \uADF8\uB807\uAE34 \uADF8\uB798!! \uC5B8\uB2C8\uB294 \uC190\uB4E4\uACE0\uC788\uC5B4!!!"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -2263,10 +2686,13 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
@@ -2275,6 +2701,9 @@ MonoBehaviour:
         \uD544\uC694Emotion\uC73C\uB85C \uD0C0\uC785\uC73C\uB85C \uB9CC\uB4E4\uC5B4\uB3C4
         \uB420\uAC70 \uAC19\uAE30\uB294 \uD55C\uB370 \uD544\uC694\uC2DC \uBCC0\uC218
         \uCD94\uAC00)"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -2301,15 +2730,21 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uD6C4\uC6B0\u2026.."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -2336,10 +2771,13 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
@@ -2348,6 +2786,9 @@ MonoBehaviour:
         \uC5C6\uC5B4, \uB418\uB824 \uB2E4\uC2DC \uC774 \uAC00\uAC8C\uB97C \uB0B4\uB193\uB294\uB2E4\uACE0
         \uD574\uB3C4 \uC800 \uB3C8\uC758 \uBC18\uC808\uC774\uB098 \uBC1B\uC73C\uBA74
         \uAC10\uC0AC\uD560\uC815\uB3C4\uC57C."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 1
       showEmotionIcon: 0
@@ -2374,10 +2815,13 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
@@ -2386,6 +2830,9 @@ MonoBehaviour:
         \uACF3\uC5D0\uC11C \uB2E4\uC2DC \uC7A5\uC0AC\uB97C \uC2DC\uC791\uD574\uB3C4
         \uBB38\uC81C\uC57C. \uC2DC\uACE8\uC774\uBA74 \uC7A5\uC0AC\uAC00 \uC548\uB418\uACE0,
         \uB9F9\uC774\uB098 \uB2F9 \uADFC\uCC98\uB294 \uC790\uB9BF\uC138\uAC00 \uC2EC\uD574."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 1
       showEmotionIcon: 0
@@ -2412,10 +2859,13 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
@@ -2423,6 +2873,9 @@ MonoBehaviour:
       line: "\uB3C8 \uBFD0\uB9CC\uC774 \uC544\uB2C8\uB77C \uB9DB\uC5D0 \uC788\uC5B4\uC11C\uB3C4
         \uB3C4\uC2EC \uADFC\uCC98\uC5D0\uC11C \uC7A5\uC0AC\uD558\uB294\uAC74 \uACBD\uC7C1\uC774
         \uC2EC\uD574. \uC678\uD1B5\uC218\uC778\uAC00..\uC81C\uAE38\u2026"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 1
       showEmotionIcon: 0
@@ -2449,15 +2902,21 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uADF8\uB7FC \uADF8\uB7EC\uAE30\uB85C \uD55C\uAC70\uB2E4?"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -2484,15 +2943,21 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\u2026."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -2519,15 +2984,21 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uC54C\uACA0\uC5B4, \uB300\uC2E0 \uC870\uAC74\uC774 \uC788\uC5B4."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -2554,15 +3025,21 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uB4E4\uC5B4\uBCFC\uAC8C."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -2589,10 +3066,13 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
@@ -2601,6 +3081,9 @@ MonoBehaviour:
         \uC9C8\uC774 \uC548\uC88B\uC544\uC9C8 \uACBD\uC6B0 \uACC4\uC57D\uC740 \uD30C\uAE30\uC57C.\r\n\uC774\uAC74
         \uADF8\uCABD \uADC0\uCC45\uC0AC\uC720\uB2C8\uAE4C \uB0A9\uAE30\uC77C\uC744
         \uB2E4\uC2DC 1\uB144\uC73C\uB85C \uB3CC\uB9B4\uC218\uB3C4 \uC5C6\uC5B4."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -2627,10 +3110,13 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
@@ -2638,6 +3124,9 @@ MonoBehaviour:
       line: "\uC2DD\uC7AC\uB8CC\uC758 \uC2E0\uC120\uC744 \uC704\uD574 \uC8FC\uC77C\uC5D0
         \uC138\uBC88 \uC5EC\uAE38 \uB4E4\uB7EC.\r\n\uD55C\uAEBC\uBC88\uC5D0 \uB9CE\uC774
         \uC0AC\uBA74 \uC7AC\uB8CC\uAC00 \uBD80\uD328\uD558\uB2C8\uAE4C."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -2664,16 +3153,22 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uC5B4\uB835\uC9C4 \uC54A\uB2E4\uB9CC \uADF8\uB7FC \uB0B4\uAC00 \uC5BB\uB294\uAC8C
         \uBB50\uC9C0?"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -2700,10 +3195,13 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
@@ -2711,6 +3209,9 @@ MonoBehaviour:
       line: "\uD560\uBA38\uB2C8\uC758 \uC870\uB9AC\uBE44\uAE09\uC744 \uB2F4\uBCF4\uB85C
         \uB9E1\uAE38\uAC8C. \uADF8\uAC70\uB77C\uBA74 \uBE5B \uB300\uBD80\uBD84\uC744
         \uAC1A\uC744 \uC218 \uC788\uC744\uAC70\uC57C."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -2737,15 +3238,23 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips:
+      - characterID: 0
+        flip: 0
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uC18C.\uC18C\uC6D4!!! \uADF8\uB798\uB3C4 \uB418\uB294\uAC70\uC57C??"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -2772,10 +3281,13 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
@@ -2783,6 +3295,9 @@ MonoBehaviour:
       line: "\uBFB0\uC871\uD55C \uC218\uAC00 \uC5C6\uC796\uC544. \uC5B8\uB2C8 \uB3C8
         \uBE4C\uB9B4 \uB54C \uBB34\uB9BC\uB9F9 \uC9C0\uBD80 \uC55E\uC5D0\uC11C \uC57D\uC11C\uB97C
         \uC4F0\uACE0 \uBE4C\uB838\uC9C0?"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -2809,10 +3324,13 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
@@ -2822,6 +3340,9 @@ MonoBehaviour:
         \uC6B0\uB9AC \uB458 \uB2E4 \uD769\uC5B4\uC838\uC11C \uC5B4\uB514\uB860\uAC00
         \uD314\uB824\uAC00\uACA0\uC9C0. \uADF8 \uAF34\uC744 \uBCF4\uB294\uAC83\uBCF4\uB2E8
         \uB098\uC544."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -2848,10 +3369,13 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
@@ -2859,6 +3383,9 @@ MonoBehaviour:
       line: "\uC0AC\uB78C \uBB34\uC548\uD558\uAC8C \uC2DC\uB9AC, \uB0B4\uAC00 \uB3C8
         \uBABB\uBC1B\uC558\uB2E4\uACE0 \uB204\uB098\uB791 \uB108\uB97C \uB9F9\uC5D0
         \uAC16\uB2E4\uD314\uAE4C\uBD10?"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -2885,15 +3412,21 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uADF8\uB7FC \uC5B4\uB5BB\uAC8C \uD560\uAC74\uB370?"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -2920,10 +3453,13 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
@@ -2932,6 +3468,9 @@ MonoBehaviour:
         \uB108\uAC00 \uADF8 \uBE44\uAE09\uC744 \uC900\uB2E4\uD558\uBA74 \uC5C6\uB294
         \uC774\uC57C\uAE30\uAC00 \uB418\uB294\uAC70\uACA0\uC9C0. \uACC4\uC57D \uC131\uB9BD\uC774\uC57C.
         \uB2E4\uB9CC \uBE44\uAE09\uC740 \uB098\uC911\uC5D0 \uC918,"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -2958,16 +3497,22 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uB108\uAC00 \uCB49 \uC77D\uC740\uB4A4\uC5D0 \uC918\uC57C \uBE5B \uBCC0\uC81C\uAC00
         \uC26C\uC6CC\uC9C0\uC9C0 \uC54A\uACA0\uC5B4?"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -2994,15 +3539,21 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uAEBC\uC838, \uBCC4 \uC77C \uC5C6\uC73C\uBA74 \uB4E4\uB974\uC9C0 \uB9D0\uACE0."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -3029,16 +3580,22 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uCC28\uAC00\uC6B4\uAC74 \uC5EC\uC804\uD558\uB124. \uC7A5\uC0AC\uD55C\uB2E4\uB294
         \uC0AC\uB78C\uC774 \uC774\uB807\uAC8C \uD600\uC5D0 \uAC00\uC2DC\uB97C \uB458\uB7EC\uC11C\uC57C.."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -3065,10 +3622,13 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
@@ -3076,6 +3636,9 @@ MonoBehaviour:
       line: "\uADF8\uB9AC\uACE0 \uB10C \uC544\uC9C1\uB3C4 \uC5EC\uC6B0\uAC19\uC774
         \uB3C4\uB9DD\uCE58\uACE0 \uC228\uAE30\uC5D0 \uAE09\uAE09\uD558\uC9C0. \uC9C1\uC5C5\uC744
         \uC798 \uC54C\uC544\uBCF8\uAC70 \uAC19\uC544."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -3102,16 +3665,22 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uB9C8\uC744 \uC0AC\uB78C\uB4E4\uC740 \uB108\uAC00 \uC5EC\uAE30\uC788\uB294\uAC70
         \uC54C\uC544?"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -3138,16 +3707,22 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\u2026.\uADF8 \uC774\uC57C\uAE30\uB294 \uC548\uAEBC\uB0C8\uC73C\uBA74
         \uC88B\uACA0\uB294\uB370."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -3174,16 +3749,22 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uD558. \uBA3C\uC800 \uAEC4\uB044\uB7EC\uC6B4 \uC774\uC57C\uAE30\uB97C
         \uAEBC\uB0B8\uAC74 \uADF8\uCABD\uC774\uC57C."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -3210,15 +3791,21 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\u2026\u2026\u2026(\uBD84\uB178\uD55C \uD45C\uC815)"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -3245,15 +3832,21 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uBA85\uC6D4\uB204\uB098. \uB098 \uC774\uC81C \uAC00\uBCFC\uAC8C."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -3280,15 +3873,23 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips:
+      - characterID: 0
+        flip: 1
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uC544! \uC751! \uBC8C\uC368 \uAC00\uB824\uACE0?"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -3315,10 +3916,13 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
@@ -3326,6 +3930,9 @@ MonoBehaviour:
       line: "\uB354 \uC788\uACE0 \uC2F6\uC5C8\uB294\uB370 \uC544\uBB34\uAC1C\uC528\uAC00
         \uB0A0 \uACA9\uB82C\uD558\uAC8C \uC2EB\uC5B4\uD558\uB294\uAC70 \uAC19\uC544\uC11C
         \uB9D0\uC774\uC57C. \uC790\uB9AC \uBE44\uCF1C\uB4DC\uB824\uC57C\uC9C0."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -3352,15 +3959,21 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uADF8\uB7FC \uC798\uAC00! \uB2E4\uC74C\uC5D0 \uBCF4\uC790~"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -3387,16 +4000,22 @@ MonoBehaviour:
         value: 1000
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uADF8\uB294 \uC870\uAE08 \uD480\uC5B4\uC9C4 \uC637 \uB9E4\uBB34\uC0C8\uB97C
         \uAC00\uB2E4\uB4EC\uC73C\uBA70 \uC0AC\uB77C\uC84C\uB2E4."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -3423,15 +4042,21 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\u2026\u2026."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -3458,16 +4083,22 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 1
         effectDuration: 0.5
         effectPower: 0
       line: "\uC560\uB4E4\uC544. \uC74C\uC2DD\uC5D0\uC11C \uC81C\uC77C \uC911\uC694\uD55C\uAC8C
         \uBB54\uC9C0 \uC544\uB2C8?"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -3494,15 +4125,23 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips:
+      - characterID: 0
+        flip: 0
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uB9DB?"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -3529,15 +4168,21 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uC124\uD0D5!"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -3564,16 +4209,22 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uB458\uB2E4 \uC5B4\uB290\uC815\uB3C4 \uB9DE\uC558\uC9C0\uB9CC. \uC81C\uC77C
         \uC911\uC694\uD55C\uAC74\u2026."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -3600,10 +4251,13 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 2
         effectDuration: 1
@@ -3611,6 +4265,9 @@ MonoBehaviour:
       line: "\uC8C4\uC1A1\uD574\uC694 \uD560\uBA38\uB2C8. \uD558\uC9C0\uB9CC \uC5B4\uCA54
         \uC218 \uC5C6\uC5C8\uC5B4\uC694. \uC774 \uC791\uC740 \uC77C\uC0C1\uC774\uB77C\uB3C4
         \uC9C0\uD0A4\uB824\uBA74\u2026"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 1
       showEmotionIcon: 0
@@ -3637,15 +4294,21 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uC800\uAE30 \uC18C\uC6D4."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -3672,15 +4335,21 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: " \u2026\uC65C?"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -3707,16 +4376,22 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\uB098 \uC774\uC81C \uC2AC\uC2AC \uC190 \uC880 \uB0B4\uB824\uB3C4 \uB420\uAE4C?
         \uD314\uC774 \uB5A8\uC5B4\uC9C8\uAEBC\uAC19\uC544\u2026"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -3743,15 +4418,73 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
       line: "\u2026..\uC5B8\uB2CC \uC9C0\uAE08 \uADF8\uAC8C \uD560 \uB9D0\uC774\uC57C!!!!"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
+      useTypingSound: 1
+      isInnerThought: 0
+      showEmotionIcon: 0
+      useAccentFontSize: 1
+      useSmallFontSize: 0
+      hideDialogueUI: 0
+      autoNext: 0
+      autoDelay: 0
+      hideFromLog: 0
+      transitionSpeed: 0
+    - id: 0
+      lineType: 0
+      illustrationOverride: {fileID: 0}
+      illustrationOverlay: {fileID: 0}
+      resetIllustration: 0
+      resetOverlay: 0
+      illustrationSequence: []
+      characterID: 0
+      isUnknown: 0
+      emotion: 0
+      motion:
+        type: 0
+        duration: 1.5
+        value: 0
+        targetSlotIndex: -1
+        stopDistance: 100
+        targetValue: 0
+      motions:
+      - characterID: 0
+        targetID: 0
+        motion:
+          type: 5
+          duration: 1
+          value: 1000
+          targetSlotIndex: 0
+          stopDistance: 0
+          targetValue: 0
+      playTogether: 0
+      changeDisplayName: 
+      resetDisplayName: 0
+      flips:
+      - characterID: 0
+        flip: 0
+      extraExpressions: []
+      screenEffect:
+        effectType: 0
+        effectDuration: 0
+        effectPower: 0
+      line: "\uB044\uC544\uC544\uC544\uC544!!!!!!"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
@@ -3778,15 +4511,8 @@ MonoBehaviour:
         value: 0
         targetSlotIndex: -1
         stopDistance: 100
+        targetValue: 0
       motions:
-      - characterID: 0
-        targetID: 0
-        motion:
-          type: 5
-          duration: 1
-          value: 1000
-          targetSlotIndex: 0
-          stopDistance: 0
       - characterID: 1
         targetID: 0
         motion:
@@ -3795,23 +4521,31 @@ MonoBehaviour:
           value: 1000
           targetSlotIndex: 0
           stopDistance: 0
+          targetValue: 0
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips:
+      - characterID: 1
+        flip: 0
+      extraExpressions: []
       screenEffect:
         effectType: 0
         effectDuration: 0
         effectPower: 0
-      line: "\uB044\uC544\uC544\uC544\uC544!!!!!!"
+      line: 
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
-      useAccentFontSize: 1
+      useAccentFontSize: 0
       useSmallFontSize: 0
-      hideDialogueUI: 0
-      autoNext: 0
-      autoDelay: 0
-      hideFromLog: 0
+      hideDialogueUI: 1
+      autoNext: 1
+      autoDelay: 1.2
+      hideFromLog: 1
       transitionSpeed: 0
     background: {fileID: 21300000, guid: fc62914ec8888a444af1809bd1ef9d0e, type: 3}
     illustration: {fileID: 0}
@@ -3823,4 +4557,9 @@ MonoBehaviour:
       effectPower: 0
     transitionType: 0
     startWithBlack: 0
+    sceneBGM: {fileID: 0}
+    changeBGM: 0
   rewardQuest: {fileID: 0}
+  rewardMoney: 0
+  rewardFame: 0
+  rewardItems: []
