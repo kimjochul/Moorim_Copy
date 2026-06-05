@@ -16,8 +16,11 @@ public class Gate : MonoBehaviour, IInteractable
     // 이벤트 등 외부 의존성 전부 제거됨
     public static bool isOpen { get; private set; } = false; 
 
-    // --- IInteractable 인터페이스 구현부 ---
+    // IInteractable 인터페이스
     public InteractMode Mode => InteractMode.Immediate; 
+    
+    // 문이 열리거나 닫혔을 때 발생할 이벤트
+    public static event Action<bool> OnGateStateChanged;
 
     public bool CanInteract(PlayerType playerType)
     {
@@ -42,7 +45,6 @@ public class Gate : MonoBehaviour, IInteractable
         return transform.position;
     }
     
-    // ------------------------------------
     
     
     private void OpenDoor()
@@ -55,6 +57,11 @@ public class Gate : MonoBehaviour, IInteractable
         Sequence s = DOTween.Sequence();
         s.Join(doorHandle0.transform.DOLocalRotate(new Vector3(0, 90, 0), openDoorTime).SetEase(Ease.OutQuad));
         s.Join(doorHandle1.transform.DOLocalRotate(new Vector3(0, -90, 0), openDoorTime).SetEase(Ease.OutQuad));
+        
+        s.OnComplete(() => 
+        {
+            OnGateStateChanged?.Invoke(isOpen);
+        });
         
         doorTween = s;
     }
@@ -69,6 +76,11 @@ public class Gate : MonoBehaviour, IInteractable
         Sequence s = DOTween.Sequence();
         s.Join(doorHandle0.transform.DOLocalRotate(Vector3.zero, openDoorTime).SetEase(Ease.OutQuad));
         s.Join(doorHandle1.transform.DOLocalRotate(Vector3.zero, openDoorTime).SetEase(Ease.OutQuad));
+        
+        s.OnComplete(() => 
+        {
+            OnGateStateChanged?.Invoke(isOpen);
+        });
         
         doorTween = s;
     }

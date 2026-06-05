@@ -141,6 +141,7 @@ public abstract class GuestBase : MonoBehaviour
         OnGuestPaid = null;
         OnGuestExited = null;
         OnOrderServed = null;
+        Gate.OnGateStateChanged -= HandleGateStateChanged;
         
         recipeUnlockManager = RecipeUnlockManager.Instance;
     }
@@ -178,6 +179,7 @@ public abstract class GuestBase : MonoBehaviour
             BindAnimCallbacks();
         }
 
+        Gate.OnGateStateChanged += HandleGateStateChanged;
         ChangeState(GuestState.Enter);
     }
 
@@ -238,7 +240,7 @@ public abstract class GuestBase : MonoBehaviour
         {
             myChair = SeatManager.Instance.FindEmptyChair();
 
-            if (myChair != null)
+            if (Gate.isOpen && myChair != null)
             {
                 myChair.Reserve(this);
                 mover.MoveTo(myChair.sitPoint.position);
@@ -253,7 +255,9 @@ public abstract class GuestBase : MonoBehaviour
                     ChangeState(GuestState.Waiting);
                 }
                 else
+                {
                     ChangeState(GuestState.Exit);
+                }
 
                 return;
             }
@@ -534,5 +538,13 @@ public abstract class GuestBase : MonoBehaviour
         foodMinWaitLimit = 99999f;
         foodMidWaitLimit = 99999f;
         foodMaxWaitLimit = 99999f;
+    }
+    
+    private void HandleGateStateChanged(bool isGateOpen)
+    {
+        if (mover != null)
+        {
+            mover.RecalculatePath();
+        }
     }
 }
