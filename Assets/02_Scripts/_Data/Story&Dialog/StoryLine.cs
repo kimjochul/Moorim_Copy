@@ -202,7 +202,10 @@ public enum ScreenEffectType
     
     FlashBlack,
     
-    ShakeAndSound
+    ShakeAndSound,
+    
+    FadeBlur,
+    FadeFromBlur
 }
 
 public static class DialogueStyle

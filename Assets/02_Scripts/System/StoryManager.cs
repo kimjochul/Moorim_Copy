@@ -434,6 +434,8 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
 
     private IEnumerator EndStoryRoutine()
     {
+        runtimeNameOverrides.Clear();
+        
         if (currentTrigger != null && !string.IsNullOrEmpty(currentTrigger.addFlagOnComplete))
         {
             flags.Add(currentTrigger.addFlagOnComplete);
@@ -761,6 +763,14 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
             
             case ScreenEffectType.ShakeAndSound:
                 effectUI.PlayImpact(effect.effectPower, effect.effectDuration, hitSE, false);
+                break;
+            
+            case ScreenEffectType.FadeBlur:
+                screenEffectUI.FadeBlur(effect.effectDuration);
+                break;
+
+            case ScreenEffectType.FadeFromBlur:
+                screenEffectUI.FadeFromBlur(effect.effectDuration);
                 break;
         }
     }

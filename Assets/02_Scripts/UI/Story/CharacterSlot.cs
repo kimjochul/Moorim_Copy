@@ -71,6 +71,8 @@ public class CharacterSlot : MonoBehaviour
 
         nextImage.color = new Color(1,1,1,0);
         
+        isUnknown = false;
+        isFocused = false;
         RefreshScale();
         
         gameObject.SetActive(true);
@@ -583,6 +585,9 @@ public class CharacterSlot : MonoBehaviour
         nextImage.sprite = null;
         nextImage.color = new Color(1,1,1,0);
         HideEmotionIcon();
+        
+        isUnknown = false;
+        isFocused = false;
         
         isFlipped = false;
         currentScaleMultiplier = 1f;

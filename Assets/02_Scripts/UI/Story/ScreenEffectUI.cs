@@ -10,6 +10,7 @@ public class ScreenEffectUI : MonoBehaviour
 {
     [SerializeField] private RectTransform screenRoot;
     [SerializeField] private Image fadeImage;
+    [SerializeField] private Image blurImage;
     [SerializeField] private Volume volume; // 하이어라키 창에서 global volume 추가 및 연결 필요
     
     private Vector2 defaultPos;
@@ -215,7 +216,34 @@ public class ScreenEffectUI : MonoBehaviour
 
     #endregion
 
+    #region Blur Effect
 
+    public void FadeBlur(float duration)
+    {
+        blurImage.DOKill();
+
+        blurImage.gameObject.SetActive(true);
+
+        Color c = blurImage.color;
+        c.a = 0f;
+        blurImage.color = c;
+
+        blurImage.DOFade(0.5f, duration).SetEase(Ease.InSine);
+    }
+
+    public void FadeFromBlur(float duration)
+    {
+        blurImage.DOKill();
+
+        blurImage.DOFade(0f, duration)
+            .OnComplete(() =>
+            {
+                blurImage.gameObject.SetActive(false);
+            }).SetEase(Ease.InSine);
+    }
+
+    #endregion
+    
     #region Combined Effect
 
     public void PlayImpact(
