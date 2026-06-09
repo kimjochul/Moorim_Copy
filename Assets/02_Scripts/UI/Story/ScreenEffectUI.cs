@@ -228,7 +228,7 @@ public class ScreenEffectUI : MonoBehaviour
         c.a = 0f;
         blurImage.color = c;
 
-        blurImage.DOFade(0.5f, duration).SetEase(Ease.InSine);
+        blurImage.DOFade(1f, duration).SetEase(Ease.InSine);
     }
 
     public void FadeFromBlur(float duration)

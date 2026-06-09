@@ -35,6 +35,7 @@ public class StoryUI : MonoBehaviour
 
     [SerializeField] private GameObject root;
     [SerializeField] private GameObject screenRoot;
+    [SerializeField] private GameObject canvasBG;
     [SerializeField] private GameObject characterNameRoot;
     [SerializeField] private GameObject darkBackGround;
     [SerializeField] private CanvasGroup darkBackgroundGroup;
@@ -159,6 +160,7 @@ public class StoryUI : MonoBehaviour
     public void Show()
     {
         root.SetActive(true);
+        canvasBG.SetActive(true);
         screenRoot.SetActive(true);
         defaultIllustBG.SetActive(true);
         currentBg.gameObject.SetActive(true);
@@ -174,6 +176,7 @@ public class StoryUI : MonoBehaviour
         StopAllAutoPlay();
         
         root.SetActive(false);
+        canvasBG.SetActive(false);
         screenRoot.SetActive(false);
         defaultIllustBG.SetActive(false);
         currentBg.gameObject.SetActive(false);
