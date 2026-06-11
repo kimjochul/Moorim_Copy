@@ -12,6 +12,7 @@ public class Character : ScriptableObject
     
     public List<FaceSpriteData> faces;
     public List<EyebrowSpriteData> eyebrows;
+    public Sprite shadow;
     
     public List<EmotionIcon> emotionIcons;
     
@@ -34,6 +35,9 @@ public class CharacterVisualSetting
 
     [Header("캐릭터 위치 보정")]
     public Vector2 offset;
+
+    [Header("감정 아이콘 위치")] 
+    public Vector2 emotionIconPosition;
 }
 
 [Serializable]

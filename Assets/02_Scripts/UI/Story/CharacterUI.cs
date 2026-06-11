@@ -146,7 +146,7 @@ public class CharacterUI : MonoBehaviour
 
                 if (!info.startVisible)
                 {
-                    slot.SetHidden(dataDict[info.characterID], data.characterImage);
+                    slot.SetHidden(data, data.characterImage);
 
                     continue;
                 }
@@ -154,7 +154,7 @@ public class CharacterUI : MonoBehaviour
                 // 이전엔 숨김이었는데 이번 씬에서 등장
                 if (!slot.gameObject.activeSelf && info.startVisible)
                 {
-                    slot.SetCharacter(dataDict[info.characterID], data.characterImage);
+                    slot.SetCharacter(data, data.characterImage);
                 }
 
                 continue;
@@ -177,11 +177,11 @@ public class CharacterUI : MonoBehaviour
                 
                 if (info.startVisible)
                 {
-                    slot.SetCharacter(dataDict[info.characterID], data.characterImage);
+                    slot.SetCharacter(data, data.characterImage);
                 }
                 else
                 {
-                    slot.SetHidden(dataDict[info.characterID], data.characterImage);
+                    slot.SetHidden(data, data.characterImage);
                 }
                 currentSlotMap[info.characterID] = info.slotIndex;
                 Debug.Log($"SETUP character:{info.characterID} -> slot:{info.slotIndex}");
@@ -206,14 +206,14 @@ public class CharacterUI : MonoBehaviour
         Debug.Log("-------------------------");
     }
 
-    public void SetExpression( int characterID, FaceType face = FaceType.None, EyebrowType eyebrow = EyebrowType.None)
+    public void SetExpression(int characterID, ExpressionData expression)
     {
         CharacterSlot slot = FindSlot(characterID);
 
         if (slot == null)
             return;
 
-        slot.SetExpression(face, eyebrow);
+        slot.SetExpression(expression);
     }
     
     public void SetUnknown(int characterID, bool isUnknown)

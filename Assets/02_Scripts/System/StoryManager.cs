@@ -358,11 +358,11 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         }
         
         characterUI.SetUnknown(line.characterID, line.isUnknown);
-        characterUI.SetExpression(line.characterID, line.face, line.eyebrow);
+        characterUI.SetExpression(line.characterID, line.expressionData);
         
         foreach(var exp in line.extraExpressions)
         {
-            characterUI.SetExpression(exp.characterID, exp.expressionData.face, exp.expressionData.eyebrow);
+            characterUI.SetExpression(exp.characterID, exp.expressionData);
         }
         
         if (line.motions != null && line.motions.Count > 0)

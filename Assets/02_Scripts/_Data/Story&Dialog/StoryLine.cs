@@ -27,8 +27,7 @@ public class StoryLine
     [Header("캐릭터 슬롯의 경우 캐릭터 현재 캐릭터에 대한 정보 및 행동 설정")]
     public int characterID;
     public bool isUnknown;
-    public FaceType face;
-    public EyebrowType eyebrow;
+    public ExpressionData expressionData;
     public MotionData motion;
     public List<MotionCommand> motions;
     public bool playTogether;
@@ -100,11 +99,18 @@ public enum FaceType
 {
     None,       // 변경 안함
     Neutral,
-    Happy,
-    Anger,
-    Sad,
-    Embarrassed,
-    Surprised,
+    Neutral2,
+    Neutral3,
+    Happy1,
+    Happy2,
+    Anger1,
+    Anger2,
+    Wink1,
+    Wink2,
+    Wink3,
+    Wink4,
+    Surprised1,
+    Surprised2,
 }
 
 public enum EyebrowType
@@ -113,7 +119,14 @@ public enum EyebrowType
     Default,
     Angry,
     Sad,
-    Raised
+    Surprised,
+}
+
+public enum ShadowType
+{
+    None,   // 변경 안 함
+    On,
+    Off
 }
 
 [Serializable]
@@ -121,6 +134,8 @@ public class ExpressionData
 {
     public FaceType face = FaceType.None;
     public EyebrowType eyebrow = EyebrowType.None;
+    public ShadowType shadow = ShadowType.None;
+    public bool useDOScale;
 }
 
 [Serializable]

@@ -13,10 +13,9 @@ public class CharacterSlot : MonoBehaviour
     [SerializeField] private Image characterImage;
     
     [SerializeField] private Image faceImage;
-    [SerializeField] private Image nextFaceImage;
-
     [SerializeField] private Image eyebrowImage;
-    [SerializeField] private Image nextEyebrowImage;
+    
+    [SerializeField] private Image shadowImage;
     
     [Header("감정 아이콘")]
     [SerializeField] private Image emotionIcon;
@@ -25,11 +24,9 @@ public class CharacterSlot : MonoBehaviour
     public int CurrentCharacterID => currentCharacterID;
     private Character currentCharacter;
 
-    private bool isFlipped;
+    private bool isFlipped; 
     private float currentBaseScale = 1f;
     private float currentScaleMultiplier = 1f;
-    
-    private Coroutine iconCoroutine;
     
     private RectTransform slotRoot;
     public RectTransform SlotRoot
@@ -42,40 +39,29 @@ public class CharacterSlot : MonoBehaviour
             return slotRoot;
         }
     }
-    public RectTransform MotionRoot => motionRoot;
+    
     public Vector2 SlotPos => SlotRoot.anchoredPosition;
-
-    private Coroutine motionCoroutine;
+    private Vector2 defaultEmotionIconPos;
     
     private int motionLock = 0;
     public bool IsPlayingMotion => motionLock > 0;
 
     private bool isUnknown;
     private bool isFocused;
-
-    
-    public Emotion CurrentEmotion { get; private set; }
     
     private FaceType currentFace = FaceType.Neutral;
     private EyebrowType currentEyebrow = EyebrowType.Default;
-    public FaceType CurrentFace => currentFace;
-    public EyebrowType CurrentEyebrow => currentEyebrow;
+    private bool currentShadow = false;
     
-    private bool HasFaceLayer =>
-        currentCharacter != null &&
-        currentCharacter.faces != null &&
-        currentCharacter.faces.Count > 0;
-
-    private bool HasEyebrowLayer =>
-        currentCharacter != null &&
-        currentCharacter.eyebrows != null &&
-        currentCharacter.eyebrows.Count > 0;
+    private bool HasFaceLayer => currentCharacter != null && currentCharacter.faces != null && currentCharacter.faces.Count > 0;
+    private bool HasEyebrowLayer => currentCharacter != null && currentCharacter.eyebrows != null && currentCharacter.eyebrows.Count > 0;
     
     private void Awake()
     {
         slotRoot = GetComponent<RectTransform>();
         
         characterImage.color = Color.white;
+        defaultEmotionIconPos = emotionIcon.rectTransform.anchoredPosition;
     }
     
     public void SetCharacter(Character character, Sprite bodySprite)
@@ -95,9 +81,23 @@ public class CharacterSlot : MonoBehaviour
 
         faceImage.color = Color.white;
         eyebrowImage.color = Color.white;
-        nextFaceImage.color = new Color(1,1,1,0);
-        nextEyebrowImage.color = new Color(1,1,1,0);
+
+        if (character.shadow != null)
+        {
+            currentShadow = false;
+            shadowImage.sprite = character.shadow;
+        }
+
+        if (character.visual != null)
+        {
+            emotionIcon.rectTransform.anchoredPosition = character.visual.emotionIconPosition;
+        }
+        else
+        {
+            emotionIcon.rectTransform.anchoredPosition = defaultEmotionIconPos;
+        }
         
+        RefreshShadow();
         RefreshExpression();
         
         isUnknown = false;
@@ -117,6 +117,22 @@ public class CharacterSlot : MonoBehaviour
         currentEyebrow = EyebrowType.Default;
         RefreshExpression();
         
+        if (character.shadow != null)
+        {
+            currentShadow = false;
+            shadowImage.sprite = character.shadow;
+        }
+        
+        if (character.visual != null)
+        {
+            emotionIcon.rectTransform.anchoredPosition = character.visual.emotionIconPosition;
+        }
+        else
+        {
+            emotionIcon.rectTransform.anchoredPosition = defaultEmotionIconPos;
+        }
+        
+        RefreshShadow();
         RefreshScale();
         gameObject.SetActive(false);
     }
@@ -150,16 +166,14 @@ public class CharacterSlot : MonoBehaviour
         characterImage.sprite = null;
         
         faceImage.sprite = null;
-        nextFaceImage.sprite = null;
-
         eyebrowImage.sprite = null;
-        nextEyebrowImage.sprite = null;
         
         faceImage.color = Color.white;
         eyebrowImage.color = Color.white;
 
-        nextFaceImage.color = new Color(1,1,1,0);
-        nextEyebrowImage.color = new Color(1,1,1,0);
+        currentShadow = false;
+        shadowImage.sprite = null;
+        RefreshShadow();
         
         HideEmotionIcon();
     }
@@ -197,79 +211,35 @@ public class CharacterSlot : MonoBehaviour
         visualRoot.DOScale(new Vector3(targetX, currentBaseScale * focusMultiplier, 1f), duration);
     }
     
-    public void ChangeExpression(Sprite faceSprite, Sprite eyebrowSprite, float duration = 0.2f)
+    private void ChangeExpression(Sprite faceSprite, Sprite eyebrowSprite, float duration = 0.2f)
     {
-        faceImage.DOKill();
-        nextFaceImage.DOKill();
-        eyebrowImage.DOKill();
-        nextEyebrowImage.DOKill();
-        visualRoot.DOKill();
-        
-        Color faceColor = faceImage.color;
-        Color eyebrowColor = eyebrowImage.color;
-        
-        bool changeFace = HasFaceLayer;
-        bool changeEyebrow = HasEyebrowLayer;
+        bool changeFace = HasFaceLayer && faceSprite != faceImage.sprite;
+        bool changeEyebrow = HasEyebrowLayer && eyebrowSprite != eyebrowImage.sprite;
+
+        if (!changeFace && !changeEyebrow)
+            return;
 
         if (changeFace)
-        {
-            nextFaceImage.sprite = faceSprite;
-            nextFaceImage.color = new Color(faceColor.r, faceColor.g, faceColor.b, 0);
-        }
+            faceImage.sprite = faceSprite;
 
         if (changeEyebrow)
-        {
-            nextEyebrowImage.sprite = eyebrowSprite;
-            nextEyebrowImage.color = new Color(eyebrowColor.r, eyebrowColor.g, eyebrowColor.b, 0);
-        }
+            eyebrowImage.sprite = eyebrowSprite;
 
-        Sequence seq = DOTween.Sequence();
-
-        if(changeFace)
-        {
-            seq.Join(nextFaceImage.DOFade(1, duration));
-            seq.Join(faceImage.DOFade(0, duration));
-        }
+        RefreshColor();
         
-        if(changeEyebrow)
-        {
-            seq.Join(nextEyebrowImage.DOFade(1, duration));
-            seq.Join(eyebrowImage.DOFade(0, duration));
-        }
-        
-        seq.OnComplete(() =>
-        {
-            if (changeFace)
-            {
-                faceImage.sprite = faceSprite;
-                faceImage.color = faceColor;
+        PlayExpressionScale();
 
-                nextFaceImage.sprite = null;
-                nextFaceImage.color =
-                    new Color(faceColor.r, faceColor.g, faceColor.b, 0);
-            }
-
-            if (changeEyebrow)
-            {
-                eyebrowImage.sprite = eyebrowSprite;
-                eyebrowImage.color = eyebrowColor;
-
-                nextEyebrowImage.sprite = null;
-                nextEyebrowImage.color =
-                    new Color(eyebrowColor.r, eyebrowColor.g, eyebrowColor.b, 0);
-            }
-            
-            PlayExpressionScale();
-        });
+        Debug.Log($"표정 변경 {faceSprite?.name} 눈썹 변경 {eyebrowSprite?.name}");
     }
     
     private void PlayExpressionScale()
     {
+        visualRoot.DOComplete();
+        
         float scale = currentBaseScale * currentScaleMultiplier;
-
         float x = isFlipped ? -scale : scale;
 
-        visualRoot.DOScale(new Vector3(x * 1.03f, scale * 1.03f, 1f), 0.25f).SetEase(Ease.OutQuad)
+        visualRoot.DOScale(new Vector3(x * 1.01f, scale * 1.01f, 1f), 0.25f).SetEase(Ease.OutQuad)
             .OnComplete(() =>
             {
                 visualRoot.DOScale(new Vector3(x, scale, 1f), 0.25f).SetEase(Ease.InOutQuad);
@@ -278,60 +248,38 @@ public class CharacterSlot : MonoBehaviour
     
     public void PlayEmotionIcon(Sprite icon)
     {
-        if (iconCoroutine != null)
-            StopCoroutine(iconCoroutine);
-
-        iconCoroutine = StartCoroutine(EmotionIconRoutine(icon));
-    }
-
-    private IEnumerator EmotionIconRoutine(Sprite icon)
-    {
+        emotionIcon.DOKill();
+        
         emotionIcon.sprite = icon;
         emotionIcon.gameObject.SetActive(true);
 
-        Transform t = emotionIcon.transform;
+        RectTransform rt = emotionIcon.rectTransform;
 
-        // 시작 상태
-        t.localScale = Vector3.zero;
-        Vector3 startPos = t.localPosition;
-        Vector3 targetPos = startPos + Vector3.up * 50f;
+        Vector2 startPos = rt.anchoredPosition;
+        Vector2 endPos = startPos + Vector2.up * 50f;
 
-        float time = 0;
-
-        // 1. 팝업 + 상승
-        while (time < 0.25f)
-        {
-            time += Time.deltaTime;
-            float t01 = time / 0.25f;
-
-            // 팝 효과 (살짝 튕김)
-            float scale = Mathf.Lerp(0f, 1.2f, t01);
-            t.localScale = new Vector3(scale, scale, scale);
-
-            t.localPosition = Vector3.Lerp(startPos, targetPos, t01);
-
-            yield return null;
-        }
-
-        // 살짝 줄어들면서 안정화
-        t.localScale = Vector3.one;
+        Color c = emotionIcon.color;
+        c.a = 0;
+        emotionIcon.color = c;
+        
+        Sequence seq = DOTween.Sequence();
+        
+        // 등장
+        seq.Append(emotionIcon.DOFade(1f, 0.15f));
+        seq.Join(rt.DOAnchorPos(endPos, 0.3f).SetEase(Ease.OutQuad));
 
         // 유지
-        yield return new WaitForSeconds(0.7f);
+        seq.AppendInterval(0.8f);
 
-        // 2. 사라지기
-        time = 0;
-        while (time < 0.2f)
+        // 퇴장
+        seq.Append(emotionIcon.DOFade(0f, 0.2f));
+        seq.Join(rt.DOAnchorPos(endPos + Vector2.down * 20f, 0.2f));
+        
+        seq.OnComplete(() =>
         {
-            time += Time.deltaTime;
-            float t01 = time / 0.2f;
-
-            t.localScale = Vector3.Lerp(Vector3.one, Vector3.zero, t01);
-            yield return null;
-        }
-
-        HideEmotionIcon();
-        t.localPosition = startPos; // 원위치
+            rt.anchoredPosition = startPos;
+            HideEmotionIcon();
+        });
     }
 
     // 흔들기 (캐릭터)
@@ -360,14 +308,8 @@ public class CharacterSlot : MonoBehaviour
         EndMotion();
     }
     
-    public void HideEmotionIcon()
+    private void HideEmotionIcon()
     {
-        if (iconCoroutine != null)
-        {
-            StopCoroutine(iconCoroutine);
-            iconCoroutine = null;
-        }
-
         emotionIcon.gameObject.SetActive(false);
     }
 
@@ -386,37 +328,30 @@ public class CharacterSlot : MonoBehaviour
     private void RefreshColor()
     {
         Color target;
-
+        Color targetForShadow;
+        // #76564D98
         if (isUnknown)
         {
             target = new Color(0.1f, 0.1f, 0.1f, 1f);
+            targetForShadow = new Color(0.1f, 0.1f, 0.1f, 0.5f);
         }
         else if (!isFocused)
         {
             target = new Color(0.7f, 0.7f, 0.7f, 1f);
+            targetForShadow = new Color(0.35f, 0.35f, 0.35f, 0.5f);
         }
         else
         {
             target = Color.white;
+            targetForShadow = new Color(0.5f, 0.5f, 0.5f, 0.5f);
         }
 
         characterImage.DOColor(target, 0.2f);
         faceImage.DOColor(target,0.2f);
         eyebrowImage.DOColor(target,0.2f);
-
-        Color nextFace = nextFaceImage.color;
-        nextFace.r = target.r;
-        nextFace.g = target.g;
-        nextFace.b = target.b;
-
-        nextFaceImage.DOColor(nextFace,0.2f);
-
-        Color nextEyebrow = nextEyebrowImage.color;
-        nextEyebrow.r = target.r;
-        nextEyebrow.g = target.g;
-        nextEyebrow.b = target.b;
-
-        nextEyebrowImage.DOColor(nextEyebrow,0.2f);
+        
+        if (shadowImage.gameObject.activeSelf)
+            shadowImage.DOColor(targetForShadow, 0.2f);
     }
     
     IEnumerator AppearRoutine(Vector2 targetPos)
@@ -674,17 +609,16 @@ public class CharacterSlot : MonoBehaviour
         
         characterImage.sprite = null;
         faceImage.sprite = null;
-        nextFaceImage.sprite = null;
         eyebrowImage.sprite = null;
-        nextEyebrowImage.sprite = null;
         
         faceImage.color = Color.white;
         eyebrowImage.color = Color.white;
 
-        nextFaceImage.color = new Color(1,1,1,0);
-        nextEyebrowImage.color = new Color(1,1,1,0);
-
         characterImage.color = Color.white;
+        
+        currentShadow = false;
+        shadowImage.sprite = null;
+        RefreshShadow();
         
         HideEmotionIcon();
         
@@ -697,28 +631,46 @@ public class CharacterSlot : MonoBehaviour
         RefreshScale();
     }
     
-    public void SetEmotion(Emotion emotion)
+    public void SetExpression(ExpressionData expression)
     {
-        CurrentEmotion = emotion;
-    }
-    
-    public void SetExpression(FaceType face = FaceType.None, EyebrowType eyebrow = EyebrowType.None)
-    {
+        if (expression == null || currentCharacter == null)
+            return;
+        
         FaceType nextFace = currentFace;
         EyebrowType nextEyebrow = currentEyebrow;
+        bool nextShadow = currentShadow;
+        
+        if (expression.face != FaceType.None)
+            nextFace = expression.face;
 
-        if (face != FaceType.None)
-            nextFace = face;
+        if (expression.eyebrow != EyebrowType.None)
+            nextEyebrow = expression.eyebrow;
 
-        if (eyebrow != EyebrowType.None)
-            nextEyebrow = eyebrow;
+        switch (expression.shadow)
+        {
+            case ShadowType.On:
+                nextShadow = true;
+                break;
 
-        if (nextFace == currentFace && nextEyebrow == currentEyebrow)
+            case ShadowType.Off:
+                nextShadow = false;
+                break;
+
+            // None이면 그대로 유지
+        }
+        
+        if (nextFace == currentFace && nextEyebrow == currentEyebrow && nextShadow == currentShadow)
             return;
 
+        bool shadowChanged = nextShadow != currentShadow;
+        
         currentFace = nextFace;
         currentEyebrow = nextEyebrow;
-
+        currentShadow = nextShadow;
+        
+        if (shadowChanged)
+            ChangeShadow(currentShadow);
+        
         Sprite faceSprite = null;
         Sprite eyebrowSprite = null;
 
@@ -753,7 +705,6 @@ public class CharacterSlot : MonoBehaviour
         bool showFace = HasFaceLayer && faceSprite != null;
 
         faceImage.gameObject.SetActive(showFace);
-        nextFaceImage.gameObject.SetActive(showFace);
 
         if (showFace)
             faceImage.sprite = faceSprite;
@@ -762,10 +713,49 @@ public class CharacterSlot : MonoBehaviour
         bool showEyebrow = HasEyebrowLayer && eyebrowSprite != null;
 
         eyebrowImage.gameObject.SetActive(showEyebrow);
-        nextEyebrowImage.gameObject.SetActive(showEyebrow);
 
         if (showEyebrow)
             eyebrowImage.sprite = eyebrowSprite;
+    }
+    
+    private void RefreshShadow()
+    {
+        shadowImage.DOKill();
+
+        if (currentShadow)
+        {
+            shadowImage.gameObject.SetActive(true);
+
+            RefreshColor(); // 현재 focus 상태 색 적용
+        }
+        else
+        {
+            shadowImage.gameObject.SetActive(false);
+        }
+    }
+    
+    private void ChangeShadow(bool showShadow, float duration = 0.2f)
+    {
+        shadowImage.DOKill();
+
+        if (showShadow)
+        {
+            shadowImage.gameObject.SetActive(true);
+
+            RefreshColor();
+
+            shadowImage.DOFade(0.5f, duration);
+        }
+        else
+        {
+            shadowImage.DOFade(0f, duration)
+                .OnComplete(() =>
+                {
+                    shadowImage.gameObject.SetActive(false);
+
+                    RefreshColor();
+                });
+        }
     }
     
     private void BeginMotion()
