@@ -38,6 +38,9 @@ public class CharacterVisualSetting
 
     [Header("감정 아이콘 위치")] 
     public Vector2 emotionIconPosition;
+    
+    [Header("얼굴 음영 색")]
+    public Color shadowColor = new Color(0.5f, 0.5f, 0.5f, 0.5f);
 }
 
 [Serializable]

@@ -23,6 +23,7 @@ public class CharacterSlot : MonoBehaviour
     private int currentCharacterID = -1;
     public int CurrentCharacterID => currentCharacterID;
     private Character currentCharacter;
+    public Character CurrentCharacter => currentCharacter;
 
     private bool isFlipped; 
     private float currentBaseScale = 1f;
@@ -211,7 +212,7 @@ public class CharacterSlot : MonoBehaviour
         visualRoot.DOScale(new Vector3(targetX, currentBaseScale * focusMultiplier, 1f), duration);
     }
     
-    private void ChangeExpression(Sprite faceSprite, Sprite eyebrowSprite, float duration = 0.2f)
+    private void ChangeExpression(Sprite faceSprite, Sprite eyebrowSprite, bool useDOScale, float duration = 0.2f)
     {
         bool changeFace = HasFaceLayer && faceSprite != faceImage.sprite;
         bool changeEyebrow = HasEyebrowLayer && eyebrowSprite != eyebrowImage.sprite;
@@ -225,9 +226,11 @@ public class CharacterSlot : MonoBehaviour
         if (changeEyebrow)
             eyebrowImage.sprite = eyebrowSprite;
 
+        RefreshExpression();
         RefreshColor();
         
-        PlayExpressionScale();
+        if (useDOScale)
+            PlayExpressionScale();
 
         Debug.Log($"표정 변경 {faceSprite?.name} 눈썹 변경 {eyebrowSprite?.name}");
     }
@@ -239,10 +242,10 @@ public class CharacterSlot : MonoBehaviour
         float scale = currentBaseScale * currentScaleMultiplier;
         float x = isFlipped ? -scale : scale;
 
-        visualRoot.DOScale(new Vector3(x * 1.01f, scale * 1.01f, 1f), 0.25f).SetEase(Ease.OutQuad)
+        visualRoot.DOScale(new Vector3(x * 1.05f, scale * 1.05f, 1f), 0.4f).SetEase(Ease.OutQuad)
             .OnComplete(() =>
             {
-                visualRoot.DOScale(new Vector3(x, scale, 1f), 0.25f).SetEase(Ease.InOutQuad);
+                visualRoot.DOScale(new Vector3(x, scale, 1f), 0.4f).SetEase(Ease.InOutQuad);
             });
     }
     
@@ -327,9 +330,10 @@ public class CharacterSlot : MonoBehaviour
 
     private void RefreshColor()
     {
+        Color shadowBase = GetShadowColor();
         Color target;
         Color targetForShadow;
-        // #76564D98
+        
         if (isUnknown)
         {
             target = new Color(0.1f, 0.1f, 0.1f, 1f);
@@ -338,17 +342,21 @@ public class CharacterSlot : MonoBehaviour
         else if (!isFocused)
         {
             target = new Color(0.7f, 0.7f, 0.7f, 1f);
-            targetForShadow = new Color(0.35f, 0.35f, 0.35f, 0.5f);
+            targetForShadow = new Color(shadowBase.r * 0.5f, shadowBase.g * 0.5f, shadowBase.b * 0.5f, shadowBase.a);
         }
         else
         {
             target = Color.white;
-            targetForShadow = new Color(0.5f, 0.5f, 0.5f, 0.5f);
+            targetForShadow = shadowBase;
         }
 
         characterImage.DOColor(target, 0.2f);
-        faceImage.DOColor(target,0.2f);
-        eyebrowImage.DOColor(target,0.2f);
+        
+        if(faceImage.gameObject.activeSelf)
+            faceImage.DOColor(target,0.2f);
+        
+        if(eyebrowImage.gameObject.activeSelf)
+            eyebrowImage.DOColor(target,0.2f);
         
         if (shadowImage.gameObject.activeSelf)
             shadowImage.DOColor(targetForShadow, 0.2f);
@@ -687,7 +695,7 @@ public class CharacterSlot : MonoBehaviour
             return;
         }
 
-        ChangeExpression(faceSprite, eyebrowSprite);
+        ChangeExpression(faceSprite, eyebrowSprite, expression.useDOScale);
     }
     
     private void RefreshExpression()
@@ -766,5 +774,16 @@ public class CharacterSlot : MonoBehaviour
     private void EndMotion()
     {
         motionLock = Mathf.Max(0, motionLock - 1);
+    }
+    
+    private Color GetShadowColor()
+    {
+        if (currentCharacter != null &&
+            currentCharacter.visual != null)
+        {
+            return currentCharacter.visual.shadowColor;
+        }
+
+        return new Color(0.5f, 0.5f, 0.5f, 0.5f);
     }
 }

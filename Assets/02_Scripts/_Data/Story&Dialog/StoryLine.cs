@@ -103,14 +103,32 @@ public enum FaceType
     Neutral3,
     Happy1,
     Happy2,
+    Happy3,
     Anger1,
     Anger2,
+    Anger3,
     Wink1,
     Wink2,
     Wink3,
     Wink4,
     Surprised1,
     Surprised2,
+    Surprised3,
+    Embarrassed1,
+    Embarrassed2,
+    Embarrassed3,
+    Sad1,
+    Sad2,
+    Sad3,
+    Disappointment1,
+    Disappointment2,
+    Disappointment3,
+    Conceited1,
+    Conceited2,
+    Conceited3,
+    Serious1,
+    Serious2,
+    Serious3,
 }
 
 public enum EyebrowType
@@ -120,6 +138,9 @@ public enum EyebrowType
     Angry,
     Sad,
     Surprised,
+    Embarrassed,
+    Disappointment,
+    HalfDown,
 }
 
 public enum ShadowType

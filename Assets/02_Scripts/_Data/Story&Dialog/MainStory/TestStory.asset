@@ -27,6 +27,11 @@ MonoBehaviour:
       startVisible: 1
       useSlotUI: 1
       startFlip: 0
+    - characterID: 3
+      slotIndex: 3
+      startVisible: 1
+      useSlotUI: 1
+      startFlip: 0
     lines:
     - id: 0
       lineType: 0
@@ -41,6 +46,7 @@ MonoBehaviour:
         face: 0
         eyebrow: 0
         shadow: 1
+        useDOScale: 1
       motion:
         type: 0
         duration: 0
@@ -53,7 +59,14 @@ MonoBehaviour:
       changeDisplayName: 
       resetDisplayName: 0
       flips: []
-      extraExpressions: []
+      extraExpressions:
+      - characterID: 1
+        expressionData:
+          face: 9
+          eyebrow: 5
+          shadow: 0
+          useDOScale: 0
+        isUnknown: 0
       screenEffect:
         effectType: 0
         effectDuration: 0
@@ -83,9 +96,10 @@ MonoBehaviour:
       characterID: 1
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 8
+        eyebrow: 2
         shadow: 0
+        useDOScale: 1
       motion:
         type: 0
         duration: 0
@@ -129,8 +143,9 @@ MonoBehaviour:
       isUnknown: 0
       expressionData:
         face: 6
-        eyebrow: 2
+        eyebrow: 1
         shadow: 0
+        useDOScale: 0
       motion:
         type: 0
         duration: 0
@@ -143,7 +158,14 @@ MonoBehaviour:
       changeDisplayName: 
       resetDisplayName: 0
       flips: []
-      extraExpressions: []
+      extraExpressions:
+      - characterID: 3
+        expressionData:
+          face: 20
+          eyebrow: 2
+          shadow: 0
+          useDOScale: 1
+        isUnknown: 0
       screenEffect:
         effectType: 0
         effectDuration: 0
@@ -176,6 +198,7 @@ MonoBehaviour:
         face: 0
         eyebrow: 0
         shadow: 2
+        useDOScale: 0
       motion:
         type: 0
         duration: 0
@@ -188,7 +211,21 @@ MonoBehaviour:
       changeDisplayName: 
       resetDisplayName: 0
       flips: []
-      extraExpressions: []
+      extraExpressions:
+      - characterID: 1
+        expressionData:
+          face: 29
+          eyebrow: 7
+          shadow: 0
+          useDOScale: 1
+        isUnknown: 0
+      - characterID: 3
+        expressionData:
+          face: 26
+          eyebrow: 4
+          shadow: 0
+          useDOScale: 1
+        isUnknown: 0
       screenEffect:
         effectType: 0
         effectDuration: 0
@@ -219,8 +256,9 @@ MonoBehaviour:
       isUnknown: 0
       expressionData:
         face: 12
-        eyebrow: 4
+        eyebrow: 3
         shadow: 0
+        useDOScale: 0
       motion:
         type: 0
         duration: 0
@@ -264,8 +302,9 @@ MonoBehaviour:
       isUnknown: 0
       expressionData:
         face: 13
-        eyebrow: 0
+        eyebrow: 2
         shadow: 0
+        useDOScale: 0
       motion:
         type: 0
         duration: 0
@@ -308,9 +347,10 @@ MonoBehaviour:
       characterID: 0
       isUnknown: 0
       expressionData:
-        face: 8
+        face: 7
         eyebrow: 3
         shadow: 0
+        useDOScale: 1
       motion:
         type: 0
         duration: 0
@@ -323,7 +363,14 @@ MonoBehaviour:
       changeDisplayName: 
       resetDisplayName: 0
       flips: []
-      extraExpressions: []
+      extraExpressions:
+      - characterID: 3
+        expressionData:
+          face: 20
+          eyebrow: 6
+          shadow: 0
+          useDOScale: 1
+        isUnknown: 0
       screenEffect:
         effectType: 0
         effectDuration: 0
@@ -356,6 +403,7 @@ MonoBehaviour:
         face: 4
         eyebrow: 1
         shadow: 0
+        useDOScale: 0
       motion:
         type: 0
         duration: 0
@@ -368,7 +416,14 @@ MonoBehaviour:
       changeDisplayName: 
       resetDisplayName: 0
       flips: []
-      extraExpressions: []
+      extraExpressions:
+      - characterID: 1
+        expressionData:
+          face: 4
+          eyebrow: 1
+          shadow: 0
+          useDOScale: 1
+        isUnknown: 0
       screenEffect:
         effectType: 0
         effectDuration: 0
