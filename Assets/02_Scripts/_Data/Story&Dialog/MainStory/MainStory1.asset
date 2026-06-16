@@ -19,12 +19,12 @@ MonoBehaviour:
     characters:
     - characterID: 0
       slotIndex: 1
-      startVisible: 1
+      startVisible: 0
       useSlotUI: 1
       startFlip: 1
     - characterID: 1
       slotIndex: 2
-      startVisible: 1
+      startVisible: 0
       useSlotUI: 1
       startFlip: 0
     lines:
@@ -37,7 +37,11 @@ MonoBehaviour:
       illustrationSequence: []
       characterID: 0
       isUnknown: 0
-      emotion: 0
+      expressionData:
+        face: 0
+        eyebrow: 0
+        shadow: 0
+        useDOScale: 0
       motion:
         type: 0
         duration: 0
@@ -57,15 +61,14 @@ MonoBehaviour:
         effectPower: 30
       line: "\uC804\uC7C1\uC774 \uB05D\uB09C \uC9C0 \uBA87 \uD574\uAC00 \uC9C0\uB09C
         \uC5B4\uB290 \uB0A0 \uBB34\uB9BC\uACFC \uC11C\uBC29\uC744 \uC787\uB294 \uAE38\uBAA9
-        \uD55C\uAC00\uC6B4\uB370, \uC624\uB7AB\uB3D9\uC548 \uB2EB\uD600 \uC788\uB358
-        \uAC1D\uC794 \uD558\uB098\uAC00 \uB2E4\uC2DC \uBB38\uC744 \uC5F4\uC5C8\uB2E4.\r\n\uC774\uB984\uD558\uC5EC
-        **\uBB34\uB9BC\uAC1D\uC794**."
+        \uD55C\uAC00\uC6B4\uB370,"
       playSFX: {fileID: 0}
       stopBGM: 0
       stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
+      emotion: 0
       useAccentFontSize: 0
       useSmallFontSize: 0
       hideDialogueUI: 0
@@ -82,7 +85,59 @@ MonoBehaviour:
       illustrationSequence: []
       characterID: 0
       isUnknown: 0
+      expressionData:
+        face: 0
+        eyebrow: 0
+        shadow: 0
+        useDOScale: 0
+      motion:
+        type: 0
+        duration: 0
+        value: 0
+        targetSlotIndex: -1
+        stopDistance: 100
+        targetValue: 0
+      motions: []
+      playTogether: 0
+      changeDisplayName: 
+      resetDisplayName: 0
+      flips: []
+      extraExpressions: []
+      screenEffect:
+        effectType: 0
+        effectDuration: 0.3
+        effectPower: 30
+      line: "\uC624\uB7AB\uB3D9\uC548 \uB2EB\uD600 \uC788\uB358 \uAC1D\uC794 \uD558\uB098\uAC00
+        \uB2E4\uC2DC \uBB38\uC744 \uC5F4\uC5C8\uB2E4. \n\uC774\uB984\uD558\uC5EC
+        **\uBB34\uB9BC\uAC1D\uC794**."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
+      useTypingSound: 1
+      isInnerThought: 0
+      showEmotionIcon: 0
       emotion: 0
+      useAccentFontSize: 0
+      useSmallFontSize: 0
+      hideDialogueUI: 0
+      autoNext: 0
+      autoDelay: 1.5
+      hideFromLog: 0
+      transitionSpeed: 0
+    - id: 0
+      lineType: 1
+      illustrationOverride: {fileID: 0}
+      illustrationOverlay: {fileID: 0}
+      resetIllustration: 0
+      resetOverlay: 0
+      illustrationSequence: []
+      characterID: 0
+      isUnknown: 0
+      expressionData:
+        face: 0
+        eyebrow: 0
+        shadow: 0
+        useDOScale: 0
       motion:
         type: 0
         duration: 0
@@ -111,6 +166,7 @@ MonoBehaviour:
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
+      emotion: 0
       useAccentFontSize: 0
       useSmallFontSize: 0
       hideDialogueUI: 0
@@ -127,7 +183,11 @@ MonoBehaviour:
       illustrationSequence: []
       characterID: 0
       isUnknown: 0
-      emotion: 0
+      expressionData:
+        face: 0
+        eyebrow: 0
+        shadow: 0
+        useDOScale: 0
       motion:
         type: 0
         duration: 0
@@ -146,15 +206,14 @@ MonoBehaviour:
         effectDuration: 0.3
         effectPower: 30
       line: "\uADF8\uB7F0 \uAC1D\uC794\uC758 \uBB38\uC744 \uC791\uC740 \uD310\uB2E4
-        \uC218\uC778 \uD558\uB098\uAC00 \uD798\uAECF \uBC00\uC5B4 \uC5F4\uC5C8\uB2E4.\r\n\uBB38\uC774
-        \uC5F4\uB9AC\uC790 \uC624\uB7AB\uB3D9\uC548 \uC313\uC5EC \uC788\uB358 \uBA3C\uC9C0\uAC00
-        \uD587\uBE5B \uC18D\uC5D0\uC11C \uD769\uB0A0\uB9AC\uBA70, \uBC18\uC9DD\uC778\uB2E4."
+        \uC218\uC778 \uD558\uB098\uAC00 \uD798\uAECF \uBC00\uC5B4 \uC5F4\uC5C8\uB2E4."
       playSFX: {fileID: 0}
       stopBGM: 0
       stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
+      emotion: 0
       useAccentFontSize: 0
       useSmallFontSize: 0
       hideDialogueUI: 0
@@ -163,7 +222,7 @@ MonoBehaviour:
       hideFromLog: 0
       transitionSpeed: 0
     - id: 0
-      lineType: 0
+      lineType: 1
       illustrationOverride: {fileID: 0}
       illustrationOverlay: {fileID: 0}
       resetIllustration: 0
@@ -171,7 +230,11 @@ MonoBehaviour:
       illustrationSequence: []
       characterID: 0
       isUnknown: 0
-      emotion: 0
+      expressionData:
+        face: 0
+        eyebrow: 0
+        shadow: 0
+        useDOScale: 0
       motion:
         type: 0
         duration: 0
@@ -189,13 +252,62 @@ MonoBehaviour:
         effectType: 0
         effectDuration: 0.3
         effectPower: 30
-      line: "\u201C\uD760\u2026 \uC0DD\uAC01\uBCF4\uB2E4 \uBA3C\uC9C0\uAC00 \uB9CE\uB124.\u201D"
+      line: "\uBB38\uC774 \uC5F4\uB9AC\uC790 \uC624\uB7AB\uB3D9\uC548 \uC313\uC5EC
+        \uC788\uB358 \uBA3C\uC9C0\uAC00 \uD587\uBE5B \uC18D\uC5D0\uC11C \uD769\uB0A0\uB9AC\uBA70,
+        \uBC18\uC9DD\uC778\uB2E4."
       playSFX: {fileID: 0}
       stopBGM: 0
       stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
+      emotion: 0
+      useAccentFontSize: 0
+      useSmallFontSize: 0
+      hideDialogueUI: 0
+      autoNext: 0
+      autoDelay: 1.5
+      hideFromLog: 0
+      transitionSpeed: 0
+    - id: 0
+      lineType: 0
+      illustrationOverride: {fileID: 0}
+      illustrationOverlay: {fileID: 0}
+      resetIllustration: 0
+      resetOverlay: 0
+      illustrationSequence: []
+      characterID: 0
+      isUnknown: 1
+      expressionData:
+        face: 0
+        eyebrow: 0
+        shadow: 0
+        useDOScale: 0
+      motion:
+        type: 7
+        duration: 2
+        value: 1500
+        targetSlotIndex: 0
+        stopDistance: 0
+        targetValue: 0
+      motions: []
+      playTogether: 0
+      changeDisplayName: 
+      resetDisplayName: 0
+      flips: []
+      extraExpressions: []
+      screenEffect:
+        effectType: 0
+        effectDuration: 0.3
+        effectPower: 30
+      line: "\uD760\u2026 \uC0DD\uAC01\uBCF4\uB2E4 \uBA3C\uC9C0\uAC00 \uB9CE\uB124."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
+      useTypingSound: 1
+      isInnerThought: 0
+      showEmotionIcon: 0
+      emotion: 0
       useAccentFontSize: 0
       useSmallFontSize: 0
       hideDialogueUI: 0
@@ -212,7 +324,11 @@ MonoBehaviour:
       illustrationSequence: []
       characterID: 0
       isUnknown: 0
-      emotion: 0
+      expressionData:
+        face: 0
+        eyebrow: 0
+        shadow: 0
+        useDOScale: 0
       motion:
         type: 0
         duration: 0
@@ -240,6 +356,7 @@ MonoBehaviour:
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
+      emotion: 0
       useAccentFontSize: 0
       useSmallFontSize: 0
       hideDialogueUI: 0
@@ -256,7 +373,11 @@ MonoBehaviour:
       illustrationSequence: []
       characterID: 0
       isUnknown: 0
-      emotion: 0
+      expressionData:
+        face: 5
+        eyebrow: 7
+        shadow: 0
+        useDOScale: 1
       motion:
         type: 0
         duration: 0
@@ -274,13 +395,14 @@ MonoBehaviour:
         effectType: 0
         effectDuration: 0.3
         effectPower: 30
-      line: "\u201C\uADF8\uB798\uB3C4 \uBB50, \uC7A5\uC0AC\uB294 \uD560 \uC218 \uC788\uACA0\uC9C0!\u201D"
+      line: "\uADF8\uB798\uB3C4 \uBB50, \uC7A5\uC0AC\uB294 \uD560 \uC218 \uC788\uACA0\uC9C0!"
       playSFX: {fileID: 0}
       stopBGM: 0
       stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
+      emotion: 0
       useAccentFontSize: 0
       useSmallFontSize: 0
       hideDialogueUI: 0
@@ -297,7 +419,11 @@ MonoBehaviour:
       illustrationSequence: []
       characterID: 0
       isUnknown: 0
-      emotion: 0
+      expressionData:
+        face: 0
+        eyebrow: 0
+        shadow: 0
+        useDOScale: 0
       motion:
         type: 0
         duration: 0
@@ -317,17 +443,64 @@ MonoBehaviour:
         effectPower: 30
       line: "\uAC1D\uC794\uC758 \uC808\uBC18\uC740 \uACA8\uC6B0 \uC218\uB9AC\uB41C
         \uC0C1\uD0DC\uC600\uACE0  \uC758\uC790\uC640 \uD0C1\uC790\uB3C4 \uC5EC\uAE30\uC800\uAE30
-        \uAE01\uD788\uACE0 \uB0A1\uC544 \uC788\uC5C8\uB2E4.  \uADF8\uB798\uB3C4 \uBA85\uC6D4\uC740
-        \uB9CC\uC871\uC2A4\uB7EC\uC6B4 \uD45C\uC815\uC774\uC5C8\uB2E4.  \uADF8 \uB4A4\uC5D0\uC11C
-        \uD314\uC9F1\uC744 \uB080 \uCC44 \uC11C \uC788\uB358  \uC870\uAE08 \uB354
-        \uD0A4\uAC00 \uD070 \uD310\uB2E4 \uC218\uC778\uC774 \uD55C\uC228\uC744 \uC26C\uC5C8\uB2E4. 
-        \uADF8\uB140\uC758 \uC774\uB984\uC740 \uC18C\uC6D4."
+        \uAE01\uD788\uACE0 \uB0A1\uC544 \uC788\uC5C8\uB2E4. "
       playSFX: {fileID: 0}
       stopBGM: 0
       stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
+      emotion: 0
+      useAccentFontSize: 0
+      useSmallFontSize: 0
+      hideDialogueUI: 0
+      autoNext: 0
+      autoDelay: 1.5
+      hideFromLog: 0
+      transitionSpeed: 0
+    - id: 0
+      lineType: 1
+      illustrationOverride: {fileID: 0}
+      illustrationOverlay: {fileID: 0}
+      resetIllustration: 0
+      resetOverlay: 0
+      illustrationSequence: []
+      characterID: 1
+      isUnknown: 1
+      expressionData:
+        face: 0
+        eyebrow: 0
+        shadow: 0
+        useDOScale: 0
+      motion:
+        type: 8
+        duration: 2
+        value: 1500
+        targetSlotIndex: 0
+        stopDistance: 0
+        targetValue: 0
+      motions: []
+      playTogether: 0
+      changeDisplayName: 
+      resetDisplayName: 0
+      flips: []
+      extraExpressions: []
+      screenEffect:
+        effectType: 0
+        effectDuration: 0.3
+        effectPower: 30
+      line: "\uADF8\uB798\uB3C4 \uBA85\uC6D4\uC740 \uB9CC\uC871\uC2A4\uB7EC\uC6B4
+        \uD45C\uC815\uC774\uC5C8\uB2E4.  \uADF8 \uB4A4\uC5D0\uC11C \uD314\uC9F1\uC744
+        \uB080 \uCC44 \uC11C \uC788\uB358  \uC870\uAE08 \uB354 \uD0A4\uAC00 \uD070
+        \uD310\uB2E4 \uC218\uC778\uC774 \uD55C\uC228\uC744 \uC26C\uC5C8\uB2E4.  \uADF8\uB140\uC758
+        \uC774\uB984\uC740 \uC18C\uC6D4."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
+      useTypingSound: 1
+      isInnerThought: 0
+      showEmotionIcon: 0
+      emotion: 0
       useAccentFontSize: 0
       useSmallFontSize: 0
       hideDialogueUI: 0
@@ -344,7 +517,11 @@ MonoBehaviour:
       illustrationSequence: []
       characterID: 1
       isUnknown: 0
-      emotion: 0
+      expressionData:
+        face: 0
+        eyebrow: 0
+        shadow: 0
+        useDOScale: 0
       motion:
         type: 0
         duration: 0
@@ -362,13 +539,14 @@ MonoBehaviour:
         effectType: 0
         effectDuration: 0.3
         effectPower: 30
-      line: "\u201C\uADF8\uB798\uC11C.\u201D"
+      line: "\uADF8\uB798\uC11C."
       playSFX: {fileID: 0}
       stopBGM: 0
       stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
+      emotion: 0
       useAccentFontSize: 0
       useSmallFontSize: 0
       hideDialogueUI: 0
@@ -385,7 +563,11 @@ MonoBehaviour:
       illustrationSequence: []
       characterID: 0
       isUnknown: 0
-      emotion: 0
+      expressionData:
+        face: 0
+        eyebrow: 0
+        shadow: 0
+        useDOScale: 0
       motion:
         type: 0
         duration: 0
@@ -411,6 +593,7 @@ MonoBehaviour:
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
+      emotion: 0
       useAccentFontSize: 0
       useSmallFontSize: 0
       hideDialogueUI: 0
@@ -427,7 +610,11 @@ MonoBehaviour:
       illustrationSequence: []
       characterID: 1
       isUnknown: 0
-      emotion: 0
+      expressionData:
+        face: 1
+        eyebrow: 7
+        shadow: 0
+        useDOScale: 0
       motion:
         type: 0
         duration: 0
@@ -445,14 +632,15 @@ MonoBehaviour:
         effectType: 0
         effectDuration: 0.3
         effectPower: 30
-      line: "\u201C\uC774 \uC218\uB9AC\uBE44\uB294 \uC5B4\uB514\uC11C \uB09C \uAC70\uC57C?
-        \uD55C\uB450\uD47C\uC73C\uB860 \uC548\uB410\uC744\uD150\uB370.\u201D"
+      line: "\uC774 \uC218\uB9AC\uBE44\uB294 \uC5B4\uB514\uC11C \uB09C \uAC70\uC57C?
+        \uD55C\uB450\uD47C\uC73C\uB860 \uC548\uB410\uC744\uD150\uB370."
       playSFX: {fileID: 0}
       stopBGM: 0
       stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
+      emotion: 0
       useAccentFontSize: 0
       useSmallFontSize: 0
       hideDialogueUI: 0
@@ -469,7 +657,11 @@ MonoBehaviour:
       illustrationSequence: []
       characterID: 0
       isUnknown: 0
-      emotion: 0
+      expressionData:
+        face: 0
+        eyebrow: 0
+        shadow: 0
+        useDOScale: 0
       motion:
         type: 0
         duration: 0
@@ -495,6 +687,7 @@ MonoBehaviour:
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
+      emotion: 0
       useAccentFontSize: 0
       useSmallFontSize: 0
       hideDialogueUI: 0
@@ -511,7 +704,11 @@ MonoBehaviour:
       illustrationSequence: []
       characterID: 0
       isUnknown: 0
-      emotion: 0
+      expressionData:
+        face: 10
+        eyebrow: 7
+        shadow: 0
+        useDOScale: 1
       motion:
         type: 0
         duration: 0
@@ -529,13 +726,14 @@ MonoBehaviour:
         effectType: 0
         effectDuration: 0.3
         effectPower: 30
-      line: "\u201C\uBB50, \uADF8\uAC8C\u2026.\u201D"
+      line: "\uBB50, \uADF8\uAC8C\u2026."
       playSFX: {fileID: 0}
       stopBGM: 0
       stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
+      emotion: 0
       useAccentFontSize: 0
       useSmallFontSize: 0
       hideDialogueUI: 0
@@ -552,7 +750,11 @@ MonoBehaviour:
       illustrationSequence: []
       characterID: 1
       isUnknown: 0
-      emotion: 0
+      expressionData:
+        face: 7
+        eyebrow: 7
+        shadow: 0
+        useDOScale: 1
       motion:
         type: 0
         duration: 0
@@ -570,14 +772,14 @@ MonoBehaviour:
         effectType: 0
         effectDuration: 0.3
         effectPower: 30
-      line: "\u201C\uC124\uB9C8 \uC774\uC0C1\uD55C \uACF3\uC5D0 \uBE5A \uB0B8 \uAC70
-        \uC544\uB2C8\uC9C0?\u201D"
+      line: "\uC124\uB9C8 \uC774\uC0C1\uD55C \uACF3\uC5D0 \uBE5A \uB0B8 \uAC70 \uC544\uB2C8\uC9C0?"
       playSFX: {fileID: 0}
       stopBGM: 0
       stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
+      emotion: 0
       useAccentFontSize: 1
       useSmallFontSize: 0
       hideDialogueUI: 0
@@ -594,7 +796,11 @@ MonoBehaviour:
       illustrationSequence: []
       characterID: 0
       isUnknown: 0
-      emotion: 0
+      expressionData:
+        face: 0
+        eyebrow: 0
+        shadow: 0
+        useDOScale: 0
       motion:
         type: 0
         duration: 0
@@ -621,6 +827,7 @@ MonoBehaviour:
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
+      emotion: 0
       useAccentFontSize: 0
       useSmallFontSize: 0
       hideDialogueUI: 0
@@ -637,7 +844,11 @@ MonoBehaviour:
       illustrationSequence: []
       characterID: 0
       isUnknown: 0
-      emotion: 0
+      expressionData:
+        face: 1
+        eyebrow: 7
+        shadow: 0
+        useDOScale: 0
       motion:
         type: 0
         duration: 0
@@ -645,41 +856,24 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
-      motions:
-      - characterID: 1
-        targetID: 0
-        motion:
-          type: 11
-          duration: 0.5
-          value: 50
-          targetSlotIndex: -1
-          stopDistance: 100
-          targetValue: 0
-      - characterID: 0
-        targetID: 1
-        motion:
-          type: 12
-          duration: 1
-          value: 100
-          targetSlotIndex: -1
-          stopDistance: 100
-          targetValue: 0
+      motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
       flips: []
       extraExpressions: []
       screenEffect:
-        effectType: 5
-        effectDuration: 1
-        effectPower: 50
-      line: "\u201C\uC18C\uC6D4.\u201D"
+        effectType: 0
+        effectDuration: 0
+        effectPower: 0
+      line: "\uC18C\uC6D4."
       playSFX: {fileID: 0}
       stopBGM: 0
       stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
+      emotion: 0
       useAccentFontSize: 0
       useSmallFontSize: 0
       hideDialogueUI: 0
@@ -696,7 +890,11 @@ MonoBehaviour:
       illustrationSequence: []
       characterID: 1
       isUnknown: 0
-      emotion: 0
+      expressionData:
+        face: 1
+        eyebrow: 7
+        shadow: 0
+        useDOScale: 0
       motion:
         type: 0
         duration: 0
@@ -714,13 +912,14 @@ MonoBehaviour:
         effectType: 0
         effectDuration: 0.3
         effectPower: 30
-      line: "\u201C\uC65C.\u201D"
+      line: "\uC65C."
       playSFX: {fileID: 0}
       stopBGM: 0
       stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
+      emotion: 0
       useAccentFontSize: 0
       useSmallFontSize: 0
       hideDialogueUI: 0
@@ -737,7 +936,11 @@ MonoBehaviour:
       illustrationSequence: []
       characterID: 0
       isUnknown: 0
-      emotion: 0
+      expressionData:
+        face: 5
+        eyebrow: 2
+        shadow: 0
+        useDOScale: 1
       motion:
         type: 9
         duration: 0.5
@@ -755,14 +958,15 @@ MonoBehaviour:
         effectType: 0
         effectDuration: 0.3
         effectPower: 30
-      line: "\u201C\uB098\uC911\uC5D0 \uB3C8 \uB9CE\uC774 \uBC8C\uBA74 \uC5B4\uB514
-        \uC5EC\uD589 \uAC00\uACE0 \uC2F6\uC5B4?\u201D"
+      line: "\uB098\uC911\uC5D0 \uB3C8 \uB9CE\uC774 \uBC8C\uBA74 \uC5B4\uB514 \uC5EC\uD589
+        \uAC00\uACE0 \uC2F6\uC5B4?"
       playSFX: {fileID: 0}
       stopBGM: 0
       stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
+      emotion: 0
       useAccentFontSize: 1
       useSmallFontSize: 0
       hideDialogueUI: 0
@@ -779,7 +983,11 @@ MonoBehaviour:
       illustrationSequence: []
       characterID: 1
       isUnknown: 0
-      emotion: 0
+      expressionData:
+        face: 17
+        eyebrow: 3
+        shadow: 0
+        useDOScale: 1
       motion:
         type: 0
         duration: 0
@@ -797,13 +1005,14 @@ MonoBehaviour:
         effectType: 0
         effectDuration: 0.3
         effectPower: 30
-      line: "\"...\uBB50?\""
+      line: "...\uBB50?"
       playSFX: {fileID: 0}
       stopBGM: 0
       stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
+      emotion: 0
       useAccentFontSize: 0
       useSmallFontSize: 0
       hideDialogueUI: 0
@@ -820,7 +1029,11 @@ MonoBehaviour:
       illustrationSequence: []
       characterID: 0
       isUnknown: 0
-      emotion: 0
+      expressionData:
+        face: 1
+        eyebrow: 4
+        shadow: 0
+        useDOScale: 1
       motion:
         type: 0
         duration: 0
@@ -838,13 +1051,14 @@ MonoBehaviour:
         effectType: 0
         effectDuration: 0.3
         effectPower: 30
-      line: "\u201C\uB09C \uBC14\uB2E4 \uBCF4\uACE0 \uC2F6\uC5B4. \uC11C\uCABD \uBC14\uB2E4.\u201D"
+      line: "\uB09C \uBC14\uB2E4 \uBCF4\uACE0 \uC2F6\uC5B4. \uC11C\uCABD \uBC14\uB2E4."
       playSFX: {fileID: 0}
       stopBGM: 0
       stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
+      emotion: 0
       useAccentFontSize: 1
       useSmallFontSize: 0
       hideDialogueUI: 0
@@ -861,7 +1075,11 @@ MonoBehaviour:
       illustrationSequence: []
       characterID: 0
       isUnknown: 0
-      emotion: 0
+      expressionData:
+        face: 0
+        eyebrow: 0
+        shadow: 0
+        useDOScale: 0
       motion:
         type: 0
         duration: 0
@@ -886,6 +1104,7 @@ MonoBehaviour:
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
+      emotion: 0
       useAccentFontSize: 0
       useSmallFontSize: 0
       hideDialogueUI: 0
@@ -902,7 +1121,11 @@ MonoBehaviour:
       illustrationSequence: []
       characterID: 0
       isUnknown: 0
-      emotion: 0
+      expressionData:
+        face: 4
+        eyebrow: 1
+        shadow: 0
+        useDOScale: 1
       motion:
         type: 0
         duration: 0
@@ -920,15 +1143,16 @@ MonoBehaviour:
         effectType: 0
         effectDuration: 0.3
         effectPower: 30
-      line: "\u201C\uAC1D\uC794\uC774 \uC720\uBA85\uD574\uC9C0\uBA74 \uB9D0\uC774\uC57C. 
+      line: "\uAC1D\uC794\uC774 \uC720\uBA85\uD574\uC9C0\uBA74 \uB9D0\uC774\uC57C. 
         \uC5C4\uCCAD \uC720\uBA85\uD55C \uBB34\uB9BC \uACE0\uC218\uB3C4 \uC624\uACE0,
-        \uC11C\uBC29 \uC0C1\uC778\uB3C4 \uC624\uACE0\u2026\u201D"
+        \uC11C\uBC29 \uC0C1\uC778\uB3C4 \uC624\uACE0\u2026"
       playSFX: {fileID: 0}
       stopBGM: 0
       stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
+      emotion: 0
       useAccentFontSize: 1
       useSmallFontSize: 0
       hideDialogueUI: 0
@@ -945,7 +1169,11 @@ MonoBehaviour:
       illustrationSequence: []
       characterID: 0
       isUnknown: 0
-      emotion: 0
+      expressionData:
+        face: 1
+        eyebrow: 1
+        shadow: 0
+        useDOScale: 0
       motion:
         type: 0
         duration: 0
@@ -963,15 +1191,16 @@ MonoBehaviour:
         effectType: 0
         effectDuration: 0.3
         effectPower: 30
-      line: "\u201C\uADF8\uB7EC\uB2E4\uAC00 \uD639\uC2DC \uC5F0\uC608\uC778 \uAC19\uC740
+      line: "\uADF8\uB7EC\uB2E4\uAC00 \uD639\uC2DC \uC5F0\uC608\uC778 \uAC19\uC740
         \uC0AC\uB78C\uB3C4 \uC624\uBA74 \uC5B4\uB5A1\uD558\uC9C0? \uADF8\uB7FC \uC6B0\uB9AC
-        \uAC1D\uC794 \uC644\uC804 \uB300\uBC15 \uB098\uB294 \uAC70 \uC544\uB0D0?\u201D"
+        \uAC1D\uC794 \uC644\uC804 \uB300\uBC15 \uB098\uB294 \uAC70 \uC544\uB0D0?"
       playSFX: {fileID: 0}
       stopBGM: 0
       stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
+      emotion: 0
       useAccentFontSize: 1
       useSmallFontSize: 0
       hideDialogueUI: 0
@@ -988,7 +1217,11 @@ MonoBehaviour:
       illustrationSequence: []
       characterID: 1
       isUnknown: 0
-      emotion: 0
+      expressionData:
+        face: 8
+        eyebrow: 2
+        shadow: 0
+        useDOScale: 1
       motion:
         type: 0
         duration: 0
@@ -1006,13 +1239,14 @@ MonoBehaviour:
         effectType: 0
         effectDuration: 0.3
         effectPower: 30
-      line: "\u201C\uBB3B\uB294 \uB9D0\uC774\uB098 \uB300\uB2F5\u2026\u201D"
+      line: "\uBB3B\uB294 \uB9D0\uC774\uB098 \uB300\uB2F5\u2026"
       playSFX: {fileID: 0}
       stopBGM: 0
       stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
+      emotion: 0
       useAccentFontSize: 0
       useSmallFontSize: 0
       hideDialogueUI: 0
@@ -1029,7 +1263,11 @@ MonoBehaviour:
       illustrationSequence: []
       characterID: 0
       isUnknown: 0
-      emotion: 0
+      expressionData:
+        face: 10
+        eyebrow: 1
+        shadow: 0
+        useDOScale: 1
       motion:
         type: 0
         duration: 0
@@ -1047,14 +1285,15 @@ MonoBehaviour:
         effectType: 0
         effectDuration: 0.3
         effectPower: 30
-      line: "\u201C\uC6B0\uB9AC \uB3D9\uC0DD\uB3C4 \uADF8\uB807\uAC8C \uC0DD\uAC01\uD558\uC9C0?
-        \uC751?\u201D"
+      line: "\uC6B0\uB9AC \uB3D9\uC0DD\uB3C4 \uADF8\uB807\uAC8C \uC0DD\uAC01\uD558\uC9C0?
+        \uC751?"
       playSFX: {fileID: 0}
       stopBGM: 0
       stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
+      emotion: 0
       useAccentFontSize: 1
       useSmallFontSize: 0
       hideDialogueUI: 0
@@ -1071,7 +1310,11 @@ MonoBehaviour:
       illustrationSequence: []
       characterID: 0
       isUnknown: 0
-      emotion: 0
+      expressionData:
+        face: 0
+        eyebrow: 0
+        shadow: 0
+        useDOScale: 0
       motion:
         type: 0
         duration: 0
@@ -1098,6 +1341,7 @@ MonoBehaviour:
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
+      emotion: 0
       useAccentFontSize: 0
       useSmallFontSize: 0
       hideDialogueUI: 0
@@ -1114,7 +1358,11 @@ MonoBehaviour:
       illustrationSequence: []
       characterID: 1
       isUnknown: 0
-      emotion: 0
+      expressionData:
+        face: 23
+        eyebrow: 2
+        shadow: 0
+        useDOScale: 0
       motion:
         type: 0
         duration: 0
@@ -1132,13 +1380,14 @@ MonoBehaviour:
         effectType: 0
         effectDuration: 0.3
         effectPower: 30
-      line: "\u201C\u2026\uC5ED\uC2DC \uB300\uB2F5 \uC548 \uD560 \uC0DD\uAC01\uC774\uB124.\u201D"
+      line: "\u2026\uC5ED\uC2DC \uB300\uB2F5 \uC548 \uD560 \uC0DD\uAC01\uC774\uB124."
       playSFX: {fileID: 0}
       stopBGM: 0
       stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
+      emotion: 0
       useAccentFontSize: 0
       useSmallFontSize: 0
       hideDialogueUI: 0
@@ -1155,7 +1404,11 @@ MonoBehaviour:
       illustrationSequence: []
       characterID: 0
       isUnknown: 0
-      emotion: 0
+      expressionData:
+        face: 0
+        eyebrow: 0
+        shadow: 0
+        useDOScale: 0
       motion:
         type: 0
         duration: 0
@@ -1174,20 +1427,14 @@ MonoBehaviour:
         effectDuration: 0.3
         effectPower: 30
       line: "\uBA85\uC6D4\uC740 \uC6C3\uC73C\uBA70 \uACE0\uAC1C\uB97C \uAE01\uC801\uC784\uC5D0
-        \uB530\uB77C  \uC18C\uC6D4\uC740 \uC774\uBBF8 \uB208\uCE58\uCC44\uACE0 \uC788\uC5C8\uB2E4. 
-        \uC774 \uB3C8\uC774 \uC815\uC0C1\uC801\uC778 \uBC29\uBC95\uC5D0\uC11C \uB098\uC628\uAC74
-        \uC544\uB2C8\uB77C\uB294 \uC0AC\uC2E4\uC744,  \uD5C8\uB098 \uAD6C\uD0DC\uC5EC
-        \uC0AC\uC871\uC744 \uBD99\uD788\uC9C4 \uC54A\uC558\uB2E4.  \uADF8\uB798\uBD24\uC790
-        \uC77C\uC740 \uC774\uBBF8 \uBC8C\uC5B4\uC84C\uACE0, \uAFB8\uC9C0\uB78C\uC744
-        \uD55C\uB4E4 \uBC14\uB00C\uB294\uAC8C \uC5C6\uB2E4\uB294\uAC78  \uBBF8\uB9AC
-        \uAE68\uB2EC\uC558\uAE30 \uB54C\uBB38\uC774\uB2E4.  \uB300\uC2E0 \uC8FC\uBC29
-        \uCABD\uC73C\uB85C \uAC78\uC5B4\uAC00\uBA70 \uB9D0\uD588\uB2E4."
+        \uB530\uB77C  \uC18C\uC6D4\uC740 \uC774\uBBF8 \uB208\uCE58\uCC44\uACE0 \uC788\uC5C8\uB2E4."
       playSFX: {fileID: 0}
       stopBGM: 0
       stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
+      emotion: 0
       useAccentFontSize: 0
       useSmallFontSize: 0
       hideDialogueUI: 0
@@ -1196,15 +1443,19 @@ MonoBehaviour:
       hideFromLog: 0
       transitionSpeed: 0
     - id: 0
-      lineType: 0
+      lineType: 1
       illustrationOverride: {fileID: 0}
       illustrationOverlay: {fileID: 0}
       resetIllustration: 0
       resetOverlay: 0
       illustrationSequence: []
-      characterID: 1
+      characterID: 0
       isUnknown: 0
-      emotion: 0
+      expressionData:
+        face: 0
+        eyebrow: 0
+        shadow: 0
+        useDOScale: 0
       motion:
         type: 0
         duration: 0
@@ -1222,13 +1473,16 @@ MonoBehaviour:
         effectType: 0
         effectDuration: 0.3
         effectPower: 30
-      line: "\u201C\uC77C\uB2E8 \uC8FC\uBC29\uBD80\uD130 \uC815\uB9AC\uD560\uAC8C.\u201D"
+      line: "\uC774 \uB3C8\uC774 \uC815\uC0C1\uC801\uC778 \uBC29\uBC95\uC5D0\uC11C
+        \uB098\uC628\uAC74 \uC544\uB2C8\uB77C\uB294 \uC0AC\uC2E4\uC744,  \uD5C8\uB098
+        \uAD6C\uD0DC\uC5EC \uC0AC\uC871\uC744 \uBD99\uD788\uC9C4 \uC54A\uC558\uB2E4."
       playSFX: {fileID: 0}
       stopBGM: 0
       stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
+      emotion: 0
       useAccentFontSize: 0
       useSmallFontSize: 0
       hideDialogueUI: 0
@@ -1245,7 +1499,11 @@ MonoBehaviour:
       illustrationSequence: []
       characterID: 0
       isUnknown: 0
-      emotion: 0
+      expressionData:
+        face: 0
+        eyebrow: 0
+        shadow: 0
+        useDOScale: 0
       motion:
         type: 0
         duration: 0
@@ -1259,6 +1517,158 @@ MonoBehaviour:
       resetDisplayName: 0
       flips: []
       extraExpressions: []
+      screenEffect:
+        effectType: 0
+        effectDuration: 0.3
+        effectPower: 30
+      line: "\uADF8\uB798\uBD24\uC790 \uC77C\uC740 \uC774\uBBF8 \uBC8C\uC5B4\uC84C\uACE0,
+        \uAFB8\uC9C0\uB78C\uC744 \uD55C\uB4E4 \uBC14\uB00C\uB294\uAC8C \uC5C6\uB2E4\uB294\uAC78 
+        \uBBF8\uB9AC \uAE68\uB2EC\uC558\uAE30 \uB54C\uBB38\uC774\uB2E4."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
+      useTypingSound: 1
+      isInnerThought: 0
+      showEmotionIcon: 0
+      emotion: 0
+      useAccentFontSize: 0
+      useSmallFontSize: 0
+      hideDialogueUI: 0
+      autoNext: 0
+      autoDelay: 1.5
+      hideFromLog: 0
+      transitionSpeed: 0
+    - id: 0
+      lineType: 1
+      illustrationOverride: {fileID: 0}
+      illustrationOverlay: {fileID: 0}
+      resetIllustration: 0
+      resetOverlay: 0
+      illustrationSequence: []
+      characterID: 1
+      isUnknown: 0
+      expressionData:
+        face: 0
+        eyebrow: 0
+        shadow: 0
+        useDOScale: 0
+      motion:
+        type: 15
+        duration: 2
+        value: 0
+        targetSlotIndex: 0
+        stopDistance: 0
+        targetValue: 0
+      motions: []
+      playTogether: 0
+      changeDisplayName: 
+      resetDisplayName: 0
+      flips: []
+      extraExpressions: []
+      screenEffect:
+        effectType: 0
+        effectDuration: 0.3
+        effectPower: 30
+      line: "\uB300\uC2E0 \uC8FC\uBC29 \uCABD\uC73C\uB85C \uAC78\uC5B4\uAC00\uBA70
+        \uB9D0\uD588\uB2E4."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
+      useTypingSound: 1
+      isInnerThought: 0
+      showEmotionIcon: 0
+      emotion: 0
+      useAccentFontSize: 0
+      useSmallFontSize: 0
+      hideDialogueUI: 0
+      autoNext: 0
+      autoDelay: 1.5
+      hideFromLog: 0
+      transitionSpeed: 0
+    - id: 0
+      lineType: 0
+      illustrationOverride: {fileID: 0}
+      illustrationOverlay: {fileID: 0}
+      resetIllustration: 0
+      resetOverlay: 0
+      illustrationSequence: []
+      characterID: 1
+      isUnknown: 0
+      expressionData:
+        face: 1
+        eyebrow: 1
+        shadow: 0
+        useDOScale: 0
+      motion:
+        type: 0
+        duration: 0
+        value: 0
+        targetSlotIndex: -1
+        stopDistance: 100
+        targetValue: 0
+      motions: []
+      playTogether: 0
+      changeDisplayName: 
+      resetDisplayName: 0
+      flips:
+      - characterID: 1
+        flip: 1
+      extraExpressions: []
+      screenEffect:
+        effectType: 0
+        effectDuration: 0.3
+        effectPower: 30
+      line: "\uC77C\uB2E8 \uC8FC\uBC29\uBD80\uD130 \uC815\uB9AC\uD560\uAC8C."
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
+      useTypingSound: 1
+      isInnerThought: 0
+      showEmotionIcon: 0
+      emotion: 0
+      useAccentFontSize: 0
+      useSmallFontSize: 0
+      hideDialogueUI: 0
+      autoNext: 0
+      autoDelay: 1.5
+      hideFromLog: 0
+      transitionSpeed: 0
+    - id: 0
+      lineType: 1
+      illustrationOverride: {fileID: 0}
+      illustrationOverlay: {fileID: 0}
+      resetIllustration: 0
+      resetOverlay: 0
+      illustrationSequence: []
+      characterID: 0
+      isUnknown: 0
+      expressionData:
+        face: 0
+        eyebrow: 0
+        shadow: 0
+        useDOScale: 0
+      motion:
+        type: 0
+        duration: 0
+        value: 0
+        targetSlotIndex: -1
+        stopDistance: 100
+        targetValue: 0
+      motions: []
+      playTogether: 0
+      changeDisplayName: 
+      resetDisplayName: 0
+      flips:
+      - characterID: 0
+        flip: 0
+      extraExpressions:
+      - characterID: 0
+        expressionData:
+          face: 1
+          eyebrow: 1
+          shadow: 0
+          useDOScale: 0
+        isUnknown: 0
       screenEffect:
         effectType: 0
         effectDuration: 0.3
@@ -1271,6 +1681,7 @@ MonoBehaviour:
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
+      emotion: 0
       useAccentFontSize: 0
       useSmallFontSize: 0
       hideDialogueUI: 0
@@ -1287,7 +1698,11 @@ MonoBehaviour:
       illustrationSequence: []
       characterID: 1
       isUnknown: 0
-      emotion: 0
+      expressionData:
+        face: 23
+        eyebrow: 1
+        shadow: 0
+        useDOScale: 0
       motion:
         type: 0
         duration: 0
@@ -1305,15 +1720,16 @@ MonoBehaviour:
         effectType: 0
         effectDuration: 0.3
         effectPower: 30
-      line: "\u201C\uC5B4\uCC28\uD53C \uAC1D\uC794\uC740 \uC5F4\uC5C8\uC796\uC544.
-        \uC774\uC655 \uC2DC\uC791\uD55C \uAC70\uBA74\u2026 \uB9DD\uD558\uAC8C \uB450\uC9C4
-        \uC54A\uC744 \uAC70\uB2C8\uAE4C.\u201D"
+      line: "\uC5B4\uCC28\uD53C \uAC1D\uC794\uC740 \uC5F4\uC5C8\uC796\uC544. \uC774\uC655
+        \uC2DC\uC791\uD55C \uAC70\uBA74\u2026 \uB9DD\uD558\uAC8C \uB450\uC9C4 \uC54A\uC744
+        \uAC70\uB2C8\uAE4C."
       playSFX: {fileID: 0}
       stopBGM: 0
       stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
+      emotion: 0
       useAccentFontSize: 0
       useSmallFontSize: 0
       hideDialogueUI: 0
@@ -1330,7 +1746,11 @@ MonoBehaviour:
       illustrationSequence: []
       characterID: 0
       isUnknown: 0
-      emotion: 0
+      expressionData:
+        face: 0
+        eyebrow: 0
+        shadow: 0
+        useDOScale: 0
       motion:
         type: 0
         duration: 0
@@ -1355,6 +1775,7 @@ MonoBehaviour:
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
+      emotion: 0
       useAccentFontSize: 0
       useSmallFontSize: 0
       hideDialogueUI: 0
@@ -1371,7 +1792,11 @@ MonoBehaviour:
       illustrationSequence: []
       characterID: 0
       isUnknown: 0
-      emotion: 0
+      expressionData:
+        face: 5
+        eyebrow: 4
+        shadow: 0
+        useDOScale: 1
       motion:
         type: 9
         duration: 1
@@ -1389,13 +1814,14 @@ MonoBehaviour:
         effectType: 0
         effectDuration: 0.3
         effectPower: 30
-      line: "\u201C\uC5ED\uC2DC \uC6B0\uB9AC \uC18C\uC6D4!\u201D"
+      line: "\uC5ED\uC2DC \uC6B0\uB9AC \uC18C\uC6D4!"
       playSFX: {fileID: 0}
       stopBGM: 0
       stopAllSFX: 0
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
+      emotion: 0
       useAccentFontSize: 0
       useSmallFontSize: 0
       hideDialogueUI: 0
@@ -1412,19 +1838,25 @@ MonoBehaviour:
       illustrationSequence: []
       characterID: 0
       isUnknown: 0
-      emotion: 0
+      expressionData:
+        face: 0
+        eyebrow: 0
+        shadow: 0
+        useDOScale: 0
       motion:
-        type: 0
-        duration: 0
+        type: 15
+        duration: 3
         value: 0
-        targetSlotIndex: -1
-        stopDistance: 100
+        targetSlotIndex: 3
+        stopDistance: -500
         targetValue: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
-      flips: []
+      flips:
+      - characterID: 0
+        flip: 1
       extraExpressions: []
       screenEffect:
         effectType: 0
@@ -1439,6 +1871,7 @@ MonoBehaviour:
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
+      emotion: 0
       useAccentFontSize: 0
       useSmallFontSize: 0
       hideDialogueUI: 0
@@ -1455,7 +1888,11 @@ MonoBehaviour:
       illustrationSequence: []
       characterID: 0
       isUnknown: 0
-      emotion: 0
+      expressionData:
+        face: 0
+        eyebrow: 0
+        shadow: 0
+        useDOScale: 0
       motion:
         type: 0
         duration: 0
@@ -1480,6 +1917,7 @@ MonoBehaviour:
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
+      emotion: 0
       useAccentFontSize: 0
       useSmallFontSize: 0
       hideDialogueUI: 0
@@ -1496,7 +1934,11 @@ MonoBehaviour:
       illustrationSequence: []
       characterID: 0
       isUnknown: 0
-      emotion: 0
+      expressionData:
+        face: 0
+        eyebrow: 0
+        shadow: 0
+        useDOScale: 0
       motion:
         type: 0
         duration: 0
@@ -1524,6 +1966,7 @@ MonoBehaviour:
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
+      emotion: 0
       useAccentFontSize: 0
       useSmallFontSize: 0
       hideDialogueUI: 0
