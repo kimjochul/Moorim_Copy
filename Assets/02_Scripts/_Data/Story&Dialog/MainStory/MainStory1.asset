@@ -18,15 +18,15 @@ MonoBehaviour:
   - visualType: 0
     characters:
     - characterID: 0
-      slotIndex: 1
-      startVisible: 0
-      useSlotUI: 1
-      startFlip: 1
-    - characterID: 1
       slotIndex: 2
       startVisible: 0
       useSlotUI: 1
       startFlip: 0
+    - characterID: 1
+      slotIndex: 1
+      startVisible: 0
+      useSlotUI: 1
+      startFlip: 1
     lines:
     - id: 0
       lineType: 1
@@ -284,9 +284,9 @@ MonoBehaviour:
         shadow: 0
         useDOScale: 0
       motion:
-        type: 7
+        type: 8
         duration: 2
-        value: 1500
+        value: 1000
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
@@ -473,7 +473,7 @@ MonoBehaviour:
         shadow: 0
         useDOScale: 0
       motion:
-        type: 8
+        type: 7
         duration: 2
         value: 1500
         targetSlotIndex: 0
@@ -1563,7 +1563,9 @@ MonoBehaviour:
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
-      flips: []
+      flips:
+      - characterID: 1
+        flip: 0
       extraExpressions: []
       screenEffect:
         effectType: 0

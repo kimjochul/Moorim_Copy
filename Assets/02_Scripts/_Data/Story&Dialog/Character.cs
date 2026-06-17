@@ -18,6 +18,9 @@ public class Character : ScriptableObject
     
     [Header("비주얼 보정")]
     public CharacterVisualSetting visual;
+    
+    [Header("이름표")]
+    public Sprite namePlateSprite;
 }
 
 [Serializable]

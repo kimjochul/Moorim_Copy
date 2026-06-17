@@ -31,6 +31,8 @@ public class DialogueLog
 public class StoryUI : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI speakerText;
+    [SerializeField] private Image namePlateImage;
+    [SerializeField] private Sprite unknownCharacterNamePlate;
     [SerializeField] private TextMeshProUGUI contentText;
 
     [SerializeField] private GameObject root;
@@ -50,10 +52,7 @@ public class StoryUI : MonoBehaviour
     [SerializeField] private Image overlayIllustA;
     [SerializeField] private Image overlayIllustB;
     
-    [SerializeField] private Button dialogueButton;
-    [SerializeField] private Button autoPlayButton;
-    [SerializeField] private Button sceneSkipButton;
-    [SerializeField] private Button storySkipButton;
+    [SerializeField] private StorySettingMenu storySettingMenu;
     [SerializeField] private Image nextIndicator;
     
     [SerializeField] private float autoPlayDelay = 1.5f;
@@ -133,26 +132,11 @@ public class StoryUI : MonoBehaviour
     private void OnEnable()
     {
         StoryManager.Instance.SetStoryUI(this);
-        dialogueButton.onClick.AddListener(ToggleLogUI);
-        autoPlayButton.onClick.AddListener(ToggleAutoPlay);
-        sceneSkipButton.onClick.AddListener(StoryManager.Instance.SkipCurrentScene);
-        storySkipButton.onClick.AddListener(StoryManager.Instance.SkipCurrentStory);
+        storySettingMenu.Init(this);
     }
     
     private void OnDisable()
     {
-        if (dialogueButton != null)
-            dialogueButton.onClick.RemoveListener(ToggleLogUI);
-
-        if (autoPlayButton != null)
-            autoPlayButton.onClick.RemoveListener(ToggleAutoPlay);
-
-        if(sceneSkipButton != null && StoryManager.Instance != null)
-            sceneSkipButton.onClick.RemoveListener(StoryManager.Instance.SkipCurrentScene);
-        
-        if (storySkipButton != null && StoryManager.Instance != null)
-            storySkipButton.onClick.RemoveListener(StoryManager.Instance.SkipCurrentStory);
-        
         if (UIManager.Instance != null)
             UIManager.Instance.OnFontSizeChanged -= SetFontSize;
     }
@@ -217,10 +201,10 @@ public class StoryUI : MonoBehaviour
     }
     
     #region 대사 관련
-
+    
     public void ShowLine(StoryLine line)
     {
-        StopAllAutoPlay();
+        StopCutSceneAuto();
         
         if (typingCoroutine != null)
             StopCoroutine(typingCoroutine);
@@ -267,15 +251,22 @@ public class StoryUI : MonoBehaviour
     private void ApplyLineUI(StoryLine line)
     {
         ShowDialogue();
+        
+        Character character = StoryManager.Instance.CharacterUI.GetCharacterData(line.characterID);
+        
         if (line.lineType == LineType.Narration)
         {
             speakerText.text = "";
-            contentText.alignment = TextAlignmentOptions.Center;
+            contentText.alignment = TextAlignmentOptions.Top;
             HideCharacterName();
         }
         else
         {
             speakerText.text = line.isUnknown ? "???" : StoryManager.Instance.GetCharacterName(line.characterID);
+            if (line.isUnknown || character is null)
+                namePlateImage.sprite = unknownCharacterNamePlate;
+            else
+                namePlateImage.sprite = character.namePlateSprite;
             contentText.alignment = TextAlignmentOptions.TopLeft;
             ShowCharacterName();
         }
@@ -378,7 +369,7 @@ public class StoryUI : MonoBehaviour
             }
             else
             {
-                contentText.color = Color.black;
+                contentText.color = new Color(1f,1f,0.85f);
                 darkBackgroundGroup.DOFade(0f, 0.5f).SetEase(Ease.OutCubic)
                     .OnComplete(() => { darkBackGround.SetActive(false); });
             }
@@ -387,10 +378,7 @@ public class StoryUI : MonoBehaviour
         else
         {
             darkBackGround.SetActive(false);
-            contentText.color = isInner
-                ? Color.gray2
-                : Color.black;
-
+            contentText.color = isInner ? Color.gray2 : new Color(1f,1f,0.85f);
             StoryManager.Instance.CharacterUI.ApplyInnerThoughtFocus(thinkerID, isInner);
         }
     }
@@ -1060,6 +1048,17 @@ public class StoryUI : MonoBehaviour
 
         isCutSceneAuto = false;
         isAutoPlayEnabled = false;
+    }
+    
+    private void StopCutSceneAuto()
+    {
+        if (autoCoroutine != null)
+        {
+            StopCoroutine(autoCoroutine);
+            autoCoroutine = null;
+        }
+
+        isCutSceneAuto = false;
     }
     #endregion
 

@@ -541,4 +541,12 @@ public class CharacterUI : MonoBehaviour
             slot.PlayEmotionIcon(icon.icon);
         }
     }
+    
+    public Character GetCharacterData(int characterID)
+    {
+        if (dataDict.TryGetValue(characterID, out var data))
+            return data;
+
+        return null;
+    }
 }
