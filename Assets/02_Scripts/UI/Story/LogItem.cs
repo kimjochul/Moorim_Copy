@@ -16,11 +16,12 @@ public class LogItem : MonoBehaviour
     [SerializeField] private GameObject dialogueUI;
     [SerializeField] private TMP_Text speakerText;
     [SerializeField] private TMP_Text contentText;
+    [SerializeField] private GameObject barImage;
 
     [Header("헤더")]
     [SerializeField] private GameObject headerUI;
     [SerializeField] private TMP_Text headerText;
-
+    
     public void Setup(DialogueLog log)
     {
         // 헤더 로그
@@ -55,12 +56,14 @@ public class LogItem : MonoBehaviour
             if (log.isNarration)
             {
                 speakerText.gameObject.SetActive(false);
+                barImage.SetActive(false);
                 contentText.alignment = TextAlignmentOptions.Center;
             }
             else
             {
+                barImage.SetActive(true);
                 speakerText.gameObject.SetActive(true);
-                speakerText.alignment = TextAlignmentOptions.TopRight;
+                speakerText.alignment = TextAlignmentOptions.MidlineLeft;
                 contentText.alignment = TextAlignmentOptions.TopLeft;
             }
 

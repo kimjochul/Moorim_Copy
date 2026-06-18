@@ -903,12 +903,12 @@ public class StoryUI : MonoBehaviour
     {
         isLogOpen = true;
 
-        dialogueLogUI.Open();
+        dialogueLogUI.Open(this);
 
         HideIndicator();
     }
     
-    private void CloseLogUI()
+    public void CloseLogUI()
     {
         //Debug.Log($"닫기 전 isTyping = {isTyping}");
         isLogOpen = false;

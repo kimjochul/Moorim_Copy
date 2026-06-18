@@ -4,7 +4,8 @@ using UnityEngine;
 public class UpgradeCostUI : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI itemNameText;
-    [SerializeField] private TextMeshProUGUI countText;
+    [SerializeField] private TextMeshProUGUI currentCountText;
+    [SerializeField] private TextMeshProUGUI costText;
 
     public void Init(UpgradeCost cost)
     {
@@ -14,7 +15,8 @@ public class UpgradeCostUI : MonoBehaviour
         {
             itemNameText.text = "돈";
             int currentMoney = EconomyManager.Instance.RestaurantEconomy.Money;
-            countText.text = $"{currentMoney}/{cost.money}";
+            currentCountText.text = currentMoney.ToString();
+            costText.text = cost.money.ToString();
             enough = currentMoney >= cost.money;
         }
         else
@@ -22,9 +24,10 @@ public class UpgradeCostUI : MonoBehaviour
             ItemData itemData = DataManager.Instance.GetItemData(cost.itemID);
             itemNameText.text = itemData.itemName;
             int currentCount = InventoryManager.Instance.GetInventory(Constants.InventoryType.Fridge).GetItemCount(cost.itemID);
-            countText.text = $"{currentCount}/{cost.count}";
+            currentCountText.text = currentCount.ToString();
+            costText.text = cost.count.ToString();
             enough = currentCount >= cost.count;
         }
-        countText.color = enough ? Color.white : Color.red;
+        currentCountText.color = enough ? Color.green : Color.red;
     }
 }
