@@ -224,7 +224,7 @@ public class UIManager : Singleton<UIManager>
         return popup;
     }
     // 설명을 띄워줄 팝업
-    public OkPopup CreateOkPopup(string message, UnityAction onOk)
+    public OkPopup CreateOkPopup(string message, UnityAction onOk, UnityAction onCancel)
     {
         if (_canvas == null)
         {
@@ -240,6 +240,7 @@ public class UIManager : Singleton<UIManager>
         var popup = Instantiate(okPopupObj, _canvas.transform).GetComponent<OkPopup>();
         popup.Init(message);
         popup.ButtonOk(onOk);
+        popup.ButtonCancel(onCancel);
 
         return popup;
     }

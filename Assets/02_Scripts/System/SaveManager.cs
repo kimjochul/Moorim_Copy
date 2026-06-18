@@ -361,6 +361,7 @@ public class IngredientSaveData
 public class StorySaveData
 {
     public List<int> playedStoryIDs = new();
+    public List<int> playedStoryHistory = new();
     public List<string> flags = new();
 }
 

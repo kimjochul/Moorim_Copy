@@ -151,6 +151,8 @@ public class StoryUI : MonoBehaviour
         ResetBackgroundState();
         ResetIllustrationState();
         
+        storySettingMenu.RefreshAutoButtonSprite();
+        
         darkBackgroundGroup.alpha = 0f;
         darkBackGround.SetActive(false);
     }
@@ -1018,7 +1020,7 @@ public class StoryUI : MonoBehaviour
         }
     }
     
-    public void ToggleAutoPlay()
+    public bool ToggleAutoPlay()
     {
         isAutoPlayEnabled = !isAutoPlayEnabled;
 
@@ -1030,6 +1032,8 @@ public class StoryUI : MonoBehaviour
         {
             StopAutoPlay();
         }
+        
+        return isAutoPlayEnabled;
     }
     
     private void StopAllAutoPlay()

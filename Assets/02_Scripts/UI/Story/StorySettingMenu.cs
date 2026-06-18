@@ -13,6 +13,9 @@ public class StorySettingMenu : MonoBehaviour
     [SerializeField] private Button settingButton;
     [SerializeField] private ScrollMenu scrollMenu;
     
+    [SerializeField] private Sprite autoButtonSprite;
+    [SerializeField] private Sprite autoButtonClickedSprite;
+    
     private StoryUI storyUI;
     private bool isOpen;
 
@@ -23,7 +26,7 @@ public class StorySettingMenu : MonoBehaviour
         toggleButton.onClick.AddListener(scrollMenu.Toggle);
 
         logButton.onClick.AddListener(storyUI.ToggleLogUI);
-        autoButton.onClick.AddListener(storyUI.ToggleAutoPlay);
+        autoButton.onClick.AddListener(ToggleAutoPlay);
 
         sceneSkipButton.onClick.AddListener(() =>
         {
@@ -34,5 +37,19 @@ public class StorySettingMenu : MonoBehaviour
         {
             StoryManager.Instance.SkipCurrentStory();
         });
+    }
+
+    private void ToggleAutoPlay()
+    {
+        bool enabled = storyUI.ToggleAutoPlay();
+        if (enabled)
+            autoButton.GetComponent<Image>().sprite = autoButtonClickedSprite;
+        else
+            autoButton.GetComponent<Image>().sprite = autoButtonSprite;
+    }
+
+    public void RefreshAutoButtonSprite()
+    {
+        autoButton.GetComponent<Image>().sprite = autoButtonSprite;
     }
 }
