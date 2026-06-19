@@ -4,11 +4,11 @@ using UnityEngine;
 [Serializable]
 public struct ReceiptData
 {
-    public DayData week;             // ï¿½ï¿½Â¥
-    public int totalRevenue;        // ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½
-    public int fame;                // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
-    public int debt;                // ï¿½ï¿½ 
-    public int happyGuests;         // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Õ´ï¿½ ï¿½ï¿½
-    public int angryGuests;         // ï¿½Ò¸ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Õ´ï¿½ ï¿½ï¿½
-    public int netIncome;           // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    public DayData week;             // ³¯Â¥
+    public int totalRevenue;        // ÀüÃ¼ ¼öÀÍ
+    public int fame;                // ¾òÀº ¸í¼º
+    public int debt;                // ºú 
+    public int happyGuests;         // ¸¸Á·ÇÑ ¼Õ´Ô ¼ö
+    public int angryGuests;         // ºÒ¸¸Á·ÇÑ ¼Õ´Ô ¼ö
+    public int netIncome;           // ¼ø¼öÀÍ
 }

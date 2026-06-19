@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.Loading;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using static Constants;
 
@@ -42,7 +43,7 @@ public class Inventory : MonoBehaviour, IInitializable
             });
         }
     }
-    
+
     public void Init()
     {
         if (isInit) return;
@@ -455,4 +456,6 @@ public class Inventory : MonoBehaviour, IInitializable
             slot.Clear();
         }
     }
+    
+    
 }

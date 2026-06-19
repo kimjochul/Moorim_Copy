@@ -22,12 +22,6 @@ public class TriggerGroup
     public bool isActive;
 }
 
-public enum StoryPlayMode
-{
-    Normal,
-    Recall
-}
-
 public class StoryManager : Singleton<StoryManager>, IInitializable
 {
     private DayManager dayManager;
@@ -72,8 +66,7 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
     private StoryScene currentScene;
     public StoryScene CurrentScene => currentScene;
     private StoryTrigger currentTrigger; // 현재 트리거
-    
-    private StoryPlayMode playMode = StoryPlayMode.Normal;
+
 
     private bool isPlaying;
     private bool isTransitioning;
@@ -83,13 +76,8 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
 
     private Queue<StoryTrigger> triggerQueue = new();
     
-    private HashSet<int> playedStoryIds = new(); // 순서가 없는 집합이라 검색에 빠름
-    private List<int> playedStoryHistory = new(); // 순서가 있어서 다시보기 용으로 사용
-    public List<int> PlayedStoryHistory => playedStoryHistory;
+    private HashSet<int> playedStoryIds = new();
     private HashSet<string> flags = new();
-    
-    [SerializeField] StoryReplayManager replayManager;
-    public StoryReplayManager StoryReplayManager => replayManager;
 
     public void Init()
     {
@@ -136,14 +124,8 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
                 continue;
 
             triggerQueue.Enqueue(trigger);
-
             if (trigger.playOnce)
-            {
                 playedStoryIds.Add(trigger.storyId);
-                
-                if (!playedStoryHistory.Contains(trigger.storyId))
-                    playedStoryHistory.Add(trigger.storyId);
-            }
         }
 
         Debug.Log($"{triggerQueue.Count} stories played");
@@ -167,22 +149,10 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
 
         currentStory = storySO.stories.Find(s => s.id == currentTrigger.storyId);
 
-        yield return StartCoroutine(BeginStory(currentStory, StoryPlayMode.Normal));
-    }
-    
-    private IEnumerator BeginStory(Story story, StoryPlayMode mode)
-    {
-        playMode = mode;
-
-        currentStory = story;
-
-        runtimeNameOverrides.Clear();
         storyUI.ClearLogs();
 
         storyUI.AddLogHeader(
-            mode == StoryPlayMode.Normal
-                ? DayManager.Instance.DayData.day
-                : 0,
+            DayManager.Instance.DayData.day,
             currentStory.storyName
         );
 
@@ -191,14 +161,13 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         isPlaying = true;
 
         storyUI.Show();
-
+        
         if (HasAnyCharacter(currentStory))
             characterUI.Show();
         else
             characterUI.Hide();
 
-        yield return StartCoroutine(
-            SetupSceneInternal(false));
+        yield return StartCoroutine(SetupSceneInternal(false));
     }
     
     private IEnumerator SetupSceneInternal(bool useCrossFadeTransition) // 암전하는 fade를 사용 안하면 true
@@ -389,11 +358,11 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         }
         
         characterUI.SetUnknown(line.characterID, line.isUnknown);
-        characterUI.SetExpression(line.characterID, line.expressionData);
+        characterUI.SetExpression(line.characterID, line.emotion);
         
         foreach(var exp in line.extraExpressions)
         {
-            characterUI.SetExpression(exp.characterID, exp.expressionData);
+            characterUI.SetExpression(exp.characterID, exp.emotion);
         }
         
         if (line.motions != null && line.motions.Count > 0)
@@ -465,14 +434,6 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
 
     private IEnumerator EndStoryRoutine()
     {
-        if (playMode == StoryPlayMode.Recall)
-        {
-            EndRecallStory();
-            yield break;
-        }
-        
-        runtimeNameOverrides.Clear();
-        
         if (currentTrigger != null && !string.IsNullOrEmpty(currentTrigger.addFlagOnComplete))
         {
             flags.Add(currentTrigger.addFlagOnComplete);
@@ -801,14 +762,6 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
             case ScreenEffectType.ShakeAndSound:
                 effectUI.PlayImpact(effect.effectPower, effect.effectDuration, hitSE, false);
                 break;
-            
-            case ScreenEffectType.FadeBlur:
-                screenEffectUI.FadeBlur(effect.effectDuration);
-                break;
-
-            case ScreenEffectType.FadeFromBlur:
-                screenEffectUI.FadeFromBlur(effect.effectDuration);
-                break;
         }
     }
     
@@ -910,41 +863,11 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         }
     }
     
-    public void PlayRecallStory(int storyID)
-    {
-        Story story = storySO.stories.Find(x => x.id == storyID);
-        currentTrigger = null;
-
-        if (story == null)
-            return;
-        
-        StartCoroutine(BeginStory(story, StoryPlayMode.Recall));
-    }
-    
-    private void EndRecallStory()
-    {
-        runtimeNameOverrides.Clear();
-
-        storyUI.Hide();
-        characterUI.Hide();
-
-        currentScene = null;
-        currentStory = null;
-        currentTrigger = null;
-
-        isPlaying = false;
-
-        playMode = StoryPlayMode.Normal;
-
-        SoundManager.Instance.PlayRandomBGM();
-    }
-    
     public StorySaveData GetSaveData()
     {
         return new StorySaveData
         {
             playedStoryIDs = playedStoryIds.ToList(),
-            playedStoryHistory = playedStoryHistory.ToList(),
             flags = flags.ToList()
         };
     }
@@ -952,14 +875,12 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
     public void LoadFromData(StorySaveData data)
     {
         playedStoryIds = new HashSet<int>(data.playedStoryIDs);
-        playedStoryHistory = new List<int>(data.playedStoryHistory);
         flags = new HashSet<string>(data.flags);
     }
     
     public void ResetData()
     {
         playedStoryIds.Clear();
-        playedStoryHistory.Clear();
         flags.Clear();
 
         Debug.Log("Story Reset 완료");

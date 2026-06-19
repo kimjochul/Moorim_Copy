@@ -46,8 +46,7 @@ public class SaveSlotUI : MonoBehaviour
                     {
                         SaveManager.Instance.SaveGame(slotIndex, slotType);
                         Refresh();
-                    },
-                    () => {}
+                    }
                 );
             }
             else

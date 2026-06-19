@@ -19,7 +19,6 @@ public class SaveData
     public DailyResultSaveData dailyResult;
     public List<InventorySaveData> inventories;
     public BondSaveData bond;
-    public UpgradeSaveData upgrade;
 }
 
 public enum SaveSlotType
@@ -132,20 +131,10 @@ public class SaveManager : Singleton<SaveManager>
                 string json = File.ReadAllText(path);
                 SaveData data = JsonUtility.FromJson<SaveData>(json);
                 ApplySaveData(data);
-                
-                GameManager.Instance.ResetFlow();
-                UIManager.Instance.CloseAllUI();
-           
-                if (data.day.isDayEnded)
-                {
-                    GameManager.Instance.SetState(GameFlowState.Gameplay);
-                    GameManager.Instance.CompleteState(GameFlowState.Gameplay);
-                }
-                else
-                {
-                    DayManager.Instance.RemoteDayStart(true);
-                }
             }
+            GameManager.Instance.ResetFlow();
+            UIManager.Instance.CloseAllUI();
+            DayManager.Instance.RemoteDayStart(isLoadedGame);
         });
     }
     
@@ -195,7 +184,6 @@ public class SaveManager : Singleton<SaveManager>
         StoryManager.Instance.Init();
         QuestManager.Instance.Init();
         BondManager.Instance.Init();
-        UpgradeManager.Instance.Init();
     }
     
     // ------------------------
@@ -234,9 +222,6 @@ public class SaveManager : Singleton<SaveManager>
         if (BondManager.Instance)
             data.bond = BondManager.Instance.GetSaveData();
 
-        if (UpgradeManager.Instance)
-            data.upgrade = UpgradeManager.Instance.GetSaveData();
-        
         return data;
     }
 
@@ -279,16 +264,17 @@ public class SaveManager : Singleton<SaveManager>
         if (data.dailyResult != null)
         {
             EconomyManager.Instance.LoadDailyResult(data.dailyResult);
+            
+            var receipt = FindFirstObjectByType<Receipt>(FindObjectsInactive.Include);
+            if (receipt != null && data.day.isDayEnded)
+            {
+                receipt.LoadFromSave(data.dailyResult);
+            }
         }
         QuestManager.Instance.LoadFromData(data.quest);
         if (data.bond != null)
         {
             BondManager.Instance.LoadFromData(data.bond);
-        }
-        
-        if (data.upgrade != null)
-        {
-            UpgradeManager.Instance.LoadFromData(data.upgrade);
         }
     }
 
@@ -302,7 +288,6 @@ public class SaveManager : Singleton<SaveManager>
         EconomyManager.Instance.ResetData();
         QuestManager.Instance.ResetData();
         BondManager.Instance.ResetData();
-        UpgradeManager.Instance.ResetData();
     }
     
     public void SaveAndQuit()
@@ -376,7 +361,6 @@ public class IngredientSaveData
 public class StorySaveData
 {
     public List<int> playedStoryIDs = new();
-    public List<int> playedStoryHistory = new();
     public List<string> flags = new();
 }
 
@@ -420,17 +404,4 @@ public class SlotSaveData
 public class BondSaveData
 {
     public List<int> ownedBondItemIds = new();
-}
-
-[Serializable]
-public class UpgradeSaveData
-{
-    public List<UpgradeLevelSaveData> levels = new();
-}
-
-[Serializable]
-public class UpgradeLevelSaveData
-{
-    public UpgradeType type;
-    public int level;
 }

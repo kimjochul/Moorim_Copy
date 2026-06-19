@@ -123,7 +123,7 @@ public class MerchantUI : MonoBehaviour
                 if (!EconomyManager.Instance.CanSpend(totalPrice))
                 {
                     talkPanel.ChangeText("돈이 부족한 것 같은데?");
-                    UIManager.Instance.CreateOkPopup("돈이 부족합니다!", () => {}, () => {});
+                    UIManager.Instance.CreateOkPopup("돈이 부족합니다!", () => {});
                     return;
                 }
 
@@ -132,7 +132,7 @@ public class MerchantUI : MonoBehaviour
                 if (success)
                 {
                     talkPanel.ChangeText("좋은 선택야!");
-                    UIManager.Instance.CreateOkPopup("구매 완료!", () => {}, () => {});
+                    UIManager.Instance.CreateOkPopup("구매 완료!", () => {});
                     if(itemData is BondItemData bondItemData)
                     {
                         shop.UpdateProductList(IngredientType.Buff);
@@ -157,7 +157,7 @@ public class MerchantUI : MonoBehaviour
                 if (!EconomyManager.Instance.CanSpend(recipeData.price))
                 {
                     talkPanel.ChangeText("돈이 부족한 것 같은데?");
-                    UIManager.Instance.CreateOkPopup("돈이 부족합니다!", () => {}, () => {});
+                    UIManager.Instance.CreateOkPopup("돈이 부족합니다!", () => {});
                     return;
                 }
 
@@ -165,7 +165,7 @@ public class MerchantUI : MonoBehaviour
                 RecipeUnlockManager.Instance.Unlock(recipeData.id);
 
                 talkPanel.ChangeText("좋은 선택이야!");
-                UIManager.Instance.CreateOkPopup("레시피 해금!", ()=>{}, () => {});
+                UIManager.Instance.CreateOkPopup("레시피 해금!", ()=>{});
                 shop.UpdateProductList(IngredientType.Recipe);
             },
             () =>

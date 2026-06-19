@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 using UnityEngine;
 
 [Serializable]
@@ -27,7 +26,7 @@ public class StoryLine
     [Header("캐릭터 슬롯의 경우 캐릭터 현재 캐릭터에 대한 정보 및 행동 설정")]
     public int characterID;
     public bool isUnknown;
-    public ExpressionData expressionData;
+    public Emotion emotion;
     public MotionData motion;
     public List<MotionCommand> motions;
     public bool playTogether;
@@ -59,7 +58,6 @@ public class StoryLine
     
     [Header("감정 이모지 사용하는지")]
     public bool showEmotionIcon;
-    public Emotion emotion;
     
     [Header("강조 대사인지")]
     public bool useAccentFontSize;
@@ -93,70 +91,7 @@ public enum Emotion
     Sad,
     Embarrassed,
     Surprised,
-}
-
-public enum FaceType
-{
-    None,       // 변경 안함
-    Neutral,
-    Neutral2,
-    Neutral3,
-    Happy1,
-    Happy2,
-    Happy3,
-    Anger1,
-    Anger2,
-    Anger3,
-    Wink1,
-    Wink2,
-    Wink3,
-    Wink4,
-    Surprised1,
-    Surprised2,
-    Surprised3,
-    Embarrassed1,
-    Embarrassed2,
-    Embarrassed3,
-    Sad1,
-    Sad2,
-    Sad3,
-    Disappointment1,
-    Disappointment2,
-    Disappointment3,
-    Conceited1,
-    Conceited2,
-    Conceited3,
-    Serious1,
-    Serious2,
-    Serious3,
-}
-
-public enum EyebrowType
-{
-    None,       // 변경 안함
-    Default,
-    Angry,
-    Sad,
-    Surprised,
-    Embarrassed,
-    Disappointment,
-    HalfDown,
-}
-
-public enum ShadowType
-{
-    None,   // 변경 안 함
-    On,
-    Off
-}
-
-[Serializable]
-public class ExpressionData
-{
-    public FaceType face = FaceType.None;
-    public EyebrowType eyebrow = EyebrowType.None;
-    public ShadowType shadow = ShadowType.None;
-    public bool useDOScale;
+    HidingIdentity,
 }
 
 [Serializable]
@@ -211,7 +146,7 @@ public class IllustrationFrame
 public class ExpressionChange
 {
     public int characterID;
-    public ExpressionData expressionData;
+    public Emotion emotion;
     public bool isUnknown;
 }
 
@@ -267,10 +202,7 @@ public enum ScreenEffectType
     
     FlashBlack,
     
-    ShakeAndSound,
-    
-    FadeBlur,
-    FadeFromBlur
+    ShakeAndSound
 }
 
 public static class DialogueStyle

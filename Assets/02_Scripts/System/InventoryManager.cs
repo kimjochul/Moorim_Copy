@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using static Constants;
 using UnityEngine.SceneManagement;
 
@@ -301,5 +302,33 @@ public class InventoryManager : Singleton<InventoryManager>, IInitializable
                     InventoryManager.Instance.GetInventory(InventoryType.Ingredients).GetItem(item, 20);
             }
         }
+    }
+    
+    public void UpgradeInventorySlot(InventoryType type, int amount)
+    {
+        Inventory targetInventory = GetInventory(type);
+        
+        if (targetInventory != null)
+        {
+            targetInventory.AddSlot(amount);
+            Debug.Log($"[Upgrade] {type} 인벤토리 슬롯이 {amount}개 확장. (현재 총 {targetInventory.Slots.Count}개)");
+        }
+        else
+        {
+            Debug.Log($"[Upgrade] {type} 인벤토리를 찾을 수 없어 확장에 실패.");
+        }
+    }
+
+    private void Update()
+    {
+        if (Keyboard.current.bKey.wasPressedThisFrame)
+            UpgradeInventorySlot(InventoryType.Server, 1);
+        if (Keyboard.current.nKey.wasPressedThisFrame)
+            UpgradeInventorySlot(InventoryType.Chef, 1);
+        if (Keyboard.current.mKey.wasPressedThisFrame)
+            UpgradeInventorySlot(InventoryType.MealTable, 1);
+        if (Keyboard.current.vKey.wasPressedThisFrame)
+            UpgradeInventorySlot(InventoryType.Fridge, 1);
+
     }
 }
