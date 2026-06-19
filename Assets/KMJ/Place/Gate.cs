@@ -14,7 +14,7 @@ public class Gate : MonoBehaviour, IInteractable
     private Tween doorTween;
     
     // 이벤트 등 외부 의존성 전부 제거됨
-    public static bool isOpen { get; private set; } = false; 
+    public static bool isOpen { get; private set; } = true; 
 
     // IInteractable 인터페이스
     public InteractMode Mode => InteractMode.Immediate; 

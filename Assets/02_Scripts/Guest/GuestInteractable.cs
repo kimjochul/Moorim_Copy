@@ -41,6 +41,13 @@ public class GuestInteractable : MonoBehaviour, IInteractable
     {
         if (myBrain == null || myBrain.IsAngryExiting) return;
         
+        ViolenceGuest violence = myBrain as ViolenceGuest;
+        if (violence != null && violence.isCausingTrouble)
+        {
+            violence.SuppressViolence();
+            return;
+        }
+        
         if (myBrain.currentState == GuestState.WaitOrder)
             myBrain.TakeOrder();
         else if (myBrain.currentState == GuestState.WaitFood)
