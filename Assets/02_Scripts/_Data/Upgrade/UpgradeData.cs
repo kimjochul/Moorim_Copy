@@ -14,8 +14,7 @@ public class UpgradeData : ScriptableObject
     public UpgradeType type;
 
     public List<UpgradeLevelData> levels;
-
-    public int maxLevel;
+    public int MaxLevel => levels.Count;
 }
 
 [Serializable]
@@ -25,6 +24,8 @@ public class UpgradeLevelData
 
     [TextArea]
     public string effectDescription;
+    
+    public float value;
 }
 
 [Serializable]
@@ -41,5 +42,8 @@ public enum UpgradeType
     TableCount,
     CharacterSkill,
     CookSpeed,
-    CookAmount
+    CookStationAmount,
+    ServingSlotAmount,
+    RefridgeSlotAmount,
+    ServerSlotAmount,
 }

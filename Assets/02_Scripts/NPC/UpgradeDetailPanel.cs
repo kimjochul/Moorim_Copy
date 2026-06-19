@@ -7,9 +7,11 @@ public class UpgradeDetailPanel : MonoBehaviour
     [Header("기본 UI")]
     [SerializeField] private TextMeshProUGUI nameText;
     [SerializeField] private TextMeshProUGUI description;
-    
-    [Header("업그레이드 내용 UI")]
+
+    [Header("업그레이드 내용 UI")] 
+    [SerializeField] private TextMeshProUGUI currentLevelText;
     [SerializeField] private TextMeshProUGUI currentEffectText;
+    [SerializeField] private TextMeshProUGUI nextLevelText;
     [SerializeField] private TextMeshProUGUI nextEffectText;
 
     [Header("비용 UI")]
@@ -48,9 +50,9 @@ public class UpgradeDetailPanel : MonoBehaviour
 
         int lv = UpgradeManager.Instance.GetLevel(currentData.type);
 
-        if (lv >= currentData.levels.Count)
+        if (lv >= currentData.MaxLevel)
         {
-            buttonText.text = "MAX";
+            buttonText.text = "최대";
             upgradeButton.interactable = false;
             return;
         }
@@ -59,12 +61,12 @@ public class UpgradeDetailPanel : MonoBehaviour
 
         if (!CanUpgrade(nextLevel))
         {
-            buttonText.text = "재료 부족";
+            buttonText.text = "개량 불가";
             upgradeButton.interactable = false;
             return;
         }
 
-        buttonText.text = "업그레이드";
+        buttonText.text = "개량";
         upgradeButton.interactable = true;
 
         upgradeButton.onClick.AddListener(() =>
@@ -83,15 +85,19 @@ public class UpgradeDetailPanel : MonoBehaviour
     {
         int lv = UpgradeManager.Instance.GetLevel(currentData.type);
 
-        currentEffectText.text =
-            lv == 0
-                ? "없음"
-                : currentData.levels[lv - 1].effectDescription;
-
-        nextEffectText.text =
-            lv >= currentData.levels.Count
-                ? "MAX"
-                : currentData.levels[lv].effectDescription;
+        currentLevelText.text = lv == 0 ? "0 단계" : $"{lv} 단계";
+        currentEffectText.text = lv == 0 ? "없음" : currentData.levels[lv-1].effectDescription;
+        
+        if (lv >= currentData.MaxLevel)
+        {
+            nextLevelText.text = "최대 단계";
+            nextEffectText.text = "최대";
+        }
+        else
+        {
+            nextLevelText.text = $"{lv+1} 단계";
+            nextEffectText.text = currentData.levels[lv].effectDescription;
+        }
     }
     
     private void RefreshCosts()
@@ -101,7 +107,7 @@ public class UpgradeDetailPanel : MonoBehaviour
 
         int lv = UpgradeManager.Instance.GetLevel(currentData.type);
 
-        if (lv >= currentData.levels.Count)
+        if (lv >= currentData.MaxLevel)
             return;
 
         var nextLevel = currentData.levels[lv];

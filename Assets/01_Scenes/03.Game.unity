@@ -4441,6 +4441,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::QuestGenerator
   questPool: {fileID: 11400000, guid: 9c013438a92b1f34791c8087ada5c88e, type: 2}
+  wholeQuestPool: {fileID: 11400000, guid: 70634a7ac880ee2488db8cc45e404f38, type: 2}
   inventory: {fileID: 0}
   allRecipes: {fileID: 11400000, guid: 6d1d33b9b84924d419f1e13f1b6636fc, type: 2}
 --- !u!1 &302516298
@@ -16702,6 +16703,59 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 929255726}
   m_CullTransparentMesh: 1
+--- !u!1 &929696421
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 929696423}
+  - component: {fileID: 929696422}
+  m_Layer: 0
+  m_Name: UpgradeManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &929696422
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 929696421}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ca1d1f959c450849abd2498a8b113f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UpgradeManager
+  upgradeList:
+  - {fileID: 11400000, guid: a315db013384a5845a43f1e753f38066, type: 2}
+  - {fileID: 11400000, guid: 245f939fe8af3aa46b82100a41febab1, type: 2}
+  - {fileID: 11400000, guid: bab946edf83834c4e9ec737b495ed391, type: 2}
+  - {fileID: 11400000, guid: dd3c6d1e0c4fd8d44b6ca6a60b830b77, type: 2}
+  - {fileID: 11400000, guid: 7be3363bc4eaf0546a47b85d6c63dd68, type: 2}
+  - {fileID: 11400000, guid: 70b05c00a6b52a84990305c996e71f4b, type: 2}
+  - {fileID: 11400000, guid: c5552968e6e3e8541b062d4edd945126, type: 2}
+  - {fileID: 11400000, guid: 06f70f29e5fa1cf468f453eea0ee8457, type: 2}
+--- !u!4 &929696423
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 929696421}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 439.2761, y: 0, z: 6811.8267}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &950424264
 GameObject:
   m_ObjectHideFlags: 0
@@ -43903,6 +43957,7 @@ SceneRoots:
   - {fileID: 834262730}
   - {fileID: 532498114}
   - {fileID: 2055249659}
+  - {fileID: 929696423}
   - {fileID: 450802394}
   - {fileID: 1312058283}
   - {fileID: 367885271}
