@@ -146,7 +146,9 @@ public class CharacterUI : MonoBehaviour
 
                 if (!info.startVisible)
                 {
-                    slot.SetHidden(data, data.characterImage);
+                    slot.SetHidden(
+                        info.characterID,
+                        data.emotions[0].sprite);
 
                     continue;
                 }
@@ -154,7 +156,9 @@ public class CharacterUI : MonoBehaviour
                 // 이전엔 숨김이었는데 이번 씬에서 등장
                 if (!slot.gameObject.activeSelf && info.startVisible)
                 {
-                    slot.SetCharacter(data, data.characterImage);
+                    slot.SetCharacter(
+                        info.characterID,
+                        data.emotions[0].sprite);
                 }
 
                 continue;
@@ -177,11 +181,11 @@ public class CharacterUI : MonoBehaviour
                 
                 if (info.startVisible)
                 {
-                    slot.SetCharacter(data, data.characterImage);
+                    slot.SetCharacter(info.characterID, data.emotions[0].sprite);
                 }
                 else
                 {
-                    slot.SetHidden(data, data.characterImage);
+                    slot.SetHidden(info.characterID, data.emotions[0].sprite);
                 }
                 currentSlotMap[info.characterID] = info.slotIndex;
                 Debug.Log($"SETUP character:{info.characterID} -> slot:{info.slotIndex}");
@@ -192,11 +196,11 @@ public class CharacterUI : MonoBehaviour
             // 완전 새 캐릭터
             if (info.startVisible)
             {
-                slot.Appear(dataDict[info.characterID], data.characterImage, finalPos);
+                slot.Appear(info.characterID, data.emotions[0].sprite, finalPos);
             }
             else
             {
-                slot.SetHidden(dataDict[info.characterID], data.characterImage);
+                slot.SetHidden(info.characterID, data.emotions[0].sprite);
             }
             currentSlotMap[info.characterID] = info.slotIndex;
             
@@ -206,14 +210,22 @@ public class CharacterUI : MonoBehaviour
         Debug.Log("-------------------------");
     }
 
-    public void SetExpression(int characterID, ExpressionData expression)
+    public void SetExpression(int characterID, Emotion emotion)
     {
-        CharacterSlot slot = FindSlot(characterID);
+        var slot = FindSlot(characterID);
+        if (slot == null) return;
 
-        if (slot == null)
+        if (slot.CurrentEmotion == emotion)
             return;
+        
+        if (!dataDict.TryGetValue(characterID, out var data)) return;
 
-        slot.SetExpression(expression);
+        var emo = data.emotions.Find(e => e.emotion == emotion);
+        if (emo != null)
+        {
+            slot.SetEmotion(emotion);
+            slot.ChangeExpression(emo.sprite);
+        }
     }
     
     public void SetUnknown(int characterID, bool isUnknown)
@@ -540,13 +552,5 @@ public class CharacterUI : MonoBehaviour
         {
             slot.PlayEmotionIcon(icon.icon);
         }
-    }
-    
-    public Character GetCharacterData(int characterID)
-    {
-        if (dataDict.TryGetValue(characterID, out var data))
-            return data;
-
-        return null;
     }
 }

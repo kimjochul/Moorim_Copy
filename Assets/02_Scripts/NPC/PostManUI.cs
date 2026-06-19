@@ -5,17 +5,14 @@ using static Constants;
 public class PostManUI : MonoBehaviour
 {
     [SerializeField] private GameObject questPanel;
-    [SerializeField] private GameObject upgradePanel;
     [SerializeField] private NPCTalkPanel talkPanel;
 
     [SerializeField] private NPCQuestUI questUI;
-    [SerializeField] private UpgradeUI upgradeUI;
     
     private Inventory inventory;
     
     [SerializeField] private Button questButton;
     [SerializeField] private Button talkButton;
-    [SerializeField] private Button upgradeButton;
     [SerializeField] private Button exitButton;
     
     private bool isInitialized = false;
@@ -31,7 +28,6 @@ public class PostManUI : MonoBehaviour
     {
         Quest,
         Talk,
-        Upgrade,
     }
     private PostmanState currentState;
     private void SetState(PostmanState state)
@@ -70,7 +66,6 @@ public class PostManUI : MonoBehaviour
         
         questButton.onClick.AddListener(OpenQuest);
         talkButton.onClick.AddListener(OpenTalk);
-        upgradeButton.onClick.AddListener(OpenUpgrade);
         exitButton.onClick.AddListener(Close);
         
         currentState = PostmanState.Talk;
@@ -102,18 +97,6 @@ public class PostManUI : MonoBehaviour
         SetState(PostmanState.Talk);
     }
     
-    public void OpenUpgrade()
-    {
-        talkPanel.gameObject.SetActive(true);
-
-        questPanel.SetActive(false);
-        upgradePanel.SetActive(true);
-
-        upgradeUI.Refresh();
-
-        SetState(PostmanState.Upgrade);
-    }
-    
     private void UpdateDialogue()
     {
         string dialogue = "";
@@ -128,10 +111,6 @@ public class PostManUI : MonoBehaviour
                 dialogue = GetTalkDialogue();
                 break;
 
-            case PostmanState.Upgrade:
-                dialogue = "무림객잔 운영에 도움이 될 만한 물건들을 가져왔답니다.";
-                break;
-            
             default:
                 dialogue = "";
                 break;

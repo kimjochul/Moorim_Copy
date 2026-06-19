@@ -8,7 +8,6 @@ using static Constants;
 public class QuestGenerator : MonoBehaviour
 {
     [SerializeField] private QuestPool questPool;
-    [SerializeField] private QuestPool wholeQuestPool;
     [SerializeField] private Inventory inventory;
     
     private RecipeUnlockManager recipeUnlockManager;
@@ -259,7 +258,7 @@ public class QuestGenerator : MonoBehaviour
     /// <returns></returns>
     public Quest GenerateQuestByID(int questID)
     {
-        var data = wholeQuestPool.quests.Find(q => q.id == questID);
+        var data = questPool.quests.Find(q => q.id == questID);
 
         if (data == null)
         {

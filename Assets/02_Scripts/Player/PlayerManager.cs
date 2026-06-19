@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using static Constants;
 
 public class PlayerManager : Singleton<PlayerManager>
@@ -18,7 +20,7 @@ public class PlayerManager : Singleton<PlayerManager>
 
     [Header("캐릭터 배열 (0: 명월, 1: 소월)")]
     [SerializeField] private PlayerController[] players;
-
+    
     // 현재 선택된 유닛
     private PlayerController selectedUnit;
     public PlayerController SelectedUnit => this.selectedUnit;
@@ -124,35 +126,37 @@ public class PlayerManager : Singleton<PlayerManager>
     
     public void ToggleRunMode()
     {
+        if (selectedUnit == null)
+            return;
+        
+        SkillUIManager.Instance.UseGhostSkill();
+        
         IsRunMode = !IsRunMode; 
         
-        if (selectedUnit != null)
-        {
-            float currentMoveSpeed = IsRunMode ? moveSpeed * 1.5f : moveSpeed;
-            selectedUnit.SetSpeed(currentMoveSpeed, angularSpeed, accelerationSpeed);
+        float currentMoveSpeed = IsRunMode ? moveSpeed * 1.5f : moveSpeed;
+        selectedUnit.SetSpeed(currentMoveSpeed, angularSpeed, accelerationSpeed);
             
-            // 이동 중에 O키를 눌렀다면 애니메이션 즉시 갱신
-            if (selectedUnit.IsMoving)
-            {
-                if (IsRunMode)
-                    selectedUnit.ChangeState(PlayerState.Run);
-                else
-                    selectedUnit.ChangeState(PlayerState.Walk);
-            }
+        // 이동 중에 O키를 눌렀다면 애니메이션 즉시 갱신
+        if (selectedUnit.IsMoving)
+        {
+            if (IsRunMode)
+                selectedUnit.ChangeState(PlayerState.Run);
+            else
+                selectedUnit.ChangeState(PlayerState.Walk);
         }
     }
     
     public void TeleportSelectedUnit(Vector3 destination)
     {
         if (selectedUnit == null) return;
-
+        
+        SkillUIManager.Instance.UseTeleportSkill();
         var agent = selectedUnit.GetComponent<UnityEngine.AI.NavMeshAgent>();
         
-        // 1. 목표 지점에서 가장 가까운 NavMesh 위치 찾기 (반경 5f 이내 탐색)
+        // 목표 지점에서 가장 가까운 NavMesh 위치 찾기 (반경 5f 이내 탐색)
         Vector3 validPosition = destination;
         if (UnityEngine.AI.NavMesh.SamplePosition(destination, out UnityEngine.AI.NavMeshHit navHit, 2.0f, UnityEngine.AI.NavMesh.AllAreas))
         {
-            // 찾았다면 해당 NavMesh 좌표를 최종 목적지로 설정
             validPosition = navHit.position; 
         }
 

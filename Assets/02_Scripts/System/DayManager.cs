@@ -74,7 +74,6 @@ public class DayManager : Singleton<DayManager>
     /// </summary>
     public void DayStart(bool isLoad = false)
     {
-        Debug.Log("DayStart");
         GameManager.Instance.SetState(GameFlowState.Gameplay);
         
         if (!isLoad)
@@ -159,7 +158,7 @@ public class DayManager : Singleton<DayManager>
     /// </summary>
     public void DayEnd()
     {
-        Debug.Log("DayEnd");
+        Debug.Log("Day End");
         IsRunning = false;
         _isBusinessOver = true;
         

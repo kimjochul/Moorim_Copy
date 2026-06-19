@@ -8,7 +8,6 @@ public class Story:ScriptableObject
 {
     public int id;
     public string storyName;
-    public string description;
     
     public List<StoryScene> scenes;
     

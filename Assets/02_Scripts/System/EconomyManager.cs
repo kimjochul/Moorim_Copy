@@ -23,8 +23,7 @@ public class EconomyManager : Singleton<EconomyManager>, IInitializable
     private DailyResultSaveData _lastDailyResult;
     public DailyResultSaveData LastDailyResult => _lastDailyResult;
     
-    private ReceiptData lastReceiptData;
-    public ReceiptData LastReceiptData => lastReceiptData;
+    private bool _hasPlayedToday = false;
     
     public event Action RestaurantEconomyChanged;
     public event Action TodayEconomyChanged;
@@ -91,6 +90,7 @@ public class EconomyManager : Singleton<EconomyManager>, IInitializable
     void OnCustomerServed()
     {
         _todayCustomerCount++;
+        _hasPlayedToday = true; 
         TodayEconomyChanged?.Invoke();
     }
     
@@ -118,7 +118,6 @@ public class EconomyManager : Singleton<EconomyManager>, IInitializable
     /// </summary>
     public void TodayResult()
     {
-        SetLastReceiptData();
         Debug.Log($"금일 수입 : {_todayMoneyIncome}, 금일 명성 증가량 : {_todayFameIncome}");
         Debug.Log($"처리한 손님 수 : {_todayCustomerCount}");
         Debug.Log($"결과 재정 상태: {RestaurantEconomy.Money}, 결과 명성 수치 : {RestaurantEconomy.Fame}");
@@ -210,20 +209,6 @@ public class EconomyManager : Singleton<EconomyManager>, IInitializable
     public void LoadDailyResult(DailyResultSaveData data)
     {
         _lastDailyResult = data;
-        
-        lastReceiptData = new ReceiptData
-        {
-            week = DayManager.Instance.DayData,
-
-            totalRevenue = data.todayMoneyIncome,
-            fame = data.todayFameIncome,
-            debt = RestaurantEconomy.Debt,
-
-            happyGuests = data.happyGuests,
-            angryGuests = data.angryGuests,
-
-            netIncome = data.todayMoneyIncome
-        };
     }
     
     public void ResetData()
@@ -242,6 +227,12 @@ public class EconomyManager : Singleton<EconomyManager>, IInitializable
     
     public void CacheDailyResult()
     {
+        if (!_hasPlayedToday)
+        {
+            Debug.Log("플레이 안 해서 캐시 안함");
+            return;
+        }
+        
         if (guestResultTracker == null) return;
         
         Debug.Log("CacheDailyResult 실행됨");
@@ -254,22 +245,6 @@ public class EconomyManager : Singleton<EconomyManager>, IInitializable
 
             happyGuests = guestResultTracker.DailyResult.goodCount + guestResultTracker.DailyResult.veryGoodCount,
             angryGuests = guestResultTracker.DailyResult.badCount + guestResultTracker.DailyResult.veryBadCount,
-        };
-    }
-
-    public void SetLastReceiptData()
-    {
-        lastReceiptData = new ReceiptData
-        { 
-            week = DayManager.Instance.DayData,
-            totalRevenue = TodayMoneyIncome,
-            fame = TodayFameIncome,
-            debt =RestaurantEconomy.Debt,
-
-            happyGuests = guestResultTracker.DailyResult.goodCount + guestResultTracker.DailyResult.veryGoodCount,
-            angryGuests = guestResultTracker.DailyResult.badCount + guestResultTracker.DailyResult.veryBadCount,
-
-            netIncome = TodayMoneyIncome
         };
     }
 }
