@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: TestStory
   m_EditorClassIdentifier: Assembly-CSharp::Story
   id: 999
-  storyName: "\uD14C\uC2A4"
+  storyName: "\uD14C\uC2A4\uD2B8"
+  description: 
   scenes:
   - visualType: 0
     characters:
@@ -29,6 +30,11 @@ MonoBehaviour:
       startFlip: 0
     - characterID: 3
       slotIndex: 3
+      startVisible: 1
+      useSlotUI: 1
+      startFlip: 0
+    - characterID: 2
+      slotIndex: 0
       startVisible: 1
       useSlotUI: 1
       startFlip: 0
@@ -67,6 +73,13 @@ MonoBehaviour:
           shadow: 0
           useDOScale: 0
         isUnknown: 0
+      - characterID: 2
+        expressionData:
+          face: 7
+          eyebrow: 2
+          shadow: 0
+          useDOScale: 1
+        isUnknown: 0
       screenEffect:
         effectType: 0
         effectDuration: 0
@@ -77,8 +90,8 @@ MonoBehaviour:
       stopAllSFX: 0
       useTypingSound: 0
       isInnerThought: 0
-      showEmotionIcon: 0
-      emotion: 0
+      showEmotionIcon: 1
+      emotion: 10
       useAccentFontSize: 0
       useSmallFontSize: 0
       hideDialogueUI: 0
@@ -166,6 +179,13 @@ MonoBehaviour:
           shadow: 0
           useDOScale: 1
         isUnknown: 0
+      - characterID: 2
+        expressionData:
+          face: 7
+          eyebrow: 8
+          shadow: 0
+          useDOScale: 1
+        isUnknown: 0
       screenEffect:
         effectType: 0
         effectDuration: 0
@@ -226,6 +246,13 @@ MonoBehaviour:
           shadow: 0
           useDOScale: 1
         isUnknown: 0
+      - characterID: 2
+        expressionData:
+          face: 14
+          eyebrow: 4
+          shadow: 0
+          useDOScale: 1
+        isUnknown: 0
       screenEffect:
         effectType: 0
         effectDuration: 0
@@ -256,7 +283,7 @@ MonoBehaviour:
       isUnknown: 0
       expressionData:
         face: 12
-        eyebrow: 3
+        eyebrow: 1
         shadow: 0
         useDOScale: 0
       motion:
@@ -317,7 +344,14 @@ MonoBehaviour:
       changeDisplayName: 
       resetDisplayName: 0
       flips: []
-      extraExpressions: []
+      extraExpressions:
+      - characterID: 2
+        expressionData:
+          face: 17
+          eyebrow: 7
+          shadow: 0
+          useDOScale: 1
+        isUnknown: 0
       screenEffect:
         effectType: 0
         effectDuration: 0
@@ -367,6 +401,13 @@ MonoBehaviour:
       - characterID: 3
         expressionData:
           face: 20
+          eyebrow: 6
+          shadow: 0
+          useDOScale: 1
+        isUnknown: 0
+      - characterID: 2
+        expressionData:
+          face: 23
           eyebrow: 6
           shadow: 0
           useDOScale: 1
@@ -436,6 +477,144 @@ MonoBehaviour:
       isInnerThought: 0
       showEmotionIcon: 0
       emotion: 0
+      useAccentFontSize: 0
+      useSmallFontSize: 0
+      hideDialogueUI: 0
+      autoNext: 0
+      autoDelay: 0
+      hideFromLog: 0
+      transitionSpeed: 0
+    - id: 0
+      lineType: 0
+      illustrationOverride: {fileID: 0}
+      illustrationOverlay: {fileID: 0}
+      resetIllustration: 0
+      resetOverlay: 0
+      illustrationSequence: []
+      characterID: 2
+      isUnknown: 0
+      expressionData:
+        face: 4
+        eyebrow: 1
+        shadow: 0
+        useDOScale: 0
+      motion:
+        type: 0
+        duration: 0
+        value: 0
+        targetSlotIndex: 0
+        stopDistance: 0
+        targetValue: 0
+      motions: []
+      playTogether: 0
+      changeDisplayName: 
+      resetDisplayName: 0
+      flips: []
+      extraExpressions: []
+      screenEffect:
+        effectType: 0
+        effectDuration: 0
+        effectPower: 0
+      line: asdf
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
+      useTypingSound: 0
+      isInnerThought: 0
+      showEmotionIcon: 1
+      emotion: 7
+      useAccentFontSize: 0
+      useSmallFontSize: 0
+      hideDialogueUI: 0
+      autoNext: 0
+      autoDelay: 0
+      hideFromLog: 0
+      transitionSpeed: 0
+    - id: 0
+      lineType: 0
+      illustrationOverride: {fileID: 0}
+      illustrationOverlay: {fileID: 0}
+      resetIllustration: 0
+      resetOverlay: 0
+      illustrationSequence: []
+      characterID: 3
+      isUnknown: 0
+      expressionData:
+        face: 4
+        eyebrow: 1
+        shadow: 0
+        useDOScale: 0
+      motion:
+        type: 0
+        duration: 0
+        value: 0
+        targetSlotIndex: 0
+        stopDistance: 0
+        targetValue: 0
+      motions: []
+      playTogether: 0
+      changeDisplayName: 
+      resetDisplayName: 0
+      flips: []
+      extraExpressions: []
+      screenEffect:
+        effectType: 0
+        effectDuration: 0
+        effectPower: 0
+      line: asdf
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
+      useTypingSound: 0
+      isInnerThought: 0
+      showEmotionIcon: 1
+      emotion: 9
+      useAccentFontSize: 0
+      useSmallFontSize: 0
+      hideDialogueUI: 0
+      autoNext: 0
+      autoDelay: 0
+      hideFromLog: 0
+      transitionSpeed: 0
+    - id: 0
+      lineType: 0
+      illustrationOverride: {fileID: 0}
+      illustrationOverlay: {fileID: 0}
+      resetIllustration: 0
+      resetOverlay: 0
+      illustrationSequence: []
+      characterID: 1
+      isUnknown: 0
+      expressionData:
+        face: 4
+        eyebrow: 1
+        shadow: 0
+        useDOScale: 0
+      motion:
+        type: 0
+        duration: 0
+        value: 0
+        targetSlotIndex: 0
+        stopDistance: 0
+        targetValue: 0
+      motions: []
+      playTogether: 0
+      changeDisplayName: 
+      resetDisplayName: 0
+      flips: []
+      extraExpressions: []
+      screenEffect:
+        effectType: 0
+        effectDuration: 0
+        effectPower: 0
+      line: asdf
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
+      useTypingSound: 0
+      isInnerThought: 0
+      showEmotionIcon: 1
+      emotion: 6
       useAccentFontSize: 0
       useSmallFontSize: 0
       hideDialogueUI: 0

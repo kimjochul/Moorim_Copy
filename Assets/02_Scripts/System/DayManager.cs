@@ -163,7 +163,6 @@ public class DayManager : Singleton<DayManager>
         IsRunning = false;
         _isBusinessOver = true;
         
-        EconomyManager.Instance.CacheDailyResult();
         OnDayEnd?.Invoke();
         if(GameManager.Instance.CurrentState == GameFlowState.Gameplay)
             GameManager.Instance.CompleteState(GameFlowState.Gameplay);

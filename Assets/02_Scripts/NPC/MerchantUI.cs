@@ -17,6 +17,12 @@ public class MerchantUI : MonoBehaviour
     
     [SerializeField] private Shop shop;
     
+    [SerializeField] private NPCMenuSlot slotPrefab;
+    [SerializeField] private Transform buttonContent;
+
+    [SerializeField] private List<NPCMenuData> menuDatas;
+    [SerializeField] private CharacterSlot characterSlot;
+    
     [SerializeField] private Button shopButton;
     [SerializeField] private Button questButton;
     [SerializeField] private Button talkButton;
@@ -93,6 +99,13 @@ public class MerchantUI : MonoBehaviour
         shop.OnProductClicked += HandleProductClicked;
         shop.OnRecipeClicked += HandleRecipeClicked;
         
+        // foreach (var data in menuDatas)
+        // {
+        //     var slot = Instantiate(slotPrefab, buttonContent);
+        //
+        //     slot.Init(data, OnSelectMenu);
+        // }
+        
         shopButton.onClick.AddListener(OpenShop);
         questButton.onClick.AddListener(OpenQuest);
         talkButton.onClick.AddListener(OpenTalk);
@@ -101,6 +114,32 @@ public class MerchantUI : MonoBehaviour
         
         currentState = MerchantState.Talk;
     }
+    
+    // private void OnSelectMenu(NPCMenuData data)
+    // {
+    //     characterSlot.SetExpression(data.expression);
+    //
+    //     switch (data.state)
+    //     {
+    //         case MerchantState.Shop:
+    //             OpenShopPanel();
+    //             break;
+    //
+    //         case MerchantState.Quest:
+    //             OpenQuestPanel();
+    //             break;
+    //
+    //         case MerchantState.Talk:
+    //             OpenTalkPanel();
+    //             break;
+    //
+    //         case MerchantState.Debt:
+    //             OpenDebtPanel();
+    //             break;
+    //     }
+    //
+    //     SetState(data.state);
+    // }
     
     public void OpenShop()
     {
