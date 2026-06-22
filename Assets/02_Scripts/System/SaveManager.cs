@@ -57,7 +57,7 @@ public class SaveManager : Singleton<SaveManager>
     {
         Time.timeScale = 1f;
         isLoadedGame = false;
-        SceneLoader.Instance.LoadScene("01_Scenes/03.Game", () =>
+        SceneLoader.Instance.LoadScene("01_Scenes/03.Game 1", () =>
         {
             InitAll();
             InitializeNewGameData();
@@ -115,7 +115,7 @@ public class SaveManager : Singleton<SaveManager>
         loadSlotIndex = slotIndex;
         loadType = type;
         
-        SceneLoader.Instance.LoadScene("01_Scenes/03.Game", () =>
+        SceneLoader.Instance.LoadScene("01_Scenes/03.Game 1", () =>
         {
             InitAll();
             
@@ -195,7 +195,7 @@ public class SaveManager : Singleton<SaveManager>
         StoryManager.Instance.Init();
         QuestManager.Instance.Init();
         BondManager.Instance.Init();
-        UpgradeManager.Instance.Init();
+        //UpgradeManager.Instance.Init();
     }
     
     // ------------------------
@@ -302,7 +302,7 @@ public class SaveManager : Singleton<SaveManager>
         EconomyManager.Instance.ResetData();
         QuestManager.Instance.ResetData();
         BondManager.Instance.ResetData();
-        UpgradeManager.Instance.ResetData();
+        //UpgradeManager.Instance.ResetData();
     }
     
     public void SaveAndQuit()

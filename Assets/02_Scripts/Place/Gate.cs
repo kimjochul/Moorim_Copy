@@ -14,7 +14,8 @@ public class Gate : MonoBehaviour, IInteractable
     private Tween doorTween;
     
     // 이벤트 등 외부 의존성 전부 제거됨
-    public static bool isOpen { get; private set; } = false; 
+    // ✅ 기본값을 true로 변경했습니다. (열린 상태로 시작)
+    public static bool isOpen { get; private set; } = true; 
 
     // IInteractable 인터페이스
     public InteractMode Mode => InteractMode.Immediate; 
@@ -32,6 +33,7 @@ public class Gate : MonoBehaviour, IInteractable
         if (doorTween != null && doorTween.IsActive() && doorTween.IsPlaying()) 
             return;
 
+        // 이제 isOpen이 true이므로, 첫 클릭 시 바로 CloseDoor()가 실행됩니다.
         if (isOpen)
             CloseDoor();
         else
@@ -44,8 +46,6 @@ public class Gate : MonoBehaviour, IInteractable
     {
         return transform.position;
     }
-    
-    
     
     private void OpenDoor()
     {
