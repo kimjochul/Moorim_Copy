@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class PlayerAnimation : MonoBehaviour
 {
-    [Header("ì»´í¬ë„ŒíŠ¸ ì—°ê²°")]
+    [Header("ÄÄÆ÷³ÍÆ® ¿¬°á")]
     [SerializeField] private PlayerController player;
     [SerializeField] private Animator animator;
 

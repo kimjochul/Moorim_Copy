@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 using UnityEngine.Events;
@@ -943,6 +944,63 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
             onComplete?.Invoke();
         });
     }
+    
+    public void ToggleGroupSlide(
+        RectTransform mainButton,
+        List<RectTransform> subButtons,
+        bool show,
+        Direction direction = Direction.Left,
+        float spacing = 80f,
+        float duration = 0.25f)
+    {
+        Sequence seq = DOTween.Sequence();
+
+        for (int i = 0; i < subButtons.Count; i++)
+        {
+            RectTransform button = subButtons[i];
+
+            Vector2 targetPos;
+
+            if (show)
+            {
+                targetPos = mainButton.anchoredPosition;
+
+                switch (direction)
+                {
+                    case Direction.Left:
+                        targetPos.x -= spacing * (i + 1);
+                        break;
+
+                    case Direction.Right:
+                        targetPos.x += spacing * (i + 1);
+                        break;
+
+                    case Direction.Top:
+                        targetPos.y += spacing * (i + 1);
+                        break;
+
+                    case Direction.Bottom:
+                        targetPos.y -= spacing * (i + 1);
+                        break;
+                }
+            }
+            else
+            {
+                targetPos = mainButton.anchoredPosition;
+            }
+
+            if (show)
+                button.anchoredPosition = mainButton.anchoredPosition;
+
+            seq.Join(
+                button.DOAnchorPos(targetPos, duration)
+                    .SetEase(show ? Ease.OutBack : Ease.InBack)
+                    .SetDelay(i * 0.03f)
+            );
+        }
+    }
+    
+    
     public void ShowPopFromWorld(RectTransform ui, Transform worldOrigin, float duration = 0.4f, UnityAction onComplete = null)
     {
         if (ui == null || worldOrigin == null) return;

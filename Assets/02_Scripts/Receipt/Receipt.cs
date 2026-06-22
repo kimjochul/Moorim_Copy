@@ -36,8 +36,6 @@ public class Receipt : MonoBehaviour
 
     // ��ǥ ����
     private Sequence receiptSequence;
-
-    private bool isLoadedReceipt = false;
     
     void Awake()
     {
@@ -60,28 +58,14 @@ public class Receipt : MonoBehaviour
             GameManager.Instance.CompleteState(GameFlowState.Receipt);
         });
     }
-    public ReceiptData? HandleDayResult(GuestResultData dailyData, GuestResultData totalData)
-    {
-        if (isLoadedReceipt) return null;
-        
-        return new ReceiptData
-        {
-            week = this.dayManager.DayData,
-            totalRevenue = EconomyManager.Instance.TodayMoneyIncome,
-            fame = EconomyManager.Instance.TodayFameIncome,
-            debt = EconomyManager.Instance.RestaurantEconomy.Debt,
-
-            happyGuests = dailyData.goodCount + dailyData.veryGoodCount,
-            angryGuests = dailyData.badCount + dailyData.veryBadCount,
-
-            netIncome = EconomyManager.Instance.TodayMoneyIncome
-        };
-    }
 
     public void TurnOnReceipt(ReceiptData? data)
     {
         if (data == null)
+        {
+            Debug.Log("데이터 null");
             return;
+        }
         
         this.data = data.Value;
         SetReceiptActive(true);
@@ -177,26 +161,5 @@ public class Receipt : MonoBehaviour
         this.happyGuests.ClearText();
         this.angryGuests.ClearText();
         this.netIncome.ClearText();
-    }
-    
-    public void LoadFromSave(DailyResultSaveData data)
-    {
-        isLoadedReceipt = true;
-        
-        Debug.Log("Loaded Receipt");
-        
-        this.data = new ReceiptData
-        {
-            week = DayManager.Instance.DayData,
-            totalRevenue = data.todayMoneyIncome,
-            fame = data.todayFameIncome,
-            debt = EconomyManager.Instance.RestaurantEconomy.Debt,
-            happyGuests = data.happyGuests,
-            angryGuests = data.angryGuests,
-            netIncome = data.todayMoneyIncome
-        };
-
-        SetReceiptActive(true);
-        StartAnimationText();
     }
 }
