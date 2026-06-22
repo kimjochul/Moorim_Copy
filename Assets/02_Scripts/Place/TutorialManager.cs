@@ -59,10 +59,6 @@ public class TutorialManager : MonoBehaviour
     public GameObject redSquare2;
     public GameObject redSquare3;
 
-    [Header("키 제어")] 
-    public bool isInputLocked = false;
-    public List<KeyCode> allowedKeys = new List<KeyCode>();
-
     [Header("콜라이더")] 
     public GameObject cookingStationForColliders;
     public GameObject trayTableForColliders;
