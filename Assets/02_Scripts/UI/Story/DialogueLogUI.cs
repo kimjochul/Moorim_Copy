@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,13 +9,27 @@ public class DialogueLogUI : MonoBehaviour
     
     [SerializeField] private Transform contentRoot;
     [SerializeField] private LogItem logPrefab;
+    
+    [SerializeField] private Button exitButton;
 
-    public void Open()
+    private StoryUI storyUI;
+    private void OnEnable()
     {
-        gameObject.SetActive(true);
+        exitButton.onClick.AddListener(storyUI.CloseLogUI);
+    }
 
-        Refresh();
+    private void OnDisable()
+    {
+        if (exitButton)
+            exitButton.onClick.RemoveListener(storyUI.CloseLogUI);
+    }
+
+    public void Open(StoryUI story)
+    {
+        storyUI = story;
         
+        gameObject.SetActive(true);
+        Refresh();
         StartCoroutine(MoveToBottomRoutine());
     }
 

@@ -7,19 +7,20 @@ public class Character : ScriptableObject
 {
     public int characterID;
     public string characterName;
-
-    public List<EmotionSprite> emotions;
+    
+    public Sprite characterImage;
+    
+    public List<FaceSpriteData> faces;
+    public List<EyebrowSpriteData> eyebrows;
+    public Sprite shadow;
+    
     public List<EmotionIcon> emotionIcons;
     
     [Header("비주얼 보정")]
     public CharacterVisualSetting visual;
-}
-
-[Serializable]
-public class EmotionSprite
-{
-    public Emotion emotion;
-    public Sprite sprite;
+    
+    [Header("이름표")]
+    public Sprite namePlateSprite;
 }
 
 [Serializable]
@@ -37,4 +38,24 @@ public class CharacterVisualSetting
 
     [Header("캐릭터 위치 보정")]
     public Vector2 offset;
+
+    [Header("감정 아이콘 위치")] 
+    public Vector2 emotionIconPosition;
+    
+    [Header("얼굴 음영 색")]
+    public Color shadowColor = new Color(0.5f, 0.5f, 0.5f, 0.5f);
+}
+
+[Serializable]
+public class FaceSpriteData
+{
+    public FaceType type;
+    public Sprite sprite;
+}
+
+[Serializable]
+public class EyebrowSpriteData
+{
+    public EyebrowType type;
+    public Sprite sprite;
 }

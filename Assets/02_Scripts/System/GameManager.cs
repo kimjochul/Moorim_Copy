@@ -38,8 +38,6 @@ public class GameManager : Singleton<GameManager>
     
     private Receipt receipt;
     private List<INPCSchedule> npcs = new List<INPCSchedule>();
-    
-    private ReceiptData? cachedResult;
     private GuestResultTracker guest;
     
     private bool isTransitioning = false;
@@ -53,7 +51,6 @@ public class GameManager : Singleton<GameManager>
         receipt = FindFirstObjectByType<Receipt>();
         npcs = DayManager.Instance.NPCs;
         
-        BindEvents();
         InitStateTable();
     }
     
@@ -143,7 +140,7 @@ public class GameManager : Singleton<GameManager>
                     GameFlowState.Story,
                     onEnter: () =>
                     {
-                        receipt.TurnOnReceipt(cachedResult);
+                        receipt.TurnOnReceipt(EconomyManager.Instance.LastReceiptData);
                     }
                 )
             },
@@ -184,17 +181,6 @@ public class GameManager : Singleton<GameManager>
                 )
             }
         };
-    }
-    
-    private void BindEvents()
-    {
-        guest = FindFirstObjectByType<GuestResultTracker>();
-        guest.OnDayResultReady += OnDayResultReady;
-    }
-    
-    private void OnDayResultReady(GuestResultData daily, GuestResultData total)
-    {
-        cachedResult = receipt.HandleDayResult(daily, total);
     }
     
     public void ResetFlow()

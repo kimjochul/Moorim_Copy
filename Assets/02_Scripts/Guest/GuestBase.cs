@@ -533,7 +533,10 @@ public abstract class GuestBase : MonoBehaviour
     
     public void TimeSetForTutorial()
     {
+        orderMinWaitLimit = 99999f;
         orderMaxWaitLimit = 99999f;
+        foodMinWaitLimit = 99999f;
+        foodMidWaitLimit = 99999f;
         foodMaxWaitLimit = 99999f;
     }
     
