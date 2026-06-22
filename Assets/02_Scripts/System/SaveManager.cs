@@ -195,7 +195,7 @@ public class SaveManager : Singleton<SaveManager>
         StoryManager.Instance.Init();
         QuestManager.Instance.Init();
         BondManager.Instance.Init();
-        UpgradeManager.Instance.Init();
+        //UpgradeManager.Instance.Init();
     }
     
     // ------------------------
@@ -302,7 +302,7 @@ public class SaveManager : Singleton<SaveManager>
         EconomyManager.Instance.ResetData();
         QuestManager.Instance.ResetData();
         BondManager.Instance.ResetData();
-        UpgradeManager.Instance.ResetData();
+        //UpgradeManager.Instance.ResetData();
     }
     
     public void SaveAndQuit()

@@ -3,7 +3,7 @@ using UnityEngine.AI;
 
 public class ThiefGuyGuest : GuestBase
 {
-    private bool isCaught = false; 
+    public bool isCaught = false; 
     private bool isEscape = false; 
 
     [Header("술래잡기 설정")]
