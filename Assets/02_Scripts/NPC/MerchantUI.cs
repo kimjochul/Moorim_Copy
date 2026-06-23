@@ -22,17 +22,15 @@ public class MerchantUI : MonoBehaviour
 
     [SerializeField] private List<NPCMenuData> menuDatas;
     [SerializeField] private CharacterSlot characterSlot;
+    [SerializeField] private Character merchantCharacter;
     
-    [SerializeField] private Button shopButton;
-    [SerializeField] private Button questButton;
-    [SerializeField] private Button talkButton;
-    [SerializeField] private Button debtButton;
     [SerializeField] private Button exitButton;
+    private Button debtButton;
     
     private bool isInitialized = false;
     
-    [SerializeField] private string[] greetingDialogues;
-    [SerializeField] private string[] idleDialogues; 
+    [SerializeField] private NPCDialogueData[] greetingDialogues;
+    [SerializeField] private NPCDialogueData[] idleDialogues;
     
     private int lastDialogIndex = -1;
     
@@ -40,15 +38,8 @@ public class MerchantUI : MonoBehaviour
     
     private Merchant merchant;
     
-    public enum MerchantState
-    {
-        Shop,
-        Quest,
-        Talk,
-        Debt,
-    }
-    private MerchantState currentState;
-    private void SetState(MerchantState state)
+    private NPCUIState currentState;
+    private void SetState(NPCUIState state)
     {
         currentState = state;
         UpdateDialogue();
@@ -99,56 +90,54 @@ public class MerchantUI : MonoBehaviour
         shop.OnProductClicked += HandleProductClicked;
         shop.OnRecipeClicked += HandleRecipeClicked;
         
-        // foreach (var data in menuDatas)
-        // {
-        //     var slot = Instantiate(slotPrefab, buttonContent);
-        //
-        //     slot.Init(data, OnSelectMenu);
-        // }
+        characterSlot.SetCharacter(merchantCharacter, merchantCharacter.characterImage);
+        SetDefaultExpression();
         
-        shopButton.onClick.AddListener(OpenShop);
-        questButton.onClick.AddListener(OpenQuest);
-        talkButton.onClick.AddListener(OpenTalk);
-        debtButton.onClick.AddListener(OpenDebt);
+        foreach (var data in menuDatas)
+        {
+            var slot = Instantiate(slotPrefab, buttonContent);
+        
+            slot.Init(data, OnSelectMenu);
+            
+            debtButton = slot.Button;
+        }
         exitButton.onClick.AddListener(Close);
         
-        currentState = MerchantState.Talk;
+        currentState = NPCUIState.Talk;
     }
     
-    // private void OnSelectMenu(NPCMenuData data)
-    // {
-    //     characterSlot.SetExpression(data.expression);
-    //
-    //     switch (data.state)
-    //     {
-    //         case MerchantState.Shop:
-    //             OpenShopPanel();
-    //             break;
-    //
-    //         case MerchantState.Quest:
-    //             OpenQuestPanel();
-    //             break;
-    //
-    //         case MerchantState.Talk:
-    //             OpenTalkPanel();
-    //             break;
-    //
-    //         case MerchantState.Debt:
-    //             OpenDebtPanel();
-    //             break;
-    //     }
-    //
-    //     SetState(data.state);
-    // }
+    private void OnSelectMenu(NPCMenuData data)
+    {
+        ChangeExpression(data.expression);
     
-    public void OpenShop()
+        switch (data.state)
+        {
+            case NPCUIState.Shop:
+                OpenShop();
+                break;
+    
+            case NPCUIState.Quest:
+                OpenQuest();
+                break;
+    
+            case NPCUIState.Talk:
+                OpenTalk();
+                break;
+    
+            case NPCUIState.Debt:
+                OpenDebt();
+                break;
+        }
+    }
+    
+    private void OpenShop()
     {
         shopPanel.SetActive(true);
         questPanel.SetActive(false);
         talkPanel.gameObject.SetActive(true);
         debtPanel.gameObject.SetActive(false);
         
-        SetState(MerchantState.Shop);
+        SetState(NPCUIState.Shop);
     }
     
     private void HandleProductClicked(ItemData itemData)
@@ -161,8 +150,9 @@ public class MerchantUI : MonoBehaviour
                 
                 if (!EconomyManager.Instance.CanSpend(totalPrice))
                 {
+                    SetDisappointmentExpression();
                     talkPanel.ChangeText("돈이 부족한 것 같은데?");
-                    UIManager.Instance.CreateOkPopup("돈이 부족합니다!", () => {}, () => {});
+                    UIManager.Instance.CreateOkPopup("돈이 부족합니다!", () => {}, () => {}, false);
                     return;
                 }
 
@@ -170,8 +160,9 @@ public class MerchantUI : MonoBehaviour
 
                 if (success)
                 {
+                    SetHappyExpression();
                     talkPanel.ChangeText("좋은 선택야!");
-                    UIManager.Instance.CreateOkPopup("구매 완료!", () => {}, () => {});
+                    UIManager.Instance.CreateOkPopup("구매 완료!", () => {}, () => {}, false);
                     if(itemData is BondItemData bondItemData)
                     {
                         shop.UpdateProductList(IngredientType.Buff);
@@ -180,6 +171,7 @@ public class MerchantUI : MonoBehaviour
             },
             () =>
             {
+                SetDefaultExpression();
                 talkPanel.ChangeText("천천히 골라도 돼");
                 Debug.Log("취소 버튼 눌림");
             });
@@ -191,30 +183,31 @@ public class MerchantUI : MonoBehaviour
         UIManager.Instance.CreateAmountPopup($"{recipeData.recipeName} 조리법을 구매하시겠습니까?", recipeData,
             (amount) =>
             {
-                int totalPrice = recipeData.price * amount;
-                
                 if (!EconomyManager.Instance.CanSpend(recipeData.price))
                 {
+                    SetDisappointmentExpression();
                     talkPanel.ChangeText("돈이 부족한 것 같은데?");
-                    UIManager.Instance.CreateOkPopup("돈이 부족합니다!", () => {}, () => {});
+                    UIManager.Instance.CreateOkPopup("돈이 부족합니다!", () => {}, () => {}, false);
                     return;
                 }
 
                 EconomyManager.Instance.SpendMoney(recipeData.price);
                 RecipeUnlockManager.Instance.Unlock(recipeData.id);
 
+                SetHappyExpression();
                 talkPanel.ChangeText("좋은 선택이야!");
-                UIManager.Instance.CreateOkPopup("레시피 해금!", ()=>{}, () => {});
+                UIManager.Instance.CreateOkPopup("레시피 해금!", ()=>{}, () => {}, false);
                 shop.UpdateProductList(IngredientType.Recipe);
             },
             () =>
             {
+                SetDefaultExpression();
                 talkPanel.ChangeText("천천히 골라도 돼");
                 Debug.Log("취소 버튼 눌림");
             });
     }
     
-    public void OpenQuest()
+    private void OpenQuest()
     {
         shopPanel.SetActive(false);
         questPanel.SetActive(true);
@@ -223,10 +216,10 @@ public class MerchantUI : MonoBehaviour
         
         npcQuestUI.Init(QuestType.Merchant, NPCType.Merchant);
         
-        SetState(MerchantState.Quest);
+        SetState(NPCUIState.Quest);
     }
 
-    public void OpenTalk()
+    private void OpenTalk()
     {
         talkPanel.gameObject.SetActive(false);
         shopPanel.SetActive(false);
@@ -236,53 +229,52 @@ public class MerchantUI : MonoBehaviour
 
         talkPanel.Clear();
         
-        SetState(MerchantState.Talk);
+        SetState(NPCUIState.Talk);
     }
     
-    public void OpenDebt()
+    private void OpenDebt()
     {
         shopPanel.SetActive(false);
         questPanel.SetActive(false);
         talkPanel.gameObject.SetActive(true);
         debtPanel.gameObject.SetActive(true);
-
-        SetState(MerchantState.Debt);
+        
+        SetState(NPCUIState.Debt);
     }
     
     private void UpdateDialogue()
     {
-        string dialogue = "";
-
         switch (currentState)
         {
-            case MerchantState.Shop:
-                dialogue = "좋은 물건 많아~ 구경하고 가";
+            case NPCUIState.Shop:
+                talkPanel.ChangeText("좋은 물건 많아~ 구경하고 가");
                 break;
 
-            case MerchantState.Quest:
-                dialogue = "일 좀 부탁해도 될까? 보상은 할게";
+            case NPCUIState.Quest:
+                talkPanel.ChangeText("일 좀 부탁해도 될까? 보상은 할게");
                 break;
 
-            case MerchantState.Talk:
-                dialogue = GetTalkDialogue();
+            case NPCUIState.Talk:
+                var dialogueData = GetTalkDialogue();
+
+                if (dialogueData != null)
+                    ChangeDialogue(dialogueData);
                 break;
             
-            case MerchantState.Debt:
-                dialogue = "돈을 갚고 싶어?";
+            case NPCUIState.Debt:
+                talkPanel.ChangeText("돈을 갚고 싶어?");
                 break;
 
             default:
-                dialogue = "";
+                talkPanel.ChangeText("");
                 break;
         }
-        //Debug.Log($"대사 출력: {dialogue}");
-        talkPanel.ChangeText(dialogue);
     }
 
-    private string GetRandomDialogue(string[] dialogues)
+    private NPCDialogueData GetRandomDialogue(NPCDialogueData[] dialogues)
     {
         if (dialogues == null || dialogues.Length == 0)
-            return "";
+            return null;
 
         int index;
 
@@ -293,20 +285,26 @@ public class MerchantUI : MonoBehaviour
         while (dialogues.Length > 1 && index == lastDialogIndex);
 
         lastDialogIndex = index;
+
         return dialogues[index];
     }
     
-    private string GetTalkDialogue()
+    private NPCDialogueData GetTalkDialogue()
     {
-        // 30% 확률로 인사, 70% 잡담
         if (Random.value < 0.3f)
         {
             return GetRandomDialogue(greetingDialogues);
         }
-        else
-        {
-            return GetRandomDialogue(idleDialogues);
-        }
+
+        return GetRandomDialogue(idleDialogues);
+    }
+    
+    private void ChangeDialogue(NPCDialogueData data)
+    {
+        talkPanel.ChangeText(data.text);
+
+        if (data.expression != null)
+            characterSlot.SetExpression(data.expression);
     }
 
     private void FullyRepayDebt()
@@ -316,14 +314,74 @@ public class MerchantUI : MonoBehaviour
         debtButton.gameObject.SetActive(false);
     }
     
-    public void Close()
+    private void ChangeExpression(ExpressionData expression)
+    {
+        if (characterSlot != null)
+            characterSlot.SetExpression(expression);
+    }
+
+    public void SetDefaultExpression()
+    {
+        characterSlot.SetExpression(new ExpressionData
+        {
+            face = FaceType.Neutral,
+            eyebrow = EyebrowType.Default,
+            useDOScale = true
+        });
+    }
+    
+    public void SetHappyExpression()
+    {
+        characterSlot.SetExpression(new ExpressionData
+        {
+            face = FaceType.Happy1,
+            eyebrow = EyebrowType.Surprised,
+            useDOScale = true
+        });
+    }
+
+    public void SetSurprisedExpression()
+    {
+        characterSlot.SetExpression(new ExpressionData
+        {
+            face = FaceType.Surprised1,
+            eyebrow = EyebrowType.Surprised,
+            useDOScale = true
+        });
+    }
+    
+    public void SetSadExpression()
+    {
+        characterSlot.SetExpression(new ExpressionData
+        {
+            face = FaceType.Sad1,
+            eyebrow = EyebrowType.Sad,
+            useDOScale = true
+        });
+    }
+
+    public void SetDisappointmentExpression()
+    {
+        characterSlot.SetExpression(new ExpressionData
+        {
+            face = FaceType.Disappointment1,
+            eyebrow = EyebrowType.Disappointment,
+            useDOScale = true
+        });
+    }
+
+    public void ChangeText(string text)
+    {
+        talkPanel.ChangeText(text);
+    }
+    
+    private void Close()
     {
         gameObject.SetActive(false);
         GameManager.Instance.CompleteState(GameFlowState.NPC);
-        //DayManager.Instance.DayStart();
     }
     
-    public void ResetDialogue()
+    private void ResetDialogue()
     {
         lastDialogIndex = -1;
     }

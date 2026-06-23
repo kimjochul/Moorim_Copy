@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using static Constants;
@@ -11,30 +12,26 @@ public class PostManUI : MonoBehaviour
     [SerializeField] private NPCQuestUI questUI;
     [SerializeField] private UpgradeUI upgradeUI;
     
-    private Inventory inventory;
+    [SerializeField] private NPCMenuSlot slotPrefab;
+    [SerializeField] private Transform buttonContent;
+
+    [SerializeField] private List<NPCMenuData> menuDatas;
+    [SerializeField] private CharacterSlot characterSlot;
+    [SerializeField] private Character postmanCharacter;
     
-    [SerializeField] private Button questButton;
-    [SerializeField] private Button talkButton;
-    [SerializeField] private Button upgradeButton;
     [SerializeField] private Button exitButton;
     
     private bool isInitialized = false;
     
-    [SerializeField] private string[] greetingDialogues;
-    [SerializeField] private string[] idleDialogues; 
+    [SerializeField] private NPCDialogueData[] greetingDialogues;
+    [SerializeField] private NPCDialogueData[] idleDialogues;
     
     private int lastDialogIndex = -1;
 
     private Postman postman;
     
-    public enum PostmanState
-    {
-        Quest,
-        Talk,
-        Upgrade,
-    }
-    private PostmanState currentState;
-    private void SetState(PostmanState state)
+    private NPCUIState currentState;
+    private void SetState(NPCUIState state)
     {
         currentState = state;
         UpdateDialogue();
@@ -42,9 +39,6 @@ public class PostManUI : MonoBehaviour
     
     private void OnEnable()
     {
-        if (postman.IsAvailableDay())
-            postman.DayManager.OnDayStart += ResetDialogue;
-        
         OpenTalk();
     }
 
@@ -66,32 +60,60 @@ public class PostManUI : MonoBehaviour
         
         this.postman = postman;
         
-        inventory = InventoryManager.Instance.GetInventory(InventoryType.Fridge);
+        if (postman.IsAvailableDay())
+            postman.DayManager.OnDayStart += ResetDialogue;
         
-        questButton.onClick.AddListener(OpenQuest);
-        talkButton.onClick.AddListener(OpenTalk);
-        upgradeButton.onClick.AddListener(OpenUpgrade);
+        characterSlot.SetCharacter(postmanCharacter, postmanCharacter.characterImage);
+        SetDefaultExpression();
+        
+        foreach (var data in menuDatas)
+        {
+            var slot = Instantiate(slotPrefab, buttonContent);
+        
+            slot.Init(data, OnSelectMenu);
+        }
+        
         exitButton.onClick.AddListener(Close);
         
-        currentState = PostmanState.Talk;
+        currentState = NPCUIState.Talk;
+    }
+    
+    private void OnSelectMenu(NPCMenuData data)
+    {
+        ChangeExpression(data.expression);
+    
+        switch (data.state)
+        {
+            case NPCUIState.Upgrade:
+                OpenUpgrade();
+                break;
+    
+            case NPCUIState.Quest:
+                OpenQuest();
+                break;
+    
+            case NPCUIState.Talk:
+                OpenTalk();
+                break;
+        }
     }
 
-    public void ResetDialogue()
+    private void ResetDialogue()
     {
         lastDialogIndex = -1;
     }
     
-    public void OpenQuest()
+    private void OpenQuest()
     {
         talkPanel.gameObject.SetActive(true);
         questPanel.SetActive(true);
         
         questUI.Init(QuestType.PostMan,NPCType.PostMan);
         
-        SetState(PostmanState.Quest);
+        SetState(NPCUIState.Quest);
     }
 
-    public void OpenTalk()
+    private void OpenTalk()
     {
         talkPanel.gameObject.SetActive(false);
         talkPanel.gameObject.SetActive(true);
@@ -99,10 +121,10 @@ public class PostManUI : MonoBehaviour
 
         talkPanel.Clear();
         
-        SetState(PostmanState.Talk);
+        SetState(NPCUIState.Talk);
     }
     
-    public void OpenUpgrade()
+    private void OpenUpgrade()
     {
         talkPanel.gameObject.SetActive(true);
 
@@ -111,39 +133,37 @@ public class PostManUI : MonoBehaviour
 
         upgradeUI.Refresh();
 
-        SetState(PostmanState.Upgrade);
+        SetState(NPCUIState.Upgrade);
     }
-    
     private void UpdateDialogue()
     {
-        string dialogue = "";
-
         switch (currentState)
         {
-            case PostmanState.Quest:
-                dialogue = "일 좀 부탁드려도 될까요? 보상은 해드릴게요";
+            case NPCUIState.Quest:
+                talkPanel.ChangeText("일 좀 부탁드리고 싶다는 것입니다.");
                 break;
 
-            case PostmanState.Talk:
-                dialogue = GetTalkDialogue();
-                break;
+            case NPCUIState.Talk:
+                var dialogueData = GetTalkDialogue();
 
-            case PostmanState.Upgrade:
-                dialogue = "무림객잔 운영에 도움이 될 만한 물건들을 가져왔답니다.";
+                if (dialogueData != null)
+                    ChangeDialogue(dialogueData);
                 break;
             
+            case NPCUIState.Upgrade:
+                talkPanel.ChangeText("무림객잔 운영에 도움이 될 만한 물건들을 가져온 것입니다.");
+                break;
+
             default:
-                dialogue = "";
+                talkPanel.ChangeText("");
                 break;
         }
-        //Debug.Log($"대사 출력: {dialogue}");
-        talkPanel.ChangeText(dialogue);
     }
-
-    private string GetRandomDialogue(string[] dialogues)
+    
+    private NPCDialogueData GetRandomDialogue(NPCDialogueData[] dialogues)
     {
         if (dialogues == null || dialogues.Length == 0)
-            return "";
+            return null;
 
         int index;
 
@@ -154,26 +174,72 @@ public class PostManUI : MonoBehaviour
         while (dialogues.Length > 1 && index == lastDialogIndex);
 
         lastDialogIndex = index;
+
         return dialogues[index];
     }
     
-    private string GetTalkDialogue()
+    private NPCDialogueData GetTalkDialogue()
     {
-        // 30% 확률로 인사, 70% 잡담
         if (Random.value < 0.3f)
         {
             return GetRandomDialogue(greetingDialogues);
         }
-        else
-        {
-            return GetRandomDialogue(idleDialogues);
-        }
+
+        return GetRandomDialogue(idleDialogues);
     }
     
-    public void Close()
+    private void ChangeDialogue(NPCDialogueData data)
+    {
+        talkPanel.ChangeText(data.text);
+
+        if (data.expression != null)
+            characterSlot.SetExpression(data.expression);
+    }
+    
+    private void ChangeExpression(ExpressionData expression)
+    {
+        if (characterSlot != null)
+            characterSlot.SetExpression(expression);
+    }
+
+    private void SetDefaultExpression()
+    {
+        characterSlot.SetExpression(new ExpressionData
+        {
+            face = FaceType.Neutral,
+            eyebrow = EyebrowType.Default,
+            useDOScale = true
+        });
+    }
+    
+    private void SetHappyExpression()
+    {
+        characterSlot.SetExpression(new ExpressionData
+        {
+            face = FaceType.Happy1,
+            eyebrow = EyebrowType.Default,
+            useDOScale = true
+        });
+    }
+
+    private void SetConceitExpression()
+    {
+        characterSlot.SetExpression(new ExpressionData
+        {
+            face = FaceType.Conceited1,
+            eyebrow = EyebrowType.Angry,
+            useDOScale = true
+        });
+    }
+    
+    public void ChangeText(string text)
+    {
+        talkPanel.ChangeText(text);
+    }
+    
+    private void Close()
     {
         gameObject.SetActive(false);
         GameManager.Instance.CompleteState(GameFlowState.NPC);
-        //DayManager.Instance.DayStart();
     }
 }

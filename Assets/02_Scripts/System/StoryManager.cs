@@ -42,10 +42,6 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
 
     [SerializeField] private RestaurantEconomy economy;
     
-    [Header("사운드")]
-    [SerializeField] private AudioClip hitSE;
-    public AudioClip HitSE => hitSE;
-    
     private StoryUI storyUI;
     public StoryUI StoryUI => storyUI;
     private CharacterUI characterUI;
@@ -795,11 +791,11 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
                 break;
 
             case ScreenEffectType.FlashWithShake:
-                effectUI.PlayImpact(effect.effectPower, effect.effectDuration, hitSE, true);
+                effectUI.PlayImpact(effect.effectPower, effect.effectDuration, true);
                 break;
             
             case ScreenEffectType.ShakeAndSound:
-                effectUI.PlayImpact(effect.effectPower, effect.effectDuration, hitSE, false);
+                effectUI.PlayImpact(effect.effectPower, effect.effectDuration, false);
                 break;
             
             case ScreenEffectType.FadeBlur:
@@ -853,11 +849,11 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
                 break;
 
             case ScreenEffectType.FlashWithShake:
-                effectUI.PlayImpact(effect.effectPower, effect.effectDuration, hitSE, true);
+                effectUI.PlayImpact(effect.effectPower, effect.effectDuration, true);
                 break;
             
             case  ScreenEffectType.ShakeAndSound:
-                effectUI.PlayImpact(effect.effectPower, effect.effectDuration, hitSE, false);
+                effectUI.PlayImpact(effect.effectPower, effect.effectDuration, false);
                 break;
         }
         yield return new WaitForSeconds(effect.effectDuration);

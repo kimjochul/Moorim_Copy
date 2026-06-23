@@ -9,7 +9,8 @@ public class NPCMenuSlot : MonoBehaviour
     [SerializeField] private TextMeshProUGUI title;
 
     private NPCMenuData data;
-
+    public Button Button => button;
+    
     public void Init(NPCMenuData data, Action<NPCMenuData> callback)
     {
         this.data = data;
@@ -29,7 +30,7 @@ public class NPCMenuData
 {
     public string buttonName;
 
-    public MerchantUI.MerchantState state;
+    public NPCUIState state;
 
     public ExpressionData expression;
 }

@@ -9,6 +9,4 @@ public class SoundList : ScriptableObject
 
     [Header("효과음 리스트")]
     public List<SFXData> sfxList = new List<SFXData>();
-
-    public AudioClip typingSound;
 }

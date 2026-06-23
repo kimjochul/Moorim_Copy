@@ -37,6 +37,6 @@ public class StoryReplaySlot : MonoBehaviour
         UIManager.Instance.CreateOkPopup(msg, () =>
         {
             StoryManager.Instance.StoryReplayManager.PlayStory(story.id);
-        }, () => {});
+        }, () => {}, true);
     }
 }

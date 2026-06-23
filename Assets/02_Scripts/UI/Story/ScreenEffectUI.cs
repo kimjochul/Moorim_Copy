@@ -249,7 +249,6 @@ public class ScreenEffectUI : MonoBehaviour
     public void PlayImpact(
         float shakePower,
         float shakeDuration,
-        AudioClip se,
         bool useFlash)
     {
         if (useFlash)
@@ -257,7 +256,7 @@ public class ScreenEffectUI : MonoBehaviour
 
         ShakeScreen(shakePower, shakeDuration);
 
-        SoundManager.Instance.PlaySE(se);
+        SoundManager.Instance.PlaySFX("Hit");
     }
     #endregion
 }

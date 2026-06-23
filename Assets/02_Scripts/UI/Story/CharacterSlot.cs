@@ -250,14 +250,22 @@ public class CharacterSlot : MonoBehaviour
             });
     }
     
-    public void PlayEmotionIcon(Sprite icon)
+    public void PlayEmotionIcon(Emotion emotion)
     {
         emotionIcon.DOKill();
         
+        EmotionIcon data = currentCharacter.emotionIcons.Find(x => x.emotion == emotion);
+        
         iconBubble.gameObject.SetActive(true);
-        emotionIcon.sprite = icon;
+        emotionIcon.sprite = data.icon;
         emotionIcon.gameObject.SetActive(true);
 
+        // 감정 전용 효과음
+        if (data.sound != null)
+        {
+            SoundManager.Instance.PlaySFX(data.sound);
+        }
+        
         RectTransform rt = iconBubble.rectTransform;
 
         Vector2 startPos = rt.anchoredPosition;
@@ -280,7 +288,7 @@ public class CharacterSlot : MonoBehaviour
 
         // 유지
         seq.AppendInterval(1f);
-
+        
         // 퇴장
         seq.Append(emotionIcon.DOFade(0f, 0.3f));
         seq.Join(rt.DOAnchorPos(endPos + Vector2.down * 20f, 0.5f));
