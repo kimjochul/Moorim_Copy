@@ -2824,7 +2824,7 @@ MonoBehaviour:
   amountInput: {fileID: 6280475704955814722}
   repayButton: {fileID: 2773703616184724505}
   cancelButton: {fileID: 209219631649345045}
-  talkPanel: {fileID: 197587849062485464}
+  merchantUI: {fileID: 0}
 --- !u!1 &3910774368019621780
 GameObject:
   m_ObjectHideFlags: 0
@@ -7560,6 +7560,10 @@ PrefabInstance:
     - target: {fileID: 4342582666316294395, guid: 778a70718af10ce4db4e15fb689aa2f7, type: 3}
       propertyPath: m_Name
       value: CharacterSlot
+      objectReference: {fileID: 0}
+    - target: {fileID: 4342582666316294395, guid: 778a70718af10ce4db4e15fb689aa2f7, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

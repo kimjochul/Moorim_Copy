@@ -37,6 +37,7 @@ public class DayManager : Singleton<DayManager>
     public DayData DayData {  get => dayData; private set => dayData = value; }
 
     public bool IsRunning { get; private set; }
+    private bool isPaused;
     
     public event Action OnDayStart; // 각 매니저에서 가게 운영이 시작될 때의 동작들을 여기에 등록
     public event Action OnDayEnd; // 각 매니저에서 가게 운영이 종료될 때의 동작들을 여기에 등록
@@ -128,6 +129,7 @@ public class DayManager : Singleton<DayManager>
     void Update()
     {
         if (!IsRunning) return;
+        if (isPaused) return;
         
         _timer += Time.deltaTime;
 
@@ -245,5 +247,15 @@ public class DayManager : Singleton<DayManager>
         _isFirstDayStart = true;
 
         Debug.Log("DayManager Reset 완료");
+    }
+    
+    public void PauseTime()
+    {
+        isPaused = true;
+    }
+
+    public void ResumeTime()
+    {
+        isPaused = false;
     }
 }

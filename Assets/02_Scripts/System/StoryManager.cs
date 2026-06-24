@@ -42,6 +42,9 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
 
     [SerializeField] private RestaurantEconomy economy;
     
+    [Header("캐릭터 데이터")]
+    [SerializeField] private List<Character> characterDatas;
+    
     private StoryUI storyUI;
     public StoryUI StoryUI => storyUI;
     private CharacterUI characterUI;
@@ -193,8 +196,7 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         else
             characterUI.Hide();
 
-        yield return StartCoroutine(
-            SetupSceneInternal(false));
+        yield return StartCoroutine(SetupSceneInternal(false));
     }
     
     private IEnumerator SetupSceneInternal(bool useCrossFadeTransition) // 암전하는 fade를 사용 안하면 true
@@ -467,6 +469,13 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
             yield break;
         }
         
+        ApplyStoryRewardsAndFlags();
+            
+        yield return StartCoroutine(PlayQueuedStory());
+    }
+
+    private void ApplyStoryRewardsAndFlags()
+    {
         runtimeNameOverrides.Clear();
         
         if (currentTrigger != null && !string.IsNullOrEmpty(currentTrigger.addFlagOnComplete))
@@ -531,8 +540,6 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
                 ingredientUnlockManager.Unlock(id);
             }
         }
-            
-        yield return StartCoroutine(PlayQueuedStory());
     }
     
     public void SkipCurrentScene()
@@ -909,16 +916,16 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
     public void PlayRecallStory(int storyID)
     {
         Story story = storySO.stories.Find(x => x.id == storyID);
-        currentTrigger = null;
 
         if (story == null)
             return;
         
-        StartCoroutine(BeginStory(story, StoryPlayMode.Recall));
+        StartCoroutine(PlaySceneTransition(() => BeginStory(story, StoryPlayMode.Recall)));
     }
     
     private void EndRecallStory()
     {
+        DayManager.Instance.ResumeTime();
         runtimeNameOverrides.Clear();
 
         storyUI.Hide();
@@ -926,7 +933,6 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
 
         currentScene = null;
         currentStory = null;
-        currentTrigger = null;
 
         isPlaying = false;
 
@@ -987,6 +993,15 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         fadePanel.canvasGroup.blocksRaycasts = false;
     }
 
+    public Character GetCharacter(int characterID)
+    {
+        foreach (var character in characterDatas)
+            if (character.characterID == characterID)
+                return character;
+        
+        return null;
+    }
+    
     public void SetScreenEffectUI(ScreenEffectUI ui)
     {
         screenEffectUI = ui;
