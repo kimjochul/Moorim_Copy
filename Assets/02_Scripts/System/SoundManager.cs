@@ -172,15 +172,7 @@ public class SoundManager : Singleton<SoundManager>
 
     public void PlayTypeSound()
     {
-        typingSource.PlayOneShot(soundList.typingSound, this.sfxVolume * this.masterVolume);
-    }
-
-    public void PlaySE(AudioClip clip)
-    {
-        if (clip == null)
-            return;
-        
-        sfxSource.PlayOneShot(clip, this.sfxVolume * this.masterVolume);
+        PlaySFX("Type");
     }
     
     /// <summary>

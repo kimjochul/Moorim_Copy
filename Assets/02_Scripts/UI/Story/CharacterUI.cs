@@ -422,8 +422,7 @@ public class CharacterUI : MonoBehaviour
                 Vector2 dir = target != null ? GetDirection(slot, target) : Vector2.right;
                 if (motion.value >= 50f)
                 {
-                    AudioClip hitSe = StoryManager.Instance.HitSE;
-                    StoryManager.Instance.ScreenEffectUI.PlayImpact(motion.value, motion.duration, hitSe, false);
+                    StoryManager.Instance.ScreenEffectUI.PlayImpact(motion.value, motion.duration, false);
                 }
                 yield return slot.PlayAttack(dir, motion.value, motion.duration * 0.5f);
                 break;
@@ -538,7 +537,7 @@ public class CharacterUI : MonoBehaviour
 
         if (icon != null)
         {
-            slot.PlayEmotionIcon(icon.icon);
+            slot.PlayEmotionIcon(emotion);
         }
     }
     

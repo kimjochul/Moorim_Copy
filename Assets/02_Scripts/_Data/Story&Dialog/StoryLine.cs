@@ -93,6 +93,11 @@ public enum Emotion
     Sad,
     Embarrassed,
     Surprised,
+    Complicated,
+    Disappointed,
+    Silence,
+    Lovely,
+    Exclamation
 }
 
 public enum FaceType
@@ -141,6 +146,7 @@ public enum EyebrowType
     Embarrassed,
     Disappointment,
     HalfDown,
+    StrongAnger,
 }
 
 public enum ShadowType

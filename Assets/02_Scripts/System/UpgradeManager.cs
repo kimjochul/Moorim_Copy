@@ -11,8 +11,10 @@ public class UpgradeManager : Singleton<UpgradeManager>
     
     public Action SelectedOptionUpgraded; 
     
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+        
         foreach (var data in upgradeList)
         {
             upgradeDataDict[data.type] = data;

@@ -170,9 +170,6 @@ public class EconomyManager : Singleton<EconomyManager>, IInitializable
     {
         Debug.Log("Tracker 등록됨");
         this.guestResultTracker = tracker;
-
-        DayManager.Instance.OnDayEnd -= CacheDailyResult;
-        DayManager.Instance.OnDayEnd += CacheDailyResult;
         
         DayManager.Instance.OnDayEnd -= tracker.EndDay; // 중복 방지
         DayManager.Instance.OnDayEnd += tracker.EndDay;
@@ -239,37 +236,33 @@ public class EconomyManager : Singleton<EconomyManager>, IInitializable
         TodayEconomyChanged?.Invoke();
         Debug.Log("Economy Reset 완료");
     }
-    
-    public void CacheDailyResult()
-    {
-        if (guestResultTracker == null) return;
-        
-        Debug.Log("CacheDailyResult 실행됨");
 
+    private void SetLastReceiptData()
+    {
+        int happy = guestResultTracker.DailyResult.goodCount + guestResultTracker.DailyResult.veryGoodCount;
+
+        int angry = guestResultTracker.DailyResult.badCount + guestResultTracker.DailyResult.veryBadCount;
+
+        // 영수증용
+        lastReceiptData = new ReceiptData
+        {
+            week = DayManager.Instance.DayData,
+            totalRevenue = TodayMoneyIncome,
+            fame = TodayFameIncome,
+            debt = RestaurantEconomy.Debt,
+            happyGuests = happy,
+            angryGuests = angry,
+            netIncome = TodayMoneyIncome
+        };
+
+        // 세이브용
         _lastDailyResult = new DailyResultSaveData
         {
             todayMoneyIncome = _todayMoneyIncome,
             todayFameIncome = _todayFameIncome,
             todayCustomerCount = _todayCustomerCount,
-
-            happyGuests = guestResultTracker.DailyResult.goodCount + guestResultTracker.DailyResult.veryGoodCount,
-            angryGuests = guestResultTracker.DailyResult.badCount + guestResultTracker.DailyResult.veryBadCount,
-        };
-    }
-
-    public void SetLastReceiptData()
-    {
-        lastReceiptData = new ReceiptData
-        { 
-            week = DayManager.Instance.DayData,
-            totalRevenue = TodayMoneyIncome,
-            fame = TodayFameIncome,
-            debt =RestaurantEconomy.Debt,
-
-            happyGuests = guestResultTracker.DailyResult.goodCount + guestResultTracker.DailyResult.veryGoodCount,
-            angryGuests = guestResultTracker.DailyResult.badCount + guestResultTracker.DailyResult.veryBadCount,
-
-            netIncome = TodayMoneyIncome
+            happyGuests = happy,
+            angryGuests = angry
         };
     }
 }

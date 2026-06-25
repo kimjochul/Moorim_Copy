@@ -9,9 +9,14 @@ public class OkPopup : PopupController
     [SerializeField] private Button btnOk;
     [SerializeField] private Button btnCancel;
     
-    public void Init(string message)
+    public void Init(string message, bool useCancel)
     {
         this.txtMessage.text = message;
+        
+        if (!useCancel)
+            btnCancel.gameObject.SetActive(false);
+        else
+            btnOk.gameObject.SetActive(true);
     }
     public void ButtonOk(UnityAction action)
     {

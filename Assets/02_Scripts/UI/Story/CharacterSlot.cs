@@ -19,6 +19,7 @@ public class CharacterSlot : MonoBehaviour
     
     [Header("감정 아이콘")]
     [SerializeField] private Image emotionIcon;
+    [SerializeField] private Image iconBubble;
     
     private int currentCharacterID = -1;
     public int CurrentCharacterID => currentCharacterID;
@@ -62,7 +63,7 @@ public class CharacterSlot : MonoBehaviour
         slotRoot = GetComponent<RectTransform>();
         
         characterImage.color = Color.white;
-        defaultEmotionIconPos = emotionIcon.rectTransform.anchoredPosition;
+        defaultEmotionIconPos = iconBubble.rectTransform.anchoredPosition;
     }
     
     public void SetCharacter(Character character, Sprite bodySprite)
@@ -91,11 +92,11 @@ public class CharacterSlot : MonoBehaviour
 
         if (character.visual != null)
         {
-            emotionIcon.rectTransform.anchoredPosition = character.visual.emotionIconPosition;
+            iconBubble.rectTransform.anchoredPosition = character.visual.emotionIconPosition;
         }
         else
         {
-            emotionIcon.rectTransform.anchoredPosition = defaultEmotionIconPos;
+            iconBubble.rectTransform.anchoredPosition = defaultEmotionIconPos;
         }
         
         RefreshShadow();
@@ -126,11 +127,11 @@ public class CharacterSlot : MonoBehaviour
         
         if (character.visual != null)
         {
-            emotionIcon.rectTransform.anchoredPosition = character.visual.emotionIconPosition;
+            iconBubble.rectTransform.anchoredPosition = character.visual.emotionIconPosition;
         }
         else
         {
-            emotionIcon.rectTransform.anchoredPosition = defaultEmotionIconPos;
+            iconBubble.rectTransform.anchoredPosition = defaultEmotionIconPos;
         }
         
         RefreshShadow();
@@ -249,34 +250,49 @@ public class CharacterSlot : MonoBehaviour
             });
     }
     
-    public void PlayEmotionIcon(Sprite icon)
+    public void PlayEmotionIcon(Emotion emotion)
     {
         emotionIcon.DOKill();
         
-        emotionIcon.sprite = icon;
+        EmotionIcon data = currentCharacter.emotionIcons.Find(x => x.emotion == emotion);
+        
+        iconBubble.gameObject.SetActive(true);
+        emotionIcon.sprite = data.icon;
         emotionIcon.gameObject.SetActive(true);
 
-        RectTransform rt = emotionIcon.rectTransform;
+        // 감정 전용 효과음
+        if (data.sound != null)
+        {
+            SoundManager.Instance.PlaySFX(data.sound);
+        }
+        
+        RectTransform rt = iconBubble.rectTransform;
 
         Vector2 startPos = rt.anchoredPosition;
         Vector2 endPos = startPos + Vector2.up * 50f;
 
-        Color c = emotionIcon.color;
-        c.a = 0;
-        emotionIcon.color = c;
+        Color c1 = emotionIcon.color;
+        c1.a = 0;
+        emotionIcon.color = c1;
+        
+        Color c2 = iconBubble.color;
+        c2.a = 0;
+        emotionIcon.color = c2;
         
         Sequence seq = DOTween.Sequence();
         
         // 등장
-        seq.Append(emotionIcon.DOFade(1f, 0.15f));
-        seq.Join(rt.DOAnchorPos(endPos, 0.3f).SetEase(Ease.OutQuad));
+        seq.Append(iconBubble.DOFade(1f, 0.1f));
+        seq.Join(emotionIcon.DOFade(1f, 0.3f));
+        seq.Join(rt.DOAnchorPos(endPos, 0.5f).SetEase(Ease.OutQuad));
 
         // 유지
-        seq.AppendInterval(0.8f);
-
+        seq.AppendInterval(1f);
+        
         // 퇴장
-        seq.Append(emotionIcon.DOFade(0f, 0.2f));
-        seq.Join(rt.DOAnchorPos(endPos + Vector2.down * 20f, 0.2f));
+        seq.Append(emotionIcon.DOFade(0f, 0.3f));
+        seq.Join(rt.DOAnchorPos(endPos + Vector2.down * 20f, 0.5f));
+        seq.Append(iconBubble.DOFade(0f, 0.1f));
         
         seq.OnComplete(() =>
         {
@@ -314,6 +330,7 @@ public class CharacterSlot : MonoBehaviour
     private void HideEmotionIcon()
     {
         emotionIcon.gameObject.SetActive(false);
+        iconBubble.gameObject.SetActive(false);
     }
 
     public void SetUnknown(bool value)

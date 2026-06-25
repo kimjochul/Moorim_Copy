@@ -32,6 +32,6 @@ public class TutorialCharacter : MonoBehaviour
         Sprite icon = characterSlot.CurrentCharacter.emotionIcons.Find(x => x.emotion == emotion)?.icon;
 
         if (icon != null)
-            characterSlot.PlayEmotionIcon(icon);
+            characterSlot.PlayEmotionIcon(emotion);
     }
 }

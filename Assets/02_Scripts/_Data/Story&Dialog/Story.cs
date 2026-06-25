@@ -9,7 +9,8 @@ public class Story:ScriptableObject
     public int id;
     public string storyName;
     public string description;
-    
+
+    public List<int> characterIDs;
     public List<StoryScene> scenes;
     
     public QuestData rewardQuest;

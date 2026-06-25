@@ -28,6 +28,7 @@ public class EmotionIcon
 {
     public Emotion emotion;
     public Sprite icon;
+    public SFXData sound;
 }
 
 [Serializable]

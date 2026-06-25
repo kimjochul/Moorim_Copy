@@ -1,16 +1,17 @@
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class StoryReplaySlot : MonoBehaviour
+public class StoryReplaySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] private TextMeshProUGUI titleText;
-    [SerializeField] private TextMeshProUGUI description;
-
     [SerializeField] private Button slotButton; 
     
     private Story story;
+    private BriefStoryInfo briefStoryInfo;
+    private StoryDetailPanel storyDetailPanel;
 
     private void OnEnable()
     {
@@ -22,21 +23,29 @@ public class StoryReplaySlot : MonoBehaviour
         if(slotButton)
             slotButton.onClick.RemoveListener(OnClick);
     }
-
-    public void Setup(Story story)
+    
+    public void Setup(Story story, BriefStoryInfo storyInfo, StoryDetailPanel detailPanel)
     {
         this.story = story;
-
+        briefStoryInfo = storyInfo;
+        this.storyDetailPanel = detailPanel;
+        
         titleText.text = story.storyName;
-        description.text = story.description;
     }
 
     public void OnClick()
     {
-        string msg = $"{story.storyName}을 다시 보시겠습니까?";
-        UIManager.Instance.CreateOkPopup(msg, () =>
-        {
-            StoryManager.Instance.StoryReplayManager.PlayStory(story.id);
-        }, () => {});
+        storyDetailPanel.SetStory(story);
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        briefStoryInfo.SetInfo(story);
+        briefStoryInfo.ShowInfo(transform as RectTransform);
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        briefStoryInfo.HideInfo();
     }
 }

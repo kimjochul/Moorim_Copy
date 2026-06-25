@@ -21,9 +21,16 @@ public class NPCTalkPanel : MonoBehaviour
 
     private IEnumerator TempTextCoroutine(string message)
     {
+        int count = 0;
+        
         foreach (char c in message)
         {
             this.text.text += c;
+            count++;
+            if (!char.IsPunctuation(c) && !char.IsWhiteSpace(c) && count % 2 == 0)
+            {
+                SoundManager.Instance.PlayTypeSound();
+            }
             yield return new WaitForSeconds(textSpeed);
         }
     }
