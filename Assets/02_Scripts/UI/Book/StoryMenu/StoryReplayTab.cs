@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class StoryReplayTab : BaseTab
@@ -7,6 +8,9 @@ public class StoryReplayTab : BaseTab
     
     [SerializeField] private BriefStoryInfo briefStoryInfo;
     [SerializeField] private StoryDetailPanel detailPanel;
+    
+    private StoryReplaySlot currentSelectedSlot;
+
     public void Refresh()
     {
         foreach (Transform child in contentParent)
@@ -16,9 +20,22 @@ public class StoryReplayTab : BaseTab
         {
             Story story = StoryManager.Instance.StoryReplayManager.GetStory(storyID);
             StoryReplaySlot slot = Instantiate(slotPrefab, contentParent);
-
-            slot.Setup(story, briefStoryInfo, detailPanel);
+            
+            slot.Setup(story, briefStoryInfo, detailPanel, this);
         }
+        
+        detailPanel.gameObject.SetActive(false);
+    }
+    
+    public void SelectSlot(StoryReplaySlot slot)
+    {
+        if (currentSelectedSlot != null)
+            currentSelectedSlot.SetSelected(false);
+
+        currentSelectedSlot = slot;
+
+        if (currentSelectedSlot != null)
+            currentSelectedSlot.SetSelected(true);
     }
     
     public override void SetupData()

@@ -297,9 +297,9 @@ public class UIManager : Singleton<UIManager>
     private void CheckAndPauseGame()
     {
         if (IsBookActive || IsSettingActive || IsSaveLoadActive)
-            Time.timeScale = 0f;
+            DayManager.Instance.PauseTime();
         else 
-            Time.timeScale = 1f;
+            DayManager.Instance.ResumeTime();
     }
 
     private void BindSceneUI()
