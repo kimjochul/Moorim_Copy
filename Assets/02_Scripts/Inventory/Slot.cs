@@ -27,6 +27,8 @@ public class Slot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDropHandler
     public float SpoilTimer { get; set; } = 0f;
     public int FridgeSpoilTimer { get; set; } = 0;
     public bool IsSpoiling {get; set;} = false;
+    
+    public Image SlotIcon => slotIcon;
 
     public event Action<Slot, Slot> OnSlotDrop; // 드래그 중인 아이템을 슬롯에서 놓을 때 호출 용
     

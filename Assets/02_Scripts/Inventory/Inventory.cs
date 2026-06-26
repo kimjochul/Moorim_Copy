@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Loading;
 using UnityEngine;
 using UnityEngine.Events;
@@ -400,6 +401,28 @@ public class Inventory : MonoBehaviour, IInitializable
 
         Debug.Log("빈 슬롯 없음");
         return -1;
+    }
+    
+    public void RefreshItemOrder()
+    {
+        var items = slots.Where(x => !x.IsEmpty).OrderBy(x => x.Item.ID)
+            .Select(x => new
+            {
+                x.Item,
+                x.Count,
+                x.SpoilTimer,
+                x.FridgeSpoilTimer
+            }).ToList();
+
+        foreach (var slot in slots)
+            slot.Clear();
+
+        for (int i = 0; i < items.Count; i++)
+        {
+            slots[i].SetItem(items[i].Item, items[i].Count);
+            slots[i].SpoilTimer = items[i].SpoilTimer;
+            slots[i].FridgeSpoilTimer = items[i].FridgeSpoilTimer;
+        }
     }
     
     public InventorySaveData GetSaveData()
