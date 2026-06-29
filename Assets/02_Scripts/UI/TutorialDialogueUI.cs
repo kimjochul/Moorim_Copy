@@ -18,6 +18,7 @@ public class TutorialDialogueUI : MonoBehaviour
 
     public bool IsTyping => isTyping;
 
+    /*
     public void Show(string speakerName, string line)
     {
         root.SetActive(true);
@@ -27,6 +28,34 @@ public class TutorialDialogueUI : MonoBehaviour
         if (typingCoroutine != null)
             StopCoroutine(typingCoroutine);
 
+        typingCoroutine = StartCoroutine(TypeRoutine(line));
+    }
+    */
+    
+    public void Show(string speakerName, string line)
+    {
+        Debug.Log($"[TutorialDialogueUI] Show 호출됨. 화자: {speakerName}, 대사: {line}");
+
+        if (root == null) 
+        { 
+            Debug.LogError("[TutorialDialogueUI] 🚨 root(대화창 패널)가 연결되지 않았습니다!"); 
+            return; 
+        }
+
+        root.SetActive(true);
+        Debug.Log("[TutorialDialogueUI] root(대화창 패널) SetActive(true) 완료");
+
+        if (nameText == null) 
+        { 
+            Debug.LogError("[TutorialDialogueUI] 🚨 nameText가 연결되지 않았습니다!"); 
+            return; 
+        }
+        nameText.text = speakerName;
+
+        if (typingCoroutine != null)
+            StopCoroutine(typingCoroutine);
+
+        Debug.Log("[TutorialDialogueUI] TypeRoutine 코루틴 시작 직전");
         typingCoroutine = StartCoroutine(TypeRoutine(line));
     }
 
