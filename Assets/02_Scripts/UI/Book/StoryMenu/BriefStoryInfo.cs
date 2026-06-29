@@ -27,7 +27,7 @@ public class BriefStoryInfo : MonoBehaviour
         // 오른쪽 중앙
         Vector3 rightCenter = (corners[2] + corners[3]) * 0.5f;
 
-        popupRect.position = rightCenter + Vector3.right * 100f;
+        popupRect.position = rightCenter + Vector3.right * 160f + Vector3.down * 60;
 
         gameObject.SetActive(true);
     }

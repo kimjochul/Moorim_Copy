@@ -54,9 +54,9 @@ public class LoadUIManager : Singleton<LoadUIManager>
     
     public void SetFadeImmediate(bool black)
     {
-        fade.gameObject.SetActive(true);
-        fade.blocksRaycasts = black;
         fade.alpha = black ? 1 : 0;
+        fade.blocksRaycasts = black;
+        fade.gameObject.SetActive(true);
     }
 
     #endregion

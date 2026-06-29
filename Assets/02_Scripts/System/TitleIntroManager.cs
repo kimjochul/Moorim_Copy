@@ -11,9 +11,28 @@ public class TitleIntroManager : MonoBehaviour
     [SerializeField] private float logoDuration = 2f;
     [SerializeField] private float fadeDuration = 1f;
     
+    private Coroutine introRoutine;
+    private bool skipped;
+    
     private IEnumerator Start()
     {
-        yield return PlaySequence();
+        yield return introRoutine = StartCoroutine(PlaySequence());
+    }
+    
+    private void Update()
+    {
+        if (skipped)
+            return;
+
+        if (Input.anyKeyDown || Input.GetMouseButtonDown(0))
+        {
+            skipped = true;
+
+            if (introRoutine != null)
+                StopCoroutine(introRoutine);
+
+            SkipIntro();
+        }
     }
     
     private IEnumerator PlaySequence()
@@ -34,5 +53,16 @@ public class TitleIntroManager : MonoBehaviour
 
         // 메인메뉴 애니메이션
         menuAnimator.Play();
+    }
+    
+    private void SkipIntro()
+    {
+        DOTween.Kill(this);
+
+        teamLogo.SetActive(false);
+
+        LoadUIManager.Instance.SetFadeImmediate(false);
+
+        menuAnimator.ShowImmediate();
     }
 }

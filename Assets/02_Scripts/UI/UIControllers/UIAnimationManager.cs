@@ -114,7 +114,7 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
 
     [Header("=== ������ ������ ���� Ƣ�� ���� ===")]
     [Header("Show ����")]
-    [Range(0.1f, 1.5f)]
+    [Range(0.1f, 2f)]
     [SerializeField] 
     private float bouncePopShowDuration = 0.8f;
     [SerializeField]
