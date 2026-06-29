@@ -925,7 +925,6 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
     
     private void EndRecallStory()
     {
-        DayManager.Instance.ResumeTime();
         runtimeNameOverrides.Clear();
 
         storyUI.Hide();

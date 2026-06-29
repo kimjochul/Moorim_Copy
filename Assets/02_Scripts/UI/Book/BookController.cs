@@ -14,9 +14,6 @@ public class BookController : MonoBehaviour
 
         for (int i = 0; i < bookView.menus.Length; i++)
         {
-            // if¹® ÀÓ½Ã
-            if (i == 2)
-                break;
             int menuIndex = i;
             this.bookView.menus[i].menuView.OnTabToggleClicked += (tabIndex) => HandleTabClicked(menuIndex, tabIndex);
         }
@@ -36,19 +33,19 @@ public class BookController : MonoBehaviour
     }
 
 
-    // »ó´Ü ¸Þ´º°¡ Å¬¸¯µÇ¾úÀ» ¶§ Model¿¡ Àü´Þ
+    // ï¿½ï¿½ï¿½ ï¿½Þ´ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½Ç¾ï¿½ï¿½ï¿½ ï¿½ï¿½ Modelï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     private void HandleMenuClicked(int index)
     {
         this.bookModel.ChangeMenu(index);
     }
 
-    // ÇÏ´Ü ÅÇÀÌ Å¬¸¯µÇ¾úÀ» ¶§ Model¿¡ Àü´Þ
+    // ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½Ç¾ï¿½ï¿½ï¿½ ï¿½ï¿½ Modelï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     private void HandleTabClicked(int menuIndex, int tabIndex)
     {
         this.bookModel.ChangeTab(menuIndex, tabIndex);
     }
 
-    // ¸Þ´º »óÅÂ°¡ º¯ÇßÀ» ¶§ ½ÇÁ¦ ViewÀÇ ¸Þ´º¿Í Åä±Û UI¸¦ µ¿±âÈ­
+    // ï¿½Þ´ï¿½ ï¿½ï¿½ï¿½Â°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Viewï¿½ï¿½ ï¿½Þ´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ UIï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½È­
     private void UpdateMenuView(int activeMenuIndex)
     {
         for (int i = 0; i < bookView.menus.Length; i++)
@@ -61,7 +58,7 @@ public class BookController : MonoBehaviour
         }
     }
 
-    // ÅÇ »óÅÂ°¡ º¯ÇßÀ» ¶§, ½ÇÁ¦ ViewÀÇ ÅÇ°ú Åä±Û UI¸¦ µ¿±âÈ­
+    // ï¿½ï¿½ ï¿½ï¿½ï¿½Â°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ Viewï¿½ï¿½ ï¿½Ç°ï¿½ ï¿½ï¿½ï¿½ UIï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½È­
     private void UpdateTabView(int menuIndex, int activeTabIndex)
     {
         BaseMenu activeMenu = this.bookView.menus[menuIndex].menuView;
@@ -81,7 +78,7 @@ public class BookController : MonoBehaviour
         }
     }
 
-    // Ã¥ÀÌ Ã³À½ ¿­¸± ¶§ ¸ðµç ÅÇÀ» ¼øÈ¸ÇÏ¸ç ÃÊ±â µ¥ÀÌÅÍ »ðÀÔ
+    // Ã¥ï¿½ï¿½ Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¸ï¿½Ï¸ï¿½ ï¿½Ê±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     private void InitData()
     {
         foreach (var menuPair in this.bookView.menus)

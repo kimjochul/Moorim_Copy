@@ -27,6 +27,8 @@ public class Slot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDropHandler
     public float SpoilTimer { get; set; } = 0f;
     public int FridgeSpoilTimer { get; set; } = 0;
     public bool IsSpoiling {get; set;} = false;
+    
+    public Image SlotIcon => slotIcon;
 
     public event Action<Slot, Slot> OnSlotDrop; // 드래그 중인 아이템을 슬롯에서 놓을 때 호출 용
     
@@ -83,12 +85,6 @@ public class Slot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDropHandler
 
     private void OnClickSlotAction()
     {
-        if (Owner.IsReadOnly)
-        {
-            // 인연 아이템용 
-            return;
-        }
-        
         OnSlotClick?.Invoke(this);
     }
 
@@ -150,6 +146,11 @@ public class Slot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDropHandler
             slotIcon.sprite = newItem.Icon;
             countText.text = Count.ToString();
             slotIcon.gameObject.SetActive(true);
+        }
+        
+        if (Owner.Type == Constants.InventoryType.BondItem)
+        {
+            countText.gameObject.SetActive(false);
         }
     }
 

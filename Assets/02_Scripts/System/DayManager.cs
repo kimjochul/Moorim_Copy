@@ -80,7 +80,10 @@ public class DayManager : Singleton<DayManager>
         
         if (!isLoad)
             _timer = 0f;
+        
+        Time.timeScale = 1f;
         IsRunning = true;
+        isPaused = false;
         
         // _hour = (int)gameStartHour;
         // _minute = 0;
@@ -108,7 +111,9 @@ public class DayManager : Singleton<DayManager>
         GameManager.Instance.SetState(GameFlowState.Gameplay);
         Debug.Log("Load Day Start");
 
+        Time.timeScale = 1f;
         IsRunning = true;
+        isPaused = false;
 
         _prevHour = -1;
         _prevMinute = -1;

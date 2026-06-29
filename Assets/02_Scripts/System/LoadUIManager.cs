@@ -13,9 +13,24 @@ public class LoadUIManager : Singleton<LoadUIManager>
     [SerializeField] private Image progressBar;
     [SerializeField] private TextMeshProUGUI percentText;
     [SerializeField] private TextMeshProUGUI tipText;
-
+    [SerializeField] private float followSpeed = 800f;
+    
+    [Header("Progress Mover")]
+    [SerializeField] private RectTransform progressMover;
+    [SerializeField] private RectTransform progressStart;
+    [SerializeField] private RectTransform progressEnd;
+    
     private float currentProgress = 0f;
+    private Vector2 targetPos;
+    
+    private void LateUpdate()
+    {
+        if (!loadingUI.activeInHierarchy)
+            return;
 
+        progressMover.anchoredPosition = Vector2.MoveTowards(progressMover.anchoredPosition, targetPos, followSpeed * Time.deltaTime);
+    }
+    
     #region Fade
 
     public IEnumerator FadeOut(float duration = 1f)
@@ -25,16 +40,23 @@ public class LoadUIManager : Singleton<LoadUIManager>
 
         fade.alpha = 0f;
         
-        yield return fade.DOFade(1f, duration).SetUpdate(true).WaitForCompletion();
+        yield return fade.DOFade(1f, duration).SetEase(Ease.OutQuad).SetUpdate(true).WaitForCompletion();
     }
 
     public IEnumerator FadeIn(float duration = 1f)
     {
         fade.alpha = 1f;
-        yield return fade.DOFade(0f, duration).SetUpdate(true).WaitForCompletion();
+        yield return fade.DOFade(0f, duration).SetEase(Ease.InQuad).SetUpdate(true).WaitForCompletion();
 
         fade.blocksRaycasts = false;
         fade.gameObject.SetActive(false);
+    }
+    
+    public void SetFadeImmediate(bool black)
+    {
+        fade.alpha = black ? 1 : 0;
+        fade.blocksRaycasts = black;
+        fade.gameObject.SetActive(true);
     }
 
     #endregion
@@ -44,8 +66,12 @@ public class LoadUIManager : Singleton<LoadUIManager>
     public void ShowLoading()
     {
         loadingUI.SetActive(true);
+        
         currentProgress = 0f;
         UpdateUI(0f);
+        
+        progressMover.anchoredPosition = progressStart.anchoredPosition;
+        targetPos = progressStart.anchoredPosition;
     }
 
     public void HideLoading()
@@ -65,6 +91,8 @@ public class LoadUIManager : Singleton<LoadUIManager>
         progressBar.fillAmount = value;
         percentText.text = $"{(int)(value * 100)}%";
         
+        UpdateProgressMover(value);
+        
         if (value < 0.3f)
             tipText.text = "객잔을 정리하는 중...";
         else if (value < 0.7f)
@@ -77,7 +105,13 @@ public class LoadUIManager : Singleton<LoadUIManager>
     {
         currentProgress = value;
         UpdateUI(value);
+        
+        progressMover.anchoredPosition = targetPos;
     }
-
+    
+    private void UpdateProgressMover(float value)
+    {
+        targetPos  = Vector2.Lerp(progressStart.anchoredPosition, progressEnd.anchoredPosition, value);
+    }
     #endregion
 }
