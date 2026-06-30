@@ -26,15 +26,28 @@ public class SkillUIManager : Singleton<SkillUIManager>
 
         teleportCover.fillAmount = 0f;
         teleportCooltimeText.gameObject.SetActive(false);
+        
+        RefreshSkillUnlock();
     }
 
+    private void RefreshSkillUnlock()
+    {
+        ghostCover.transform.parent.gameObject.SetActive(UpgradeManager.Instance.HasCharacterSkill(CharacterSkillLevel.Ghost));
+        teleportCover.transform.parent.gameObject.SetActive(UpgradeManager.Instance.HasCharacterSkill(CharacterSkillLevel.Teleport)); 
+    }
+    
     private void Update()
     {
         // O키를 누르고 쿨타임 중이 아닐 때만 고스트 스킬 실행
-        if (Input.GetKeyDown(KeyCode.O) && !isGhostCooldown)
+        if (UpgradeManager.Instance.HasCharacterSkill(CharacterSkillLevel.Ghost) && Input.GetKeyDown(KeyCode.O) && !isGhostCooldown)
         {
             UseGhostSkill();
         }
+
+        // if (UpgradeManager.Instance.HasCharacterSkill(CharacterSkillLevel.Teleport) && Input.GetKeyDown(KeyCode.P) && !isTeleportCooldown)
+        // {
+        //     UseTeleportSkill();
+        // }
     }
 
     /// <summary>

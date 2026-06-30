@@ -248,6 +248,22 @@ public class SaveManager : Singleton<SaveManager>
         DayManager.Instance.LoadFromData(data.day);
         RecipeUnlockManager.Instance.LoadFromData(data.recipe);
         IngredientUnlockManager.Instance.LoadFromData(data.ingredient);
+        EconomyManager.Instance.LoadFromData(data.economy);
+        if (data.dailyResult != null)
+        {
+            EconomyManager.Instance.LoadDailyResult(data.dailyResult);
+        }
+        if (data.bond != null)
+        {
+            BondManager.Instance.LoadFromData(data.bond);
+        }
+        
+        if (data.upgrade != null)
+        {
+            UpgradeManager.Instance.LoadFromData(data.upgrade);
+            InventoryManager.Instance.ApplyInventoryUpgrade();
+        }
+        
         if (data.inventories != null)
         {
             foreach (var invData in data.inventories)
@@ -274,22 +290,9 @@ public class SaveManager : Singleton<SaveManager>
                 }
             }
         }
-        StoryManager.Instance.LoadFromData(data.story);
-        EconomyManager.Instance.LoadFromData(data.economy);
-        if (data.dailyResult != null)
-        {
-            EconomyManager.Instance.LoadDailyResult(data.dailyResult);
-        }
         QuestManager.Instance.LoadFromData(data.quest);
-        if (data.bond != null)
-        {
-            BondManager.Instance.LoadFromData(data.bond);
-        }
-        
-        if (data.upgrade != null)
-        {
-            UpgradeManager.Instance.LoadFromData(data.upgrade);
-        }
+        QuestManager.Instance.RefreshItemConditions();
+        StoryManager.Instance.LoadFromData(data.story);
     }
 
     private void InitializeNewGameData()

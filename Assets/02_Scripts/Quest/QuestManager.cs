@@ -397,6 +397,25 @@ public class QuestManager : Singleton<QuestManager>, ISubject, IInitializable
         }
     }
     
+    public void RefreshItemConditions()
+    {
+        foreach (Inventory inventory in InventoryManager.Instance.GetAll())
+        {
+            foreach (var slot in inventory.Slots)
+            {
+                if (slot.IsEmpty)
+                    continue;
+
+                NotifyListener(new QuestEvent
+                {
+                    type = QuestEventType.ItemChanged,
+                    ID = slot.Item.ID,
+                    currentCount = inventory.GetItemCount(slot.Item.ID)
+                });
+            }
+        }
+    }
+    
     public void ResetData()
     {
         activeQuests.Clear();

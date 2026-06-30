@@ -37,11 +37,19 @@ public class PlaceManager : MonoBehaviour
 
     private void OpenTable()
     {
-        // 입력값이 비어있거나 파싱에 실패할 경우를 대비한 안전 장치 (선택 사항)
-        if (!int.TryParse(openTableCount.text, out int targetCount)) return;
-
-        // 현재 인덱스부터 targetCount만큼 추가로 활성화 (O(K), K는 추가할 테이블 수)
-        int limit = Mathf.Min(currentTableIndex + targetCount, tableSets.Length);
+        int openCount = Mathf.RoundToInt(UpgradeManager.Instance.GetValue(UpgradeType.TableCount));
+        
+        if (openCount <= 0)
+            return;
+        
+        int limit = Mathf.Min(currentTableIndex + openCount, tableSets.Length);
+        
+        //
+        // // 입력값이 비어있거나 파싱에 실패할 경우를 대비한 안전 장치 (선택 사항)
+        // if (!int.TryParse(openTableCount.text, out int targetCount)) return;
+        //
+        // // 현재 인덱스부터 targetCount만큼 추가로 활성화 (O(K), K는 추가할 테이블 수)
+        // int limit = Mathf.Min(currentTableIndex + targetCount, tableSets.Length);
         
         for (int i = currentTableIndex; i < limit; i++)
         {
@@ -52,8 +60,15 @@ public class PlaceManager : MonoBehaviour
 
     private void OpenStove()
     {
+        int openCount = Mathf.RoundToInt(UpgradeManager.Instance.GetValue(UpgradeType.CookStationAmount));
+        
+        if (openCount <= 0)
+            return;
+        
+        int limit = Mathf.Min(currentStoveIndex + openCount, cookingStations.Length);
+        
         // 시간복잡도 O(1): 현재 인덱스가 배열 길이보다 작을 때만 바로 활성화하고 끝
-        if (currentStoveIndex < cookingStations.Length)
+        if (currentStoveIndex == limit)
         {
             cookingStations[currentStoveIndex].SetActive(true);
             kitchenTables[currentStoveIndex].SetActive(false);

@@ -77,8 +77,12 @@ public class CookingStation : MonoBehaviour, IInteractable
  
     private IEnumerator CookingRoutine()
     {
-        float speedBonus = BondManager.Instance.GetModifier(BondEffectType.CookingSpeed);
-        float finalCookTime = Mathf.Max(minimumCookTime, cookTime * (1f - speedBonus));
+        float bondBonus = BondManager.Instance.GetPercentModifier(BondEffectType.CookingSpeed);
+        float upgradeBonus = UpgradeManager.Instance.GetPercentValue(UpgradeType.CookSpeed);
+        
+        float totalBonus = (bondBonus + upgradeBonus);
+        
+        float finalCookTime = Mathf.Max(minimumCookTime, cookTime * (1f - totalBonus));
         
         yield return new WaitForSeconds(finalCookTime);
  

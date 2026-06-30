@@ -54,6 +54,11 @@ public class UpgradeManager : Singleton<UpgradeManager>
         return GetData(type).levels[level - 1].value;
     }
     
+    public float GetPercentValue(UpgradeType type)
+    {
+        return GetValue(type) / 100f;
+    }
+    
     public UpgradeData GetData(UpgradeType type)
     {
         if (upgradeDataDict.TryGetValue(type, out UpgradeData data))
@@ -95,6 +100,16 @@ public class UpgradeManager : Singleton<UpgradeManager>
         {
             levels[levelData.type] = levelData.level;
         }
+    }
+    
+    public bool IsUnlocked(UpgradeType type)
+    {
+        return GetValue(type) > 0;
+    }
+    
+    public bool HasCharacterSkill(CharacterSkillLevel skillLevel)
+    {
+        return GetLevel(UpgradeType.CharacterSkill) >= (int)skillLevel;
     }
     
     public void ResetData()

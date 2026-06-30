@@ -47,3 +47,9 @@ public enum UpgradeType
     RefridgeSlotAmount,
     ServerSlotAmount,
 }
+
+public enum CharacterSkillLevel
+{
+    Ghost = 1,
+    Teleport = 2,
+}
