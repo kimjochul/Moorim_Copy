@@ -48,7 +48,8 @@ public class PlayerInput : MonoBehaviour
         // O키를 누르면 달리기
         if (Input.GetKeyDown(KeyCode.O))
         {
-            PlayerManager.Instance.ToggleRunMode();
+            if(UpgradeManager.Instance.HasCharacterSkill(CharacterSkillLevel.Ghost) && !SkillUIManager.Instance.isGhostCooldown)
+                PlayerManager.Instance.ToggleRunMode();
         }
  
         // 마우스 클릭
@@ -143,7 +144,8 @@ public class PlayerInput : MonoBehaviour
         }
 
         //  P키를 누른 상태라면 해당 위치로 순간이동
-        if (Input.GetKey(KeyCode.P))
+        if (Input.GetKey(KeyCode.P) && UpgradeManager.Instance.HasCharacterSkill(CharacterSkillLevel.Teleport)
+            && !SkillUIManager.Instance.isTeleportCooldown)
         {
             Vector3 teleportPos = interactable.GetInteractPosition();
             PlayerManager.Instance.TeleportSelectedUnit(teleportPos);
@@ -166,7 +168,8 @@ public class PlayerInput : MonoBehaviour
         PlayerManager.Instance.ReservedInteractable = null;
         
         // P키 누르면 순간이동, 아니면 그냥 이동
-        if (Input.GetKey(KeyCode.P))
+        if (Input.GetKey(KeyCode.P) && UpgradeManager.Instance.HasCharacterSkill(CharacterSkillLevel.Teleport)
+            && !SkillUIManager.Instance.isTeleportCooldown)
             PlayerManager.Instance.TeleportSelectedUnit(point);
         else
             PlayerManager.Instance.MoveSelectedUnitTo(point);

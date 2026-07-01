@@ -38,6 +38,7 @@ public class UpgradeCost
 
 public enum UpgradeType
 {
+    Null,
     AutoIngredient,
     TableCount,
     CharacterSkill,

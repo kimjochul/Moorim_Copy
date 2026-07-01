@@ -118,6 +118,8 @@ public class CookingController : MonoBehaviour
         
         mainCookingUICanvas.SetActive(true);
         
+        cookingView.SetAutoButtonInteractable();
+        
         InitRuntimeRecipes();
         
         cookingView.SetCookStartInteractable(false);

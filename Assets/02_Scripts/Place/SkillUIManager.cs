@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,7 +11,7 @@ public class SkillUIManager : Singleton<SkillUIManager>
     [SerializeField] private TextMeshProUGUI ghostCooltimeText;
     public float ghostValidTime = 5f;
     public float ghostCooldown = 10f; 
-    private bool isGhostCooldown = false; // 쿨타임 진행 여부 체크
+    public bool isGhostCooldown = false; // 쿨타임 진행 여부 체크
 
     [Header("Teleport Skill UI")]
     [SerializeField] private Image teleportCover;
@@ -22,15 +23,26 @@ public class SkillUIManager : Singleton<SkillUIManager>
     {
         // 시작 시 초기화
         ghostCover.fillAmount = 0f;
+        ghostCover.transform.parent.gameObject.SetActive(false);
         ghostCooltimeText.gameObject.SetActive(false);
 
         teleportCover.fillAmount = 0f;
+        teleportCover.transform.parent.gameObject.SetActive(false);
         teleportCooltimeText.gameObject.SetActive(false);
-        
-        RefreshSkillUnlock();
     }
 
-    private void RefreshSkillUnlock()
+    private void OnEnable()
+    {
+        UpgradeManager.Instance.SelectedOptionUpgraded += RefreshSkillUnlock;
+    }
+
+    private void OnDisable()
+    {
+        if(UpgradeManager.Instance)
+            UpgradeManager.Instance.SelectedOptionUpgraded -= RefreshSkillUnlock;
+    }
+
+    private void RefreshSkillUnlock(UpgradeType upgradeType = UpgradeType.Null)
     {
         ghostCover.transform.parent.gameObject.SetActive(UpgradeManager.Instance.HasCharacterSkill(CharacterSkillLevel.Ghost));
         teleportCover.transform.parent.gameObject.SetActive(UpgradeManager.Instance.HasCharacterSkill(CharacterSkillLevel.Teleport)); 
@@ -44,10 +56,10 @@ public class SkillUIManager : Singleton<SkillUIManager>
             UseGhostSkill();
         }
 
-        // if (UpgradeManager.Instance.HasCharacterSkill(CharacterSkillLevel.Teleport) && Input.GetKeyDown(KeyCode.P) && !isTeleportCooldown)
-        // {
-        //     UseTeleportSkill();
-        // }
+        if (UpgradeManager.Instance.HasCharacterSkill(CharacterSkillLevel.Teleport) && Input.GetKeyDown(KeyCode.P) && !isTeleportCooldown)
+        {
+            UseTeleportSkill();
+        }
     }
 
     /// <summary>

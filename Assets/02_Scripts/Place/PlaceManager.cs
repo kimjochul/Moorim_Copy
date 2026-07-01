@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -22,6 +23,9 @@ public class PlaceManager : MonoBehaviour
     {
         guestManager = FindFirstObjectByType<GuestManager>();
         
+        currentTableIndex = tableSets.Count(t => t.activeSelf);
+        currentStoveIndex = cookingStations.Count(t => t.activeSelf);
+        
         tableAdd.onClick.AddListener(OpenTable);
         stoveAdd.onClick.AddListener(OpenStove);
     }
@@ -34,15 +38,41 @@ public class PlaceManager : MonoBehaviour
             guestManager.SpawnGuset();
         }
     }
+    
+    private void OnEnable()
+    {
+        UpgradeManager.Instance.SelectedOptionUpgraded += ApplyUpgrade;
+    }
+
+    private void OnDisable()
+    {
+        if (UpgradeManager.Instance != null)
+            UpgradeManager.Instance.SelectedOptionUpgraded -= ApplyUpgrade;
+    }
+    
+    private void ApplyUpgrade(UpgradeType type)
+    {
+        Debug.Log($"ApplyUpgrade : {type}");
+        switch (type)
+        {
+            case UpgradeType.TableCount:
+                OpenTable();
+                break;
+
+            case UpgradeType.CookStationAmount:
+                OpenStove();
+                break;
+        }
+    }
 
     private void OpenTable()
     {
         int openCount = Mathf.RoundToInt(UpgradeManager.Instance.GetValue(UpgradeType.TableCount));
-        
+        Debug.Log($"TableCount Value : {openCount}");
         if (openCount <= 0)
             return;
         
-        int limit = Mathf.Min(currentTableIndex + openCount, tableSets.Length);
+        int limit = Mathf.Min(openCount, tableSets.Length);
         
         //
         // // 입력값이 비어있거나 파싱에 실패할 경우를 대비한 안전 장치 (선택 사항)
@@ -53,27 +83,27 @@ public class PlaceManager : MonoBehaviour
         
         for (int i = currentTableIndex; i < limit; i++)
         {
-            tableSets[i].SetActive(true);
-            currentTableIndex++; // 다음번에 열기 시작할 위치 저장
+            if (!tableSets[i].activeSelf)
+            {
+                tableSets[i].SetActive(true);
+                currentTableIndex++; // 다음번에 열기 시작할 위치 저장
+            }
         }
     }
 
     private void OpenStove()
     {
-        int openCount = Mathf.RoundToInt(UpgradeManager.Instance.GetValue(UpgradeType.CookStationAmount));
+        int targetOpened = Mathf.RoundToInt(UpgradeManager.Instance.GetValue(UpgradeType.CookStationAmount));
+        int limit = Mathf.Min(targetOpened, tableSets.Length)-1;
         
-        if (openCount <= 0)
-            return;
-        
-        int limit = Mathf.Min(currentStoveIndex + openCount, cookingStations.Length);
-        
-        // 시간복잡도 O(1): 현재 인덱스가 배열 길이보다 작을 때만 바로 활성화하고 끝
-        if (currentStoveIndex == limit)
+        for (int i = 0; i < limit; i++)
         {
-            cookingStations[currentStoveIndex].SetActive(true);
-            kitchenTables[currentStoveIndex].SetActive(false);
-            
-            currentStoveIndex++; // 다음번에 켤 스토브 인덱스로 이동
+            if (!cookingStations[i].activeSelf)
+            {
+                cookingStations[i].SetActive(true);
+                kitchenTables[i].SetActive(false);
+                currentStoveIndex++;
+            }
         }
     }
 }

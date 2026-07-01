@@ -10,7 +10,6 @@ public class TitleMenuAnimator : MonoBehaviour
     [SerializeField] private RectTransform buttonGroup;
     [SerializeField] private CanvasGroup buttonCanvas;
 
-    [SerializeField] private float logoMove = 80f;
     [SerializeField] private float buttonMove = 60f;
 
     private Vector2 logoOriginPos;

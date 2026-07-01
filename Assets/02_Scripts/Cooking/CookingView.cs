@@ -43,8 +43,6 @@ public class CookingView : MonoBehaviour
         recipeIcon.sprite = data.icon;
         recipeName.text = data.recipeName;
         recipeDescription.text = data.description;
-
-        autoBtn.gameObject.SetActive(UpgradeManager.Instance.IsUnlocked(UpgradeType.AutoIngredient));
         
         // 재료 슬롯 빈칸으로 초기화
         foreach (var slot in ingredientSlots)
@@ -105,5 +103,10 @@ public class CookingView : MonoBehaviour
         }
 
         SetCookStartInteractable(false);
+    }
+
+    public void SetAutoButtonInteractable()
+    {
+        autoBtn.gameObject.SetActive(UpgradeManager.Instance.IsUnlocked(UpgradeType.AutoIngredient));
     }
 }

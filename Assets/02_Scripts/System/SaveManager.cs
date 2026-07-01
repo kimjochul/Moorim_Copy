@@ -262,6 +262,7 @@ public class SaveManager : Singleton<SaveManager>
         {
             UpgradeManager.Instance.LoadFromData(data.upgrade);
             InventoryManager.Instance.ApplyInventoryUpgrade();
+            UpgradeManager.Instance.ApplyLoadedUpgrades();
         }
         
         if (data.inventories != null)
@@ -305,7 +306,7 @@ public class SaveManager : Singleton<SaveManager>
         EconomyManager.Instance.ResetData();
         QuestManager.Instance.ResetData();
         BondManager.Instance.ResetData();
-        //UpgradeManager.Instance.ResetData();
+        UpgradeManager.Instance.ResetData();
     }
     
     public void SaveAndQuit()

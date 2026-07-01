@@ -9,7 +9,7 @@ public class UpgradeManager : Singleton<UpgradeManager>
     private Dictionary<UpgradeType, UpgradeData> upgradeDataDict = new();
     private Dictionary<UpgradeType, int> levels = new();
     
-    public Action SelectedOptionUpgraded; 
+    public Action<UpgradeType> SelectedOptionUpgraded; 
     
     protected override void Awake()
     {
@@ -41,7 +41,7 @@ public class UpgradeManager : Singleton<UpgradeManager>
             return;
 
         levels[type] = currentLevel + 1;
-        SelectedOptionUpgraded?.Invoke();
+        SelectedOptionUpgraded?.Invoke(type);
     }
     
     public float GetValue(UpgradeType type)
@@ -99,6 +99,14 @@ public class UpgradeManager : Singleton<UpgradeManager>
         foreach (var levelData in data.levels)
         {
             levels[levelData.type] = levelData.level;
+        }
+    }
+    
+    public void ApplyLoadedUpgrades()
+    {
+        foreach (var pair in levels)
+        {
+            SelectedOptionUpgraded?.Invoke(pair.Key);
         }
     }
     

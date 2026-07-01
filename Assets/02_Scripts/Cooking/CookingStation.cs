@@ -13,6 +13,8 @@ public class CookingStation : MonoBehaviour, IInteractable
     [Header("조리 설정")]
     [SerializeField] private float cookTime = 15f;
     [SerializeField] private float minimumCookTime = 3f;
+
+    [SerializeField] private float cookSpeedCheckForDebug = 0;
  
     // ── 이벤트 ──
     /// <summary>
@@ -81,6 +83,7 @@ public class CookingStation : MonoBehaviour, IInteractable
         float upgradeBonus = UpgradeManager.Instance.GetPercentValue(UpgradeType.CookSpeed);
         
         float totalBonus = (bondBonus + upgradeBonus);
+        cookSpeedCheckForDebug = totalBonus;
         
         float finalCookTime = Mathf.Max(minimumCookTime, cookTime * (1f - totalBonus));
         
