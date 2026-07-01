@@ -47,6 +47,11 @@ public class BondManager : Singleton<BondManager>, IInitializable
         return cachedModifiers.GetValueOrDefault(type, 0f);
     }
     
+    public float GetPercentModifier(BondEffectType type)
+    {
+        return GetModifier(type) / 100f;
+    }
+    
     private void RegisterBondItem(BondItemData item)
     {
         ownedBondItems.Add(item.id);

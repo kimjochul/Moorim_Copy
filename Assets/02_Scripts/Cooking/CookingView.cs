@@ -31,6 +31,7 @@ public class CookingView : MonoBehaviour
         cookBtn.onClick.AddListener(() => OnCookClicked?.Invoke());
         clostBtn.onClick.AddListener(() => OnCloseClicked?.Invoke());
         autoBtn.onClick.AddListener(() => OnAutoClicked?.Invoke());
+        autoBtn.gameObject.SetActive(false);
     }
 
     // 레시피가 선택됐을 때 ui에 연결
@@ -42,7 +43,7 @@ public class CookingView : MonoBehaviour
         recipeIcon.sprite = data.icon;
         recipeName.text = data.recipeName;
         recipeDescription.text = data.description;
-
+        
         // 재료 슬롯 빈칸으로 초기화
         foreach (var slot in ingredientSlots)
             slot.ClearSlot();
@@ -102,5 +103,10 @@ public class CookingView : MonoBehaviour
         }
 
         SetCookStartInteractable(false);
+    }
+
+    public void SetAutoButtonInteractable()
+    {
+        autoBtn.gameObject.SetActive(UpgradeManager.Instance.IsUnlocked(UpgradeType.AutoIngredient));
     }
 }

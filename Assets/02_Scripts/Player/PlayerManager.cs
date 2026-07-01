@@ -128,7 +128,8 @@ public class PlayerManager : Singleton<PlayerManager>
         
         if (selectedUnit != null)
         {
-            float currentMoveSpeed = IsRunMode ? moveSpeed * 1.5f : moveSpeed;
+            //float currentMoveSpeed = IsRunMode ? moveSpeed * 1.5f : moveSpeed;
+            float currentMoveSpeed = IsRunMode ? moveSpeed * 3f : moveSpeed;
             selectedUnit.SetSpeed(currentMoveSpeed, angularSpeed, accelerationSpeed);
             
             // 이동 중에 O키를 눌렀다면 애니메이션 즉시 갱신

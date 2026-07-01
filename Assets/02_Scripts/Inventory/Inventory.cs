@@ -71,6 +71,18 @@ public class Inventory : MonoBehaviour, IInitializable
     }
     
     /// <summary>
+    /// 업그레이드 적용함수
+    /// </summary>
+    /// <param name="targetCount"></param>
+    public void ApplyUpgradeSlotCount(int targetCount)
+    {
+        if (targetCount <= slots.Count)
+            return;
+
+        AddSlot(targetCount - slots.Count);
+    }
+    
+    /// <summary>
     /// 업그레이드 등으로 슬롯의 개수가 늘어날 때 사용하는 슬롯 추가 함수
     /// </summary>
     /// <param name="amount"></param>
@@ -446,7 +458,9 @@ public class Inventory : MonoBehaviour, IInitializable
     
     public void LoadFromData(InventorySaveData data)
     {
-        for (int i = 0; i < slots.Count; i++)
+        int count = Mathf.Min(slots.Count, data.slots.Count);
+        
+        for (int i = 0; i < count; i++)
         {
             var slotData = data.slots[i];
 

@@ -24,7 +24,7 @@ public class UpgradeUI : MonoBehaviour
             UpgradeManager.Instance.SelectedOptionUpgraded -= Refresh;
     }
 
-    public void Refresh()
+    public void Refresh(UpgradeType upgradeType = UpgradeType.Null)
     {
         foreach (Transform child in content)
             Destroy(child.gameObject);

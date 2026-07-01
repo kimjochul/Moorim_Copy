@@ -38,6 +38,7 @@ public class UpgradeCost
 
 public enum UpgradeType
 {
+    Null,
     AutoIngredient,
     TableCount,
     CharacterSkill,
@@ -46,4 +47,10 @@ public enum UpgradeType
     ServingSlotAmount,
     RefridgeSlotAmount,
     ServerSlotAmount,
+}
+
+public enum CharacterSkillLevel
+{
+    Ghost = 1,
+    Teleport = 2,
 }

@@ -75,6 +75,7 @@ public class UpgradeDetailPanel : MonoBehaviour
 
             UpgradeManager.Instance.Upgrade(currentData.type);
 
+            InventoryManager.Instance.ApplyInventoryUpgrade();
             RefreshEffects();
             RefreshCosts();
             SetupButton();

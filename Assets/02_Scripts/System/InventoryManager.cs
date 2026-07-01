@@ -302,4 +302,11 @@ public class InventoryManager : Singleton<InventoryManager>, IInitializable
             }
         }
     }
+    
+    public void ApplyInventoryUpgrade()
+    {
+        GetInventory(InventoryType.Fridge).ApplyUpgradeSlotCount(Mathf.RoundToInt(UpgradeManager.Instance.GetValue(UpgradeType.RefridgeSlotAmount)));
+        GetInventory(InventoryType.MealTable).ApplyUpgradeSlotCount(Mathf.RoundToInt(UpgradeManager.Instance.GetValue(UpgradeType.ServingSlotAmount)));
+        GetInventory(InventoryType.Server).ApplyUpgradeSlotCount(Mathf.RoundToInt(UpgradeManager.Instance.GetValue(UpgradeType.ServerSlotAmount)));
+    }
 }
