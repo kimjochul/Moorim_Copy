@@ -10,7 +10,7 @@ public class SkillUIManager : Singleton<SkillUIManager>
     [SerializeField] private TextMeshProUGUI ghostCooltimeText;
     public float ghostValidTime = 5f;
     public float ghostCooldown = 10f; 
-    private bool isGhostCooldown = false; // 쿨타임 진행 여부 체크
+    public bool isGhostCooldown = false; // 쿨타임 진행 여부 체크
 
     [Header("Teleport Skill UI")]
     [SerializeField] private Image teleportCover;

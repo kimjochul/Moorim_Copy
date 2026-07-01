@@ -320,6 +320,8 @@ public class TutorialManager : MonoBehaviour
         // 배식대에 음식이 놓일 때까지 대기
         yield return new WaitUntil(() => servingSlotInventory != null && servingSlotInventory.Slots.Any(slot => !slot.IsEmpty));
 
+        
+        ChangeCanvasRenderMode(RenderMode.ScreenSpaceOverlay);
         yield return StartCoroutine(CompleteStep("잘하셨습니다.", "이제 만들어진 음식을 손님에게 가져가야 합니다.", putFoodPanel, 2f));
         serviceSlotInven.SetActive(false);
     }
