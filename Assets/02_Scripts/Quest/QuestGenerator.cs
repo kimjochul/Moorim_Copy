@@ -248,8 +248,16 @@ public class QuestGenerator : MonoBehaviour
             }
         }
         // 보상도 랜덤으로 설정
-        quest.Data.reward.gold = Random.Range(50, 150); 
-        quest.Data.reward.reputation = Random.Range(1, 10);
+        if (quest.QuestType == QuestType.Merchant)
+        {
+            quest.Data.reward.gold = Random.Range(50, 150);
+            quest.Data.reward.reputation = 0;
+        } 
+        else if (quest.QuestType == QuestType.PostMan)
+        {
+            quest.Data.reward.gold = 0;
+            quest.Data.reward.reputation = Random.Range(1, 10);
+        }
     }
     
     /// <summary>
