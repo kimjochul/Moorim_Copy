@@ -39,23 +39,23 @@ public class TutorialManager : MonoBehaviour
     public CookingStation cookingStation;
     public HighlightEffect trayTableHighlightEffect;
     public GameObject serviceSlotInven;
-    public GameObject putFoodPanel;
     public Inventory servingSlotInventory;
     public CookingView cookingView;
 
     [Header("캐릭터 및 메뉴 관련")]
-    public GameObject pickPlayer;
     public GameObject menuPanel;
+    public Transform menuPanelTransform; // RecipeList Area
     public RecipeListView recipeListView;
     public GameObject recipePanel;
+    public Transform recipePanelTransform; // Inventory Area
     public GameObject ingredientPanel;
+    public Transform ingredientPanelTransform; // RecipeList Area
 
     [Header("손님 및 카메라 관련")]
     public GuestManager guestManager;
     private GuestBase guest;
     public RecipeData mapoTofuRecipe;
     public FoodData mapoTofuFood;
-    public GameObject getFoodPanel;
 
     [Header("특수 기믹 오브젝트")]
     public HighlightEffect gateHighlightEffect0;
@@ -75,12 +75,11 @@ public class TutorialManager : MonoBehaviour
     
     [Header("튜토리얼 진행 상태")]
     public int eventCount;
-    
-    [Header("오프스크린 인디케이터")]
-    public RectTransform offScreenIndicatorArrow;
 
     private IEnumerator Start()
     {
+        eventCount = 4;
+        
         // 씬 로드 될 때 페이드인/아웃 효과 때문에 시간 지나고 해야함.
         yield return new WaitForSeconds(1.5f);
         
@@ -95,19 +94,16 @@ public class TutorialManager : MonoBehaviour
         mouseLeft.SetActive(false);
         mouseRight.SetActive(false);
         
-        pickPlayer.SetActive(false);
         menuPanel.SetActive(false);
         recipePanel.SetActive(false);
         ingredientPanel.SetActive(false);
-        putFoodPanel.SetActive(false);
-        getFoodPanel.SetActive(false);
         blackPanelForTutorialHighlight.SetActive(false);
         
         // 3. 블랙 배경용 시작 버튼 일단 숨기기
         if (blackNextButton != null) blackNextButton.gameObject.SetActive(false);
         
-        SetChildColliders(false, cookingStationForColliders);
-        SetChildColliders(false, trayTableForColliders);
+        //SetChildColliders(false, cookingStationForColliders);
+        //SetChildColliders(false, trayTableForColliders);
 
         // 4. 인트로 대화 연출 시작
         string introText = "이동 방법에 대해 알아보겠습니다.";
@@ -202,7 +198,9 @@ public class TutorialManager : MonoBehaviour
     
     IEnumerator GuestTutorial()
     {
+        ChangeCanvasRenderMode(RenderMode.ScreenSpaceCamera);
         ShowGuide("손님이 들어오고 있습니다. WASD와 마우스를 이용해 객잔을 살펴보세요.");
+        
         guest = guestManager.SpawnGuset(GuestManager.SpawnType.Normal);
         guest.myOrder.recipe = mapoTofuRecipe;
         guest.myOrder.orderedFood = mapoTofuFood;
@@ -230,30 +228,26 @@ public class TutorialManager : MonoBehaviour
     {
         yield return StartCoroutine(ShowPanelSequentially(playerPickPanel));
         
-        pickPlayer.SetActive(true);
+        blackPanelForTutorialHighlight.SetActive(true);
+        ChangeCanvasRenderMode(RenderMode.ScreenSpaceCamera);
         SpeakTutorialText("숫자 2번 키를 눌러주세요.");
         yield return new WaitUntil(() => PlayerManager.Instance.CurrentPlayer == Constants.PlayerType.Sowol);
-        
-        pickPlayer.SetActive(false);
-        
-        // 🚨 냄비를 가리키고 클릭을 대기하는 동안 캔버스를 Overlay 모드로 변경합니다.
-        ChangeCanvasRenderMode(RenderMode.ScreenSpaceOverlay);
+        blackPanelForTutorialHighlight.SetActive(false);
         
         ShowGuide("마우스 커서를 냄비에 대고 왼쪽 클릭해주세요.", mouseLeft);
         SetChildColliders(true, cookingStationForColliders);
 
-        // 요리 UI가 열릴 때까지 하이라이트 유지 및 화면 밖 화살표 가이드 실행
+        // 요리 UI가 열릴 때까지 하이라이트 유지
         ToggleHighlight(potHighlightEffect.gameObject, true, potHighlightEffect);
         
-        yield return StartCoroutine(WaitUntilWithIndicator(
-            potHighlightEffect.transform, 
-            () => mainCookingUICanvas.activeSelf
-        ));
+        // 🚨 인디케이터 없이 UI 활성화만 깔끔하게 대기합니다.
+        yield return new WaitUntil(() => mainCookingUICanvas.activeSelf);
         
         ToggleHighlight(potHighlightEffect.gameObject, false, potHighlightEffect);
 
         mouseLeft.gameObject.SetActive(false);
         
+        ChangeCanvasRenderMode(RenderMode.ScreenSpaceOverlay);
         TransitionToNextTutorial("냄비로 요리를 시작해보겠습니다.");
     }
 
@@ -261,6 +255,9 @@ public class TutorialManager : MonoBehaviour
     IEnumerator CookingTutorial()
     {
         ShowGuide("손님이 주문하신 메뉴를 선택해주세요.");
+        
+        // 🚨 메뉴 패널 이동 (0, 0, 0)
+        MovePanelToTarget(menuPanel, menuPanelTransform, new Vector3(0, 0, 0));
         menuPanel.SetActive(true);
         
         bool isRecipeClicked = false;
@@ -271,12 +268,21 @@ public class TutorialManager : MonoBehaviour
         recipeListView.OnRecipeClicked -= onRecipeSelected;
         
         menuPanel.SetActive(false);
+        menuPanel.transform.SetParent(this.transform, false); 
+        
+        // 🚨 레시피 패널 이동 (0, -70, 0)
+        MovePanelToTarget(recipePanel, recipePanelTransform, new Vector3(0, -30, 0));
         recipePanel.SetActive(true);
 
         yield return StartCoroutine(ShowTextAndWaitForNextButton("필요한 재료가 나와있는 레시피가 보입니다. 확인 후 다음 버튼을 눌러주세요."));
         
         ShowGuide("레시피에 맞춰 재료를 클릭해주세요.");
+        
         recipePanel.SetActive(false);
+        recipePanel.transform.SetParent(this.transform, false);
+        
+        // 🚨 재료 패널 이동 (1250, 3, 0)
+        MovePanelToTarget(ingredientPanel, ingredientPanelTransform, new Vector3(1250, 3, 0));
         ingredientPanel.SetActive(true);
         
         bool isCookStartClicked = false;
@@ -285,6 +291,8 @@ public class TutorialManager : MonoBehaviour
 
         yield return new WaitUntil(() => isCookStartClicked);
         cookingView.OnCookClicked -= onCookSelected;
+
+        ingredientPanel.transform.SetParent(this.transform, false);
 
         yield return StartCoroutine(CompleteStep("잘하셨습니다.", "이제 만들어진 음식을 옮겨 보겠습니다.", ingredientPanel, 8f));
     }
@@ -306,31 +314,34 @@ public class TutorialManager : MonoBehaviour
         ToggleHighlight(potHighlightEffect.gameObject, false, potHighlightEffect);
         cookingStation.OnStateChanged -= onStateChanged;
         
+        // 🚨 1. 슬롯에 대한 부연 설명창을 먼저 띄워서 끝날 때까지 대기합니다.
+        yield return StartCoroutine(ShowPanelSequentially(slotPanel));
+        
+        // 🚨 2. 설명이 모두 끝나고 다시 대화창이 켜지면, 그때 클릭 안내 텍스트를 출력합니다.
         ShowGuide("조리 완료된 음식을 테이블을 클릭해 가져갑니다.");
         SetChildColliders(true, trayTableForColliders);
-        yield return StartCoroutine(ShowPanelSequentially(slotPanel));
 
         // 배식대 인벤토리가 열릴 때까지 대기
         ToggleHighlight(trayTableHighlightEffect.gameObject, true, trayTableHighlightEffect);
         yield return new WaitUntil(() => serviceSlotInven.activeSelf);
         ToggleHighlight(trayTableHighlightEffect.gameObject, false, trayTableHighlightEffect);
         
-        ShowGuide("조리 완료된 음식을 눌러 테이블로 옮겨주세요.", putFoodPanel);
+        ShowGuide("조리 완료된 음식을 눌러 테이블로 옮겨주세요.", blackPanelForTutorialHighlight);
 
         // 배식대에 음식이 놓일 때까지 대기
         yield return new WaitUntil(() => servingSlotInventory != null && servingSlotInventory.Slots.Any(slot => !slot.IsEmpty));
-
         
         ChangeCanvasRenderMode(RenderMode.ScreenSpaceOverlay);
-        yield return StartCoroutine(CompleteStep("잘하셨습니다.", "이제 만들어진 음식을 손님에게 가져가야 합니다.", putFoodPanel, 2f));
+        yield return StartCoroutine(CompleteStep("잘하셨습니다.", "이제 만들어진 음식을 손님에게 가져가야 합니다.", blackPanelForTutorialHighlight, 2f));
         serviceSlotInven.SetActive(false);
     }
     
     IEnumerator BringFoodTutorial()
     {
-        ShowGuide("숫자 1을 눌러 명월로 바꿔주세요", pickPlayer);
+        ChangeCanvasRenderMode(RenderMode.ScreenSpaceCamera);
+        ShowGuide("숫자 1을 눌러 명월로 바꿔주세요", blackPanelForTutorialHighlight);
         yield return new WaitUntil(() => PlayerManager.Instance.CurrentPlayer == Constants.PlayerType.Myungwol);
-        pickPlayer.SetActive(false);
+        blackPanelForTutorialHighlight.SetActive(false);
         
         ShowGuide("명월인 상태로 트레이 테이블을 클릭해주세요.");
         
@@ -339,13 +350,13 @@ public class TutorialManager : MonoBehaviour
         yield return new WaitUntil(() => serviceSlotInven.activeSelf);
         ToggleHighlight(trayTableHighlightEffect.gameObject, false, trayTableHighlightEffect);
         
-        ShowGuide("트레이 테이블 슬롯에 있는 음식을 눌러 명월의 인벤토리로 가져올 수 있습니다.", getFoodPanel);
+        ShowGuide("트레이 테이블 슬롯에 있는 음식을 눌러 명월의 인벤토리로 가져올 수 있습니다.", blackPanelForTutorialHighlight);
         
         // 명월 인벤토리에 음식 들어올 때까지 대기
         Inventory myungwolInventory = InventoryManager.Instance.GetInventory(Constants.InventoryType.Server);
         yield return new WaitUntil(() => myungwolInventory != null && myungwolInventory.Slots.Any(slot => !slot.IsEmpty));
 
-        getFoodPanel.SetActive(false);
+        blackPanelForTutorialHighlight.SetActive(false);
         ShowGuide("잘하셨습니다! 이제 음식을 들고 손님을 클릭해 서빙해주세요.", mouseLeft);
         
         // 손님이 음식 받을 때까지 대기
@@ -360,24 +371,11 @@ public class TutorialManager : MonoBehaviour
         {
             SpeakTutorialText("일반 손님 접대 튜토리얼을 무사히 완료했습니다!");
             yield return new WaitForSeconds(3f);
+            ChangeCanvasRenderMode(RenderMode.ScreenSpaceOverlay);
             TransitionToNextTutorial("이제부터는 객잔에 찾아오는 특수한 손님들에 대해 알아보겠습니다.");
         }
-        else
-        {
-            yield return StartCoroutine(HandleNormalGuestFailure());
-        }
     }
-
-    IEnumerator HandleNormalGuestFailure()
-    {
-        SpeakTutorialText("앗! 잘못된 음식을 가져다 주어 손님이 화가 나서 돌아가버렸습니다...\n다시 올바른 요리를 만들어 서빙해 봅시다.");
-        if (guest != null && guest.gameObject.activeInHierarchy) guest.ForceExit();
-
-        yield return new WaitForSeconds(4f);
-        eventCount = 4;
-        StartTutorial(); 
-    }
-
+    
     IEnumerator ThiefGuestTutorial()
     {
         ShowGuide("새로운 손님이 오고 있습니다. 기존처럼 주문을 받고 음식을 서빙해주세요.");
@@ -498,7 +496,7 @@ public class TutorialManager : MonoBehaviour
         
         guest.GetComponentInChildren<HighlightEffect>().highlighted = false;
         mouseLeft.gameObject.SetActive(false);
-        SpeakTutorialText("무사히 난동 손님을 제압하고 쫓아냈습니다");
+        SpeakTutorialText("무사히 난동 손님 제압하고 쫓아냈습니다");
         
         yield return new WaitForSeconds(5f);
         TransitionToNextTutorial("이제 마지막 손님을 맞이할 준비를 합시다.");
@@ -717,6 +715,7 @@ public class TutorialManager : MonoBehaviour
         blackBackground.SetActive(wasBlackActive);
         whiteBackground.SetActive(wasWhiteActive);
     }
+    
     private void ChangeCanvasRenderMode(RenderMode mode)
     {
         Canvas canvas = GetComponent<Canvas>();
@@ -737,66 +736,15 @@ public class TutorialManager : MonoBehaviour
         }
     }
     
-    // 특정 조건이 달성될 때까지 목표물을 화면 가장자리에서 가리키는 코루틴
-    private IEnumerator WaitUntilWithIndicator(Transform target, Func<bool> stopCondition)
+    private void MovePanelToTarget(GameObject panel, Transform targetTransform, Vector3 localPos)
     {
-        while (!stopCondition())
-        {
-            if (target != null && offScreenIndicatorArrow != null)
-            {
-                UpdateOffScreenIndicator(target.position);
-            }
-            yield return null; // 매 프레임 실행
-        }
+        if (panel == null || targetTransform == null) return;
 
-        // 조건이 달성되면 화살표 숨기기
-        if (offScreenIndicatorArrow != null)
-        {
-            offScreenIndicatorArrow.gameObject.SetActive(false);
-        }
+        // 1. 부모 변경 (worldPositionStays: false)
+        panel.transform.SetParent(targetTransform, false);
+
+        // 2. 부모의 좌표계에 맞춘 로컬 위치 강제 고정
+        panel.transform.localPosition = localPos;
+        panel.transform.localScale = Vector3.one;
     }
-
-    // 타겟의 월드 좌표를 받아 화면 밖일 경우 화살표 위치와 회전을 세팅하는 함수
-    private void UpdateOffScreenIndicator(Vector3 targetWorldPos)
-    {
-        Camera cam = Camera.main;
-        if (cam == null) return;
-
-        Vector3 screenPos = cam.WorldToScreenPoint(targetWorldPos);
-
-        // 타겟이 카메라 뒤에 있는지, 또는 화면 밖으로 나갔는지 체크
-        bool isBehind = screenPos.z < 0;
-        bool isOffScreen = isBehind || screenPos.x < 0 || screenPos.x > Screen.width || screenPos.y < 0 || screenPos.y > Screen.height;
-
-        if (!isOffScreen)
-        {
-            // 화면 안에 있으면 화살표를 끕니다.
-            offScreenIndicatorArrow.gameObject.SetActive(false);
-            return;
-        }
-
-        offScreenIndicatorArrow.gameObject.SetActive(true);
-
-        // 카메라 뒤에 있다면 좌표를 반전시켜 반대 방향을 가리키게 함
-        if (isBehind)
-        {
-            screenPos *= -1;
-        }
-
-        // 화면 중심을 기준으로 방향 벡터 계산
-        Vector3 screenCenter = new Vector3(Screen.width / 2f, Screen.height / 2f, 0f);
-        Vector3 dir = (screenPos - screenCenter).normalized;
-
-        // 화살표가 화면 밖으로 나가지 않도록 가장자리에 고정 (여백 50 픽셀)
-        float padding = 50f;
-        screenPos.x = Mathf.Clamp(screenPos.x, padding, Screen.width - padding);
-        screenPos.y = Mathf.Clamp(screenPos.y, padding, Screen.height - padding);
-
-        offScreenIndicatorArrow.position = screenPos;
-
-        // 화살표 회전 (오른쪽(▶)을 바라보는 이미지를 기준으로 각도 계산)
-        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-        offScreenIndicatorArrow.rotation = Quaternion.Euler(0f, 0f, angle);
-    }
-
 }
