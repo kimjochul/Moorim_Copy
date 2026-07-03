@@ -246,6 +246,11 @@ public class QuestGenerator : MonoBehaviour
             {
                 serveCondition.requireCount  = Random.Range(1, 5);
             }
+
+            if (condition is CatchThiefCondition catchThiefCondition)
+            {
+                catchThiefCondition.requiredCatchCount = Random.Range(1, 2);   
+            }
         }
         // 보상도 랜덤으로 설정
         if (quest.QuestType == QuestType.Merchant)

@@ -54,5 +54,67 @@ public class QuestData : ScriptableObject
     // 퀘스트 내용
     [TextArea(3, 10)]
     public string questDetail;
+    
+    /// <summary>
+    /// 퀘스트 보상 리스트화해서 리턴
+    /// </summary>
+    /// <returns></returns>
+    public List<QuestRewardEntry> GetRewardEntries()
+    {
+        List<QuestRewardEntry> list = new();
+
+        if (reward.gold > 0)
+        {
+            list.Add(new QuestRewardEntry
+            {
+                type = QuestRewardType.Gold,
+                amount = reward.gold
+            });
+        }
+
+        if (reward.reputation > 0)
+        {
+            list.Add(new QuestRewardEntry
+            {
+                type = QuestRewardType.Reputation,
+                amount = reward.reputation
+            });
+        }
+
+        foreach (int id in rewardRecipeIds)
+        {
+            list.Add(new QuestRewardEntry
+            {
+                type = QuestRewardType.Recipe,
+                id = id
+            });
+        }
+
+        foreach (int id in rewardIngredientIds)
+        {
+            list.Add(new QuestRewardEntry
+            {
+                type = QuestRewardType.Ingredient,
+                id = id
+            });
+        }
+
+        return list;
+    }
 }
 
+public enum QuestRewardType
+{
+    Gold,
+    Reputation,
+    Recipe,
+    Ingredient
+}
+
+public class QuestRewardEntry
+{
+    public QuestRewardType type;
+
+    public int amount;     // Gold, Reputation
+    public int id;         // RecipeID, IngredientID
+}

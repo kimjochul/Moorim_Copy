@@ -12,6 +12,10 @@ public class NPCQuestDetailPanel : MonoBehaviour
     [SerializeField] private Transform conditionContent;
     [SerializeField] private GameObject conditionPrefab;
 
+    [Header("보상 UI")]
+    [SerializeField] private Transform rewardContent;
+    [SerializeField] private QuestRewardUI rewardPrefab;
+    
     [Header("버튼")]
     [SerializeField] private Button actionButton;
     [SerializeField] private TextMeshProUGUI buttonText;
@@ -57,7 +61,8 @@ public class NPCQuestDetailPanel : MonoBehaviour
         description.text = quest.Data.questDetail;
 
         RefreshConditions();   
-
+        RefreshRewards();
+        
         SetupButton();        
 
         gameObject.SetActive(true);
@@ -76,6 +81,18 @@ public class NPCQuestDetailPanel : MonoBehaviour
             var ui = obj.GetComponent<QuestConditionUI>();
 
             ui.Init(condition, !currentQuest.IsAccepted);
+        }
+    }
+    
+    private void RefreshRewards()
+    {
+        foreach (Transform child in rewardContent)
+            Destroy(child.gameObject);
+
+        foreach (var reward in currentQuest.Data.GetRewardEntries())
+        {
+            var ui = Instantiate(rewardPrefab, rewardContent);
+            ui.Init(reward);
         }
     }
 
@@ -106,6 +123,9 @@ public class NPCQuestDetailPanel : MonoBehaviour
         currentQuest = null;
 
         foreach (Transform child in conditionContent)
+            Destroy(child.gameObject);
+        
+        foreach (Transform child in rewardContent)
             Destroy(child.gameObject);
 
         gameObject.SetActive(false);
