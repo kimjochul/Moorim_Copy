@@ -47,20 +47,6 @@ public class SkillUIManager : Singleton<SkillUIManager>
         ghostCover.transform.parent.gameObject.SetActive(UpgradeManager.Instance.HasCharacterSkill(CharacterSkillLevel.Ghost));
         teleportCover.transform.parent.gameObject.SetActive(UpgradeManager.Instance.HasCharacterSkill(CharacterSkillLevel.Teleport)); 
     }
-    
-    private void Update()
-    {
-        // O키를 누르고 쿨타임 중이 아닐 때만 고스트 스킬 실행
-        if (UpgradeManager.Instance.HasCharacterSkill(CharacterSkillLevel.Ghost) && Input.GetKeyDown(KeyCode.O) && !isGhostCooldown)
-        {
-            UseGhostSkill();
-        }
-
-        if (UpgradeManager.Instance.HasCharacterSkill(CharacterSkillLevel.Teleport) && Input.GetKeyDown(KeyCode.P) && !isTeleportCooldown)
-        {
-            UseTeleportSkill();
-        }
-    }
 
     /// <summary>
     /// 고스트 스킬 사용 시 호출
@@ -83,11 +69,10 @@ public class SkillUIManager : Singleton<SkillUIManager>
     private IEnumerator Co_GhostCooldown()
     {
         isGhostCooldown = true;
-
-        // 1. 스킬 즉시 발동
+        // 1. 스킬 즉시 발동 내가 직접 켠 경우만 기록
         if (!PlayerManager.Instance.IsRunMode)
         {
-            PlayerManager.Instance.ToggleRunMode();
+            PlayerManager.Instance.SetRunMode(true);
         }
 
         // 2. 쿨타임 UI 즉시 시작
@@ -108,7 +93,7 @@ public class SkillUIManager : Singleton<SkillUIManager>
             {
                 if (PlayerManager.Instance.IsRunMode)
                 {
-                    PlayerManager.Instance.ToggleRunMode();
+                    PlayerManager.Instance.SetRunMode(false);
                 }
                 isEffectActive = false; // 한 번 껐으니 플래그 닫기
             }
@@ -145,5 +130,15 @@ public class SkillUIManager : Singleton<SkillUIManager>
         teleportCover.fillAmount = 0f;
         teleportCooltimeText.gameObject.SetActive(false);
         isTeleportCooldown = false;
+    }
+    
+    public bool CanUseTeleport()
+    {
+        return !isTeleportCooldown;
+    }
+
+    public bool CanUseGhost()
+    {
+        return !isGhostCooldown;
     }
 }

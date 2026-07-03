@@ -107,6 +107,7 @@ public class PostManUI : MonoBehaviour
     {
         talkPanel.gameObject.SetActive(true);
         questPanel.SetActive(true);
+        upgradePanel.SetActive(false);
         
         questUI.Init(QuestType.PostMan,NPCType.PostMan);
         
@@ -118,6 +119,7 @@ public class PostManUI : MonoBehaviour
         talkPanel.gameObject.SetActive(false);
         talkPanel.gameObject.SetActive(true);
         questPanel.SetActive(false);
+        upgradePanel.SetActive(false);
 
         talkPanel.Clear();
         

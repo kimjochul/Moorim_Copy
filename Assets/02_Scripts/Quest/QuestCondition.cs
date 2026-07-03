@@ -10,6 +10,7 @@ public enum QuestEventType
     ItemChanged,
     Fail,
     ServeCustomer,
+    CatchThief,
     ProgressCheck,
     GenerateQuest
 }

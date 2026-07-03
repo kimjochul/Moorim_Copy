@@ -122,9 +122,12 @@ public class PlayerManager : Singleton<PlayerManager>
         selectedUnit.MoveTo(destination, onArrived);
     }
     
-    public void ToggleRunMode()
+    public void SetRunMode(bool enable)
     {
-        IsRunMode = !IsRunMode; 
+        if (IsRunMode == enable)
+            return;
+
+        IsRunMode = enable;
         
         if (selectedUnit != null)
         {
