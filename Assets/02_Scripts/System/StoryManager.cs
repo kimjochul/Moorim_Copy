@@ -940,6 +940,16 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         SoundManager.Instance.PlayRandomBGM();
     }
     
+    public Story GetStory(int storyId)
+    {
+        return storySO.stories.Find(s => s.id == storyId);
+    }
+    
+    public bool IsStoryPlayed(int storyId)
+    {
+        return playedStoryIds.Contains(storyId);
+    }
+    
     public StorySaveData GetSaveData()
     {
         return new StorySaveData

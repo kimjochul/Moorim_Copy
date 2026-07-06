@@ -54,6 +54,15 @@ public class PlayerInput : MonoBehaviour
                 SkillUIManager.Instance.UseGhostSkill();
             }
         }
+
+        if (GameManager.Instance.CurrentState == GameFlowState.Gameplay)
+        {
+            if (Input.GetKeyDown(KeyCode.I))
+            {
+                Debug.Log("호출 인벤토리");
+                InventoryManager.Instance.ToggleCommonInventory();
+            }
+        }
  
         // 마우스 클릭
         if (Input.GetMouseButtonDown(0))

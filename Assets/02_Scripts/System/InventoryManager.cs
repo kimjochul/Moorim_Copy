@@ -39,6 +39,9 @@ public class InventoryManager : Singleton<InventoryManager>, IInitializable
     private bool isInitialized = false;
     public bool IsInitialized => isInitialized;
 
+    private Inventory currentOpenedInventory;
+    private bool isCommonInventoryOpened;
+    
     protected override void Awake()
     {
         base.Awake();
@@ -115,7 +118,12 @@ public class InventoryManager : Singleton<InventoryManager>, IInitializable
     /// </summary>
     public void OpenCommonInventory()
     {
+        if (isCommonInventoryOpened)
+            return;
+        
+        Debug.Log("OpenCommonInventoryPopup");
         UIManager.Instance.OpenCommonInventoryPopup(commonInventoryRoot);
+        isCommonInventoryOpened = true;
     }
 
     /// <summary>
@@ -123,7 +131,11 @@ public class InventoryManager : Singleton<InventoryManager>, IInitializable
     /// </summary>
     public void CloseCommonInventory()
     {
+        if (!isCommonInventoryOpened)
+            return;
+        
         UIManager.Instance.CloseCommonInventoryPopup(commonInventoryRoot);
+        isCommonInventoryOpened = false;
     }
 
     /// <summary>
@@ -152,6 +164,8 @@ public class InventoryManager : Singleton<InventoryManager>, IInitializable
 
         Debug.Log($"{inventory.Type} 열기 시도");
         UIManager.Instance.OpenInventoryPopup(inventory);
+        
+        currentOpenedInventory = inventory;
         OnInventoryUIOpened?.Invoke(inventory);
     }
 
@@ -167,6 +181,10 @@ public class InventoryManager : Singleton<InventoryManager>, IInitializable
             return;
         }
         UIManager.Instance.CloseInventoryPopup(inventory);
+        
+        if (currentOpenedInventory == inventory)
+            currentOpenedInventory = null;
+        
         OnInventoryUIClosed?.Invoke(inventory);
     }
 
@@ -280,11 +298,11 @@ public class InventoryManager : Singleton<InventoryManager>, IInitializable
     // ResetData의 CreateInitItems도 같이 끔.
     private void CreateInitItems()
     {
-        List<Constants.IngredientType> ingredientTypes = new List<Constants.IngredientType>();
-        ingredientTypes.Add(Constants.IngredientType.Meats);
-        ingredientTypes.Add(Constants.IngredientType.Vegetable);
-        ingredientTypes.Add(Constants.IngredientType.Processed);
-        ingredientTypes.Add(Constants.IngredientType.Spices);
+        List<IngredientType> ingredientTypes = new List<IngredientType>();
+        ingredientTypes.Add(IngredientType.Meats);
+        ingredientTypes.Add(IngredientType.Vegetable);
+        ingredientTypes.Add(IngredientType.Processed);
+        ingredientTypes.Add(IngredientType.Spices);
         foreach(var a in ingredientTypes)
         {
             var ingredientList = DataManager.Instance.GetIngredientList(a);
@@ -292,14 +310,45 @@ public class InventoryManager : Singleton<InventoryManager>, IInitializable
             {
                 Item item = ItemFactory.Instance.CreateItem(ingredientData.id);
 
-                if (ingredientData.type == Constants.IngredientType.Meats)
-                {
-                    InventoryManager.Instance.GetInventory(InventoryType.IngredientsButMeatOnly).GetItem(item, 10);
-
-                }
+                if (ingredientData.type == IngredientType.Meats)
+                    GetInventory(InventoryType.IngredientsButMeatOnly).GetItem(item, 10);
                 else
-                    InventoryManager.Instance.GetInventory(InventoryType.Ingredients).GetItem(item, 20);
+                    GetInventory(InventoryType.Ingredients).GetItem(item, 20);
             }
+        }
+    }
+    
+    public void ToggleCommonInventory()
+    {
+        // 다른 인벤토리가 열려있으면 그것부터 닫기
+        if (currentOpenedInventory != null)
+        {
+            CloseInventory(currentOpenedInventory);
+            return;
+        }
+
+        RectTransform invenRect = GetCommonInventoryRect();
+        
+        // 공용 인벤토리가 열려있으면 닫기
+        if (isCommonInventoryOpened)
+        {
+            if (invenRect != null)
+            {
+                UIAnimationManager.Instance.HideSlide(invenRect, CommonInvenInitPos, Direction.Left, 800f, 0.3f,
+                    onComplete: () =>
+                    {
+                        CloseCommonInventory();
+                    }
+                );
+            }
+            return;
+        }
+        
+        // 아무것도 안 열려있으면 공용 인벤 열기
+        OpenCommonInventory();
+        if (invenRect != null)
+        {
+            UIAnimationManager.Instance.ShowSlide(invenRect,CommonInvenInitPos, Direction.Left, 800f, 0.4f);
         }
     }
     

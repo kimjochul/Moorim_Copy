@@ -7,30 +7,23 @@ using System.Collections.Generic;
 public class AffinityTab : BaseTab
 {
     private List<NPCProfile> listNPCProfiles = new List<NPCProfile>();
-    // ¿ŞÂÊ ÆäÀÌÁö
-    [SerializeField]
-    private GameObject objNPCProfile;
-    [SerializeField]
-    private Transform tsParent;
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    [SerializeField] private GameObject objNPCProfile;
+    [SerializeField] private Transform tsParent;
 
-    // ¿À¸¥ÂÊ ÆäÀÌÁö
-    [SerializeField]
-    private GameObject objRightPage;
-    [SerializeField]
-    private Image imgPortrait;                  // ÃÊ»óÈ­ ÀÌ¹ÌÁö
-    [SerializeField]
-    private TextMeshProUGUI txtName;            // ÀÌ¸§
-    [SerializeField]
-    private TextMeshProUGUI txtDescription;     // ¼³¸í±Û
-    [SerializeField]
-    private TextMeshProUGUI txtLikes;           // ÁÁ¾ÆÇÏ´Â °Í
-    [SerializeField]
-    private TextMeshProUGUI txtDislikes;        // ½È¾îÇÏ´Â °Í
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    [SerializeField] private GameObject objRightPage;
+    [SerializeField] private Image imgPortrait;                  // ï¿½Ê»ï¿½È­ ï¿½Ì¹ï¿½ï¿½ï¿½
+    [SerializeField] private TextMeshProUGUI txtName;            // ï¿½Ì¸ï¿½
+    [SerializeField] private TextMeshProUGUI txtDescription;     // ï¿½ï¿½ï¿½ï¿½ï¿½
+    [SerializeField] private TextMeshProUGUI txtLikes;           // ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½
+    [SerializeField] private TextMeshProUGUI txtDislikes;        // ï¿½È¾ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½
 
-    [SerializeField]
-    private GameObject progressPrefab;
-    [SerializeField]
-    private Transform progressParent;
+    [SerializeField] private GameObject progressPrefab;
+    [SerializeField] private Transform progressParent;
+    [SerializeField] private BriefStoryInfo briefStoryInfo;
+    
+    private readonly List<StoryProgressSlot> progressSlots = new();
 
     public override void SetupData()
     {
@@ -65,9 +58,10 @@ public class AffinityTab : BaseTab
         this.txtName.text = data.myName;
         this.txtDescription.text = data.description;
 
-        this.txtLikes.text = data.likes != null ? string.Join(", ", data.likes) : "¾øÀ½";
-
-        this.txtDislikes.text = data.dislikes != null ? string.Join(", ", data.dislikes) : "¾øÀ½";
+        this.txtLikes.text = data.likes != null ? string.Join(", ", data.likes) : "ì—†ìŒ";
+        this.txtDislikes.text = data.dislikes != null ? string.Join(", ", data.dislikes) : "ì—†ìŒ";
+        
+        RefreshStoryProgress(data);
     }
 
     public override void ResetSetting() 
@@ -79,5 +73,38 @@ public class AffinityTab : BaseTab
         this.txtDescription.text = "";
         this.txtLikes.text = "";
         this.txtDislikes.text = "";
+    }
+    
+    private void RefreshStoryProgress(AffinityNPCData data)
+    {
+        if (data.storyTriggers == null)
+            return;
+
+        List<StoryTrigger> triggers = data.storyTriggers.triggers;
+
+        // ë¶€ì¡±í•˜ë©´ ìƒì„±
+        while (progressSlots.Count < triggers.Count)
+        {
+            StoryProgressSlot slot = Instantiate(progressPrefab, progressParent).GetComponent<StoryProgressSlot>();
+
+            progressSlots.Add(slot);
+        }
+
+        // ì‚¬ìš©
+        for (int i = 0; i < triggers.Count; i++)
+        {
+            progressSlots[i].gameObject.SetActive(true);
+
+            bool played = StoryManager.Instance.IsStoryPlayed(triggers[i].storyId);
+            Story story = StoryManager.Instance.GetStory(triggers[i].storyId);
+            
+            progressSlots[i].Init(story, briefStoryInfo, played);
+        }
+
+        // ë‚¨ëŠ” ìŠ¬ë¡¯ ìˆ¨ê¹€
+        for (int i = triggers.Count; i < progressSlots.Count; i++)
+        {
+            progressSlots[i].gameObject.SetActive(false);
+        }
     }
 }
