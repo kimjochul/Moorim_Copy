@@ -12,4 +12,6 @@ public class AffinityNPCData : ScriptableObject
     public string description;
     public string[] likes;
     public string[] dislikes;
+    
+    public StoryTriggerSO storyTriggers; // 캐릭터 스토리 체크용
 }

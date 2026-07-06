@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,6 +8,7 @@ public class NPCQuestDetailPanel : MonoBehaviour
     [Header("기본 UI")]
     [SerializeField] private TextMeshProUGUI questName;
     [SerializeField] private TextMeshProUGUI description;
+    [SerializeField] private Transform content;
 
     [Header("조건 UI")]
     [SerializeField] private Transform conditionContent;
@@ -54,6 +56,13 @@ public class NPCQuestDetailPanel : MonoBehaviour
     
     public void Show(Quest quest, NPCQuestUI parent)
     {
+        if (currentQuest != null)
+            SubscribeConditions(false);
+
+        currentQuest = quest;
+
+        SubscribeConditions(true);
+        
         this.parent = parent;
         currentQuest = quest;
 
@@ -66,8 +75,19 @@ public class NPCQuestDetailPanel : MonoBehaviour
         SetupButton();        
 
         gameObject.SetActive(true);
+        
+        StartCoroutine(RebuildLayout());
     }
 
+    private IEnumerator RebuildLayout()
+    {
+        yield return null;
+
+        Canvas.ForceUpdateCanvases();
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)content);
+    }
+    
     private void RefreshConditions()
     {
         // 기존 제거
