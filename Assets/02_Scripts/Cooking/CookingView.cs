@@ -22,6 +22,16 @@ public class CookingView : MonoBehaviour
     public event Action OnCloseClicked;
     public event Action OnAutoClicked;
 
+    private void Awake()
+    {
+        Debug.Log($"Awake : {recipeName.font.name}");
+    }
+
+    private void Start()
+    {
+        Debug.Log($"Start : {recipeName.font.name}");
+    }
+    
     public void Init()
     {
         cookBtn.onClick.RemoveAllListeners();  // 혹시 모를 중복 방지
