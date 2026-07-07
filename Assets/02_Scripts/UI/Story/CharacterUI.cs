@@ -312,6 +312,11 @@ public class CharacterUI : MonoBehaviour
         if (slot == null || motion == null)
             yield break;
 
+        if (motion.useFlip)
+        {
+            slot.SetFlip(motion.flip);
+        }
+        
         var preset = presets[slot.slotIndex];
 
         Vector2 finalPos = preset.position;
@@ -447,6 +452,11 @@ public class CharacterUI : MonoBehaviour
 
         var motion = cmd.motion;
 
+        if (motion.useFlip)
+        {
+            actor.SetFlip(motion.flip);
+        }
+        
         switch (motion.type)
         {
             case MotionType.Attack:

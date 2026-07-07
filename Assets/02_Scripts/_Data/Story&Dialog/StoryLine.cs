@@ -182,6 +182,10 @@ public class MotionData
     public int targetSlotIndex = -1;
     public float stopDistance = 100f;
     public float targetValue;
+    
+    [Header("Flip")]
+    public bool useFlip;
+    public bool flip;
 }
 
 [Serializable]

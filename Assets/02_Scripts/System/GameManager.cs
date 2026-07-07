@@ -21,9 +21,7 @@ public class StateNode
     public Action onEnter;
     public Action onExit;
 
-    public StateNode(GameFlowState state, GameFlowState nextState,
-        Action onEnter = null,
-        Action onExit = null)
+    public StateNode(GameFlowState state, GameFlowState nextState, Action onEnter = null, Action onExit = null)
     {
         this.state = state;
         this.nextState = nextState;
