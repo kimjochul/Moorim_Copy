@@ -21,16 +21,13 @@ public class RecipePage : MonoBehaviour
 
         this.recipeName.text = data.recipeName;
         this.imgIcon.sprite = data.icon;
-
-        // Àç·á¿Í °¹¼ö
-
+        
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         foreach (Transform child in this.ingredientParent)
         {
             Destroy(child.gameObject);
         }
-
-
-        int count = data.ingredients.Count;
+        
         for (int i = 0; i < data.ingredients.Count; i++)
         {
             RecipeIngredientSlot slot = Instantiate(this.ingredientSlotPrefab,
@@ -38,10 +35,10 @@ public class RecipePage : MonoBehaviour
             slot.Init(data.ingredients[i].ingredient.icon, data.ingredients[i].amount);
         }
 
-        // ¼÷·Ãµµ
+        // ï¿½ï¿½ï¿½Ãµï¿½
         this.imgProgress.fillAmount = GetCustomFillAmount(mastery.proficiency);
 
-        // ¼³¸í
+        // ï¿½ï¿½ï¿½ï¿½
         this.txtExplain.text = mastery.data.description;
     }
     public void HidePage()

@@ -103,6 +103,7 @@ public class DayManager : Singleton<DayManager>
             UpdateDayData();
         }
         
+        OnDateChanged?.Invoke();
         SaveManager.Instance.SaveGame(0, SaveSlotType.Auto);
         OnDayStart?.Invoke();
     }
@@ -121,6 +122,7 @@ public class DayManager : Singleton<DayManager>
 
         _isBusinessOver = false;
         
+        OnDateChanged?.Invoke();
         OnDayStart?.Invoke();
     }
 
@@ -185,8 +187,6 @@ public class DayManager : Singleton<DayManager>
         dayData.day++;
         dayData.dayOfWeek = (DayOfWeek)(((int)dayData.dayOfWeek + 1) % 7);
         Debug.Log($"오늘 날짜 {dayData.day}일, {dayData.dayOfWeek}");
-        
-        OnDateChanged?.Invoke();
     }
     
     
