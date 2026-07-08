@@ -9,7 +9,6 @@ public class QuestGenerator : MonoBehaviour
 {
     [SerializeField] private QuestPool questPool;
     [SerializeField] private QuestPool wholeQuestPool;
-    [SerializeField] private Inventory inventory;
     
     private RecipeUnlockManager recipeUnlockManager;
     
@@ -20,7 +19,6 @@ public class QuestGenerator : MonoBehaviour
         yield return null;
         yield return null;
         
-        inventory = InventoryManager.Instance.GetInventory(InventoryType.Fridge);
         recipeUnlockManager = RecipeUnlockManager.Instance;
     }
 
@@ -53,6 +51,7 @@ public class QuestGenerator : MonoBehaviour
         Debug.Log(validTemplates.Count);
         QuestData selected = validTemplates[Random.Range(0, validTemplates.Count)];
         
+        var inventory = InventoryManager.Instance.GetInventory(InventoryType.Fridge);
         Quest quest = new Quest(selected, inventory);
         RandomizeQuest(quest);
         
@@ -279,6 +278,8 @@ public class QuestGenerator : MonoBehaviour
             Debug.LogError($"QuestData 없음: {questID}");
             return null;
         }
+
+        var inventory = InventoryManager.Instance.GetInventory(InventoryType.Fridge);
 
         return new Quest(data, inventory);
     }

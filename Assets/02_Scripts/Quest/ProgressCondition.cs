@@ -154,4 +154,12 @@ public class ProgressCondition : QuestCondition
 
         return "";
     }
+    
+    public override void SaveRuntimeData(ConditionRuntimeData data)
+    {
+    }
+    public override void LoadRuntimeData(ConditionRuntimeData data)
+    {
+        Init();
+    }
 }

@@ -306,24 +306,10 @@ public class QuestManager : Singleton<QuestManager>, ISubject, IInitializable
 
                 var condData = new ConditionRuntimeData
                 {
-                    conditionIndex = i,
-                    currentCount = int.Parse(cond.GetCurrentCount())
+                    conditionIndex = i
                 };
 
-                // 🔥 타입별 저장
-                if (cond is ItemCondition item)
-                {
-                    condData.targetID = item.itemID;
-                    condData.requiredCount = item.requiredCount;
-                }
-                else if (cond is FailLimitCondition fail)
-                {
-                    condData.extraValue = fail.maxFailCount;
-                }
-                else if (cond is ServeCondition serve)
-                {
-                    condData.requiredCount = serve.requireCount;
-                }
+                cond.SaveRuntimeData(condData);
 
                 questData.conditions.Add(condData);
             }
@@ -367,20 +353,7 @@ public class QuestManager : Singleton<QuestManager>, ISubject, IInitializable
                 // 🔥 진행도 복원
                 cond.SetCurrentCount(savedCond.currentCount);
 
-                // 🔥 타입별 복원
-                if (cond is ItemCondition item)
-                {
-                    item.itemID = savedCond.targetID;
-                    item.requiredCount = savedCond.requiredCount;
-                }
-                else if (cond is FailLimitCondition fail)
-                {
-                    fail.maxFailCount = savedCond.extraValue;
-                }
-                else if (cond is ServeCondition serve)
-                {
-                    serve.requireCount = savedCond.requiredCount;
-                }
+                cond.LoadRuntimeData(savedCond);
             }
 
             activeQuests.Add(quest);
@@ -392,25 +365,6 @@ public class QuestManager : Singleton<QuestManager>, ISubject, IInitializable
             var quest = generator.GenerateQuestByID(id);
             if (quest != null)
                 completedQuests.Add(quest);
-        }
-    }
-    
-    public void RefreshItemConditions()
-    {
-        foreach (Inventory inventory in InventoryManager.Instance.GetAll())
-        {
-            foreach (var slot in inventory.Slots)
-            {
-                if (slot.IsEmpty)
-                    continue;
-
-                NotifyListener(new QuestEvent
-                {
-                    type = QuestEventType.ItemChanged,
-                    ID = slot.Item.ID,
-                    currentCount = inventory.GetItemCount(slot.Item.ID)
-                });
-            }
         }
     }
     

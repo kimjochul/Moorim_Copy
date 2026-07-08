@@ -51,4 +51,13 @@ public class CatchThiefCondition : QuestCondition
     {
         return requiredCatchCount.ToString();
     }
+    
+    public override void SaveRuntimeData(ConditionRuntimeData data)
+    {
+        base.SaveRuntimeData(data);
+    }
+    public override void LoadRuntimeData(ConditionRuntimeData data)
+    {
+        base.LoadRuntimeData(data);
+    }
 }
