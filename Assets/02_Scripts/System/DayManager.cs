@@ -42,6 +42,7 @@ public class DayManager : Singleton<DayManager>
     public event Action OnDayStart; // 각 매니저에서 가게 운영이 시작될 때의 동작들을 여기에 등록
     public event Action OnDayEnd; // 각 매니저에서 가게 운영이 종료될 때의 동작들을 여기에 등록
     public event Action<int, int> OnTimeChanged;
+    public event Action OnDateChanged;
     
     private int _hour;
     private int _prevHour = -1;
@@ -184,16 +185,15 @@ public class DayManager : Singleton<DayManager>
         dayData.day++;
         dayData.dayOfWeek = (DayOfWeek)(((int)dayData.dayOfWeek + 1) % 7);
         Debug.Log($"오늘 날짜 {dayData.day}일, {dayData.dayOfWeek}");
+        
+        OnDateChanged?.Invoke();
     }
     
-    public bool HasAnyAvailableNPC()
+    
+    public void RefreshUI()
     {
-        foreach (var npc in npcs)
-        {
-            if (npc.IsAvailableDay())
-                return true;
-        }
-        return false;
+        OnDateChanged?.Invoke();
+        OnTimeChanged?.Invoke(_hour, _minute);
     }
     
     public DaySaveData GetSaveData()

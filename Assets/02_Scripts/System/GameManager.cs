@@ -34,7 +34,6 @@ public class GameManager : Singleton<GameManager>
 {
     private Dictionary<GameFlowState, StateNode> stateTable;
     
-    private Receipt receipt;
     private List<INPCSchedule> npcs = new List<INPCSchedule>();
     private GuestResultTracker guest;
     
@@ -42,11 +41,12 @@ public class GameManager : Singleton<GameManager>
     
     public GameFlowState CurrentState { get; private set; }
 
+    private Receipt receipt;
+    
     private IEnumerator Start()
     {
         yield return null;
-
-        receipt = FindFirstObjectByType<Receipt>();
+        
         npcs = DayManager.Instance.NPCs;
         
         InitStateTable();
@@ -179,6 +179,11 @@ public class GameManager : Singleton<GameManager>
                 )
             }
         };
+    }
+    
+    public void SetReceipt(Receipt receipt)
+    {
+        this.receipt = receipt;
     }
     
     public void ResetFlow()

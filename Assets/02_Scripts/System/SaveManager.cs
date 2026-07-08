@@ -138,6 +138,7 @@ public class SaveManager : Singleton<SaveManager>
            
                 if (data.day.isDayEnded)
                 {
+                    DayManager.Instance.RefreshUI();
                     GameManager.Instance.SetState(GameFlowState.Gameplay);
                     GameManager.Instance.CompleteState(GameFlowState.Gameplay);
                 }
