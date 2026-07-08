@@ -47,6 +47,7 @@ public class Receipt : MonoBehaviour
     private void OnEnable()
     {
         StoryManager.Instance.SetReceipt(this);
+        GameManager.Instance.SetReceipt(this);
     }
     
     private void EventInit()

@@ -138,6 +138,7 @@ public class SaveManager : Singleton<SaveManager>
            
                 if (data.day.isDayEnded)
                 {
+                    DayManager.Instance.RefreshUI();
                     GameManager.Instance.SetState(GameFlowState.Gameplay);
                     GameManager.Instance.CompleteState(GameFlowState.Gameplay);
                 }
@@ -276,23 +277,9 @@ public class SaveManager : Singleton<SaveManager>
                 var inv = InventoryManager.Instance.GetInventory(invData.type);
                 Debug.Log($"찾은 인벤토리: {inv}");
                 inv.LoadFromData(invData);
-                
-                foreach (var slot in inv.Slots)
-                {
-                    if (!slot.IsEmpty)
-                    {
-                        QuestManager.Instance.NotifyListener(new QuestEvent
-                        {
-                            type = QuestEventType.ItemChanged,
-                            ID = slot.Item.ID,
-                            currentCount = inv.GetItemCount(slot.Item.ID)
-                        });
-                    }
-                }
             }
         }
         QuestManager.Instance.LoadFromData(data.quest);
-        QuestManager.Instance.RefreshItemConditions();
         StoryManager.Instance.LoadFromData(data.story);
     }
 

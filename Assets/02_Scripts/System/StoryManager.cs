@@ -404,21 +404,13 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
             {
                 foreach (var cmd in line.motions)
                 {
-                    yield return StartCoroutine(
-                        characterUI.PlayMotionRoutine(cmd, line.isUnknown)
-                    );
+                    yield return StartCoroutine(characterUI.PlayMotionRoutine(cmd, line.isUnknown));
                 }
             }
         }
         else if (line.motion != null && line.motion.type != MotionType.None)
         {
-            yield return StartCoroutine(
-                characterUI.PlayMotionRoutine(
-                    line.characterID,
-                    line.motion,
-                    line.isUnknown
-                )
-            );
+            yield return StartCoroutine(characterUI.PlayMotionRoutine(line.characterID, line.motion, line.isUnknown));
         }
             
         if(line.showEmotionIcon)

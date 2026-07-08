@@ -80,4 +80,17 @@ public class ServeCondition : QuestCondition
     {
         return requireCount.ToString();
     }
+    
+    public override void SaveRuntimeData(ConditionRuntimeData data)
+    {
+        base.SaveRuntimeData(data);
+
+        data.requiredCount = requireCount;
+    }
+    public override void LoadRuntimeData(ConditionRuntimeData data)
+    {
+        requireCount = data.requiredCount;
+
+        base.LoadRuntimeData(data);
+    }
 }

@@ -15,6 +15,8 @@ public class ScrollMenu : MonoBehaviour
     [SerializeField] private float openHeight = 500f;
     [SerializeField] private float duration = 0.4f;
     [SerializeField] private float buttonDuration = 0.15f;
+    
+    [SerializeField] private ToolTipUI toolTipUI;
 
     private float bottomClosedY;
     private bool isOpen;
@@ -35,7 +37,10 @@ public class ScrollMenu : MonoBehaviour
     public void Toggle()
     {
         if (isOpen)
+        {
             Close();
+            toolTipUI.Hide();
+        }
         else
             Open();
     }

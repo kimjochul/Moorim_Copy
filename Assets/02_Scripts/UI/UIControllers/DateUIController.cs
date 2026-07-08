@@ -12,7 +12,7 @@ public class DateUIController : MonoBehaviour
     void Awake()
     {
         _dayManager = FindFirstObjectByType<DayManager>();
-        _dayManager.OnDayStart += DateUIUpdate;
+        _dayManager.OnDateChanged += DateUIUpdate;
         _dayManager.OnTimeChanged += TimeUIUpdate;
     }
 

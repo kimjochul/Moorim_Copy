@@ -24,6 +24,12 @@ public class ItemCondition : QuestCondition
     /// <param name="inventory"></param>
     public override void Init(Inventory inventory = null)
     {
+        if (inventory == null)
+        {
+            currentCount = 0;
+            return;
+        }
+        
         currentCount = inventory.GetItemCount(itemID);
     }
 
@@ -91,5 +97,21 @@ public class ItemCondition : QuestCondition
     public override string GetRequiredCount()
     {
         return requiredCount.ToString();
+    }
+    
+    public override void SaveRuntimeData(ConditionRuntimeData data)
+    {
+        data.targetID = itemID;
+        data.requiredCount = requiredCount;
+
+        // currentCount는 저장 안함
+    }
+
+    public override void LoadRuntimeData(ConditionRuntimeData data)
+    {
+        itemID = data.targetID;
+        requiredCount = data.requiredCount;
+
+        Init(InventoryManager.Instance.GetInventory(Constants.InventoryType.Fridge));
     }
 }
