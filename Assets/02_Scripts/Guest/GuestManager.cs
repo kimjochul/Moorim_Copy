@@ -23,7 +23,8 @@ public class GuestManager : MonoBehaviour
 
     [Header("Spawn Info")]
     [SerializeField] private float startSpawnTime = 1f;
-    [SerializeField] private float spawnInterval = 5f;
+    [SerializeField] private float spawnInterval = 20f;
+
 
     [Header("Watitng Point")]
     [SerializeField] private int maxWaitingCount = 4;
@@ -105,9 +106,16 @@ public class GuestManager : MonoBehaviour
         Gate.OnGateStateChanged -= HandleGateStateChanged;
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.L))
+            EconomyManager.Instance.AddFame(100);
+    }
+
     private void StartSpawn()
     {
-        //InvokeRepeating(nameof(SpawnGuset), startSpawnTime, spawnInterval);
+        Debug.Log("StartSpawn");
+        InvokeRepeating(nameof(SpawnGuset), startSpawnTime, spawnInterval * 100 / (100 + EconomyManager.Instance.RestaurantEconomy.Fame));
         //Invoke(nameof(SpawnGuset), startSpawnTime);
     }
     

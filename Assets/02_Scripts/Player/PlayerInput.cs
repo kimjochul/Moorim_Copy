@@ -85,6 +85,12 @@ public class PlayerInput : MonoBehaviour
             if (GameManager.Instance.CurrentState == GameFlowState.Story)
                 return;
             
+            if (CookingController.Instance != null && CookingController.Instance.IsCookingUIOpen)
+            {
+                CookingController.Instance.CloseCookingSystem();
+                return;
+            }
+            
             Debug.Log(!UIManager.Instance.IsSettingActive);
             UIManager.Instance.ActiveSetting(!UIManager.Instance.IsSettingActive);
         }
