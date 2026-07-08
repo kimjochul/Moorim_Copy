@@ -13,7 +13,11 @@ public class AmountPopup : PopupController
     [SerializeField]
     private Button btnMinus;
     [SerializeField]
+    private Button btnTenMinus;
+    [SerializeField]
     private Button btnPlus;
+    [SerializeField]
+    private Button btnTenPlus;
 
     [SerializeField]
     private Button btnOk;
@@ -27,6 +31,8 @@ public class AmountPopup : PopupController
     {
         this.btnPlus.onClick.AddListener(OnClickPlus);
         this.btnMinus.onClick.AddListener(OnClickMinus);
+        this.btnTenPlus.onClick.AddListener(OnClickTenPlus);
+        this.btnTenMinus.onClick.AddListener(OnClickTenMinus);
     }
     public void Init(ItemData itemData)
     {
@@ -60,6 +66,23 @@ public class AmountPopup : PopupController
         if (this.currentAmount > 1)
         {
             this.currentAmount--;
+            UpdateUI();
+        }
+    }
+    private void OnClickTenPlus()
+    {
+        if (this.currentAmount < this.maxAmount)
+        {
+            this.currentAmount = Mathf.Min(this.currentAmount + 10, this.maxAmount);
+            UpdateUI();
+        }
+    }
+
+    private void OnClickTenMinus()
+    {
+        if (this.currentAmount > 1)
+        {
+            this.currentAmount = Mathf.Max(this.currentAmount - 10, 1);
             UpdateUI();
         }
     }

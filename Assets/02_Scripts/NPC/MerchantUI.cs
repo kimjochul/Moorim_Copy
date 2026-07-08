@@ -93,13 +93,18 @@ public class MerchantUI : MonoBehaviour
         characterSlot.SetCharacter(merchantCharacter, merchantCharacter.characterImage);
         SetDefaultExpression();
         
+        
         foreach (var data in menuDatas)
         {
+            if (EconomyManager.Instance.RestaurantEconomy.Debt == 0 && data.state == NPCUIState.Debt)
+                return;
+            
             var slot = Instantiate(slotPrefab, buttonContent);
         
             slot.Init(data, OnSelectMenu);
             
-            debtButton = slot.Button;
+            if (data.state == NPCUIState.Debt)
+                debtButton = slot.Button;
         }
         exitButton.onClick.AddListener(Close);
         

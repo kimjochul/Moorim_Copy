@@ -53,30 +53,26 @@ public class Guard : MonoBehaviour
         switch (currentState)
         {
             case GuardState.Idle:
-                // 대기 중 처리 (필요시 대기 애니메이션 재생 등)
+                // 필요시 애니메이션
                 break;
 
             case GuardState.Chasing:
-                // 타겟이 맵에서 사라졌거나, 이미 플레이어에 의해 제압된 경우
                 if (currentTarget == null || !currentTarget.isCausingTrouble)
                 {
                     ReturnToPost();
                     return;
                 }
 
-                // 타겟의 현재 위치로 계속 갱신 (손님이 약간 움직일 가능성 대비)
                 agent.SetDestination(currentTarget.transform.position);
 
-                // 목표물에 충분히 가까워졌는지 확인 (닿았는지 판정)
                 if (Vector3.Distance(transform.position, currentTarget.transform.position) <= suppressDistance)
                 {
-                    currentTarget.SuppressViolence(); // 타겟 제압[cite: 8]
-                    ReturnToPost(); // 제압 후 대기소로 복귀
+                    currentTarget.SuppressViolence();
+                    ReturnToPost();
                 }
                 break;
 
             case GuardState.Returning:
-                // 대기 위치로 도착했는지 확인
                 if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
                 {
                     currentState = GuardState.Idle;

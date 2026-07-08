@@ -38,6 +38,9 @@ public class GuestMover : MonoBehaviour
     
     public void RecalculatePath()
     {
+        if (agent == null || !agent.isActiveAndEnabled || !agent.isOnNavMesh)
+            return;
+        
         if (agent != null && agent.enabled && !agent.isStopped)
         {
             if (!HasArrived())
