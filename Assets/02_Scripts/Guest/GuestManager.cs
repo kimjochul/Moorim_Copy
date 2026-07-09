@@ -22,8 +22,8 @@ public class GuestManager : MonoBehaviour
     [SerializeField] private Transform exitPoint;
 
     [Header("Spawn Info")]
-    [SerializeField] private float startSpawnTime = 1f;
-    [SerializeField] private float spawnInterval = 20f;
+    private readonly float startSpawnTime = 1f;
+    private readonly float spawnInterval = 80f;
 
 
     [Header("Watitng Point")]
@@ -115,12 +115,15 @@ public class GuestManager : MonoBehaviour
     private void StartSpawn()
     {
         Debug.Log("StartSpawn");
+        Debug.Log(spawnInterval * 100 / (100 + EconomyManager.Instance.RestaurantEconomy.Fame));
         InvokeRepeating(nameof(SpawnGuset), startSpawnTime, spawnInterval * 100 / (100 + EconomyManager.Instance.RestaurantEconomy.Fame));
         //Invoke(nameof(SpawnGuset), startSpawnTime);
     }
     
     public GuestBase SpawnGuset()
     {
+        Debug.Log("SpawnGuset");
+        
         bool canEnterDirectly = Gate.isOpen && (SeatManager.Instance.FindEmptyChair() != null);
         
         if (!canEnterDirectly && waitingGuests.Count >= maxWaitingCount) 
