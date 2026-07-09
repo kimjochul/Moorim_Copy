@@ -45,6 +45,9 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
     [Header("캐릭터 데이터")]
     [SerializeField] private List<Character> characterDatas;
     
+    [Header("TooltipUI")]
+    [SerializeField] private ToolTipUI tooltipUI;
+    
     private StoryUI storyUI;
     public StoryUI StoryUI => storyUI;
     private CharacterUI characterUI;
@@ -551,6 +554,9 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
 
         // 다음 ShowNextLine 호출 시 씬 종료 처리됨
         ShowNextLine();
+
+        if(tooltipUI != null)
+            tooltipUI.Hide();
         
         DOVirtual.DelayedCall(0.3f, () =>
         {
@@ -566,6 +572,9 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         if (isTransitioning || isSkipLocked)
             return;
 
+        if(tooltipUI != null)
+            tooltipUI.Hide();
+        
         isSkipLocked = true;
         StartCoroutine(SkipCurrentStoryRoutine());
     }
@@ -940,6 +949,11 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
     public bool IsStoryPlayed(int storyId)
     {
         return playedStoryIds.Contains(storyId);
+    }
+
+    public void SetTooltipUI(ToolTipUI tooltipUI)
+    {
+        this.tooltipUI = tooltipUI;
     }
     
     public StorySaveData GetSaveData()

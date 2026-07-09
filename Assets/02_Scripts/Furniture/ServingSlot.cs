@@ -32,9 +32,9 @@ public class ServingSlot : MonoBehaviour, IInteractable
             if (slot.Item == null)
                 continue;
             
-            slot.SpoilTimer += Time.deltaTime;
+            slot.Item.SpoilTimer += Time.deltaTime;
 
-            if (slot.SpoilTimer >= SPOIL_TIME)
+            if (slot.Item.SpoilTimer >= SPOIL_TIME)
             {
                 Debug.Log($"{slot.Item.ItemName} 상함");
 
@@ -45,7 +45,7 @@ public class ServingSlot : MonoBehaviour, IInteractable
                     Destroy(objFoodPrefab);
                 }
                 
-                slot.SpoilTimer = 0f;
+                slot.Item.SpoilTimer = 0f;
             }
             //Debug.Log($"{slot.Index}번 슬롯 Spoil Timer : {slot.SpoilTimer}");
         }
@@ -74,8 +74,8 @@ public class ServingSlot : MonoBehaviour, IInteractable
     /// <param name="foodData"></param>
     public void PlaceFood(Inventory sourceInven, Slot sourceSlot)
     {
-        int index = sourceInven.MoveSlotTo(inventory, sourceSlot, 1);
-        OnItemAddedToServing(inventory.Slots[index]);
+        Slot targetSlot = sourceInven.TryMoveToInventory(inventory, sourceSlot, sourceSlot.Count);
+        OnItemAddedToServing(targetSlot);
     }
     
     /// <summary>
@@ -93,8 +93,7 @@ public class ServingSlot : MonoBehaviour, IInteractable
 
         IItem item = slot.Item;
 
-        inventory.MoveSlotTo(targetInven, slot, 1);
-        inventory.RemoveItem(item.ID, 1);
+        inventory.TryMoveOneToInventory(targetInven, slot);
 
         if (objFoodPrefab != null)
         {

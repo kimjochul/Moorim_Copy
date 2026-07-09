@@ -12,6 +12,10 @@ public class Item : IItem
     public int InventoryCapacity { get; }
     
     public ItemData Data { get; private set; }
+
+    public float SpoilTimer { get; set; }
+    public int FridgeSpoilTimer { get; set; }
+    
     public Item(ItemData data)
     {
         Data = data;
@@ -20,5 +24,7 @@ public class Item : IItem
         ItemName = data.itemName;
         InventoryCapacity = data.maxCapacity;
         Icon = data.icon;
+        SpoilTimer = 0;
+        FridgeSpoilTimer = 0;
     }
 }
