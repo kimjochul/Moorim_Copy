@@ -7,8 +7,8 @@ public class BottomSlideAnim : MonoBehaviour
     private RectTransform rectTransform;
 
     [Header("애니메이션 설정")]
-    [SerializeField] private float hiddenPosY = -130f;   // 숨어있을 때의 Y 좌표 (인벤토리 창 높이만큼 마이너스)
-    [SerializeField] private float shownPosY = 359;       // 다 올라왔을 때의 Y 좌표
+    [SerializeField] private float hiddenPosY = 120f;   // 숨어있을 때의 Y 좌표 
+    [SerializeField] private float shownPosY = 242f;       // 다 올라왔을 때의 Y 좌표
 
     [SerializeField] private float duration = 0.2f;  // 이동 시간
 
