@@ -49,7 +49,19 @@ public class MerchantUI : MonoBehaviour
     {
         lastDialogIndex = -1;
         
+        
+        if (merchant.IsAvailableDay())
+            merchant.DayManager.OnDayStart += ResetDialogue;
+        
+        SetDefaultExpression();
+        
         debtPanel.FullPayDebt += FullyRepayDebt;
+
+        shop.OnProductClicked -= HandleProductClicked;
+        shop.OnProductClicked += HandleProductClicked;
+        
+        shop.OnRecipeClicked -= HandleRecipeClicked;
+        shop.OnRecipeClicked += HandleRecipeClicked;
         
         OpenTalk();
     }
@@ -83,16 +95,7 @@ public class MerchantUI : MonoBehaviour
         this.merchant = merchant;
         
         shop.Init();
-        
-        if (merchant.IsAvailableDay())
-            merchant.DayManager.OnDayStart += ResetDialogue;
-        
-        shop.OnProductClicked += HandleProductClicked;
-        shop.OnRecipeClicked += HandleRecipeClicked;
-        
         characterSlot.SetCharacter(merchantCharacter, merchantCharacter.characterImage);
-        SetDefaultExpression();
-        
         
         foreach (var data in menuDatas)
         {

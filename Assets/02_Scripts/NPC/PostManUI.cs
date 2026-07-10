@@ -39,6 +39,11 @@ public class PostManUI : MonoBehaviour
     
     private void OnEnable()
     {
+        if (postman.IsAvailableDay())
+            postman.DayManager.OnDayStart += ResetDialogue;
+        
+        SetDefaultExpression();
+        
         OpenTalk();
     }
 
@@ -60,11 +65,7 @@ public class PostManUI : MonoBehaviour
         
         this.postman = postman;
         
-        if (postman.IsAvailableDay())
-            postman.DayManager.OnDayStart += ResetDialogue;
-        
         characterSlot.SetCharacter(postmanCharacter, postmanCharacter.characterImage);
-        SetDefaultExpression();
         
         foreach (var data in menuDatas)
         {

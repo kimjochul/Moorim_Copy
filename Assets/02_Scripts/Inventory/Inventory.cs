@@ -289,7 +289,64 @@ public class Inventory : MonoBehaviour, IInitializable
     }
 
     /// <summary>
+    /// 아이템 생성(GetItem) 전에 수용 가능한지 확인하는 함수
+    /// </summary>
+    /// <param name="item"></param>
+    /// <param name="count"></param>
+    /// <returns></returns>
+    public int CanReceiveItem(IItem item, int count)
+    {
+        int remain = count;
+
+        // 기존 스택
+        foreach (var slot in slots)
+        {
+            if (remain <= 0)
+                break;
+
+            if (slot.IsEmpty)
+                continue;
+
+            if (slot.Item.ID != item.ID)
+                continue;
+
+            // 냉장고 부패일 체크
+            if (slot.Item.FridgeSpoilTimer != item.FridgeSpoilTimer)
+                continue;
+
+            // 배식대는 실시간 부패도 체크
+            if (type == InventoryType.MealTable)
+            {
+                if (Mathf.Abs(slot.Item.SpoilTimer - item.SpoilTimer) > 0.1f)
+                    continue;
+            }
+
+            int canAdd = item.InventoryCapacity - slot.Count;
+
+            if (canAdd <= 0)
+                continue;
+
+            remain -= canAdd;
+        }
+
+        // 빈 슬롯
+        foreach (var slot in slots)
+        {
+            if (remain <= 0)
+                break;
+
+            if (!slot.IsEmpty)
+                continue;
+
+            remain -= item.InventoryCapacity;
+        }
+
+        return count - remain;
+    }
+    
+    /// <summary>
     /// 아이템을 획득 했을 때 호출되는 함수
+    /// 반환값 : 인벤토리에 들어가지 못한 개수
     /// </summary>
     /// <param name="item"></param>
     /// <param name="count"></param>
@@ -441,6 +498,13 @@ public class Inventory : MonoBehaviour, IInitializable
         return true;
     }
     
+    /// <summary>
+    /// 클릭으로 아이템 이동할 때 쓰는 함수
+    /// </summary>
+    /// <param name="targetInventory"></param>
+    /// <param name="sourceSlot"></param>
+    /// <param name="amount"></param>
+    /// <returns></returns>
     public Slot TryMoveToInventory(Inventory targetInventory, Slot sourceSlot, int amount)
     {
         if (sourceSlot.IsEmpty)
@@ -462,34 +526,35 @@ public class Inventory : MonoBehaviour, IInitializable
                 firstTarget = targetSlot;
             
             remain -= moved;
-            
+
             if (remain <= 0)
-                return firstTarget;
+                break;
         }
 
-        foreach (var targetSlot in targetInventory.Slots)
+        if(remain > 0)
         {
-            if (!targetSlot.IsEmpty)
-                continue;
+            foreach (var targetSlot in targetInventory.Slots)
+            {
+                if (!targetSlot.IsEmpty)
+                    continue;
 
-            int moved = MoveToEmptySlot(targetSlot, sourceSlot, remain);
+                int moved = MoveToEmptySlot(targetSlot, sourceSlot, remain);
 
-            if (moved > 0 && firstTarget == null)
-                firstTarget = targetSlot;
+                if (moved > 0 && firstTarget == null)
+                    firstTarget = targetSlot;
 
-            remain -= moved;
+                remain -= moved;
 
-            if (remain <= 0)
-                return firstTarget;
+                if (remain <= 0)
+                    break;
+            }
         }
 
         if (targetInventory.Type == InventoryType.MealTable && firstTarget != null)
-            OnItemAdded?.Invoke(firstTarget);
+            targetInventory.OnItemAdded?.Invoke(firstTarget);
         
         NotifyItemChanged(itemID);
-        
-        if (firstTarget != null)
-            targetInventory.NotifyItemChanged(firstTarget.Item.ID);
+        targetInventory.NotifyItemChanged(itemID);
         
         return firstTarget;
     }
