@@ -74,6 +74,9 @@ public class GuestInteractable : MonoBehaviour, IInteractable
             return;
         }
         
+        if (myBrain.currentState != GuestState.WaitFood)
+            return;
+        
         FoodData food = slot.Item.Data as FoodData;
         if (food == null) return;
 
