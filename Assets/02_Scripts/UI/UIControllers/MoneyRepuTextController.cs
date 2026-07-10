@@ -19,12 +19,13 @@ public class MoneyRepuTextController : MonoBehaviour
     void Awake()
     {
         economyManager = EconomyManager.Instance;
+        
     }
 
     private void OnEnable()
     {
         economyManager.RestaurantEconomyChanged += Refresh;
-        Refresh();
+        DayManager.Instance.OnDayStart += Refresh;
     }
 
     private void OnDisable()
@@ -32,6 +33,11 @@ public class MoneyRepuTextController : MonoBehaviour
         if (economyManager != null)
         {
             economyManager.RestaurantEconomyChanged -= Refresh;
+        }
+        
+        if (DayManager.Instance != null)
+        {
+            DayManager.Instance.OnDayStart -= Refresh;
         }
     }
 
