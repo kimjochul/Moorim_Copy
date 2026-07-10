@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 
@@ -11,6 +12,11 @@ public class ToolTipUI : MonoBehaviour
         rect = GetComponent<RectTransform>();
 
         gameObject.SetActive(false);
+    }
+
+    private void OnEnable()
+    {
+        StoryManager.Instance.SetTooltipUI(this);
     }
 
     public void Show(string text, RectTransform target)

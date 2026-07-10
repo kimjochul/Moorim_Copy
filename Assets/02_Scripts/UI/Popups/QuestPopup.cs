@@ -52,6 +52,7 @@ public class QuestPopup : MonoBehaviour
             condition.OnConditionUpdated += Refresh;
         }
         Refresh();
+        gameObject.SetActive(true);
     }
 
     private void Close()

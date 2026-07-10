@@ -337,12 +337,15 @@ public class InventoryManager : Singleton<InventoryManager>, IInitializable
                 UIAnimationManager.Instance.HideSlide(invenRect, CommonInvenInitPos, Direction.Left, 800f, 0.3f,
                     onComplete: () =>
                     {
+                        OnBottomUIToggleRequested?.Invoke(false);
                         CloseCommonInventory();
                     }
                 );
             }
             return;
         }
+        
+        OnBottomUIToggleRequested?.Invoke(true);
         
         // 아무것도 안 열려있으면 공용 인벤 열기
         OpenCommonInventory();

@@ -56,8 +56,8 @@ public class Fridge : MonoBehaviour, IInteractable
             if (slot.Item == null)
                 continue;
 
-            slot.FridgeSpoilTimer++;
-            Debug.Log($"{slot.Item.ItemName} → {slot.FridgeSpoilTimer}");
+            slot.Item.FridgeSpoilTimer++;
+            Debug.Log($"{slot.Item.ItemName} → {slot.Item.FridgeSpoilTimer}");
         }
     }
     
@@ -70,7 +70,7 @@ public class Fridge : MonoBehaviour, IInteractable
             if (slot.Item == null)
                 continue;
 
-            if (slot.FridgeSpoilTimer >= 3)
+            if (slot.Item.FridgeSpoilTimer >= 3)
             {
                 removeSlots.Add(slot);
             }
@@ -90,7 +90,7 @@ public class Fridge : MonoBehaviour, IInteractable
     /// <param name="foodData"></param>
     public void PlaceFood(Inventory sourceInven, Slot sourceSlot)
     {
-        sourceInven.MoveSlotTo(inventory, sourceSlot, 1);
+        sourceInven.TryMoveToInventory(inventory, sourceSlot, sourceSlot.Count);
     }
     
     /// <summary>
@@ -108,8 +108,7 @@ public class Fridge : MonoBehaviour, IInteractable
 
         IItem item = slot.Item;
 
-        inventory.MoveSlotTo(targetInven, slot, 1);
-        inventory.RemoveItem(item.ID, 1);
+        inventory.TryMoveOneToInventory(targetInven, slot);
         
         return item;
     }

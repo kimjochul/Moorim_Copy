@@ -79,25 +79,33 @@ public class Shop : MonoBehaviour
             return false;
         }
         
-        EconomyManager.Instance.SpendMoney(totalPrice);
-        
+        Inventory inventory = null;
         if (item.Data is IngredientData ingredientData)
         {
-            if (ingredientData.type == Constants.IngredientType.Meats)
-            {
-                //Debug.Log($"{ingredientData.name} is a meat");
-                playerMeatInventory.GetItem(item, count);
-            }
-            else
-            {
-                //Debug.Log($"{ingredientData.name} is not a meat");
-                playerOtherIngredientInventory.GetItem(item, count);
-            }
+            inventory = ingredientData.type == IngredientType.Meats ? playerMeatInventory : playerOtherIngredientInventory;
         }
-        else if (item.Data is FoodData foodData)
+        else if (item.Data is FoodData)
         {
-            fridgeInventory.GetItem(item, count);
-            Debug.Log($"{foodData.name} is a food");
+            inventory = fridgeInventory;
+        }
+        
+        if (inventory != null)
+        {
+            int canBuy = inventory.CanReceiveItem(item, count);
+            
+            if (canBuy == 0)
+            {
+                UIManager.Instance.CreateOkPopup("인벤토리가 가득 찼습니다.", () => {}, () => {}, false);
+                return false;
+            }
+            
+            if (canBuy < count)
+            {
+                UIManager.Instance.CreateOkPopup($"구매 실패!\n{canBuy}개만 구매 가능합니다.", () => {}, () => {}, false);
+                return false;
+            }
+            
+            inventory.GetItem(item, count);
         }
         else if (item.Data is BondItemData bondItemData)
         {
@@ -108,6 +116,8 @@ public class Shop : MonoBehaviour
         {
             Debug.Log("Not a valid item");
         }
+        
+        EconomyManager.Instance.SpendMoney(totalPrice);
 
         return true;
     }

@@ -125,12 +125,12 @@ public class Inventory : MonoBehaviour, IInitializable
         // 같은 인벤토리면 내가 처리
         if (target.Owner == this && source.Owner == this)
         {
-            MoveItem(target, source);
+            MoveItem(target, source, source.Count);
         }
         // 다른 인벤토리면 target 쪽이 본인의 컴포넌트에서 처리
         else if (target.Owner == this)
         {
-            MoveItem(target, source);
+            MoveItem(target, source, source.Count);
         }
     }
 
@@ -145,15 +145,107 @@ public class Inventory : MonoBehaviour, IInitializable
     }
     
     /// <summary>
+    /// 타겟에 소스의 아이템을 합칠 수 있는지
+    /// </summary>
+    /// <param name="target"></param>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    private bool CanMerge(Slot target, Slot source)
+    {
+        if (target.IsEmpty || source.IsEmpty)
+            return false;
+
+        if (target.Item.ID != source.Item.ID)
+            return false;
+
+        // 부패 일수가 다르면 합치지 않는다.
+        if (target.Item.FridgeSpoilTimer != source.Item.FridgeSpoilTimer)
+            return false;
+        
+        //Debug.Log($"FridgeTimer {target.Item.FridgeSpoilTimer} / {source.Item.FridgeSpoilTimer}");
+        
+        // 배식대는 실시간 부패 시간도 같아야 합침
+        if (target.Owner.Type == InventoryType.MealTable)
+        {
+            if (Mathf.Abs(target.Item.SpoilTimer - source.Item.SpoilTimer) > 0.1f)
+                return false;
+        }
+
+        return true;
+    }
+    
+    /// <summary>
+    /// 슬롯끼리 아이템 합치는 함수
+    /// </summary>
+    /// <param name="target"></param>
+    /// <param name="source"></param>
+    private int MergeSlot(Slot target, Slot source, int amount)
+    {
+        int max = target.Item.InventoryCapacity;
+        int canAdd = max - target.Count;
+
+        if (canAdd <= 0)
+            return 0;
+
+        int move = Mathf.Min(canAdd, amount);
+
+        target.AddCount(move);
+        source.AddCount(-move);
+
+        if (source.Count <= 0)
+            source.Clear();
+
+        return move;
+    }
+    
+    /// <summary>
+    /// 빈 슬롯에 아이템 넣는 함수
+    /// </summary>
+    /// <param name="target"></param>
+    /// <param name="source"></param>
+    private int MoveToEmptySlot(Slot target, Slot source, int amount)
+    {
+        int move = Mathf.Min(amount, source.Count);
+        
+        target.SetItem(source.Item, move);
+        
+        source.AddCount(-move);
+
+        if (source.Count <= 0)
+            source.Clear();
+
+        return move;
+    }
+    
+    /// <summary>
+    /// 슬롯끼리 스왑
+    /// </summary>
+    /// <param name="target"></param>
+    /// <param name="source"></param>
+    private void SwapSlot(Slot target, Slot source)
+    {
+        // dragslot은 원래 슬롯을 참조하는 것이기 때문에 원래 슬롯이 변경됨
+        //“dragSlot은 A 슬롯 객체를 참조하고 있고, dragSlot을 통해 호출한 메서드는 A 슬롯 인스턴스의 상태를 직접 변경한다.”
+        IItem tempItem = target.Item;
+        int tempCount = target.Count;
+
+        target.SetItem(source.Item, source.Count);
+
+        source.SetItem(tempItem, tempCount);
+    }
+    
+    /// <summary>
     /// 소스 슬롯에서 타겟 슬롯에 아이템을 이동시키는 함수
     /// </summary>
     /// <param name="target"></param>
     /// <param name="source"></param>
-    private void MoveItem(Slot target, Slot source)
+    private void MoveItem(Slot target, Slot source, int amount)
     {
         if (source.IsEmpty)
             return;
 
+        amount = Mathf.Clamp(amount, 1, source.Count);
+        
         int itemID = source.Item.ID;
 
         // 컨트롤 누른 채 드래그하면 절반으로 줄이기
@@ -162,14 +254,7 @@ public class Inventory : MonoBehaviour, IInitializable
             int half = source.Count / 2;
             if (half > 0)
             {
-                target.SetItem(source.Item, half);
-                source.AddCount(-half);
-                
-                target.FridgeSpoilTimer = source.FridgeSpoilTimer;
-                target.SpoilTimer = source.SpoilTimer;
-                
-                if (source.Count <= 0)
-                    source.Clear();
+                MoveItem(target, source, half);
             }
             NotifyItemChanged(itemID);
             return;
@@ -178,57 +263,25 @@ public class Inventory : MonoBehaviour, IInitializable
         // 1. 빈 슬롯
         if (target.IsEmpty)
         {
-            target.SetItem(source.Item, source.Count);
-            
-            target.FridgeSpoilTimer = source.FridgeSpoilTimer;
-            target.SpoilTimer = source.SpoilTimer;
-            
-            source.Clear();
+            MoveToEmptySlot(target, source, amount);
         }
         // 2. 같은 아이템 → 합치기
-        else if (target.Item.ID == source.Item.ID)
+        else if (CanMerge(target, source))
         {
-            if (target.FridgeSpoilTimer != source.FridgeSpoilTimer) // 드래그로 음식 옮길 때 
-                return;
-            
-            int max = target.Item.InventoryCapacity;
-            int canAdd = max - target.Count;
-
-            if (canAdd > 0)
-            {
-                int move = Mathf.Min(canAdd, source.Count);
-                target.AddCount(move);
-                source.AddCount(-move);
-
-                if (source.Count <= 0)
-                    source.Clear();
-            }
+            MergeSlot(target, source, amount);
         }
         // 3. 스왑
         else
         {
-            IItem tempItem = target.Item;
-            int tempCount = target.Count;
-            // dragslot은 원래 슬롯을 참조하는 것이기 때문에 원래 슬롯이 변경됨
-            //“dragSlot은 A 슬롯 객체를 참조하고 있고, dragSlot을 통해 호출한 메서드는 A 슬롯 인스턴스의 상태를 직접 변경한다.”
-
-            int tempFridgeSpoil = target.FridgeSpoilTimer;
-            float tempSpoilTimer = target.SpoilTimer;
+            // 부분 이동이면 스왑 불가
+            if (amount != source.Count)
+                return;
             
-            target.FridgeSpoilTimer = source.FridgeSpoilTimer;
-            target.SpoilTimer = source.SpoilTimer;
-
-            source.FridgeSpoilTimer = tempFridgeSpoil;
-            source.SpoilTimer = tempSpoilTimer;
-            
-            target.SetItem(source.Item, source.Count);
-            source.SetItem(tempItem, tempCount);
+            SwapSlot(target, source);
         }
 
-        if (source.Owner.Type == InventoryType.MealTable)
-        {
-            OnItemAdded?.Invoke(source);
-        }
+        if (target.Owner.Type == InventoryType.MealTable)
+            OnItemAdded?.Invoke(target);
         
         NotifyItemChanged(itemID);
         if (!target.IsEmpty)
@@ -236,7 +289,64 @@ public class Inventory : MonoBehaviour, IInitializable
     }
 
     /// <summary>
+    /// 아이템 생성(GetItem) 전에 수용 가능한지 확인하는 함수
+    /// </summary>
+    /// <param name="item"></param>
+    /// <param name="count"></param>
+    /// <returns></returns>
+    public int CanReceiveItem(IItem item, int count)
+    {
+        int remain = count;
+
+        // 기존 스택
+        foreach (var slot in slots)
+        {
+            if (remain <= 0)
+                break;
+
+            if (slot.IsEmpty)
+                continue;
+
+            if (slot.Item.ID != item.ID)
+                continue;
+
+            // 냉장고 부패일 체크
+            if (slot.Item.FridgeSpoilTimer != item.FridgeSpoilTimer)
+                continue;
+
+            // 배식대는 실시간 부패도 체크
+            if (type == InventoryType.MealTable)
+            {
+                if (Mathf.Abs(slot.Item.SpoilTimer - item.SpoilTimer) > 0.1f)
+                    continue;
+            }
+
+            int canAdd = item.InventoryCapacity - slot.Count;
+
+            if (canAdd <= 0)
+                continue;
+
+            remain -= canAdd;
+        }
+
+        // 빈 슬롯
+        foreach (var slot in slots)
+        {
+            if (remain <= 0)
+                break;
+
+            if (!slot.IsEmpty)
+                continue;
+
+            remain -= item.InventoryCapacity;
+        }
+
+        return count - remain;
+    }
+    
+    /// <summary>
     /// 아이템을 획득 했을 때 호출되는 함수
+    /// 반환값 : 인벤토리에 들어가지 못한 개수
     /// </summary>
     /// <param name="item"></param>
     /// <param name="count"></param>
@@ -388,31 +498,73 @@ public class Inventory : MonoBehaviour, IInitializable
         return true;
     }
     
-    public int MoveSlotTo(Inventory target, Slot sourceSlot, int count)
+    /// <summary>
+    /// 클릭으로 아이템 이동할 때 쓰는 함수
+    /// </summary>
+    /// <param name="targetInventory"></param>
+    /// <param name="sourceSlot"></param>
+    /// <param name="amount"></param>
+    /// <returns></returns>
+    public Slot TryMoveToInventory(Inventory targetInventory, Slot sourceSlot, int amount)
     {
         if (sourceSlot.IsEmpty)
-            return -1;
-
-        // target에서 빈 슬롯 찾기
-        foreach (var targetSlot in target.Slots)
+            return null;
+        
+        amount = Mathf.Clamp(amount, 1, sourceSlot.Count);
+        int itemID = sourceSlot.Item.ID;
+        Slot firstTarget = null;
+        int remain = amount;
+        
+        foreach (var targetSlot in targetInventory.Slots)
         {
-            if (!targetSlot.IsEmpty)
+            if (!CanMerge(targetSlot, sourceSlot))
                 continue;
 
-            targetSlot.SetItem(sourceSlot.Item, count);
-            targetSlot.FridgeSpoilTimer = sourceSlot.FridgeSpoilTimer;
-            targetSlot.SpoilTimer = sourceSlot.SpoilTimer;
+            int moved = MergeSlot(targetSlot, sourceSlot, amount);
 
-            sourceSlot.AddCount(-count);
+            if(moved > 0)
+                firstTarget = targetSlot;
+            
+            remain -= moved;
 
-            if (sourceSlot.Count <= 0)
-                sourceSlot.Clear();
-
-            return targetSlot.Index;
+            if (remain <= 0)
+                break;
         }
 
-        Debug.Log("빈 슬롯 없음");
-        return -1;
+        if(remain > 0)
+        {
+            foreach (var targetSlot in targetInventory.Slots)
+            {
+                if (!targetSlot.IsEmpty)
+                    continue;
+
+                int moved = MoveToEmptySlot(targetSlot, sourceSlot, remain);
+
+                if (moved > 0 && firstTarget == null)
+                    firstTarget = targetSlot;
+
+                remain -= moved;
+
+                if (remain <= 0)
+                    break;
+            }
+        }
+
+        if (targetInventory.Type == InventoryType.MealTable && firstTarget != null)
+            targetInventory.OnItemAdded?.Invoke(firstTarget);
+        
+        NotifyItemChanged(itemID);
+        targetInventory.NotifyItemChanged(itemID);
+        
+        return firstTarget;
+    }
+    
+    public Slot TryMoveOneToInventory(Inventory targetInventory, Slot sourceSlot)
+    {
+        if (sourceSlot.IsEmpty)
+            return null;
+        
+        return TryMoveToInventory(targetInventory, sourceSlot, 1);
     }
     
     public void RefreshItemOrder()
@@ -421,9 +573,7 @@ public class Inventory : MonoBehaviour, IInitializable
             .Select(x => new
             {
                 x.Item,
-                x.Count,
-                x.SpoilTimer,
-                x.FridgeSpoilTimer
+                x.Count
             }).ToList();
 
         foreach (var slot in slots)
@@ -432,8 +582,6 @@ public class Inventory : MonoBehaviour, IInitializable
         for (int i = 0; i < items.Count; i++)
         {
             slots[i].SetItem(items[i].Item, items[i].Count);
-            slots[i].SpoilTimer = items[i].SpoilTimer;
-            slots[i].FridgeSpoilTimer = items[i].FridgeSpoilTimer;
         }
     }
     
@@ -448,8 +596,8 @@ public class Inventory : MonoBehaviour, IInitializable
             {
                 itemID = slot.IsEmpty ? -1 : slot.Item.ID,
                 count = slot.Count,
-                spoilTimer = slot.SpoilTimer,
-                fridgeSpoilTimer = slot.FridgeSpoilTimer
+                spoilTimer = slot.IsEmpty ? 0 : slot.Item.SpoilTimer,
+                fridgeSpoilTimer = slot.IsEmpty ? 0 : slot.Item.FridgeSpoilTimer
             });
         }
 
@@ -474,8 +622,8 @@ public class Inventory : MonoBehaviour, IInitializable
             IItem item = new Item(itemData);
 
             slots[i].SetItem(item, slotData.count);
-            slots[i].SpoilTimer = slotData.spoilTimer;
-            slots[i].FridgeSpoilTimer = slotData.fridgeSpoilTimer;
+            slots[i].Item.SpoilTimer = slotData.spoilTimer;
+            slots[i].Item.FridgeSpoilTimer = slotData.fridgeSpoilTimer;
         }
     }
     
