@@ -176,7 +176,12 @@ public class PlayerInput : MonoBehaviour
         }
 
         PlayerManager.Instance.ReservedInteractable = interactable;
-        PlayerManager.Instance.MoveSelectedUnitTo(interactable.GetInteractPosition());
+        PlayerManager.Instance.MoveSelectedUnitTo(interactable.GetInteractPosition(), () =>
+        {
+            // 도착했을 때 아직 이 대상이 예약 상태면 실행 (이동 중 다른 걸 클릭했거나 트리거 진입으로 이미 실행됐으면 스킵됨)
+            if (PlayerManager.Instance.ReservedInteractable == interactable)
+                PlayerManager.Instance.ExecuteInteract(interactable);
+        });
     }
 
     // 명월 전용 / 빈 땅 클릭 시 이동
