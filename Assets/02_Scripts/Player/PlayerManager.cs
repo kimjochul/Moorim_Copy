@@ -80,6 +80,10 @@ public class PlayerManager : Singleton<PlayerManager>
                 lastInteractables[CurrentPlayer] = selectedUnit.ActiveInteractable;
                 selectedUnit.ActiveInteractable.OnInteractEnd(selectedUnit);
             }
+            else
+            {
+                lastInteractables.Remove(CurrentPlayer);
+            }
 
             selectedUnit.OnDeselected();
         }
@@ -95,12 +99,20 @@ public class PlayerManager : Singleton<PlayerManager>
         {
             if (last != null && last.CanInteract(playerType))
             {
+                if (last == selectedUnit.ActiveInteractable
+                    && last is MonoBehaviour mb && mb.gameObject.activeInHierarchy)
+                {
+                    last.Interact(selectedUnit);
+                    resumed = true;
+                }
+                /*
                 if (last is MonoBehaviour mb && mb.gameObject.activeInHierarchy)
                 {
                     selectedUnit.ActiveInteractable = last;
                     last.Interact(selectedUnit);
                     resumed = true;
                 }
+                */
             }
         }
         
