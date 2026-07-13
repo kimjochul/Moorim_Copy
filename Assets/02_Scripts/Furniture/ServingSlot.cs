@@ -13,7 +13,7 @@ public class ServingSlot : MonoBehaviour, IInteractable
 
     // 음식 오브젝트 소환용
     private GameObject objFoodPrefab;
-    private GameObject currentFood;
+    //private GameObject currentFood;
 
     [SerializeField] private Inventory inventory;
     [SerializeField] private PopupController ui;
@@ -38,14 +38,13 @@ public class ServingSlot : MonoBehaviour, IInteractable
             {
                 Debug.Log($"{slot.Item.ItemName} 상함");
 
-                inventory.RemoveItem(slot.Item.ID, 1);
+                SlotItemInfoUI.Instance?.Hide();
+                inventory.RemoveItem(slot.Item.ID, slot.Count);
 
                 if (objFoodPrefab != null)
                 {
                     Destroy(objFoodPrefab);
                 }
-                
-                slot.Item.SpoilTimer = 0f;
             }
             //Debug.Log($"{slot.Index}번 슬롯 Spoil Timer : {slot.SpoilTimer}");
         }
@@ -100,7 +99,7 @@ public class ServingSlot : MonoBehaviour, IInteractable
             Destroy(this.objFoodPrefab);
             objFoodPrefab = null;
         }
-        currentFood = null;
+        //currentFood = null;
         
         return item;
     }

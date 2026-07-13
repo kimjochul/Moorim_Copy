@@ -44,7 +44,7 @@ public class BottomSlideAnim : MonoBehaviour
     // private void OnInvOpened(Inventory inven) => MoveUI(inven, true);
     private void OnInvOpened(Inventory inven)
     {
-        Debug.Log($"[BottomSlideAnim] OnInvOpened: {inven.Type}");
+        //Debug.Log($"[BottomSlideAnim] OnInvOpened: {inven.Type}");
         MoveUI(inven, true);
     }
     private void OnInvClosed(Inventory inven) => MoveUI(inven, false);
