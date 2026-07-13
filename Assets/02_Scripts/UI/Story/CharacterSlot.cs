@@ -28,7 +28,8 @@ public class CharacterSlot : MonoBehaviour
 
     private bool isFlipped; 
     private float currentBaseScale = 1f;
-    private float currentScaleMultiplier = 1f;
+    private float focusScale = 1f;
+    private float expressionScale = 1f;
     
     private RectTransform slotRoot;
     public RectTransform SlotRoot
@@ -141,6 +142,10 @@ public class CharacterSlot : MonoBehaviour
 
     public void SetFlip(bool flip)
     {
+        //Debug.Log($"Flip {currentCharacterID} -> {flip}");
+        
+        visualRoot.DOKill();
+        
         isFlipped = flip;
         RefreshScale();
     }
@@ -153,12 +158,11 @@ public class CharacterSlot : MonoBehaviour
     
     private void RefreshScale()
     {
-        float x = currentBaseScale * currentScaleMultiplier;
+        float scale = currentBaseScale * focusScale * expressionScale;
 
-        if (isFlipped)
-            x *= -1f;
+        float x = isFlipped ? -scale : scale;
 
-        visualRoot.localScale = new Vector3(x, currentBaseScale * currentScaleMultiplier, 1f);
+        visualRoot.localScale = new Vector3(x, scale, 1f);
     }
     
     private void Clear()
@@ -200,17 +204,11 @@ public class CharacterSlot : MonoBehaviour
         StartCoroutine(DisappearRoutine(startPos));
     }
     
-    public void SetFocusScale(float focusMultiplier, float duration = 0.25f)
+    public void SetFocusScale(float target, float duration = 0.25f)
     {
         visualRoot.DOKill();
         
-        currentScaleMultiplier = focusMultiplier;
-        float targetX = currentBaseScale * focusMultiplier;
-        
-        if (isFlipped)
-            targetX *= -1f;
-        
-        visualRoot.DOScale(new Vector3(targetX, currentBaseScale * focusMultiplier, 1f), duration);
+        DOTween.To(() => focusScale, x => { focusScale = x; RefreshScale(); }, target, duration);
     }
     
     private void ChangeExpression(Sprite faceSprite, Sprite eyebrowSprite, bool useDOScale, float duration = 0.2f)
@@ -240,13 +238,31 @@ public class CharacterSlot : MonoBehaviour
     {
         visualRoot.DOComplete();
         
-        float scale = currentBaseScale * currentScaleMultiplier;
-        float x = isFlipped ? -scale : scale;
+        expressionScale = 1f;
 
-        visualRoot.DOScale(new Vector3(x * 1.05f, scale * 1.05f, 1f), 0.4f).SetEase(Ease.OutQuad)
+        DOTween.To(
+                () => expressionScale,
+                x =>
+                {
+                    expressionScale = x;
+                    RefreshScale();
+                },
+                1.05f,
+                0.25f
+            )
+            .SetEase(Ease.OutQuad)
             .OnComplete(() =>
             {
-                visualRoot.DOScale(new Vector3(x, scale, 1f), 0.4f).SetEase(Ease.InOutQuad);
+                DOTween.To(
+                    () => expressionScale,
+                    x =>
+                    {
+                        expressionScale = x;
+                        RefreshScale();
+                    },
+                    1f,
+                    0.25f
+                ).SetEase(Ease.InQuad);
             });
     }
     
@@ -650,9 +666,11 @@ public class CharacterSlot : MonoBehaviour
         isUnknown = false;
         isFocused = false;
         
-        isFlipped = false;
-        currentScaleMultiplier = 1f;
+        focusScale = 1f;
+        expressionScale = 1f;
         currentBaseScale = 1f;
+        isFlipped = false;
+
         RefreshScale();
     }
     

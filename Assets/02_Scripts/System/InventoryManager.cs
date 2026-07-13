@@ -16,6 +16,7 @@ public class InventoryManager : Singleton<InventoryManager>, IInitializable
     // 각 인벤토리들의 UI 패널들은 무조건 InventoryPopUpController 있어야함
     
     [SerializeField] private InventoryPopupController commonInventoryRoot; // 공용 인벤토리 루트의 위치 공용 인벤토리 켜질 때 사용 
+    [SerializeField] private CommonInventoryUIController commonInventoryUIController;
     
     [SerializeField] private Inventory meatIngredientInventory; // 고기 재료용 인벤토리
     [SerializeField] private Inventory otherIngredientInventory; // 다른 재료용 인벤토리
@@ -28,6 +29,8 @@ public class InventoryManager : Singleton<InventoryManager>, IInitializable
     [SerializeField] private Inventory fridgeInventory; // 냉장고
     [SerializeField] private Inventory mealTableInventory; // 배식대
 
+    
+    
     private Dictionary<InventoryType, Inventory> inventoryMap;
 
     public Vector2 CommonInvenInitPos;
@@ -55,16 +58,17 @@ public class InventoryManager : Singleton<InventoryManager>, IInitializable
         
         // 🔥 씬에 있는 Inventory 전부 찾아서 Init
         var inventories = FindObjectsByType<Inventory>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-
-        SetCommonInventoryRoot();
+        var commonInvenUIController = FindFirstObjectByType<CommonInventoryUIController>(FindObjectsInactive.Include); 
         
+        SetCommonInventoryRoot();
+        RegisterCommonInventoryUI(commonInvenUIController);
         
         if (inventories.Length == 0)
         {
             Debug.LogError("Inventory 없음 Init 실패");
             return;
         }
-
+        
         inventoryMap = new Dictionary<InventoryType, Inventory>();
         
         foreach (var inv in inventories)
@@ -79,8 +83,10 @@ public class InventoryManager : Singleton<InventoryManager>, IInitializable
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         var inventories = FindObjectsByType<Inventory>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        var commonInvenUIController = FindFirstObjectByType<CommonInventoryUIController>(FindObjectsInactive.Include); 
 
         SetCommonInventoryRoot();
+        RegisterCommonInventoryUI(commonInvenUIController);
         
         if (inventories.Length == 0)
         {
@@ -122,6 +128,7 @@ public class InventoryManager : Singleton<InventoryManager>, IInitializable
             return;
         
         Debug.Log("OpenCommonInventoryPopup");
+        commonInventoryUIController.ResetFilter();
         UIManager.Instance.OpenCommonInventoryPopup(commonInventoryRoot);
         isCommonInventoryOpened = true;
     }
@@ -245,6 +252,17 @@ public class InventoryManager : Singleton<InventoryManager>, IInitializable
                 Debug.LogWarning($"[Register] 매핑 안된 타입: {inventory.Type}");
                 break;
         }
+    }
+
+    public void RegisterCommonInventoryUI(CommonInventoryUIController inventoryUIController)
+    {
+        if (inventoryUIController == null)
+        {
+            Debug.LogError("공용 인벤 UI 등록 실패");
+            return;
+        }
+        
+        commonInventoryUIController = inventoryUIController;
     }
     
     public List<Inventory> GetAll()

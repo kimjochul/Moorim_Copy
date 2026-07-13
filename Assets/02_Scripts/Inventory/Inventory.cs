@@ -584,7 +584,97 @@ public class Inventory : MonoBehaviour, IInitializable
             slots[i].SetItem(items[i].Item, items[i].Count);
         }
     }
-    
+
+    public void RefreshItemOrder(InventoryFilter filter = InventoryFilter.All, bool mergeStack = true)
+    {
+        var items = slots
+            .Where(x => !x.IsEmpty)
+            .Select(x => new
+            {
+                Item = x.Item,
+                Count = x.Count
+            });
+
+        // 필터
+        if (filter != InventoryFilter.All)
+        {
+            items = items.Where(x =>
+            {
+                if (x.Item.Data is not IngredientData ingredient)
+                    return false;
+
+                return ingredient.Filter == filter;
+            });
+        }
+
+        // 정렬
+        var list = items
+            .OrderBy(x => x.Item.ID)
+            .ToList();
+
+        // ===== 스택 합치기 =====
+        if (mergeStack)
+        {
+            var merged = new List<(IItem item, int count)>();
+
+            foreach (var data in list)
+            {
+                int remain = data.Count;
+
+                foreach (var m in merged.ToList())
+                {
+                    if (m.item.ID != data.Item.ID)
+                        continue;
+
+                    if (m.item.FridgeSpoilTimer != data.Item.FridgeSpoilTimer)
+                        continue;
+
+                    if (Mathf.Abs(m.item.SpoilTimer - data.Item.SpoilTimer) > 0.1f)
+                        continue;
+
+                    if (m.count >= m.item.InventoryCapacity)
+                        continue;
+
+                    int index = merged.IndexOf(m);
+
+                    int canAdd = m.item.InventoryCapacity - m.count;
+                    int add = Mathf.Min(canAdd, remain);
+
+                    merged[index] = (m.item, m.count + add);
+
+                    remain -= add;
+
+                    if (remain <= 0)
+                        break;
+                }
+
+                while (remain > 0)
+                {
+                    int add = Mathf.Min(data.Item.InventoryCapacity, remain);
+                    merged.Add((data.Item, add));
+                    remain -= add;
+                }
+            }
+
+            list = merged
+                .Select(x => new
+                {
+                    Item = x.item,
+                    Count = x.count
+                })
+                .OrderBy(x => x.Item.ID)
+                .ToList();
+        }
+
+        foreach (var slot in slots)
+            slot.Clear();
+
+        for (int i = 0; i < list.Count && i < slots.Count; i++)
+        {
+            slots[i].SetItem(list[i].Item, list[i].Count);
+        }
+    }
+
     public InventorySaveData GetSaveData()
     {
         var data = new InventorySaveData();
