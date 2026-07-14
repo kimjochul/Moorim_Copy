@@ -76,7 +76,7 @@ public class QuestManager : Singleton<QuestManager>, ISubject, IInitializable
         if (HasQuest(quest.QuestID) && activeQuests.Contains(quest))
             return;
 
-        quest.QuestAcceptCheck();
+        quest.SetAccepted();
         
         activeQuests.Add(quest);
         waitingQuests.Remove(quest);
@@ -328,6 +328,7 @@ public class QuestManager : Singleton<QuestManager>, ISubject, IInitializable
     public void LoadFromData(QuestSaveData data)
     {
         activeQuests.Clear();
+        waitingQuests.Clear();
         completedQuests.Clear();
 
         foreach (var savedQuest in data.activeQuests)
@@ -357,6 +358,7 @@ public class QuestManager : Singleton<QuestManager>, ISubject, IInitializable
             }
 
             activeQuests.Add(quest);
+            quest.SetAccepted();
             AddObserver(quest);
         }
 
@@ -371,6 +373,7 @@ public class QuestManager : Singleton<QuestManager>, ISubject, IInitializable
     public void ResetData()
     {
         activeQuests.Clear();
+        waitingQuests.Clear();
         completedQuests.Clear();
 
         Debug.Log("Quest Reset 완료");

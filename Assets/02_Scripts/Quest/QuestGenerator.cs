@@ -11,16 +11,18 @@ public class QuestGenerator : MonoBehaviour
     [SerializeField] private QuestPool wholeQuestPool;
     
     private RecipeUnlockManager recipeUnlockManager;
+    private RecipeUnlockManager RecipeUnlockManager
+    {
+        get
+        {
+            if (recipeUnlockManager == null)
+                recipeUnlockManager = RecipeUnlockManager.Instance;
+
+            return recipeUnlockManager;
+        }
+    }
     
     [SerializeField] private RecipeList allRecipes;
-
-    private IEnumerator Start()
-    {
-        yield return null;
-        yield return null;
-        
-        recipeUnlockManager = RecipeUnlockManager.Instance;
-    }
 
     /// <summary>
     /// 해금이 되어있는 아이템을 필요로 하는 퀘스트만 나오게 설정해야함
@@ -53,7 +55,11 @@ public class QuestGenerator : MonoBehaviour
         
         var inventory = InventoryManager.Instance.GetInventory(InventoryType.Fridge);
         Quest quest = new Quest(selected, inventory);
-        RandomizeQuest(quest);
+        
+        if (quest.Data.useDifficultyScaling)
+        {
+            ApplyDifficulty(quest);
+        }
         
         Debug.Log("정해진 퀘스트" + selected.name);
         
@@ -93,7 +99,7 @@ public class QuestGenerator : MonoBehaviour
                 }
                 else
                 {
-                    if (!recipeUnlockManager.IsUnlocked(itemCondition.itemID))
+                    if (!RecipeUnlockManager.IsUnlocked(itemCondition.itemID))
                         return false;
                 }
             }
@@ -110,7 +116,7 @@ public class QuestGenerator : MonoBehaviour
     {
         foreach (var recipe in allRecipes.recipes)
         {
-            if (!recipeUnlockManager.IsUnlocked(recipe.id))
+            if (!RecipeUnlockManager.IsUnlocked(recipe.id))
                 continue;
 
             if (recipe.foodType == type)
@@ -128,7 +134,7 @@ public class QuestGenerator : MonoBehaviour
     {
         foreach (var recipe in allRecipes.recipes)
         {
-            if (recipeUnlockManager.IsUnlocked(recipe.id))
+            if (RecipeUnlockManager.IsUnlocked(recipe.id))
                 return true;
         }
 
@@ -146,7 +152,7 @@ public class QuestGenerator : MonoBehaviour
 
         foreach (var recipe in allRecipes.recipes)
         {
-            if (!recipeUnlockManager.IsUnlocked(recipe.id))
+            if (!RecipeUnlockManager.IsUnlocked(recipe.id))
                 continue;
 
             if (recipe.foodType == type)
@@ -163,19 +169,20 @@ public class QuestGenerator : MonoBehaviour
     /// 무작위 레시피 리턴 함수
     /// </summary>
     /// <returns></returns>
-    private RecipeData GetRandomUnlockedRecipe()
+    private RecipeData GetRandomUnlockedRecipe(HashSet<int> usedIds)
     {
-        List<RecipeData> list = new List<RecipeData>();
+        List<RecipeData> list = new();
 
         foreach (var recipe in allRecipes.recipes)
         {
-            //Debug.Log($"레시피 체크: {recipe.recipeName}, unlocked: {recipeUnlockManager.IsUnlocked(recipe.id)}");
-            
-            if (recipeUnlockManager.IsUnlocked(recipe.id))
-                list.Add(recipe);
+            if (!RecipeUnlockManager.IsUnlocked(recipe.id))
+                continue;
+
+            if (usedIds.Contains(recipe.id))
+                continue;
+
+            list.Add(recipe);
         }
-        
-        Debug.Log($"언락된 레시피 개수: {list.Count}");
 
         if (list.Count == 0)
             return null;
@@ -203,32 +210,61 @@ public class QuestGenerator : MonoBehaviour
     /// 퀘스트에 있는 퀘스트 조건의 퀘스트 조건들의 완료 개수 랜덤 설정
     /// </summary>
     /// <param name="quest"></param>
-    public void RandomizeQuest(Quest quest)
+    public void ApplyDifficulty(Quest quest)
     {
+        if (!quest.Data.useDifficultyScaling)
+            return;
+        
+        int tier = GetQuestTier();
+        float rewardMultiplier = 1f + (tier - 1) * 0.5f;
+        List<QuestCondition> conditionsToAdd = new();
+        
+        // Tier에 맞게 RandomItem 조건 복제
+        foreach (var condition in quest.Conditions)
+        {
+            if (condition is ItemCondition itemCondition && itemCondition.useRandomItem)
+            {
+                for (int i = 1; i < tier; i++)
+                {
+                    conditionsToAdd.Add(itemCondition.Clone());
+                }
+            }
+        }
+        
+        // foreach 끝난 뒤 추가
+        foreach (var condition in conditionsToAdd)
+        {
+            quest.AddCondition(condition);
+        }
+        
+        HashSet<int> selectedRecipes = new();
+        
         foreach (var condition in quest.Conditions)
         {
             if (condition is ItemCondition itemCondition)
             {
-                Debug.Log($"useRandomItem: {itemCondition.useRandomItem}, useFoodType: {itemCondition.useFoodType}, itemID: {itemCondition.itemID}");
+                //Debug.Log($"useRandomItem: {itemCondition.useRandomItem}, useFoodType: {itemCondition.useFoodType}, itemID: {itemCondition.itemID}");
                 RecipeData recipe = null;
                 if (itemCondition.useFoodType)
                 {
                     recipe = GetRandomRecipeByType(itemCondition.foodType);
-
-                    if (recipe != null)
-                        itemCondition.itemID = recipe.id;
                 }
                 else if (itemCondition.useRandomItem)
                 {
-                    recipe = GetRandomUnlockedRecipe();
-
-                    if (recipe != null)
-                        itemCondition.itemID = recipe.id;
+                    recipe = GetRandomUnlockedRecipe(selectedRecipes);
                 }
                 else
                     recipe = GetRecipeByID(itemCondition.itemID);
                 
-                itemCondition.requiredCount = Random.Range(1, 3);
+                if (recipe != null)
+                {
+                    itemCondition.itemID = recipe.id;
+                    selectedRecipes.Add(recipe.id);
+                }
+                
+                itemCondition.requiredCount = Random.Range(tier, tier + 3);
+                itemCondition.useRandomItem = false;
+                itemCondition.useFoodType = false;
                 
                 if (recipe != null)
                     Debug.Log($"{recipe.recipeName} / require count: {itemCondition.requiredCount}");
@@ -238,29 +274,29 @@ public class QuestGenerator : MonoBehaviour
 
             if (condition is FailLimitCondition failCondition)
             {
-                failCondition.maxFailCount = Random.Range(1, 5);
+                failCondition.maxFailCount = Mathf.Max(1, Random.Range(2, 6) - (tier - 1));
             }
 
             if (condition is ServeCondition serveCondition)
             {
-                serveCondition.requireCount  = Random.Range(1, 5);
+                serveCondition.requireCount = Random.Range(tier, tier + 3);
             }
 
-            if (condition is CatchThiefCondition catchThiefCondition)
+            if (condition is CatchThiefCondition catchCondition)
             {
-                catchThiefCondition.requiredCatchCount = Random.Range(1, 2);   
+                catchCondition.requiredCatchCount = Random.Range(1, tier + 1);
             }
         }
         // 보상도 랜덤으로 설정
         if (quest.QuestType == QuestType.Merchant)
         {
-            quest.Data.reward.gold = Random.Range(50, 150);
+            quest.Data.reward.gold = Mathf.RoundToInt(Random.Range(50, 150) * rewardMultiplier);
             quest.Data.reward.reputation = 0;
         } 
         else if (quest.QuestType == QuestType.PostMan)
         {
             quest.Data.reward.gold = 0;
-            quest.Data.reward.reputation = Random.Range(1, 10);
+            quest.Data.reward.reputation = Mathf.RoundToInt(Random.Range(1, 10) * rewardMultiplier);
         }
     }
     
@@ -282,5 +318,20 @@ public class QuestGenerator : MonoBehaviour
         var inventory = InventoryManager.Instance.GetInventory(InventoryType.Fridge);
 
         return new Quest(data, inventory);
+    }
+    
+    /// <summary>
+    /// 퀘스트 난이도용 함수
+    /// </summary>
+    /// <returns></returns>
+    private int GetQuestTier()
+    {
+        int fame = EconomyManager.Instance.RestaurantEconomy.Fame;
+
+        if (fame < 50) return 1;
+        if (fame < 100) return 2;
+        if (fame < 150) return 3;
+        if (fame < 200) return 4;
+        return 5;
     }
 }

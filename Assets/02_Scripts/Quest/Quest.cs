@@ -2,7 +2,24 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-// TODO: 퀘스트 보상관련 추가
+public class QuestDifficulty
+{
+    public int MinItemCount;
+    public int MaxItemCount;
+
+    public int RandomFoodTypes;
+
+    public int GoldMin;
+    public int GoldMax;
+
+    public int RepMin;
+    public int RepMax;
+
+    public int ServeMin;
+    public int ServeMax;
+
+    public int MaxFail;
+}
 
 /// <summary>
 /// 퀘스트 객체에 대한 클래스
@@ -180,8 +197,19 @@ public class Quest : IObserver
     /// <summary>
     /// 퀘스트 수락 시 프로퍼티 체크
     /// </summary>
-    public void QuestAcceptCheck()
+    public void SetAccepted()
     {
         IsAccepted = true;
+    }
+    
+    
+    /// <summary>
+    /// 퀘스트 조건 삽입
+    /// </summary>
+    /// <param name="condition"></param>
+    public void AddCondition(QuestCondition condition)
+    {
+        condition.Init(inventory);
+        conditions.Add(condition);
     }
 }

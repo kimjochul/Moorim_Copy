@@ -145,6 +145,34 @@ public class Inventory : MonoBehaviour, IInitializable
     }
     
     /// <summary>
+    /// 대상 아이템이랑 소스 아이템이랑 합칠 수 있는지
+    /// </summary>
+    /// <param name="target"></param>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    private bool CanMergeItems(IItem target, IItem source)
+    {
+        if (target == null || source == null)
+            return false;
+
+        if (target.ID != source.ID)
+            return false;
+
+        // 부패 일수가 다르면 합치지 않음
+        if (target.FridgeSpoilTimer != source.FridgeSpoilTimer)
+            return false;
+
+        // 배식대는 실시간 부패 시간도 같아야 함
+        if (type == InventoryType.MealTable)
+        {
+            if (Mathf.Abs(target.SpoilTimer - source.SpoilTimer) > 0.1f)
+                return false;
+        }
+
+        return true;
+    }
+    
+    /// <summary>
     /// 타겟에 소스의 아이템을 합칠 수 있는지
     /// </summary>
     /// <param name="target"></param>
@@ -155,23 +183,7 @@ public class Inventory : MonoBehaviour, IInitializable
         if (target.IsEmpty || source.IsEmpty)
             return false;
 
-        if (target.Item.ID != source.Item.ID)
-            return false;
-
-        // 부패 일수가 다르면 합치지 않는다.
-        if (target.Item.FridgeSpoilTimer != source.Item.FridgeSpoilTimer)
-            return false;
-        
-        //Debug.Log($"FridgeTimer {target.Item.FridgeSpoilTimer} / {source.Item.FridgeSpoilTimer}");
-        
-        // 배식대는 실시간 부패 시간도 같아야 합침
-        if (target.Owner.Type == InventoryType.MealTable)
-        {
-            if (Mathf.Abs(target.Item.SpoilTimer - source.Item.SpoilTimer) > 0.1f)
-                return false;
-        }
-
-        return true;
+        return CanMergeItems(target.Item, source.Item);
     }
     
     /// <summary>
@@ -585,31 +597,12 @@ public class Inventory : MonoBehaviour, IInitializable
         }
     }
 
-    public void RefreshItemOrder(InventoryFilter filter = InventoryFilter.All, bool mergeStack = true)
+    public void RefreshItemOrder(bool mergeStack = true)
     {
-        var items = slots
+        var list = slots
             .Where(x => !x.IsEmpty)
-            .Select(x => new
-            {
-                Item = x.Item,
-                Count = x.Count
-            });
-
-        // 필터
-        if (filter != InventoryFilter.All)
-        {
-            items = items.Where(x =>
-            {
-                if (x.Item.Data is not IngredientData ingredient)
-                    return false;
-
-                return ingredient.Filter == filter;
-            });
-        }
-
-        // 정렬
-        var list = items
-            .OrderBy(x => x.Item.ID)
+            .Select(x => (item: x.Item, count: x.Count))
+            .OrderBy(x => x.item.ID)
             .ToList();
 
         // ===== 스택 합치기 =====
@@ -619,28 +612,22 @@ public class Inventory : MonoBehaviour, IInitializable
 
             foreach (var data in list)
             {
-                int remain = data.Count;
+                int remain = data.count;
 
-                foreach (var m in merged.ToList())
+                for (int i = 0; i < merged.Count; i++)
                 {
-                    if (m.item.ID != data.Item.ID)
-                        continue;
+                    var m = merged[i];
 
-                    if (m.item.FridgeSpoilTimer != data.Item.FridgeSpoilTimer)
-                        continue;
-
-                    if (Mathf.Abs(m.item.SpoilTimer - data.Item.SpoilTimer) > 0.1f)
+                    if (!CanMergeItems(m.item, data.item))
                         continue;
 
                     if (m.count >= m.item.InventoryCapacity)
                         continue;
 
-                    int index = merged.IndexOf(m);
-
                     int canAdd = m.item.InventoryCapacity - m.count;
                     int add = Mathf.Min(canAdd, remain);
 
-                    merged[index] = (m.item, m.count + add);
+                    merged[i] = (m.item, m.count + add);
 
                     remain -= add;
 
@@ -650,19 +637,14 @@ public class Inventory : MonoBehaviour, IInitializable
 
                 while (remain > 0)
                 {
-                    int add = Mathf.Min(data.Item.InventoryCapacity, remain);
-                    merged.Add((data.Item, add));
+                    int add = Mathf.Min(data.item.InventoryCapacity, remain);
+                    merged.Add((data.item, add));
                     remain -= add;
                 }
             }
 
             list = merged
-                .Select(x => new
-                {
-                    Item = x.item,
-                    Count = x.count
-                })
-                .OrderBy(x => x.Item.ID)
+                .Select(x => (item: x.item, count: x.count))
                 .ToList();
         }
 
@@ -671,7 +653,7 @@ public class Inventory : MonoBehaviour, IInitializable
 
         for (int i = 0; i < list.Count && i < slots.Count; i++)
         {
-            slots[i].SetItem(list[i].Item, list[i].Count);
+            slots[i].SetItem(list[i].item, list[i].count);
         }
     }
 

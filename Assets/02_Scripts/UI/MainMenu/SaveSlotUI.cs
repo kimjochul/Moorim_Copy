@@ -75,7 +75,16 @@ public class SaveSlotUI : MonoBehaviour
         string json = File.ReadAllText(path);
         SaveData data = JsonUtility.FromJson<SaveData>(json);
 
-        infoText.text = $"{data.day.day}일차 {data.day.hour:00}:{data.day.minute:00}";
+        string stateText = data.day.flowState switch
+        {
+            GameFlowState.Gameplay => "영업 중",
+            GameFlowState.Receipt => "영업 종료",
+            GameFlowState.Story => "스토리",
+            GameFlowState.NPC => "NPC",
+            _ => ""
+        };
+
+        infoText.text = $"{data.day.day}일차 {data.day.hour:00}:{data.day.minute:00} ({stateText})";
     }
 
     private string GetPath()

@@ -25,6 +25,8 @@ public class MerchantUI : MonoBehaviour
     [SerializeField] private Character merchantCharacter;
     
     [SerializeField] private Button exitButton;
+    [SerializeField] private Button saveButton;
+    [SerializeField] private Button loadButton;
     private Button debtButton;
     
     private bool isInitialized = false;
@@ -110,6 +112,8 @@ public class MerchantUI : MonoBehaviour
                 debtButton = slot.Button;
         }
         exitButton.onClick.AddListener(Close);
+        saveButton.onClick.AddListener(OnClickSave);
+        loadButton.onClick.AddListener(OnClickLoad);
         
         currentState = NPCUIState.Talk;
     }
@@ -387,6 +391,16 @@ public class MerchantUI : MonoBehaviour
     {
         gameObject.SetActive(false);
         GameManager.Instance.CompleteState(GameFlowState.NPC);
+    }
+    
+    private void OnClickSave()
+    {
+        UIManager.Instance.ActiveSaveUI(true);
+    }
+
+    private void OnClickLoad()
+    {
+        UIManager.Instance.ActiveLoadUI(true);
     }
     
     private void ResetDialogue()

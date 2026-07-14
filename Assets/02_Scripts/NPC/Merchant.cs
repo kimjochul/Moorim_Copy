@@ -41,7 +41,6 @@ public class Merchant : MonoBehaviour, IInteractable, INPCSchedule
         if (IsAvailableDay())
         {
             GameManager.Instance.SetState(GameFlowState.NPC);
-            DailyQuestCreate();
         }
         
         merchantView.SetActive(IsAvailableDay());
@@ -71,7 +70,7 @@ public class Merchant : MonoBehaviour, IInteractable, INPCSchedule
     /// <summary>
     /// 랜덤 퀘스트 이전거 삭제 후 3개 재발행 (매주 월 수 금요일 마다 호출)
     /// </summary>
-    private void DailyQuestCreate()
+    public void DailyQuestCreate()
     {
         if (IsAvailableDay())
         {

@@ -55,8 +55,8 @@ public class CommonInventoryUIController : MonoBehaviour
 
     private void SortInventory()
     {
-        meatInventory.RefreshItemOrder(currentFilter, true);
-        ingredientInventory.RefreshItemOrder(currentFilter,true);
+        meatInventory.RefreshItemOrder(true);
+        ingredientInventory.RefreshItemOrder(true);
 
         ChangeFilter(currentFilter);
     }

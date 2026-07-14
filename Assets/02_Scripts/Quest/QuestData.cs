@@ -41,6 +41,9 @@ public class QuestData : ScriptableObject
     public int id;
     public QuestType questType;
     public string questName;
+    
+    public bool useDifficultyScaling = true;
+    
     public List<QuestCondition> conditions;
     
     public QuestReward reward;
