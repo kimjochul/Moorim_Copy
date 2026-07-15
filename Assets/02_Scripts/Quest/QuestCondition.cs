@@ -15,6 +15,15 @@ public enum QuestEventType
     GenerateQuest
 }
 
+public enum QuestConditionType
+{
+    Item,
+    Serve,
+    FailLimit,
+    CatchThief,
+    ProgressCheck,
+}
+
 /// <summary>
 /// 퀘스트에 대한 이벤트가 발생했을 때 어떤 이벤트인지 정의하기 위한 데이터 struct
 /// </summary>
@@ -34,6 +43,8 @@ public struct QuestEvent
 /// </summary>
 public abstract class QuestCondition : ScriptableObject
 {
+    public abstract QuestConditionType ConditionType { get; }
+    
     public abstract void Init(Inventory inventory = null);
     public abstract void Notify(QuestEvent questEvent, GuestMood mood = GuestMood.Neutral);
     public abstract bool IsComplete();

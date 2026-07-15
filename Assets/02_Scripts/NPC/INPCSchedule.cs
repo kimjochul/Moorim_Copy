@@ -5,6 +5,7 @@ public interface INPCSchedule
 {
     bool IsAvailableDay();
     void ViewActive();
+    void DailyQuestCreate();
 }
 
 public enum NPCUIState

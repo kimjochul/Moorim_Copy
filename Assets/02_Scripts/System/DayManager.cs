@@ -105,6 +105,12 @@ public class DayManager : Singleton<DayManager>
         
         OnDateChanged?.Invoke();
         SaveManager.Instance.SaveGame(0, SaveSlotType.Auto);
+        
+        foreach (var npc in NPCs)
+        {
+            npc.DailyQuestCreate();
+        }
+        
         OnDayStart?.Invoke();
     }
     
@@ -176,7 +182,6 @@ public class DayManager : Singleton<DayManager>
         OnDayEnd?.Invoke();
         if(GameManager.Instance.CurrentState == GameFlowState.Gameplay)
             GameManager.Instance.CompleteState(GameFlowState.Gameplay);
-        SaveManager.Instance.SaveGame(0, SaveSlotType.Auto);
     }
 
     /// <summary>
@@ -206,7 +211,8 @@ public class DayManager : Singleton<DayManager>
                 dayOfWeek = (int)DayData.dayOfWeek,
                 hour = (int)gameStartHour,
                 minute = 0,
-                isDayEnded = false
+                
+                flowState = GameFlowState.Gameplay
             };
         }
         else
@@ -217,7 +223,8 @@ public class DayManager : Singleton<DayManager>
                 dayOfWeek = (int)DayData.dayOfWeek,
                 hour = (int)gameEndHour,
                 minute = 00,
-                isDayEnded = true
+                
+                flowState = GameManager.Instance.CurrentState
             };
         }
     }

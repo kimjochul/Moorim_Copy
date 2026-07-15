@@ -20,6 +20,8 @@ public class PostManUI : MonoBehaviour
     [SerializeField] private Character postmanCharacter;
     
     [SerializeField] private Button exitButton;
+    [SerializeField] private Button saveButton;
+    [SerializeField] private Button loadButton;
     
     private bool isInitialized = false;
     
@@ -75,6 +77,8 @@ public class PostManUI : MonoBehaviour
         }
         
         exitButton.onClick.AddListener(Close);
+        saveButton.onClick.AddListener(OnClickSave);
+        loadButton.onClick.AddListener(OnClickLoad);
         
         currentState = NPCUIState.Talk;
     }
@@ -238,6 +242,16 @@ public class PostManUI : MonoBehaviour
     public void ChangeText(string text)
     {
         talkPanel.ChangeText(text);
+    }
+    
+    private void OnClickSave()
+    {
+        UIManager.Instance.ActiveSaveUI(true);
+    }
+
+    private void OnClickLoad()
+    {
+        UIManager.Instance.ActiveLoadUI(true);
     }
     
     private void Close()

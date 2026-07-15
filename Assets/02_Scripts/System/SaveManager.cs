@@ -136,15 +136,25 @@ public class SaveManager : Singleton<SaveManager>
                 GameManager.Instance.ResetFlow();
                 UIManager.Instance.CloseAllUI();
            
-                if (data.day.isDayEnded)
+                switch(data.day.flowState)
                 {
-                    DayManager.Instance.RefreshUI();
-                    GameManager.Instance.SetState(GameFlowState.Gameplay);
-                    GameManager.Instance.CompleteState(GameFlowState.Gameplay);
-                }
-                else
-                {
-                    DayManager.Instance.RemoteDayStart(true);
+                    case GameFlowState.Gameplay:
+                        DayManager.Instance.RemoteDayStart(true);
+                        break;
+
+                    case GameFlowState.Receipt:
+                        DayManager.Instance.RefreshUI();
+                        GameManager.Instance.SetState(GameFlowState.Gameplay);
+                        GameManager.Instance.CompleteState(GameFlowState.Gameplay);
+                        break;
+
+                    case GameFlowState.Story:
+                        // Story부터 시작
+                        break;
+
+                    case GameFlowState.NPC:
+                        GameManager.Instance.EnterState(GameFlowState.NPC);
+                        break;
                 }
             }
         });
@@ -310,12 +320,14 @@ public class DaySaveData
     public int dayOfWeek;
     public int hour;
     public int minute;
-    public bool isDayEnded;
+    
+    public GameFlowState flowState;
 }
 
 [Serializable]
 public class QuestSaveData
 {
+    public List<QuestRuntimeData> waitingQuests = new();
     public List<QuestRuntimeData> activeQuests = new();
     public List<int> completedQuestIDs = new();
 }
@@ -335,7 +347,8 @@ public class QuestRuntimeData
 public class ConditionRuntimeData
 {
     public int conditionIndex;
-
+    public QuestConditionType conditionType;
+    
     public int currentCount;
     
     public int targetID;       // itemID 등

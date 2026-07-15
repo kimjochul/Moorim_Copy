@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-// TODO: 퀘스트 보상관련 추가
+
+
 
 /// <summary>
 /// 퀘스트 객체에 대한 클래스
@@ -60,6 +61,40 @@ public class Quest : IObserver
 
         RewardRecipeIds = questData.rewardRecipeIds;
         RewardIngredientIds = questData.rewardIngredientIds;
+    }
+    
+    public Quest(QuestData questData, Inventory inventory, QuestRuntimeData runtimeData)
+    {
+        data = questData;
+        QuestID = data.id;
+        QuestName = data.questName;
+
+        IsCompleted = false;
+        IsAccepted = false;
+
+        targetNPC = questData.npcType;
+        this.inventory = inventory;
+
+        RewardRecipeIds = questData.rewardRecipeIds;
+        RewardIngredientIds = questData.rewardIngredientIds;
+
+        conditions = new List<QuestCondition>();
+
+        data.reward.gold = runtimeData.rewardGold;
+        data.reward.reputation = runtimeData.rewardFame;
+
+        foreach (var savedCond in runtimeData.conditions)
+        {
+            QuestCondition condition = CreateCondition(savedCond.conditionType);
+
+            if (condition == null)
+                continue;
+
+            condition.Init(inventory);
+            condition.LoadRuntimeData(savedCond);
+
+            conditions.Add(condition);
+        }
     }
     
     /// <summary>
@@ -180,8 +215,85 @@ public class Quest : IObserver
     /// <summary>
     /// 퀘스트 수락 시 프로퍼티 체크
     /// </summary>
-    public void QuestAcceptCheck()
+    public void SetAccepted()
     {
         IsAccepted = true;
+    }
+    
+    
+    /// <summary>
+    /// 퀘스트 조건 삽입
+    /// </summary>
+    /// <param name="condition"></param>
+    public void AddCondition(QuestCondition condition)
+    {
+        condition.Init(inventory);
+        conditions.Add(condition);
+    }
+    
+    
+    /// <summary>
+    /// 랜덤 아이템 조건용 조건 복제 함수
+    /// </summary>
+    /// <param name="targetCount"></param>
+    public void AdjustRandomItemConditions(int targetCount)
+    {
+        List<ItemCondition> randomConditions = new();
+
+        foreach (var condition in conditions)
+        {
+            if (condition is ItemCondition itemCondition && itemCondition.useRandomItem)
+                randomConditions.Add(itemCondition);
+        }
+
+        // 랜덤 조건이 하나도 없으면 종료
+        if (randomConditions.Count == 0)
+            return;
+
+        // ---------- 부족하면 추가 ----------
+        if (randomConditions.Count < targetCount)
+        {
+            int need = targetCount - randomConditions.Count;
+
+            for (int i = 0; i < need; i++)
+            {
+                ItemCondition source = randomConditions[i % randomConditions.Count];
+                AddCondition(source.Clone() as ItemCondition);
+            }
+        }
+        // ---------- 많으면 제거 ----------
+        else if (randomConditions.Count > targetCount)
+        {
+            int removeCount = randomConditions.Count - targetCount;
+
+            for (int i = 0; i < removeCount; i++)
+            {
+                conditions.Remove(randomConditions[randomConditions.Count - 1 - i]);
+            }
+        }
+    }
+    
+    private QuestCondition CreateCondition(QuestConditionType type)
+    {
+        switch (type)
+        {
+            case QuestConditionType.Item:
+                return ScriptableObject.CreateInstance<ItemCondition>();
+
+            case QuestConditionType.Serve:
+                return ScriptableObject.CreateInstance<ServeCondition>();
+
+            case QuestConditionType.FailLimit:
+                return ScriptableObject.CreateInstance<FailLimitCondition>();
+
+            case QuestConditionType.CatchThief:
+                return ScriptableObject.CreateInstance<CatchThiefCondition>();
+
+            case QuestConditionType.ProgressCheck:
+                return ScriptableObject.CreateInstance<ProgressCondition>();
+            
+            default:
+                return null;
+        }
     }
 }

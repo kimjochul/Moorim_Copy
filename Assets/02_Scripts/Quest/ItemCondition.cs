@@ -8,6 +8,8 @@ using static Constants;
 [CreateAssetMenu(menuName = "Quest/Condition/Item")]
 public class ItemCondition : QuestCondition
 {
+    public override QuestConditionType ConditionType => QuestConditionType.Item;
+    
     public bool useRandomItem;     // 랜덤 여부
     public bool useFoodType;       // 타입 기반 랜덤
 

@@ -60,6 +60,14 @@ public class GameManager : Singleton<GameManager>
         Debug.Log($"[GameFlow] State Changed → {state}");
     }
 
+    public void EnterState(GameFlowState state)
+    {
+        ResetFlow();
+
+        CurrentState = GameFlowState.None;
+        ChangeState(state);
+    }
+    
     private void ChangeState(GameFlowState newState)
     {
         if (CurrentState == newState)
@@ -138,6 +146,7 @@ public class GameManager : Singleton<GameManager>
                     GameFlowState.Story,
                     onEnter: () =>
                     {
+                        SaveManager.Instance.SaveGame(0, SaveSlotType.Auto);
                         receipt.TurnOnReceipt(EconomyManager.Instance.LastReceiptData);
                     }
                 )

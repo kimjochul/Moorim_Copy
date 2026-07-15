@@ -4,6 +4,8 @@ using static Constants;
 [CreateAssetMenu(menuName = "Quest/Condition/ServeGuest")]
 public class ServeCondition : QuestCondition
 {
+    public override QuestConditionType ConditionType => QuestConditionType.Serve;
+    
     public GuestMood requiredGuestMood;
     public int requireCount;
     private int currentServeCount;

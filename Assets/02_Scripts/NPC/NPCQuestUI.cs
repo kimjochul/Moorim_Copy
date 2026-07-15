@@ -54,6 +54,8 @@ public class NPCQuestUI : MonoBehaviour
 
         foreach (var quest in quests)
         {
+            Debug.Log($"{quest.QuestName} / Accepted : {quest.IsAccepted}");
+            
             var obj = Instantiate(slotPrefab, listContent);
             var slot = obj.GetComponent<NPCQuestSlot>();
 

@@ -76,7 +76,7 @@ public class QuestManager : Singleton<QuestManager>, ISubject, IInitializable
         if (HasQuest(quest.QuestID) && activeQuests.Contains(quest))
             return;
 
-        quest.QuestAcceptCheck();
+        quest.SetAccepted();
         
         activeQuests.Add(quest);
         waitingQuests.Remove(quest);
@@ -289,6 +289,35 @@ public class QuestManager : Singleton<QuestManager>, ISubject, IInitializable
     {
         var data = new QuestSaveData();
 
+        foreach (var quest in waitingQuests)
+        {
+            var questData = new QuestRuntimeData
+            {
+                questID = quest.QuestID,
+                rewardGold = quest.Data.reward.gold,
+                rewardFame = quest.Data.reward.reputation
+            };
+
+            var conditions = quest.GetConditions();
+
+            for (int i = 0; i < conditions.Count; i++)
+            {
+                var cond = conditions[i];
+
+                var condData = new ConditionRuntimeData
+                {
+                    conditionIndex = i,
+                    conditionType = cond.ConditionType,
+                };
+
+                cond.SaveRuntimeData(condData);
+
+                questData.conditions.Add(condData);
+            }
+
+            data.waitingQuests.Add(questData);
+        }
+        
         foreach (var quest in activeQuests)
         {
             var questData = new QuestRuntimeData
@@ -306,7 +335,8 @@ public class QuestManager : Singleton<QuestManager>, ISubject, IInitializable
 
                 var condData = new ConditionRuntimeData
                 {
-                    conditionIndex = i
+                    conditionIndex = i,
+                    conditionType = cond.ConditionType,
                 };
 
                 cond.SaveRuntimeData(condData);
@@ -328,35 +358,28 @@ public class QuestManager : Singleton<QuestManager>, ISubject, IInitializable
     public void LoadFromData(QuestSaveData data)
     {
         activeQuests.Clear();
+        waitingQuests.Clear();
         completedQuests.Clear();
 
-        foreach (var savedQuest in data.activeQuests)
+        foreach (var savedQuest in data.waitingQuests)
         {
-            var quest = generator.GenerateQuestByID(savedQuest.questID);
+            var quest = generator.GenerateQuestFromSave(savedQuest);
 
             if (quest == null)
                 continue;
 
-            // 🔥 보상 복원
-            quest.Data.reward.gold = savedQuest.rewardGold;
-            quest.Data.reward.reputation = savedQuest.rewardFame;
+            waitingQuests.Add(quest);
+        }
+        
+        foreach (var savedQuest in data.activeQuests)
+        {
+            var quest = generator.GenerateQuestFromSave(savedQuest);
 
-            var conditions = quest.GetConditions();
-
-            foreach (var savedCond in savedQuest.conditions)
-            {
-                if (savedCond.conditionIndex >= conditions.Count)
-                    continue;
-
-                var cond = conditions[savedCond.conditionIndex];
-
-                // 🔥 진행도 복원
-                cond.SetCurrentCount(savedCond.currentCount);
-
-                cond.LoadRuntimeData(savedCond);
-            }
+            if (quest == null)
+                continue;
 
             activeQuests.Add(quest);
+            quest.SetAccepted();
             AddObserver(quest);
         }
 
@@ -371,6 +394,7 @@ public class QuestManager : Singleton<QuestManager>, ISubject, IInitializable
     public void ResetData()
     {
         activeQuests.Clear();
+        waitingQuests.Clear();
         completedQuests.Clear();
 
         Debug.Log("Quest Reset 완료");

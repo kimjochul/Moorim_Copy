@@ -31,6 +31,18 @@ public class QuestReward
     public int reputation;
 }
 
+public enum QuestConditionCategory
+{
+    None,
+    RandomFood,
+    FoodType,
+    FixedFood,
+    Serve,
+    FailLimit,
+    CatchThief,
+}
+
+
 /// <summary>
 /// 각각의 퀘스트에 대한 데이터를 SO로 생성하기 위한 클래스
 /// condition은 퀘스트 완료 조건에 대한 변수
@@ -40,7 +52,11 @@ public class QuestData : ScriptableObject
 {
     public int id;
     public QuestType questType;
+    public QuestConditionCategory category;
     public string questName;
+    
+    public bool useDifficultyScaling = true;
+    
     public List<QuestCondition> conditions;
     
     public QuestReward reward;
