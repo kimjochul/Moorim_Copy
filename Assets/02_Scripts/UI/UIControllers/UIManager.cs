@@ -205,15 +205,16 @@ public class UIManager : Singleton<UIManager>
     }
 
     // 갯수가 필요한 팝업
-    public AmountPopup CreateAmountPopup(string message, ItemData itemData, UnityAction<int> onOk, UnityAction onCancel)
+    public AmountPopup CreateAmountPopup(string message, ItemData itemData, int owned, int maxBuyable, UnityAction<int> onOk, UnityAction onCancel)
     {
         var popup = Instantiate(amountPopupObj, _canvas.transform).GetComponent<AmountPopup>();
-        popup.Init(itemData);
+        popup.Init(itemData, owned, maxBuyable);
         popup.ButtonOk(onOk);
         popup.ButtonCancel(onCancel);
 
         return popup;
     }
+    
     public AmountPopup CreateAmountPopup(string message, RecipeData recipeData, UnityAction<int> onOk, UnityAction onCancel)
     {
         var popup = Instantiate(amountPopupObj, _canvas.transform).GetComponent<AmountPopup>();

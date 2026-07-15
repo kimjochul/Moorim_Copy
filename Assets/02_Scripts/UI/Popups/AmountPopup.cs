@@ -34,12 +34,14 @@ public class AmountPopup : PopupController
         this.btnTenPlus.onClick.AddListener(OnClickTenPlus);
         this.btnTenMinus.onClick.AddListener(OnClickTenMinus);
     }
-    public void Init(ItemData itemData)
+
+    // ★ 변경: 보유 개수(owned), 구매 가능 개수(maxBuyable)를 받음
+    public void Init(ItemData itemData, int owned, int maxBuyable)
     {
         this.itemData = itemData;
-        this.maxAmount = itemData.maxCapacity;
+        this.maxAmount = maxBuyable;   // ★ maxCapacity 대신 '추가 구매 가능 개수'가 상한
         this.currentAmount = 1;
-
+        
         UpdateUI();
     }
     
@@ -48,10 +50,10 @@ public class AmountPopup : PopupController
         this.recipeData = recipeData;
         this.maxAmount = 1;
         this.currentAmount = 1;
-
+        
         UpdateUI();
     }
-    // ����
+
     private void OnClickPlus()
     {
         if (this.currentAmount < this.maxAmount)
@@ -60,7 +62,7 @@ public class AmountPopup : PopupController
             UpdateUI();
         }
     }
-    // ����
+
     private void OnClickMinus()
     {
         if (this.currentAmount > 1)
@@ -69,6 +71,7 @@ public class AmountPopup : PopupController
             UpdateUI();
         }
     }
+
     private void OnClickTenPlus()
     {
         if (this.currentAmount < this.maxAmount)
@@ -86,10 +89,12 @@ public class AmountPopup : PopupController
             UpdateUI();
         }
     }
+
     private void UpdateUI()
     {
         this.amount.text = this.currentAmount.ToString();
     }
+
     public void ButtonOk(UnityAction<int> action)
     {
         this.btnOk.onClick.AddListener(() =>
@@ -99,6 +104,7 @@ public class AmountPopup : PopupController
             Destroy(this.gameObject);
         });
     }
+
     public void ButtonCancel(UnityAction action)
     {
         this.btnCancel.onClick.AddListener(()=>
