@@ -154,12 +154,25 @@ public class MerchantUI : MonoBehaviour
     
     private void HandleProductClicked(ItemData itemData)
     {
+        // 이미 최대 보유량이면 팝업 자체를 안 띄움
+        int maxBuyable = shop.GetMaxBuyable(itemData);
+        if (maxBuyable <= 0)
+        {
+            SetDisappointmentExpression();
+            talkPanel.ChangeText("더 이상 들고 갈 수 없을 것 같은데?");
+            UIManager.Instance.CreateOkPopup($"최대 {itemData.maxCapacity}개까지만 보유할 수 있습니다.", () => {}, () => {}, false);
+            return;
+        }
+
+        int owned = shop.GetOwnedCount(itemData);
+
         talkPanel.ChangeText($"{itemData.itemName}을 사고 싶어?");
         UIManager.Instance.CreateAmountPopup($"{itemData.itemName}을 구매하시겠습니까?", itemData,
+            owned, maxBuyable,
             (amount) =>
             {
                 int totalPrice = itemData.price * amount;
-                
+            
                 if (!EconomyManager.Instance.CanSpend(totalPrice))
                 {
                     SetDisappointmentExpression();

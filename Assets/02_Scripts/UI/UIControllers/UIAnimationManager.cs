@@ -166,6 +166,9 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
     private float stampAnimDuration = 0.5f;
     [SerializeField] 
     private Ease stampEase = Ease.OutBack;
+    
+    private readonly Dictionary<RectTransform, Vector2> popHomePos = new();
+
 
     protected override void Awake()
     {
@@ -1008,13 +1011,18 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         ui.DOKill();
         CanvasGroup cg = ui.GetComponent<CanvasGroup>();
         if (cg == null) cg = ui.gameObject.AddComponent<CanvasGroup>();
+        cg.DOKill();
 
         Canvas canvas = ui.GetComponentInParent<Canvas>();
         RectTransform parentRect = ui.parent.GetComponent<RectTransform>();
 
-        Vector2 finalPos = ui.anchoredPosition;
+        // 1회 원래 자리를 기억 이후엔 항상 캐싱된 값 사용
+        if (!popHomePos.TryGetValue(ui, out Vector2 finalPos))
+        {
+            finalPos = ui.anchoredPosition;
+            popHomePos[ui] = finalPos;
+        }
 
-        // 3D의 위치를 2D UI 좌표로 변환합니다.
         Camera cam = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
         Vector2 screenPos = Camera.main.WorldToScreenPoint(worldOrigin.position);
         RectTransformUtility.ScreenPointToLocalPointInRectangle(parentRect, screenPos, cam, out Vector2 startPos);
@@ -1025,9 +1033,11 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         cg.blocksRaycasts = false;
 
         Sequence seq = DOTween.Sequence();
+        seq.SetTarget(ui); // ★ 이제 ui.DOKill()이 이 시퀀스를 죽일 수 있음
+
         seq.Append(ui.DOAnchorPos(finalPos, duration).SetEase(Ease.OutBack));
         seq.Join(ui.DOScale(Vector3.one, duration).SetEase(Ease.OutBack));
-        seq.Join(cg.DOFade(1f, duration * 0.5f)); 
+        seq.Join(cg.DOFade(1f, duration * 0.5f));
 
         seq.OnComplete(() => {
             cg.blocksRaycasts = true;
@@ -1045,14 +1055,14 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         ui.DOKill();
         CanvasGroup cg = ui.GetComponent<CanvasGroup>();
         if (cg == null) cg = ui.gameObject.AddComponent<CanvasGroup>();
+        cg.DOKill();
 
         Canvas canvas = ui.GetComponentInParent<Canvas>();
         RectTransform parentRect = ui.parent.GetComponent<RectTransform>();
 
-        // 현재 위치 저장
-        Vector2 originalPos = ui.anchoredPosition;
+        // 캐싱된 원래 자리로 복원
+        Vector2 originalPos = popHomePos.TryGetValue(ui, out var home) ? home : ui.anchoredPosition;
 
-        // 원래 위치 계산
         Camera cam = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
         Vector2 screenPos = Camera.main.WorldToScreenPoint(worldOrigin.position);
         RectTransformUtility.ScreenPointToLocalPointInRectangle(parentRect, screenPos, cam, out Vector2 endPos);
@@ -1060,12 +1070,14 @@ public class UIAnimationManager : Singleton<UIAnimationManager>
         cg.blocksRaycasts = false;
 
         Sequence seq = DOTween.Sequence();
+        seq.SetTarget(ui); // ★
+
         seq.Append(ui.DOAnchorPos(endPos, duration).SetEase(Ease.InBack));
         seq.Join(ui.DOScale(Vector3.zero, duration).SetEase(Ease.InBack));
         seq.Join(cg.DOFade(0f, duration));
 
         seq.OnComplete(() => {
-            ui.anchoredPosition = originalPos; 
+            ui.anchoredPosition = originalPos;
             onComplete?.Invoke();
         });
     }

@@ -51,6 +51,9 @@ public class Fridge : MonoBehaviour, IInteractable
     }
     private void OnDayEnd()
     {
+        if (inventory.gameObject.activeInHierarchy)
+            HandleInventoryCloseRequest();
+        
         foreach (var slot in inventory.Slots)
         {
             if (slot.Item == null)

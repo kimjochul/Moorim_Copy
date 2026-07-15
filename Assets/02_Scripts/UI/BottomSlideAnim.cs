@@ -29,6 +29,8 @@ public class BottomSlideAnim : MonoBehaviour
         InventoryManager.Instance.OnInventoryUIOpened += OnInvOpened;
         InventoryManager.Instance.OnInventoryUIClosed += OnInvClosed;
         InventoryManager.Instance.OnBottomUIToggleRequested += OnToggleRequested;
+        
+        DayManager.Instance.OnDayEnd += ForceHide;
     }
 
     void OnDestroy()
@@ -39,6 +41,9 @@ public class BottomSlideAnim : MonoBehaviour
             InventoryManager.Instance.OnInventoryUIClosed -= OnInvClosed;
             InventoryManager.Instance.OnBottomUIToggleRequested -= OnToggleRequested;
         }
+        
+        if (DayManager.Instance != null)
+            DayManager.Instance.OnDayEnd -= ForceHide;
     }
 
     // private void OnInvOpened(Inventory inven) => MoveUI(inven, true);
@@ -102,5 +107,12 @@ public class BottomSlideAnim : MonoBehaviour
         rectTransform.anchoredPosition = endPos;
     }
 
+    private void ForceHide()
+    {
+        openCount = 0;
+
+        if (currentRoutine != null) StopCoroutine(currentRoutine);
+        currentRoutine = StartCoroutine(SmoothMove(hiddenPosY));
+    }
 
 }

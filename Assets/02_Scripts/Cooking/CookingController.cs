@@ -70,6 +70,12 @@ public class CookingController : MonoBehaviour
             cookingView.OnCloseClicked -= HandleClose;
             cookingView.OnAutoClicked -= OnAutoFillClicked;
         }
+
+        if (DayManager.Instance != null)
+        {
+            DayManager.Instance.OnDayEnd -= HandleClose;
+
+        }
     }
 
     private void InitView()
@@ -84,6 +90,8 @@ public class CookingController : MonoBehaviour
         cookingView.OnCookClicked += OnCookButtonClicked;
         cookingView.OnCloseClicked += HandleClose;
         cookingView.OnAutoClicked += OnAutoFillClicked;
+        
+        DayManager.Instance.OnDayEnd += HandleClose;
     }
     
     private void ResetUIPosition()
@@ -178,6 +186,7 @@ public class CookingController : MonoBehaviour
         targetInventoryMeat = null;
         targetInventoryOther = null;
     }
+    
 
     private void HandleClose()
     {

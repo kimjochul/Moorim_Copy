@@ -162,18 +162,25 @@ public class PlayerInput : MonoBehaviour
         }
 
         //  P키를 누른 상태라면 해당 위치로 순간이동
-        if (Input.GetKey(KeyCode.P) && UpgradeManager.Instance.HasCharacterSkill(CharacterSkillLevel.Teleport)
-            && SkillUIManager.Instance.CanUseTeleport())
+        if (UpgradeManager.Instance.HasCharacterSkill(CharacterSkillLevel.Teleport) &&
+            SkillUIManager.Instance.CanUseTeleport())
         {
-            Vector3 teleportPos = interactable.GetInteractPosition();
-            PlayerManager.Instance.TeleportSelectedUnit(teleportPos);
+            if (Input.GetMouseButton(1))
+            {
+                if (Input.GetMouseButton(0))
+                {
+                    Vector3 teleportPos = interactable.GetInteractPosition();
+                    PlayerManager.Instance.TeleportSelectedUnit(teleportPos);
             
-            SkillUIManager.Instance.UseTeleportSkill();
-            // 순간이동 직후 바로 상호작용 실행되도록 설정
-            PlayerManager.Instance.SelectedUnit.ActiveInteractable = interactable;
-            PlayerManager.Instance.ExecuteInteract(interactable);
-            return;
+                    SkillUIManager.Instance.UseTeleportSkill();
+                    // 순간이동 직후 바로 상호작용 실행되도록 설정
+                    PlayerManager.Instance.SelectedUnit.ActiveInteractable = interactable;
+                    PlayerManager.Instance.ExecuteInteract(interactable);
+                    return;
+                }
+            }
         }
+        
 
         PlayerManager.Instance.ReservedInteractable = interactable;
         PlayerManager.Instance.MoveSelectedUnitTo(interactable.GetInteractPosition(), () =>
@@ -192,12 +199,18 @@ public class PlayerInput : MonoBehaviour
         PlayerManager.Instance.ReservedInteractable = null;
         
         // P키 누르면 순간이동, 아니면 그냥 이동
-        if (Input.GetKey(KeyCode.P) && UpgradeManager.Instance.HasCharacterSkill(CharacterSkillLevel.Teleport)
-                                    && SkillUIManager.Instance.CanUseTeleport())
+        if (UpgradeManager.Instance.HasCharacterSkill(CharacterSkillLevel.Teleport) && SkillUIManager.Instance.CanUseTeleport())
         {
-            PlayerManager.Instance.TeleportSelectedUnit(point);
-            SkillUIManager.Instance.UseTeleportSkill();
+            if (Input.GetMouseButton(1))
+            {
+                if (Input.GetMouseButton(0))
+                {
+                    PlayerManager.Instance.TeleportSelectedUnit(point);
+                    SkillUIManager.Instance.UseTeleportSkill(); 
+                }
+            }
         }
+        
         else
             PlayerManager.Instance.MoveSelectedUnitTo(point);
         

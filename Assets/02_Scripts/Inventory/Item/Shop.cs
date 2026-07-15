@@ -39,6 +39,9 @@ public class Shop : MonoBehaviour
 
     [SerializeField]
     private ShopProductInfo infoPanel;
+    
+    private IngredientType currentCategory;
+    private bool hasCategory = false;
 
     public void Init()
     {
@@ -61,7 +64,7 @@ public class Shop : MonoBehaviour
             Debug.LogError("EconomyManager is NULL");
             return false;
         }
-        
+    
         Debug.Log("Buying " + itemID);
         Item item = itemFactory.CreateItem(itemID);
 
@@ -70,41 +73,41 @@ public class Shop : MonoBehaviour
             Debug.LogError("item is NULL");
             return false;
         }
-        
+    
         int totalPrice = item.Data.price * count;
-        
+    
         if (!EconomyManager.Instance.CanSpend(totalPrice))
         {
             Debug.Log("돈 부족");
             return false;
         }
-        
-        Inventory inventory = null;
-        if (item.Data is IngredientData ingredientData)
-        {
-            inventory = ingredientData.type == IngredientType.Meats ? playerMeatInventory : playerOtherIngredientInventory;
-        }
-        else if (item.Data is FoodData)
-        {
-            inventory = fridgeInventory;
-        }
-        
+    
+        Inventory inventory = GetTargetInventory(item.Data);
+    
         if (inventory != null)
         {
+            // 보유 한도 검사: 현재 보유량 + 구매량이 최대 보유량을 넘으면 실패
+            int owned = inventory.GetItemCount(item.ID);
+            if (owned + count > item.Data.maxCapacity)
+            {
+                UIManager.Instance.CreateOkPopup($"최대 {item.Data.maxCapacity}개까지만 보유할 수 있습니다.", () => {}, () => {}, false);
+                return false;
+            }
+
             int canBuy = inventory.CanReceiveItem(item, count);
-            
+        
             if (canBuy == 0)
             {
                 UIManager.Instance.CreateOkPopup("인벤토리가 가득 찼습니다.", () => {}, () => {}, false);
                 return false;
             }
-            
+        
             if (canBuy < count)
             {
                 UIManager.Instance.CreateOkPopup($"구매 실패!\n{canBuy}개만 구매 가능합니다.", () => {}, () => {}, false);
                 return false;
             }
-            
+        
             inventory.GetItem(item, count);
         }
         else if (item.Data is BondItemData bondItemData)
@@ -116,11 +119,16 @@ public class Shop : MonoBehaviour
         {
             Debug.Log("Not a valid item");
         }
-        
+    
         EconomyManager.Instance.SpendMoney(totalPrice);
+
+        // ★ 구매 성공 → 현재 카테고리 목록 다시 그려서 보유량(20/99 → 60/99) 갱신
+        if (hasCategory)
+            UpdateProductList(currentCategory);
 
         return true;
     }
+    
     // 카테고리 생성
     public void CreateCategory()
     {
@@ -161,6 +169,10 @@ public class Shop : MonoBehaviour
     // 카테고리 클릭시 카테고리에 해당되는 상점 요소로 바꾸기
     public void UpdateProductList(IngredientType type)
     {
+        // 현재 카테고리 기억 (구매 후 갱신에 사용)
+        currentCategory = type;
+        hasCategory = true;
+
         switch(type)
         {
             case IngredientType.Recipe:
@@ -176,6 +188,7 @@ public class Shop : MonoBehaviour
                 break;
         }
     }
+    
     private void UpdateIngredientProductList(IngredientType type)
     {
         List<ItemData> targetDataList = DataManager.Instance.GetIngredientList(type).Cast<ItemData>().ToList();
@@ -261,7 +274,7 @@ public class Shop : MonoBehaviour
 
             if (i < targetDataList.Count)
             {
-                product.Init(targetDataList[i]);
+                product.Init(targetDataList[i], GetOwnedCount(targetDataList[i]));
 
                 product.onClickBuy = null;
                 product.onClickBuy += (itemData) =>
@@ -289,6 +302,7 @@ public class Shop : MonoBehaviour
             this.listProduct[i].SetActive(false);
         }
     }
+    
     private void OnEnable()
     {
         EconomyManager.Instance.RestaurantEconomyChanged += Refresh;
@@ -307,5 +321,35 @@ public class Shop : MonoBehaviour
     {
         this.txtMoney.text = EconomyManager.Instance.RestaurantEconomy.Money.ToString();
         this.txtFame.text = EconomyManager.Instance.RestaurantEconomy.Fame.ToString();
+    }
+    
+    // 아이템이 들어갈 인벤토리 결정 (Buy와 동일)
+    private Inventory GetTargetInventory(ItemData itemData)
+    {
+        if (itemData is IngredientData ingredientData)
+            return ingredientData.type == IngredientType.Meats ? playerMeatInventory : playerOtherIngredientInventory;
+
+        if (itemData is FoodData)
+            return fridgeInventory;
+
+        return null; 
+    }
+
+    // 현재 보유 개수 (팝업 표시용)
+    public int GetOwnedCount(ItemData itemData)
+    {
+        Inventory inventory = GetTargetInventory(itemData);
+        return inventory != null ? inventory.GetItemCount(itemData.id) : 0;
+    }
+
+    // 추가 구매 가능 개수 = 최대 보유량 - 현재 보유량
+    public int GetMaxBuyable(ItemData itemData)
+    {
+        Inventory inventory = GetTargetInventory(itemData);
+        if (inventory == null)
+            return 1; // 인연 아이템 등은 1개 구매
+
+        int owned = inventory.GetItemCount(itemData.id);
+        return Mathf.Max(0, itemData.maxCapacity - owned);
     }
 }
