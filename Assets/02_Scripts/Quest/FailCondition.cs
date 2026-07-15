@@ -9,6 +9,8 @@ using static Constants;
 [CreateAssetMenu(menuName = "Quest/Condition/Fail")]
 public class FailLimitCondition : QuestCondition
 {
+    public override QuestConditionType ConditionType => QuestConditionType.FailLimit;
+    
     public GuestMood requiredGuestMood;
     public int maxFailCount;
     private int currentFailCount;

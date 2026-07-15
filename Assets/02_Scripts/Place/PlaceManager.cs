@@ -106,4 +106,15 @@ public class PlaceManager : MonoBehaviour
             }
         }
     }
+    
+    public void Register(GameObject[] tables, GameObject[] stations, GameObject[] kitchens, GuestManager guest)
+    {
+        tableSets = tables;
+        cookingStations = stations;
+        kitchenTables = kitchens;
+        guestManager = guest;
+
+        currentTableIndex = tableSets.Count(t => t.activeSelf);
+        currentStoveIndex = cookingStations.Count(t => t.activeSelf);
+    }
 }

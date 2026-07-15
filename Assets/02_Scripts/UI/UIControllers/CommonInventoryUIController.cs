@@ -12,7 +12,6 @@ public class CommonInventoryUIController : MonoBehaviour
     [SerializeField] private Button meatButton;
     [SerializeField] private Button vegetableButton;
     [SerializeField] private Button dairyButton;
-    [SerializeField] private Button spicesButton;
     [SerializeField] private Button processedButton;
 
     [SerializeField] private Button sortButton;
@@ -25,8 +24,7 @@ public class CommonInventoryUIController : MonoBehaviour
         meatButton.onClick.AddListener(() => ChangeFilter(InventoryFilter.Meat));
         vegetableButton.onClick.AddListener(() => ChangeFilter(InventoryFilter.Vegetable));
         dairyButton.onClick.AddListener(() => ChangeFilter(InventoryFilter.Dairy));
-        spicesButton.onClick.AddListener(() => ChangeFilter(InventoryFilter.Spices));
-        processedButton.onClick.AddListener(() => ChangeFilter(InventoryFilter.Processed));
+        processedButton.onClick.AddListener(() => ChangeFilter(InventoryFilter.Processed)); // 가공류, 향신료 통합으로 산출
         
         sortButton.onClick.AddListener(SortInventory);
     }
@@ -72,6 +70,12 @@ public class CommonInventoryUIController : MonoBehaviour
         if (filter == InventoryFilter.All)
             return true;
 
+        // 기타(가공 + 향신료)
+        if (filter == InventoryFilter.Processed)
+        {
+            return ingredient.Filter is InventoryFilter.Processed or InventoryFilter.Spices;
+        }
+        
         return ingredient.Filter == filter;
     }
 }

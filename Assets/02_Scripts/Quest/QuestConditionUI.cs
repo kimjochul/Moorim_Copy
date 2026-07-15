@@ -36,6 +36,15 @@ public class QuestConditionUI : MonoBehaviour
 
     public void Refresh()
     {
+        if (condition is ItemCondition itemCondition)
+        {
+            if (DataManager.Instance.GetItemData(itemCondition.itemID) is not FoodData)
+            {
+                Debug.Log("Item Condition은 음식데이터인 경우만 유효합니다");
+                gameObject.SetActive(false);
+            }
+        }
+        
         descriptionText.text = condition.GetDescription();
         currentCountText.text = condition.GetCurrentCount();
         requiredCountText.text = condition.GetRequiredCount();

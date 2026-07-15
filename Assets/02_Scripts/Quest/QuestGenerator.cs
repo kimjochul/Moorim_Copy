@@ -24,6 +24,8 @@ public class QuestGenerator : MonoBehaviour
     
     [SerializeField] private RecipeList allRecipes;
 
+    private QuestConditionCategory? lastCategory;
+    
     /// <summary>
     /// 해금이 되어있는 아이템을 필요로 하는 퀘스트만 나오게 설정해야함
     /// 퀘스트 풀에 있는 데이터들 중 하나를 랜덤으로 골라서, 리턴
@@ -50,8 +52,17 @@ public class QuestGenerator : MonoBehaviour
             return null;
         }
 
-        Debug.Log(validTemplates.Count);
-        QuestData selected = validTemplates[Random.Range(0, validTemplates.Count)];
+        List<QuestData> candidates = new(validTemplates);
+        if(lastCategory != null)
+        {
+            List<QuestData> filtered = candidates.FindAll(q => q.category != lastCategory);
+
+            if(filtered.Count > 0)
+                candidates = filtered;
+        }
+        QuestData selected = candidates[Random.Range(0, candidates.Count)];
+
+        lastCategory = selected.category;
         
         var inventory = InventoryManager.Instance.GetInventory(InventoryType.Fridge);
         Quest quest = new Quest(selected, inventory);
@@ -191,6 +202,23 @@ public class QuestGenerator : MonoBehaviour
     }
     
     /// <summary>
+    /// 언락된 레시피 개수 호출 함수
+    /// </summary>
+    /// <returns></returns>
+    private int GetUnlockedRecipeCount()
+    {
+        int count = 0;
+
+        foreach (var recipe in allRecipes.recipes)
+        {
+            if (RecipeUnlockManager.IsUnlocked(recipe.id))
+                count++;
+        }
+
+        return count;
+    }
+    
+    /// <summary>
     /// 아이디 기반 레시피 탐색 함수
     /// </summary>
     /// <param name="id"></param>
@@ -217,25 +245,10 @@ public class QuestGenerator : MonoBehaviour
         
         int tier = GetQuestTier();
         float rewardMultiplier = 1f + (tier - 1) * 0.5f;
-        List<QuestCondition> conditionsToAdd = new();
         
-        // Tier에 맞게 RandomItem 조건 복제
-        foreach (var condition in quest.Conditions)
-        {
-            if (condition is ItemCondition itemCondition && itemCondition.useRandomItem)
-            {
-                for (int i = 1; i < tier; i++)
-                {
-                    conditionsToAdd.Add(itemCondition.Clone());
-                }
-            }
-        }
-        
-        // foreach 끝난 뒤 추가
-        foreach (var condition in conditionsToAdd)
-        {
-            quest.AddCondition(condition);
-        }
+        int unlockedRecipeCount = GetUnlockedRecipeCount();
+        int randomFoodTypes = Mathf.Min(tier, unlockedRecipeCount);
+        quest.AdjustRandomItemConditions(randomFoodTypes);
         
         HashSet<int> selectedRecipes = new();
         
@@ -318,6 +331,24 @@ public class QuestGenerator : MonoBehaviour
         var inventory = InventoryManager.Instance.GetInventory(InventoryType.Fridge);
 
         return new Quest(data, inventory);
+    }
+    
+    /// <summary>
+    /// 데이터로 퀘스트 복원할 때 쓰는 함수
+    /// </summary>
+    /// <param name="runtimeData"></param>
+    /// <returns></returns>
+    public Quest GenerateQuestFromSave(QuestRuntimeData runtimeData)
+    {
+        var data = wholeQuestPool.quests.Find(q => q.id == runtimeData.questID);
+        if (data == null)
+        {
+            Debug.LogError($"QuestData 없음 : {runtimeData.questID}");
+            return null;
+        }
+        var inventory = InventoryManager.Instance.GetInventory(InventoryType.Fridge);
+
+        return new Quest(data, inventory, runtimeData);
     }
     
     /// <summary>

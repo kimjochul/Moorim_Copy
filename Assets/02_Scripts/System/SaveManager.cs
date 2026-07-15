@@ -327,6 +327,7 @@ public class DaySaveData
 [Serializable]
 public class QuestSaveData
 {
+    public List<QuestRuntimeData> waitingQuests = new();
     public List<QuestRuntimeData> activeQuests = new();
     public List<int> completedQuestIDs = new();
 }
@@ -346,7 +347,8 @@ public class QuestRuntimeData
 public class ConditionRuntimeData
 {
     public int conditionIndex;
-
+    public QuestConditionType conditionType;
+    
     public int currentCount;
     
     public int targetID;       // itemID 등

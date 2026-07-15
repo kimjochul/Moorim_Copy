@@ -15,6 +15,8 @@ public enum ProgressType
 [CreateAssetMenu(menuName = "Quest/Condition/Progress")]
 public class ProgressCondition : QuestCondition
 {
+    public override QuestConditionType ConditionType => QuestConditionType.ProgressCheck;
+    
     public ProgressType type;
     
     private int currentMoney;

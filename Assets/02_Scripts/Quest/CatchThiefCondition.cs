@@ -6,6 +6,8 @@ public class CatchThiefCondition : QuestCondition
     public int requiredCatchCount;
     private int currentCatchCount;
     
+    public override QuestConditionType ConditionType => QuestConditionType.CatchThief;
+    
     public override void Init(Inventory inventory = null)
     {
         currentCatchCount = 0;

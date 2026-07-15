@@ -5263,10 +5263,44 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 4624519410360672247, guid: 5984c09a6cdb7444d8be66adb5d3de93, type: 3}
+    - {fileID: 8183044436208705013, guid: 5984c09a6cdb7444d8be66adb5d3de93, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5984c09a6cdb7444d8be66adb5d3de93, type: 3}
+--- !u!114 &784438274 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 336978511476828801, guid: 5984c09a6cdb7444d8be66adb5d3de93, type: 3}
+  m_PrefabInstance: {fileID: 784438273}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+--- !u!114 &784438275 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4063643408000406871, guid: 5984c09a6cdb7444d8be66adb5d3de93, type: 3}
+  m_PrefabInstance: {fileID: 784438273}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2da0c512f12947e489f739169773d7ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TMP_InputField
+--- !u!114 &784438276 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8316961709974675723, guid: 5984c09a6cdb7444d8be66adb5d3de93, type: 3}
+  m_PrefabInstance: {fileID: 784438273}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
 --- !u!1 &795321352
 GameObject:
   m_ObjectHideFlags: 0
@@ -10529,6 +10563,76 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1243697674}
   m_CullTransparentMesh: 1
+--- !u!1 &1254129375
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1254129377}
+  - component: {fileID: 1254129376}
+  m_Layer: 0
+  m_Name: PlaceManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1254129376
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1254129375}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fcdc34c0f4155e48b3c4c096065b4fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlaceManager
+  openTableCount: {fileID: 784438275}
+  tableAdd: {fileID: 784438276}
+  tableSets:
+  - {fileID: 1505185502}
+  - {fileID: 1505185501}
+  - {fileID: 1505185500}
+  - {fileID: 1505185499}
+  - {fileID: 1505185498}
+  - {fileID: 1505185497}
+  - {fileID: 1505185496}
+  - {fileID: 1505185495}
+  - {fileID: 1505185494}
+  - {fileID: 1505185493}
+  - {fileID: 1505185492}
+  - {fileID: 1505185491}
+  - {fileID: 1505185490}
+  - {fileID: 1505185489}
+  - {fileID: 1505185488}
+  - {fileID: 1505185487}
+  stoveAdd: {fileID: 784438274}
+  cookingStations:
+  - {fileID: 218710639}
+  - {fileID: 839641420}
+  kitchenTables:
+  - {fileID: 8244860317193223425}
+  - {fileID: 1803517926}
+--- !u!4 &1254129377
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1254129375}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 439.2761, y: 0, z: 6811.8267}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1256546456
 GameObject:
   m_ObjectHideFlags: 0
@@ -13208,126 +13312,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7721322160396618107, guid: 0aa5df01d1dc70b4cadf6c494415eaff, type: 3}
   m_PrefabInstance: {fileID: 3900352971635433750}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1517093469
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1517093470}
-  - component: {fileID: 1517093473}
-  - component: {fileID: 1517093472}
-  - component: {fileID: 1517093471}
-  m_Layer: 5
-  m_Name: '[Button] Spices'
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &1517093470
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1517093469}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1821849434}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 338.5, y: -50}
-  m_SizeDelta: {x: 68, y: 68}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1517093471
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1517093469}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
-  m_Navigation:
-    m_Mode: 3
-    m_WrapAround: 0
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
-  m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
-    m_ColorMultiplier: 1
-    m_FadeDuration: 0.1
-  m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
-  m_AnimationTriggers:
-    m_NormalTrigger: Normal
-    m_HighlightedTrigger: Highlighted
-    m_PressedTrigger: Pressed
-    m_SelectedTrigger: Selected
-    m_DisabledTrigger: Disabled
-  m_Interactable: 1
-  m_TargetGraphic: {fileID: 1517093472}
-  m_OnClick:
-    m_PersistentCalls:
-      m_Calls: []
---- !u!114 &1517093472
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1517093469}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 2565ba6fffca6e343b39856b24b0c0d0, type: 3}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
---- !u!222 &1517093473
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1517093469}
-  m_CullTransparentMesh: 1
 --- !u!1001 &1540586209
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15015,7 +14999,6 @@ MonoBehaviour:
   meatButton: {fileID: 1583003943}
   vegetableButton: {fileID: 1076790588}
   dairyButton: {fileID: 1339591193}
-  spicesButton: {fileID: 1517093471}
   processedButton: {fileID: 2031943366}
   sortButton: {fileID: 1838473703}
 --- !u!1001 &1747238843
@@ -15767,7 +15750,6 @@ RectTransform:
   - {fileID: 1583003942}
   - {fileID: 1076790587}
   - {fileID: 1339591192}
-  - {fileID: 1517093470}
   - {fileID: 2031943365}
   m_Father: {fileID: 1737785583}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -20675,6 +20657,7 @@ SceneRoots:
   - {fileID: 834262730}
   - {fileID: 2055249659}
   - {fileID: 929696423}
+  - {fileID: 1254129377}
   - {fileID: 450802394}
   - {fileID: 1312058283}
   - {fileID: 367885271}
