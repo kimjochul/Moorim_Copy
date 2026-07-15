@@ -37,8 +37,8 @@ public class ShopProduct : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     public Action<RecipeData> onHoverRecipeEnter;
     
     public Action onHoverExit;
-
-    public void Init(ItemData itemData)
+    
+    public void Init(ItemData itemData, int owned)
     {
         recipeData = null;
         
@@ -46,7 +46,7 @@ public class ShopProduct : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
         this.icon.sprite = this.itemData.icon;
         this.itemName.text = this.itemData.itemName;
-        this.amount.text = this.itemData.maxCapacity.ToString();
+        this.amount.text = $"{owned} / {this.itemData.maxCapacity}";
         this.price.text = this.itemData.price.ToString();
 
         this.btnBuy.onClick.RemoveAllListeners();

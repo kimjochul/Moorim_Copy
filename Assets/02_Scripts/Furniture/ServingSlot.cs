@@ -23,6 +23,8 @@ public class ServingSlot : MonoBehaviour, IInteractable
     private void Start()
     {
         inventory.OnItemAdded += OnItemAddedToServing;
+        DayManager.Instance.OnDayEnd += HandleDayEnd;
+
     }
     
     private void Update()
@@ -128,6 +130,12 @@ public class ServingSlot : MonoBehaviour, IInteractable
             Quaternion.identity,
             this.transform // 선택: 배식대 자식으로
         );
+    }
+    
+    private void HandleDayEnd()
+    {
+        if (inventory.gameObject.activeInHierarchy)
+            InventoryManager.Instance.CloseInventory(inventory);
     }
     
     public Vector3 GetInteractPosition()
