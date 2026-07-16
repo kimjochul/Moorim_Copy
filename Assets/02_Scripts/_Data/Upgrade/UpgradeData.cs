@@ -47,6 +47,7 @@ public enum UpgradeType
     ServingSlotAmount,
     RefridgeSlotAmount,
     ServerSlotAmount,
+    Guard,
 }
 
 public enum CharacterSkillLevel

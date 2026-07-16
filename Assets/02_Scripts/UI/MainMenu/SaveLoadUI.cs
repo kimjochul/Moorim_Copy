@@ -12,6 +12,11 @@ public class SaveLoadUI : MonoBehaviour
     [SerializeField] private SaveSlotUI[] slots;
     [SerializeField] private Button closeButton;
 
+    [SerializeField] private Image screenImage;
+        
+    [SerializeField] private Sprite saveScreen;
+    [SerializeField] private Sprite loadScreen;
+    
     private SaveLoadMode _currentMode;
     
     private void Start()
@@ -26,6 +31,7 @@ public class SaveLoadUI : MonoBehaviour
             gameObject.SetActive(true);
             
             _currentMode = SaveLoadMode.Save;
+            screenImage.sprite = saveScreen;
             
             // 1번 = 자동
             slots[0].Init(0, SaveSlotType.Auto, SaveLoadMode.Save);
@@ -49,6 +55,7 @@ public class SaveLoadUI : MonoBehaviour
             gameObject.SetActive(true);
 
             _currentMode = SaveLoadMode.Load;
+            screenImage.sprite = loadScreen;
             
             slots[0].Init(0, SaveSlotType.Auto, SaveLoadMode.Load);
 

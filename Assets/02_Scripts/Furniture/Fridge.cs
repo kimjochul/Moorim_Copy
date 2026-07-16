@@ -17,10 +17,23 @@ public class Fridge : MonoBehaviour, IInteractable
 
     private void Start()
     {
-        DayManager dayManager = FindFirstObjectByType<DayManager>();
+        //DayManager dayManager = FindFirstObjectByType<DayManager>();
+        DayManager dayManager = DayManager.Instance;
 
         dayManager.OnDayEnd += OnDayEnd;
         dayManager.OnDayStart += OnDayStart;
+    }
+    
+    private void OnDestroy()
+    {
+        if (DayManager.Instance != null)
+        {
+            DayManager.Instance.OnDayEnd -= OnDayEnd;
+            DayManager.Instance.OnDayStart -= OnDayStart;
+        }
+
+        if (inventory != null)
+            inventory.OnCloseRequested -= HandleInventoryCloseRequest;
     }
 
     public void Interact(PlayerController player)
@@ -31,6 +44,8 @@ public class Fridge : MonoBehaviour, IInteractable
         InventoryManager.Instance.OpenInventory(this.inventory);
         //this.feedback.PlayFeedback();
         UIAnimationManager.Instance.ShowPopFromWorld(this.ui.PanelTransform, this.transform);
+        
+        this.inventory.OnCloseRequested -= HandleInventoryCloseRequest;
         this.inventory.OnCloseRequested += HandleInventoryCloseRequest;
     }
 
@@ -51,9 +66,6 @@ public class Fridge : MonoBehaviour, IInteractable
     }
     private void OnDayEnd()
     {
-        if (inventory.gameObject.activeInHierarchy)
-            HandleInventoryCloseRequest();
-        
         foreach (var slot in inventory.Slots)
         {
             if (slot.Item == null)
@@ -62,6 +74,11 @@ public class Fridge : MonoBehaviour, IInteractable
             slot.Item.FridgeSpoilTimer++;
             Debug.Log($"{slot.Item.ItemName} → {slot.Item.FridgeSpoilTimer}");
         }
+        
+        if (this == null || inventory == null) return;
+        
+        if (inventory.gameObject.activeInHierarchy)
+            HandleInventoryCloseRequest();
     }
     
     private void OnDayStart()

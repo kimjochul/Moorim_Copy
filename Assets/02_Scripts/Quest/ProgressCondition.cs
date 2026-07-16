@@ -159,9 +159,28 @@ public class ProgressCondition : QuestCondition
     
     public override void SaveRuntimeData(ConditionRuntimeData data)
     {
+        data.progressType = type;
+
+        data.requiredMoney = requiredMoney;
+        data.requiredFame = requiredFame;
+        data.requiredDay = requiredDayCount;
+
+        data.prerequisiteQuestID = Prerequisite_Quest != null ? Prerequisite_Quest.id : -1;
     }
+    
     public override void LoadRuntimeData(ConditionRuntimeData data)
     {
+        type = data.progressType;
+
+        requiredMoney = data.requiredMoney;
+        requiredFame = data.requiredFame;
+        requiredDayCount = data.requiredDay;
+
+        if (data.prerequisiteQuestID != -1)
+        {
+            Prerequisite_Quest = DataManager.Instance.GetQuest(data.prerequisiteQuestID);
+        }
+
         Init();
     }
 }

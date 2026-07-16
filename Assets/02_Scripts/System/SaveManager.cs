@@ -349,13 +349,31 @@ public class ConditionRuntimeData
     public int conditionIndex;
     public QuestConditionType conditionType;
     
-    public int currentCount;
-    
-    public int targetID;       // itemID 등
+    // ===== ItemCondition =====
+    public int itemID;
     public int requiredCount;
+    public int currentCount;
 
-    public int extraValue;     // failCount, serveCount 등
+    // ===== ProgressCondition =====
+    public ProgressType progressType;
+    public int requiredMoney;
+    public int requiredFame;
+    public int requiredDay;
+    public int prerequisiteQuestID;
+
+    // ===== FailLimitCondition =====
+    public int maxFailCount;
+    public int failCount;
+
+    // ===== ServeCondition =====
+    public int serveRequired;
+    public int serveCurrent;
+
+    // ===== CatchThiefCondition =====
+    public int catchRequired;
+    public int catchCurrent;
 }
+
 [Serializable]
 public class RecipeSaveData
 {

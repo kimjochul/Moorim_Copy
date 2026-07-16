@@ -116,17 +116,16 @@ public class FailLimitCondition : QuestCondition
     {
         return maxFailCount.ToString();
     }
-    
+
     public override void SaveRuntimeData(ConditionRuntimeData data)
     {
-        base.SaveRuntimeData(data);
-
-        data.extraValue = maxFailCount;
+        data.maxFailCount = maxFailCount;
+        data.failCount = currentFailCount;
     }
+
     public override void LoadRuntimeData(ConditionRuntimeData data)
     {
-        maxFailCount = data.extraValue;
-
-        base.LoadRuntimeData(data);
+        maxFailCount = data.maxFailCount;
+        currentFailCount = data.failCount;
     }
 }

@@ -58,7 +58,13 @@ public class SaveSlotUI : MonoBehaviour
         }
         else
         {
-            SaveManager.Instance.LoadGame(slotIndex, slotType);
+            if (File.Exists(path))
+                SaveManager.Instance.LoadGame(slotIndex, slotType);
+            else
+                UIManager.Instance.CreateOkPopup(
+                    "해당 위치에는 저장된 파일이 없습니다.",
+                    () => { }, () => {},false
+                );
         }
     }
 
