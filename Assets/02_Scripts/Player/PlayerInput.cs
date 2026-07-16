@@ -197,27 +197,26 @@ public class PlayerInput : MonoBehaviour
         if (PlayerManager.Instance.CurrentPlayer == PlayerType.Sowol) return;
 
         PlayerManager.Instance.ReservedInteractable = null;
-        
-        // P키 누르면 순간이동, 아니면 그냥 이동
-        if (UpgradeManager.Instance.HasCharacterSkill(CharacterSkillLevel.Teleport) && SkillUIManager.Instance.CanUseTeleport())
+
+        bool teleported = false;
+
+        // 우클릭 + 좌클릭 && 텔레포트 사용 가능하면 순간이동
+        if (Input.GetMouseButton(1) &&
+            UpgradeManager.Instance.HasCharacterSkill(CharacterSkillLevel.Teleport) &&
+            SkillUIManager.Instance.CanUseTeleport())
         {
-            if (Input.GetMouseButton(1))
-            {
-                if (Input.GetMouseButton(0))
-                {
-                    PlayerManager.Instance.TeleportSelectedUnit(point);
-                    SkillUIManager.Instance.UseTeleportSkill(); 
-                }
-            }
+            PlayerManager.Instance.TeleportSelectedUnit(point);
+            SkillUIManager.Instance.UseTeleportSkill();
+            teleported = true;
         }
-        
-        else
+
+        if (!teleported)
             PlayerManager.Instance.MoveSelectedUnitTo(point);
-        
-        // 마우스 클릭 이펙트 : 만약 기존에 이미 코루틴이 실행되고 있었다면 취소하고 다시 실행.
+
+        // 마우스 클릭 이펙트
         if (clickCoroutine != null)
             StopCoroutine(clickCoroutine);
-        
+
         clickCoroutine = StartCoroutine(ClickEffect(point));
     }
 

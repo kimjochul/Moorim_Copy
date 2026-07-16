@@ -16,7 +16,6 @@ public class Receipt : MonoBehaviour
     [SerializeField] private TextMeshProUGUI txtDay;
 
     [Header("��ǥ �׸��")]
-    [SerializeField] private ReceiptSlot totalRevenue;
     [SerializeField] private ReceiptSlot fame;
     [SerializeField] private ReceiptSlot debt;
     [SerializeField] private ReceiptSlot happyGuests;
@@ -100,7 +99,6 @@ public class Receipt : MonoBehaviour
         this.receiptSequence = DOTween.Sequence();
         this.receiptSequence.AppendInterval(0.5f);
 
-        this.receiptSequence.Append(this.totalRevenue.AnimationText(this.data.totalRevenue, this.labelDelay, this.valueDuration));
         this.receiptSequence.AppendInterval(this.appendInterval);
 
         this.receiptSequence.Append(this.fame.AnimationText(this.data.fame, this.labelDelay, this.valueDuration));
@@ -156,7 +154,6 @@ public class Receipt : MonoBehaviour
     private void ClearSlotText()
     {
         this.txtDay.text = "";
-        this.totalRevenue.ClearText();
         this.fame.ClearText();
         this.debt.ClearText();
         this.happyGuests.ClearText();
