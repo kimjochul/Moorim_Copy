@@ -60,14 +60,7 @@ public abstract class QuestCondition : ScriptableObject
     {
         OnConditionUpdated?.Invoke();
     }
-    
-    public virtual void SaveRuntimeData(ConditionRuntimeData data)
-    {
-        data.currentCount = int.Parse(GetCurrentCount());
-    }
 
-    public virtual void LoadRuntimeData(ConditionRuntimeData data)
-    {
-        SetCurrentCount(data.currentCount);
-    }
+    public abstract void SaveRuntimeData(ConditionRuntimeData data);
+    public abstract void LoadRuntimeData(ConditionRuntimeData data);
 }

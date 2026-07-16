@@ -24,7 +24,15 @@ public class ServingSlot : MonoBehaviour, IInteractable
     {
         inventory.OnItemAdded += OnItemAddedToServing;
         DayManager.Instance.OnDayEnd += HandleDayEnd;
+    }
+    
+    private void OnDestroy()
+    {
+        if (inventory != null)
+            inventory.OnItemAdded -= OnItemAddedToServing;
 
+        if (DayManager.Instance != null)
+            DayManager.Instance.OnDayEnd -= HandleDayEnd;
     }
     
     private void Update()
@@ -134,6 +142,8 @@ public class ServingSlot : MonoBehaviour, IInteractable
     
     private void HandleDayEnd()
     {
+        if (this == null || inventory == null) return;
+        
         if (inventory.gameObject.activeInHierarchy)
             InventoryManager.Instance.CloseInventory(inventory);
     }

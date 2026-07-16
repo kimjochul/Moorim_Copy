@@ -90,7 +90,7 @@ public class SlotItemInfoUI : MonoBehaviour
         target.GetWorldCorners(slotCorners);
 
         float offsetX = 100f;
-        float offsetY = 100f;
+        float offsetY = 50f;
 
         // 기본 위치 : 오른쪽 아래
         Vector3 pos = slotCorners[3] + new Vector3(offsetX, -offsetY, 0);

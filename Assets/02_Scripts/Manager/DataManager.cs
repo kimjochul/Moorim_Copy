@@ -34,6 +34,9 @@ public class DataManager : Singleton<DataManager>
     private Dictionary<IngredientType, List<BondItemData>> dicBuff = new Dictionary<IngredientType, List<BondItemData>>();
     private Dictionary<FoodType, List<RecipeMastery>> dicRecipe = new Dictionary<FoodType, List<RecipeMastery>>();
 
+    // Quest
+    private QuestList questList;
+    
     protected override void Awake()
     {
         base.Awake();
@@ -45,6 +48,7 @@ public class DataManager : Singleton<DataManager>
         IngredientDataLoad();
         AffinityDataLoad();
         RecipeDataLoad();
+        QuestDataLoad();
 
         RecipeCategorize();
         IngredientCategorize();
@@ -64,6 +68,10 @@ public class DataManager : Singleton<DataManager>
     private void RecipeDataLoad()
     {
         this.recipeList = Resources.Load<RecipeList>("Data/RecipeList");
+    }
+    private void QuestDataLoad()
+    {
+        questList = Resources.Load<QuestList>("QuestPool/WholeQuestPool");   
     }
 
 
@@ -223,5 +231,10 @@ public class DataManager : Singleton<DataManager>
         return dicRecipe.Values
             .SelectMany(list => list)
             .ToList();
+    }
+    
+    public QuestData GetQuest(int id)
+    {
+        return questList.quests.Find(q => q.QuestID == id).Data;
     }
 }
