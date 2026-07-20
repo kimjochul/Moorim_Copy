@@ -182,7 +182,10 @@ public class Slot : MonoBehaviour, IBeginDragHandler, IDragHandler, IDropHandler
         if (IsEmpty)
             return;
 
-        if (Owner.Type != InventoryType.Fridge && Owner.Type != InventoryType.MealTable)
+        if (Owner.Type != InventoryType.Fridge 
+            && Owner.Type != InventoryType.MealTable 
+            && Owner.Type != InventoryType.Chef 
+            && Owner.Type != InventoryType.Server)
             return;
 
         SlotItemInfoUI.Instance?.Show(Item, Owner.Type, (RectTransform)transform);

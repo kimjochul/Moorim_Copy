@@ -15,6 +15,7 @@ public class Item : IItem
 
     public float SpoilTimer { get; set; }
     public int FridgeSpoilTimer { get; set; }
+    public Constants.FreshState FreshState { get; set; }
     
     public Item(ItemData data)
     {
@@ -24,7 +25,27 @@ public class Item : IItem
         ItemName = data.itemName;
         InventoryCapacity = data.maxCapacity;
         Icon = data.icon;
+        
         SpoilTimer = 0;
         FridgeSpoilTimer = 0;
+        FreshState = Constants.FreshState.Good;
+    }
+    
+    /// <summary>
+    /// 아이템 여러개로 나눌 때 데이터 복사용
+    /// </summary>
+    /// <param name="other"></param>
+    public Item(IItem other)
+    {
+        Data = other.Data;
+
+        ID = other.ID;
+        ItemName = other.ItemName;
+        InventoryCapacity = other.InventoryCapacity;
+        Icon = other.Icon;
+
+        FreshState = other.FreshState;
+        SpoilTimer = other.SpoilTimer;
+        FridgeSpoilTimer = other.FridgeSpoilTimer;
     }
 }

@@ -72,6 +72,7 @@ public class Fridge : MonoBehaviour, IInteractable
                 continue;
 
             slot.Item.FridgeSpoilTimer++;
+            slot.Item.FreshState++;
             Debug.Log($"{slot.Item.ItemName} → {slot.Item.FridgeSpoilTimer}");
         }
         
@@ -110,6 +111,7 @@ public class Fridge : MonoBehaviour, IInteractable
     /// <param name="foodData"></param>
     public void PlaceFood(Inventory sourceInven, Slot sourceSlot)
     {
+        SetFreshness(sourceSlot);
         sourceInven.TryMoveToInventory(inventory, sourceSlot, sourceSlot.Count);
     }
     
@@ -119,6 +121,8 @@ public class Fridge : MonoBehaviour, IInteractable
     /// <returns></returns>
     public IItem TakeFood(int slotIndex, Inventory targetInven)
     {
+        SlotItemInfoUI.Instance?.Hide();
+        
         var slot = inventory.Slots[slotIndex];
         if (slot.Item == null)
         {
@@ -140,5 +144,15 @@ public class Fridge : MonoBehaviour, IInteractable
     public bool CanInteract(Constants.PlayerType playerType)
     {
         return playerType == PlayerType.Sowol;
+    }
+
+    private void SetFreshness(Slot slot)
+    {
+        if (slot.Item.FreshState == FreshState.Good)
+            slot.Item.FridgeSpoilTimer = 0;
+        else if (slot.Item.FreshState == FreshState.Normal)
+            slot.Item.FridgeSpoilTimer = 1;
+        else if (slot.Item.FreshState == FreshState.Bad)
+            slot.Item.FridgeSpoilTimer = 2;
     }
 }

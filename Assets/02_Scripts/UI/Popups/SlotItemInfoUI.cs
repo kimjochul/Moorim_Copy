@@ -39,7 +39,10 @@ public class SlotItemInfoUI : MonoBehaviour
         SetPosition(target);
 
         CancelInvoke(nameof(Refresh));
-        InvokeRepeating(nameof(Refresh), 0.2f, 0.2f);
+        if (inventoryType == InventoryType.MealTable)
+        { 
+            InvokeRepeating(nameof(Refresh), 0.2f, 0.2f);
+        }
 
         gameObject.SetActive(true);
     }
@@ -72,6 +75,14 @@ public class SlotItemInfoUI : MonoBehaviour
                 SetMealTableInfo(currentItem);
                 break;
 
+            case InventoryType.Chef:
+                SetPlayerInfo(currentItem);
+                break;
+            
+            case InventoryType.Server:
+                SetPlayerInfo(currentItem);
+                break;
+            
             default:
                 freshnessText.gameObject.SetActive(false);
                 remainText.gameObject.SetActive(false);
@@ -120,7 +131,7 @@ public class SlotItemInfoUI : MonoBehaviour
         remainText.gameObject.SetActive(true);
             
         int remainDay = Mathf.Max(0, MAX_FRIDGE_DAY - item.FridgeSpoilTimer);
-        freshnessText.text = $"신선도 : {GetFreshnessName(remainDay, MAX_FRIDGE_DAY)}";
+        freshnessText.text = $"신선도 : {GetFreshnessName(item)}";
         remainText.text = $"남은 보관일 : {remainDay}일";
     }
 
@@ -130,21 +141,39 @@ public class SlotItemInfoUI : MonoBehaviour
         remainText.gameObject.SetActive(true);
         
         float remain = Mathf.Max(0, SPOIL_TIME - item.SpoilTimer);
-        freshnessText.text = $"신선도 : {GetFreshnessName(remain, SPOIL_TIME)}";
+        freshnessText.text = $"신선도 : {GetFreshnessName(item)}";
         
         int remainSecond = Mathf.CeilToInt(remain);
         remainText.text = $"남은 시간 : {remainSecond}초";
     }
 
-    private string GetFreshnessName(float remain, float max)
+    private void SetPlayerInfo(IItem item)
     {
-        float ratio = remain / max;
+        freshnessText.gameObject.SetActive(true);
+        remainText.gameObject.SetActive(false);
+        
+        freshnessText.text = $"신선도 : {GetFreshnessName(item)}";
+    }
+    
+    private string GetFreshnessName(IItem item)
+    {
+        FreshState state = item.FreshState;
+        string result = "";
+        
+        switch(state)
+        {
+            case FreshState.Good:
+                result = "<color=#55CC55>신선</color>";
+                break;
 
-        if(ratio is > 0 and < 0.35f)
-            return "<color=#FF5555>나쁨</color>";
-        else if (ratio is > 0.34f and < 0.67f)
-            return "<color=#FFD34A>보통</color>";
-        else
-            return "<color=#55CC55>신선</color>";
+            case FreshState.Normal:
+                result = "<color=#FFD34A>보통</color>";
+                break;
+
+            case FreshState.Bad:
+                result = "<color=#FF5555>나쁨</color>";
+                break;
+        }
+        return result;
     }
 }

@@ -45,7 +45,8 @@ public class Myungwol : PlayerController
     {
         base.OnSlotClicked(slot);
         // 명월: 손님에게 음식 전달 등
-
+        SlotItemInfoUI.Instance?.Hide();
+        
         if (slot.Owner.Type is InventoryType.MealTable)
             ClickMealTableSlot(slot);
         else if(slot.Owner.Type is InventoryType.Server)

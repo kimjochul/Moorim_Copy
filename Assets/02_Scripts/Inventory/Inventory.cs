@@ -143,12 +143,14 @@ public class Inventory : MonoBehaviour, IInitializable
         PlayerController currentPlayer = PlayerManager.Instance.SelectedUnit;
         currentPlayer?.OnSlotClicked(slot);
     }
-    
+
     /// <summary>
     /// 대상 아이템이랑 소스 아이템이랑 합칠 수 있는지
     /// </summary>
     /// <param name="target"></param>
+    /// <param name="targetSlot"></param>
     /// <param name="source"></param>
+    /// <param name="sourceSlot"></param>
     /// <returns></returns>
     private bool CanMergeItems(IItem target, IItem source)
     {
@@ -158,17 +160,12 @@ public class Inventory : MonoBehaviour, IInitializable
         if (target.ID != source.ID)
             return false;
 
-        // 부패 일수가 다르면 합치지 않음
-        if (target.FridgeSpoilTimer != source.FridgeSpoilTimer)
-            return false;
-
-        // 배식대는 실시간 부패 시간도 같아야 함
-        if (type == InventoryType.MealTable)
+        if (target.FreshState != source.FreshState)
         {
-            if (Mathf.Abs(target.SpoilTimer - source.SpoilTimer) > 0.1f)
-                return false;
+            Debug.Log("신선도 다름");
+            return false;
         }
-
+        
         return true;
     }
     
@@ -218,13 +215,19 @@ public class Inventory : MonoBehaviour, IInitializable
     private int MoveToEmptySlot(Slot target, Slot source, int amount)
     {
         int move = Mathf.Min(amount, source.Count);
-        
-        target.SetItem(source.Item, move);
-        
-        source.AddCount(-move);
 
-        if (source.Count <= 0)
+        if (move == source.Count)
+        {
+            // 전부 이동
+            target.SetItem(source.Item, move);
             source.Clear();
+        }
+        else
+        {
+            // 일부 이동
+            target.SetItem(new Item(source.Item), move);
+            source.AddCount(-move);
+        }
 
         return move;
     }
@@ -263,13 +266,10 @@ public class Inventory : MonoBehaviour, IInitializable
         // 컨트롤 누른 채 드래그하면 절반으로 줄이기
         if (target.IsEmpty && Input.GetKey(KeyCode.LeftControl))
         {
-            int half = source.Count / 2;
-            if (half > 0)
-            {
-                MoveItem(target, source, half);
-            }
-            NotifyItemChanged(itemID);
-            return;
+            amount = source.Count / 2;
+
+            if (amount <= 0)
+                return;
         }
         
         // 1. 빈 슬롯
@@ -322,16 +322,8 @@ public class Inventory : MonoBehaviour, IInitializable
             if (slot.Item.ID != item.ID)
                 continue;
 
-            // 냉장고 부패일 체크
-            if (slot.Item.FridgeSpoilTimer != item.FridgeSpoilTimer)
+            if (slot.Item.FreshState != item.FreshState)
                 continue;
-
-            // 배식대는 실시간 부패도 체크
-            if (type == InventoryType.MealTable)
-            {
-                if (Mathf.Abs(slot.Item.SpoilTimer - item.SpoilTimer) > 0.1f)
-                    continue;
-            }
 
             int canAdd = item.InventoryCapacity - slot.Count;
 
@@ -358,12 +350,13 @@ public class Inventory : MonoBehaviour, IInitializable
     
     /// <summary>
     /// 아이템을 획득 했을 때 호출되는 함수
-    /// 반환값 : 인벤토리에 들어가지 못한 개수
     /// </summary>
     /// <param name="item"></param>
     /// <param name="count"></param>
-    public void GetItem(IItem item, int count)
+    public int GetItem(IItem item, int count)
     {
+        int original = count;
+        
         int itemID = item.ID;
         bool changed = false;
         
@@ -375,8 +368,8 @@ public class Inventory : MonoBehaviour, IInitializable
 
             if (slot.IsEmpty)
                 continue;
-
-            if (slot.Item.ID != itemID)
+            
+            if (!CanMergeItems(slot.Item, item))
                 continue;
 
             int max = item.InventoryCapacity;
@@ -407,7 +400,7 @@ public class Inventory : MonoBehaviour, IInitializable
             Debug.Log($"{slot.name}에 {itemID} 생성");
 
             int add = Mathf.Min(item.InventoryCapacity, count);
-            slot.AddItem(new Item(item.Data), add);
+            slot.AddItem(new Item(item), add);
             count -= add;   
             changed = true;
             
@@ -418,6 +411,8 @@ public class Inventory : MonoBehaviour, IInitializable
         {
             NotifyItemChanged(itemID);
         }
+
+        return original - count;
     }
 
     /// <summary>
@@ -638,7 +633,7 @@ public class Inventory : MonoBehaviour, IInitializable
                 while (remain > 0)
                 {
                     int add = Mathf.Min(data.item.InventoryCapacity, remain);
-                    merged.Add((data.item, add));
+                    merged.Add((new Item(data.item), add));
                     remain -= add;
                 }
             }
@@ -653,7 +648,7 @@ public class Inventory : MonoBehaviour, IInitializable
 
         for (int i = 0; i < list.Count && i < slots.Count; i++)
         {
-            slots[i].SetItem(list[i].item, list[i].count);
+            slots[i].SetItem(new Item(list[i].item), list[i].count);
         }
     }
 
