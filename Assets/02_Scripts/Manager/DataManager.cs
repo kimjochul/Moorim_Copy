@@ -237,4 +237,20 @@ public class DataManager : Singleton<DataManager>
     {
         return questList.quests.Find(q => q.QuestID == id).Data;
     }
+    
+    // 음식으로 레시피 숙련도를 찾는 메서드
+    public RecipeMastery GetMasteryByFood(FoodData food)
+    {
+        return dicRecipe.Values
+            .SelectMany(list => list)
+            .FirstOrDefault(mastery => mastery.data.result == food);
+    }
+    
+    // 숙련도에 따른 음식 품질 변환
+    public FoodQuality GetQualityByProficiency(int proficiency)
+    {
+        if (proficiency >= 80) return FoodQuality.Good;   
+        if (proficiency >= 40) return FoodQuality.Fine;   
+        return FoodQuality.Normal;                       
+    }
 }

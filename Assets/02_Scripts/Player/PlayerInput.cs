@@ -46,7 +46,7 @@ public class PlayerInput : MonoBehaviour
         PlayerSelection();
         
         // O키를 누르면 달리기
-        if (Input.GetKeyDown(KeyCode.O))
+        if (Input.GetMouseButtonDown(2))
         {
             if (UpgradeManager.Instance.HasCharacterSkill(CharacterSkillLevel.Ghost) &&
                 SkillUIManager.Instance.CanUseGhost())
