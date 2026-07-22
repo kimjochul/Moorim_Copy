@@ -297,6 +297,8 @@ public class UIManager : Singleton<UIManager>
     
     private void CheckAndPauseGame()
     {
+        //Debug.Log($"Book={IsBookActive}, Setting={IsSettingActive}, Save={IsSaveLoadActive}");
+        
         if (IsBookActive || IsSettingActive || IsSaveLoadActive)
             DayManager.Instance.PauseTime();
         else 

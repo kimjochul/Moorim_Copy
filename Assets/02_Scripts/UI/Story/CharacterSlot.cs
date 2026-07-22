@@ -7,7 +7,8 @@ public class CharacterSlot : MonoBehaviour
 {
     public int slotIndex; // 0, 1, 2, 3
 
-    [SerializeField] private RectTransform motionRoot;
+    [SerializeField] private RectTransform motionRootX;
+    [SerializeField] private RectTransform motionRootY;
     [SerializeField] private RectTransform visualRoot;
     
     [SerializeField] private Image characterImage;
@@ -189,6 +190,9 @@ public class CharacterSlot : MonoBehaviour
         HideEmotionIcon();
         SetCharacter(character, bodySprite);
         
+        motionRootX.DOKill();
+        motionRootY.DOKill();
+        
         StopAllCoroutines();
         StartCoroutine(AppearRoutine(targetPos));
     }
@@ -199,6 +203,9 @@ public class CharacterSlot : MonoBehaviour
             return;
         
         Clear();
+        
+        motionRootX.DOKill();
+        motionRootY.DOKill();
         
         StopAllCoroutines();
         StartCoroutine(DisappearRoutine(startPos));
@@ -322,7 +329,7 @@ public class CharacterSlot : MonoBehaviour
     {
         BeginMotion();
         
-        Vector2 originalPos = motionRoot.anchoredPosition;
+        Vector2 originalPos = motionRootY.anchoredPosition;
         
         float time = 0;
 
@@ -333,12 +340,12 @@ public class CharacterSlot : MonoBehaviour
             float x = Random.Range(-power, power);
             float y = Random.Range(-power, power);
 
-            motionRoot.anchoredPosition = originalPos + new Vector2(x, y);
+            motionRootY.anchoredPosition = originalPos + new Vector2(x, y);
 
             yield return null;
         }
 
-        motionRoot.anchoredPosition = originalPos;
+        motionRootY.anchoredPosition = originalPos;
         
         EndMotion();
     }
@@ -400,7 +407,7 @@ public class CharacterSlot : MonoBehaviour
         BeginMotion();
         
         Vector2 startOffset = Vector2.left * 200f;
-        motionRoot.anchoredPosition = startOffset;
+        motionRootX.anchoredPosition = startOffset;
 
         float time = 0;
 
@@ -409,11 +416,11 @@ public class CharacterSlot : MonoBehaviour
             time += Time.deltaTime;
             float t = time / 0.3f;
 
-            motionRoot.anchoredPosition = Vector2.Lerp(startOffset, Vector2.zero, t);
+            motionRootX.anchoredPosition = Vector2.Lerp(startOffset, Vector2.zero, t);
             yield return null;
         }
 
-        motionRoot.anchoredPosition = Vector2.zero;
+        motionRootX.anchoredPosition = Vector2.zero;
         EndMotion();
     }
     
@@ -421,7 +428,7 @@ public class CharacterSlot : MonoBehaviour
     {
         BeginMotion();
         
-        motionRoot.anchoredPosition = Vector2.zero;
+        motionRootX.anchoredPosition = Vector2.zero;
         Vector2 endOffset = Vector2.right * 200f;
 
         float time = 0;
@@ -431,7 +438,7 @@ public class CharacterSlot : MonoBehaviour
             time += Time.deltaTime;
             float t = time / 0.3f;
 
-            motionRoot.anchoredPosition = Vector2.Lerp(startPos, endOffset, t);
+            motionRootX.anchoredPosition = Vector2.Lerp(startPos, endOffset, t);
             yield return null;
         }
         
@@ -445,14 +452,14 @@ public class CharacterSlot : MonoBehaviour
 
         Vector2 target = dir * distance;
 
-        Tween tween = motionRoot
+        Tween tween = motionRootX
             .DOAnchorPos(target, duration)
             .SetEase(Ease.OutQuad);
 
         yield return tween.WaitForCompletion();
 
         slotRoot.anchoredPosition += target; 
-        motionRoot.anchoredPosition = Vector2.zero;
+        motionRootX.anchoredPosition = Vector2.zero;
         EndMotion();
     }
     
@@ -460,7 +467,7 @@ public class CharacterSlot : MonoBehaviour
     {
         gameObject.SetActive(true);
         BeginMotion();
-        motionRoot.DOKill();
+        motionRootX.DOKill();
 
         Debug.Log($"{slotIndex}번 슬롯 {targetPos}로 이동");
         Tween tween = slotRoot.DOAnchorPos(targetPos, duration).SetEase(Ease.InOutQuad);
@@ -476,11 +483,11 @@ public class CharacterSlot : MonoBehaviour
     {
         BeginMotion();
         
-        motionRoot.DOKill();
+        motionRootX.DOKill();
         
         Vector2 targetOffset = direction * distance;
 
-        Tween tween = motionRoot.DOAnchorPos(targetOffset, duration).SetEase(Ease.InOutQuad);
+        Tween tween = motionRootX.DOAnchorPos(targetOffset, duration).SetEase(Ease.InOutQuad);
         
         yield return tween.WaitForCompletion();
         
@@ -492,23 +499,23 @@ public class CharacterSlot : MonoBehaviour
     {
         gameObject.SetActive(true);
         BeginMotion();
-        motionRoot.DOKill();
+        motionRootX.DOKill();
         
         slotRoot.anchoredPosition = targetPos;
         // 시작 위치 (화면 밖)
         Vector2 startOffset = direction * distance;
-        motionRoot.anchoredPosition = startOffset;
+        motionRootX.anchoredPosition = startOffset;
 
         SetUnknown(isUnknown);
         
         Sequence seq = DOTween.Sequence();
 
-        seq.Append(motionRoot.DOAnchorPos(Vector2.zero, duration).SetEase(Ease.OutCubic));
+        seq.Append(motionRootX.DOAnchorPos(Vector2.zero, duration).SetEase(Ease.OutCubic));
         //seq.Join(currentImage.DOFade(1f, duration));
 
         yield return seq.WaitForCompletion();
         
-        motionRoot.anchoredPosition = Vector2.zero;
+        motionRootX.anchoredPosition = Vector2.zero;
         EndMotion();
     }
     
@@ -517,10 +524,11 @@ public class CharacterSlot : MonoBehaviour
         gameObject.SetActive(true);
         BeginMotion();
         slotRoot.DOKill();
+        motionRootX.DOKill();
         
         slotRoot.anchoredPosition = targetPos;
-        Vector2 startPos = new Vector2(targetPos.x + startOffset, motionRoot.anchoredPosition.y);
-        motionRoot.anchoredPosition = startPos;
+        Vector2 startPos = new Vector2(targetPos.x + startOffset, motionRootX.anchoredPosition.y);
+        motionRootX.anchoredPosition = startPos;
 
         Color c = characterImage.color;
         c.a = 0f;
@@ -530,7 +538,7 @@ public class CharacterSlot : MonoBehaviour
         
         Sequence seq = DOTween.Sequence();
 
-        seq.Append(motionRoot.DOAnchorPos(Vector2.zero, duration).SetEase(Ease.OutCubic));
+        seq.Append(motionRootX.DOAnchorPos(Vector2.zero, duration).SetEase(Ease.OutCubic));
         //seq.Join(currentImage.DOFade(1f, duration));
 
         yield return seq.WaitForCompletion();
@@ -544,12 +552,12 @@ public class CharacterSlot : MonoBehaviour
         Vector2 forward = dir * power;
 
         Sequence seq = DOTween.Sequence();
-        seq.Append(motionRoot.DOAnchorPos(forward, duration).SetEase(Ease.OutQuad));
-        seq.Append(motionRoot.DOAnchorPos(Vector2.zero, duration).SetEase(Ease.InQuad));
+        seq.Append(motionRootX.DOAnchorPos(forward, duration).SetEase(Ease.OutQuad));
+        seq.Append(motionRootX.DOAnchorPos(Vector2.zero, duration).SetEase(Ease.InQuad));
         
         yield return seq.WaitForCompletion();
         
-        motionRoot.anchoredPosition = Vector2.zero;
+        motionRootX.anchoredPosition = Vector2.zero;
         EndMotion();
     }
     
@@ -560,15 +568,15 @@ public class CharacterSlot : MonoBehaviour
         Debug.Log("Hit");
         Sequence seq = DOTween.Sequence();
 
-        seq.Append(motionRoot.DOAnchorPos(dir * power, duration * 0.3f));
-        seq.Append(motionRoot.DOAnchorPos(Vector2.zero, duration * 0.7f));
+        seq.Append(motionRootX.DOAnchorPos(dir * power, duration * 0.3f));
+        seq.Append(motionRootX.DOAnchorPos(Vector2.zero, duration * 0.7f));
 
         // 흔들림
-        motionRoot.DOShakeAnchorPos(duration, 10f, 20, 90, false, true);
+        motionRootX.DOShakeAnchorPos(duration, 10f, 20, 90, false, true);
         
         yield return seq.WaitForCompletion();
         
-        motionRoot.anchoredPosition = Vector2.zero;
+        motionRootX.anchoredPosition = Vector2.zero;
         EndMotion();
     }
     
@@ -576,6 +584,8 @@ public class CharacterSlot : MonoBehaviour
     {
         BeginMotion();
 
+        float baseY = motionRootY.anchoredPosition.y;
+        
         float time = 0;
 
         while (time < duration)
@@ -586,13 +596,12 @@ public class CharacterSlot : MonoBehaviour
 
             float y = Mathf.Sin(t * Mathf.PI) * height;
 
-            motionRoot.anchoredPosition =
-                new Vector2(0, y);
+            motionRootY.anchoredPosition = new Vector2(0, baseY + y);
 
             yield return null;
         }
 
-        motionRoot.anchoredPosition = Vector2.zero;
+        motionRootY.anchoredPosition = new Vector2(0, baseY);
 
         EndMotion();
     }
@@ -610,20 +619,23 @@ public class CharacterSlot : MonoBehaviour
     public IEnumerator NervousRoutine()
     {
         BeginMotion();
-        Tween tween = motionRoot.DOShakeAnchorPos(0.5f, 5f, 30);
+        
+        Vector2 originalPos = motionRootY.anchoredPosition;
+        
+        Tween tween = motionRootY.DOShakeAnchorPos(0.5f, 5f, 30);
         
         yield return tween.WaitForCompletion();
         
-        motionRoot.anchoredPosition = Vector2.zero;
+        motionRootY.anchoredPosition = originalPos;
         EndMotion();
     }
     
     public IEnumerator SitRoutine(float distance = 80f, float duration = 0.25f)
     {
         BeginMotion();
-        motionRoot.DOKill();
+        motionRootY.DOKill();
 
-        Tween tween = motionRoot.DOAnchorPosY(-distance, duration).SetEase(Ease.OutQuad);
+        Tween tween = motionRootY.DOAnchorPosY(-distance, duration).SetEase(Ease.OutQuad);
         yield return tween.WaitForCompletion();
 
         EndMotion();
@@ -632,9 +644,9 @@ public class CharacterSlot : MonoBehaviour
     public IEnumerator StandRoutine(float duration = 0.25f)
     {
         BeginMotion();
-        motionRoot.DOKill();
+        motionRootY.DOKill();
 
-        Tween tween = motionRoot.DOAnchorPosY(0f, duration).SetEase(Ease.OutQuad);
+        Tween tween = motionRootY.DOAnchorPosY(0f, duration).SetEase(Ease.OutQuad);
         yield return tween.WaitForCompletion();
 
         EndMotion();
@@ -642,6 +654,12 @@ public class CharacterSlot : MonoBehaviour
     
     public void ClearImmediate()
     {
+        motionRootX.anchoredPosition = Vector2.zero;
+        motionRootY.anchoredPosition = Vector2.zero;
+
+        motionRootX.DOKill();
+        motionRootY.DOKill();
+        
         StopAllCoroutines();
         gameObject.SetActive(false);
         

@@ -436,6 +436,8 @@ public class SlotSaveData
 
     public float spoilTimer;
     public int fridgeSpoilTimer;
+    
+    public Constants.FreshState freshState;
 }
 
 [Serializable]

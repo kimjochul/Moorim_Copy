@@ -38,6 +38,7 @@ public class DayManager : Singleton<DayManager>
 
     public bool IsRunning { get; private set; }
     private bool isPaused;
+    public bool IsPaused => isPaused;
     
     public event Action OnDayStart; // 각 매니저에서 가게 운영이 시작될 때의 동작들을 여기에 등록
     public event Action OnDayEnd; // 각 매니저에서 가게 운영이 종료될 때의 동작들을 여기에 등록
@@ -180,8 +181,13 @@ public class DayManager : Singleton<DayManager>
         _isBusinessOver = true;
         
         OnDayEnd?.Invoke();
-        if(GameManager.Instance.CurrentState == GameFlowState.Gameplay)
+        if (GameManager.Instance.CurrentState == GameFlowState.Gameplay)
+        {
+            GameManager.Instance.SetSaveState(GameFlowState.Receipt);
+            SaveManager.Instance.SaveGame(0, SaveSlotType.Auto);
+            
             GameManager.Instance.CompleteState(GameFlowState.Gameplay);
+        }
     }
 
     /// <summary>
@@ -203,30 +209,14 @@ public class DayManager : Singleton<DayManager>
     
     public DaySaveData GetSaveData()
     {
-        if (!_isBusinessOver)
+        return new DaySaveData
         {
-            return new DaySaveData
-            {
-                day = DayData.day,
-                dayOfWeek = (int)DayData.dayOfWeek,
-                hour = (int)gameStartHour,
-                minute = 0,
-                
-                flowState = GameFlowState.Gameplay
-            };
-        }
-        else
-        {
-            return new DaySaveData
-            {
-                day = DayData.day,
-                dayOfWeek = (int)DayData.dayOfWeek,
-                hour = (int)gameEndHour,
-                minute = 00,
-                
-                flowState = GameManager.Instance.CurrentState
-            };
-        }
+            day = DayData.day,
+            dayOfWeek = (int)DayData.dayOfWeek,
+            hour = _isBusinessOver ? (int)gameEndHour : (int)gameStartHour,
+            minute = 0,
+            flowState = GameManager.Instance.SaveState
+        };
     }
     
     public void LoadFromData(DaySaveData data)

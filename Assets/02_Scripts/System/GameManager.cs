@@ -40,6 +40,9 @@ public class GameManager : Singleton<GameManager>
     private bool isTransitioning = false;
     
     public GameFlowState CurrentState { get; private set; }
+    
+    // 저장 시 기록할 상태
+    public GameFlowState SaveState { get; private set; }
 
     private Receipt receipt;
     
@@ -57,6 +60,7 @@ public class GameManager : Singleton<GameManager>
         if (CurrentState == state) return;
 
         CurrentState = state;
+        SaveState = state;
         Debug.Log($"[GameFlow] State Changed → {state}");
     }
 
@@ -82,6 +86,7 @@ public class GameManager : Singleton<GameManager>
         }
 
         CurrentState = newState;
+        SaveState = newState;
 
         // enter
         stateTable[CurrentState].onEnter?.Invoke();
@@ -146,7 +151,6 @@ public class GameManager : Singleton<GameManager>
                     GameFlowState.Story,
                     onEnter: () =>
                     {
-                        SaveManager.Instance.SaveGame(0, SaveSlotType.Auto);
                         receipt.TurnOnReceipt(EconomyManager.Instance.LastReceiptData);
                     }
                 )
@@ -188,6 +192,11 @@ public class GameManager : Singleton<GameManager>
                 )
             }
         };
+    }
+
+    public void SetSaveState(GameFlowState state)
+    {
+        SaveState = state;
     }
     
     public void SetReceipt(Receipt receipt)
