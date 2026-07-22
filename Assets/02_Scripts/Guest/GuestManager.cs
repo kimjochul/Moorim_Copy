@@ -338,13 +338,15 @@ public class GuestManager : MonoBehaviour
 
     private void ForceAllGuestsExit()
     {
-        foreach (var guest in activeGuests)
+        GuestBase[] allGuests = FindObjectsByType<GuestBase>(FindObjectsSortMode.None);
+
+        foreach (var guest in allGuests)
         {
             if (guest == null) continue;
-
             guest.ForceExit();
         }
 
+        activeGuests.Clear();
         waitingGuests.Clear();
     }
 }

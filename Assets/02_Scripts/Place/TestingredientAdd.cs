@@ -1,46 +1,62 @@
 using UnityEngine;
-using static Constants; // IngredientType, InventoryType 등을 사용하기 위해
+using UnityEngine.UI;
 
-
-// 돼지고기 : 0
-// 닭고기 : 2
-// 밀가루 : 3
-// 쌀 : 4
-// 두부 : 5
-// 생강 : 6
-// 설탕 : 7
-// 고추가루 : 8
-// 상추 : 9 (8이 중복되서 9로 수정함)_
 public class TestingredientAdd : MonoBehaviour
 {
-    
-    // 유니티 인스펙터 버튼 OnClick()에 연결할 public 함수입니다.
-    // 매개변수 ingredientId: 각 버튼에서 넘겨줄 재료의 고유 ID
-    public void CreateSpecificItem(int ingredientId)
-    {
-        // 1. 아이템 팩토리를 통해 요청받은 ID의 아이템을 1개 생성합니다.
-        IItem item = ItemFactory.Instance.CreateItem(ingredientId);
+    public Button[] buttons;
+    [SerializeField] private RecipeData[] targetRecipe;
 
-        if (item == null || item.Data == null)
+    [SerializeField] private int amount = 10;
+
+    private void Start()
+    {
+        int count = Mathf.Min(buttons.Length, targetRecipe.Length);
+
+        if (buttons.Length != targetRecipe.Length)
+            Debug.LogWarning($"버튼({buttons.Length})과 레시피({targetRecipe.Length}) 개수가 다름. {count}개만 연결됨.");
+
+        for (int i = 0; i < count; i++)
         {
-            Debug.LogError($"ID {ingredientId} 찾을 수 없음");
+            int index = i;
+            buttons[i].onClick.AddListener(() => OnClickAddProficiency(index));
+
+            // 자식 이미지에 레시피 아이콘 적용
+            SetButtonIcon(buttons[i], targetRecipe[i]);
+        }
+    }
+
+    private void SetButtonIcon(Button button, RecipeData recipe)
+    {
+        if (recipe == null || recipe.icon == null)
+            return;
+
+        Image childImage = null;
+        foreach (Transform child in button.transform)
+        {
+            childImage = child.GetComponent<Image>();
+            if (childImage != null)
+                break;
+        }
+
+        if (childImage != null)
+            childImage.sprite = recipe.icon;
+        else
+            Debug.LogWarning($"{button.name}의 자식에서 Image를 못 찾음");
+    }
+
+    private void OnClickAddProficiency(int index)
+    {
+        RecipeData recipe = targetRecipe[index];
+
+        if (recipe == null)
+        {
+            Debug.LogError($"{index}번 레시피가 비어있음");
             return;
         }
 
-        if (item.Data is IngredientData ingredientData)
-        {
-            if (ingredientData.type == IngredientType.Meats)
-            {
-                InventoryManager.Instance.GetInventory(InventoryType.IngredientsButMeatOnly).GetItem(item, 10);
-            }
-            else
-            {
-                InventoryManager.Instance.GetInventory(InventoryType.Ingredients).GetItem(item, 10);
-            }
-        }
-        else
-        {
-            Debug.LogWarning("IngredientData인 ID가 아님.");
-        }
+        DataManager.Instance.AddRecipeProficiency(recipe, amount);
+
+        var mastery = DataManager.Instance.GetRecipeMasteryData(recipe.id);
+        Debug.Log($"{recipe.recipeName} 숙련도: {mastery.proficiency}");
     }
 }

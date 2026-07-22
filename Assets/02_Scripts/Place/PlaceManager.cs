@@ -10,11 +10,9 @@ public class PlaceManager : MonoBehaviour
     private GuestManager guestManager;
     
     public TMP_InputField openTableCount;
-    public Button tableAdd;
     public GameObject[] tableSets;
     private int currentTableIndex;
 
-    public Button stoveAdd;
     public GameObject[] cookingStations;
     public GameObject[] kitchenTables;
     private int currentStoveIndex;
@@ -25,9 +23,6 @@ public class PlaceManager : MonoBehaviour
         
         currentTableIndex = tableSets.Count(t => t.activeSelf);
         currentStoveIndex = cookingStations.Count(t => t.activeSelf);
-        
-        tableAdd.onClick.AddListener(OpenTable);
-        stoveAdd.onClick.AddListener(OpenStove);
     }
     
     void Update()
