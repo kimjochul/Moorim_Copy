@@ -99,8 +99,15 @@ public class CookingStation : MonoBehaviour, IInteractable
             return;
  
         Item resultItem = new Item(currentRecipe.Data.result);
-        targetInventory.GetItem(resultItem, 1);
- 
+        int received = targetInventory.GetItem(resultItem, 1);
+        int remain = 1 - received;
+
+        if (remain > 0)
+        {
+            UIManager.Instance.CreateOkPopup("소월이 인벤토리가 꽉 찼습니다.", () => { }, ()=>{}, false);
+            return;
+        }
+        
         currentRecipe = null;
         SetState(CookingState.Idle);
     }

@@ -43,6 +43,17 @@ public class Shop : MonoBehaviour
     private IngredientType currentCategory;
     private bool hasCategory = false;
 
+    private ItemFactory ItemFactory
+    {
+        get
+        {
+            if (itemFactory == null)
+                itemFactory = ItemFactory.Instance;
+
+            return itemFactory;
+        }
+    }
+    
     public void Init()
     {
         playerMeatInventory = InventoryManager.Instance.GetInventory(InventoryType.IngredientsButMeatOnly);
@@ -53,7 +64,7 @@ public class Shop : MonoBehaviour
 
     public bool Buy(int itemID, int count)
     {
-        if (itemFactory == null)
+        if (ItemFactory == null)
         {
             Debug.LogError("itemFactory is NULL");
             return false;
@@ -66,7 +77,7 @@ public class Shop : MonoBehaviour
         }
     
         Debug.Log("Buying " + itemID);
-        Item item = itemFactory.CreateItem(itemID);
+        Item item = ItemFactory.CreateItem(itemID);
 
         if (item == null)
         {

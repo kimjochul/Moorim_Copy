@@ -365,7 +365,7 @@ public class StoryUI : MonoBehaviour
         {
             if (isInner)
             {
-                contentText.color = Color.gray2;
+                contentText.color = new Color(0.83f,0.83f,0.83f);
                 darkBackGround.SetActive(true);
                 darkBackgroundGroup.DOFade(0.96f, 0.5f).SetEase(Ease.OutCubic);
             }
@@ -380,7 +380,7 @@ public class StoryUI : MonoBehaviour
         else
         {
             darkBackGround.SetActive(false);
-            contentText.color = isInner ? Color.gray2 : new Color(1f,1f,0.85f);
+            contentText.color = isInner ? new Color(0.83f,0.83f,0.83f) : new Color(1f,1f,0.85f);
             StoryManager.Instance.CharacterUI.ApplyInnerThoughtFocus(thinkerID, isInner);
         }
     }

@@ -44,6 +44,24 @@ public class ServingSlot : MonoBehaviour, IInteractable
             
             slot.Item.SpoilTimer += Time.deltaTime;
 
+            if (slot.Item.SpoilTimer >= SPOIL_TIME * 1 / 3)
+            {
+                if (slot.Item.FreshState is FreshState.Good)
+                {
+                    slot.Item.FreshState = FreshState.Normal;
+                    //Debug.Log($"신선도 {slot.Item.FreshState}으로 변경");
+                }
+            }
+
+            if (slot.Item.SpoilTimer >= SPOIL_TIME * 2 / 3)
+            {
+                if (slot.Item.FreshState == FreshState.Normal)
+                {
+                    slot.Item.FreshState = FreshState.Bad;
+                    //Debug.Log($"신선도 {slot.Item.FreshState}으로 변경");
+                }
+            }
+            
             if (slot.Item.SpoilTimer >= SPOIL_TIME)
             {
                 Debug.Log($"{slot.Item.ItemName} 상함");
@@ -83,6 +101,7 @@ public class ServingSlot : MonoBehaviour, IInteractable
     /// <param name="foodData"></param>
     public void PlaceFood(Inventory sourceInven, Slot sourceSlot)
     {
+        SetFreshness(sourceSlot.Item);
         Slot targetSlot = sourceInven.TryMoveToInventory(inventory, sourceSlot, sourceSlot.Count);
         OnItemAddedToServing(targetSlot);
     }
@@ -93,6 +112,8 @@ public class ServingSlot : MonoBehaviour, IInteractable
     /// <returns></returns>
     public IItem TakeFood(int slotIndex, Inventory targetInven)
     {
+        SlotItemInfoUI.Instance?.Hide();
+        
         var slot = inventory.Slots[slotIndex];
         if (slot.Item == null)
         {
@@ -155,6 +176,39 @@ public class ServingSlot : MonoBehaviour, IInteractable
     
     public bool CanInteract(PlayerType playerType)
     {
+        return true;
+    }
+    
+    private void SetFreshness(IItem item)
+    {
+        if (item.FreshState == FreshState.Good)
+            item.SpoilTimer = 0;
+        else if (item.FreshState == FreshState.Normal)
+            item.SpoilTimer = SPOIL_TIME * 1 / 3;
+        else if (item.FreshState == FreshState.Bad)
+            item.SpoilTimer = SPOIL_TIME * 2/3;
+    }
+
+    private bool CheckFreshness(IItem item)
+    {
+        if (item.FreshState == FreshState.Good)
+        {
+            if (item.SpoilTimer is >= 0 and <= SPOIL_TIME * 1 / 3)
+                return false;
+        }
+
+        if (item.FreshState == FreshState.Normal)
+        {
+            if (item.SpoilTimer is > SPOIL_TIME * 1 / 3 and <= SPOIL_TIME * 2 / 3)
+                return false;
+        }
+        
+        else if (item.FreshState == FreshState.Bad)
+        {
+            if (item.SpoilTimer is > SPOIL_TIME * 2 / 3 and <= SPOIL_TIME)
+                return false;
+        }
+
         return true;
     }
 }

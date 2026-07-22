@@ -13,6 +13,5 @@ public interface IItem
     
     float SpoilTimer { get; set; }
     int FridgeSpoilTimer { get; set; }
-
-    // 인연 아이템의 특수 버프 효과 용 값, 액션 혹은 함수 필요
+    Constants.FreshState FreshState { get; set; }
 }
