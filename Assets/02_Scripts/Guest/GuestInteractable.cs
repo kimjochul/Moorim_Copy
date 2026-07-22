@@ -73,15 +73,21 @@ public class GuestInteractable : MonoBehaviour, IInteractable
             InventoryManager.Instance.CloseInventory(serverInven);
             return;
         }
-        
+    
         if (myBrain.currentState != GuestState.WaitFood)
             return;
-        
+    
         FoodData food = slot.Item.Data as FoodData;
         if (food == null) return;
 
         serverInven.RemoveItem(slot.Item.ID, 1);
-        myBrain.ReceiveFood(food, FoodQuality.Normal);
+        
+        FoodQuality quality = FoodQuality.Normal;
+        var mastery = DataManager.Instance.GetMasteryByFood(food);
+        if (mastery != null)
+            quality = DataManager.Instance.GetQualityByProficiency(mastery.proficiency);
+
+        myBrain.ReceiveFood(food, quality);
 
         InventoryManager.Instance.CloseInventory(serverInven);
     }
