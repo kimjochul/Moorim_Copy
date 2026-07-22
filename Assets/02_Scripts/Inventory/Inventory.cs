@@ -664,7 +664,8 @@ public class Inventory : MonoBehaviour, IInitializable
                 itemID = slot.IsEmpty ? -1 : slot.Item.ID,
                 count = slot.Count,
                 spoilTimer = slot.IsEmpty ? 0 : slot.Item.SpoilTimer,
-                fridgeSpoilTimer = slot.IsEmpty ? 0 : slot.Item.FridgeSpoilTimer
+                fridgeSpoilTimer = slot.IsEmpty ? 0 : slot.Item.FridgeSpoilTimer,
+                freshState = slot.IsEmpty ? FreshState.None : slot.Item.FreshState
             });
         }
 
@@ -691,6 +692,7 @@ public class Inventory : MonoBehaviour, IInitializable
             slots[i].SetItem(item, slotData.count);
             slots[i].Item.SpoilTimer = slotData.spoilTimer;
             slots[i].Item.FridgeSpoilTimer = slotData.fridgeSpoilTimer;
+            slots[i].Item.FreshState = slotData.freshState;
         }
     }
     

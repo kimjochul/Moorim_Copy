@@ -84,23 +84,20 @@ public class Fridge : MonoBehaviour, IInteractable
     
     private void OnDayStart()
     {
-        List<Slot> removeSlots = new List<Slot>();
+        List<Slot> removeSlots = new();
 
         foreach (var slot in inventory.Slots)
         {
             if (slot.Item == null)
                 continue;
 
-            if (slot.Item.FridgeSpoilTimer >= 3)
-            {
+            if (slot.Item.FreshState == FreshState.None)
                 removeSlots.Add(slot);
-            }
         }
 
         foreach (var slot in removeSlots)
         {
-            Debug.Log($"{slot.Item.ItemName} 상함 → 제거");
-
+            Debug.Log($"{slot.Item.ItemName} 완전히 상함 → 제거");
             inventory.RemoveItem(slot.Item.ID, slot.Count);
         }
     }

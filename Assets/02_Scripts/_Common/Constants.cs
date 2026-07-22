@@ -62,7 +62,7 @@
     { Normal, Fine, Good }
     
     public enum FreshState
-    { Good, Normal, Bad }
+    { Good, Normal, Bad, None }
     
     public enum QuestCategory { Main, Sub, Repeat } // 메인, 서브, 반복
 

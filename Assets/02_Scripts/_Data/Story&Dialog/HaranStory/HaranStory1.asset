@@ -61,6 +61,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -109,6 +111,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -157,6 +161,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -205,12 +211,21 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
       flips: []
-      extraExpressions: []
+      extraExpressions:
+      - characterID: 0
+        expressionData:
+          face: 2
+          eyebrow: 4
+          shadow: 0
+          useDOScale: 0
+        isUnknown: 0
       screenEffect:
         effectType: 0
         effectDuration: 0
@@ -242,8 +257,8 @@ MonoBehaviour:
       characterID: 1
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 8
+        eyebrow: 2
         shadow: 0
         useDOScale: 0
       motion:
@@ -253,6 +268,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -299,6 +316,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -347,6 +366,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -385,8 +406,8 @@ MonoBehaviour:
       characterID: 2
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 1
+        eyebrow: 1
         shadow: 0
         useDOScale: 0
       motion:
@@ -396,6 +417,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -432,8 +455,8 @@ MonoBehaviour:
       characterID: 0
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 1
+        eyebrow: 4
         shadow: 0
         useDOScale: 0
       motion:
@@ -443,6 +466,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -478,8 +503,8 @@ MonoBehaviour:
       characterID: 2
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 17
+        eyebrow: 7
         shadow: 0
         useDOScale: 0
       motion:
@@ -489,6 +514,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -526,10 +553,10 @@ MonoBehaviour:
       characterID: 0
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 5
+        eyebrow: 4
         shadow: 0
-        useDOScale: 0
+        useDOScale: 1
       motion:
         type: 0
         duration: 1.5
@@ -537,6 +564,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -572,8 +601,8 @@ MonoBehaviour:
       characterID: 1
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 1
+        eyebrow: 2
         shadow: 0
         useDOScale: 0
       motion:
@@ -583,6 +612,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -618,8 +649,8 @@ MonoBehaviour:
       characterID: 2
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 1
+        eyebrow: 1
         shadow: 0
         useDOScale: 0
       motion:
@@ -629,6 +660,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -665,8 +698,8 @@ MonoBehaviour:
       characterID: 2
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 1
+        eyebrow: 4
         shadow: 0
         useDOScale: 0
       motion:
@@ -676,6 +709,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -713,8 +748,8 @@ MonoBehaviour:
       characterID: 2
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 1
+        eyebrow: 7
         shadow: 0
         useDOScale: 0
       motion:
@@ -724,6 +759,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -761,8 +798,8 @@ MonoBehaviour:
       characterID: 0
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 5
+        eyebrow: 8
         shadow: 0
         useDOScale: 0
       motion:
@@ -772,6 +809,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -807,8 +846,8 @@ MonoBehaviour:
       characterID: 1
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 18
+        eyebrow: 7
         shadow: 0
         useDOScale: 0
       motion:
@@ -818,6 +857,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -854,8 +895,8 @@ MonoBehaviour:
       characterID: 2
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 1
+        eyebrow: 4
         shadow: 0
         useDOScale: 0
       motion:
@@ -865,6 +906,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -901,8 +944,8 @@ MonoBehaviour:
       characterID: 0
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 10
+        eyebrow: 8
         shadow: 0
         useDOScale: 0
       motion:
@@ -912,6 +955,8 @@ MonoBehaviour:
         targetSlotIndex: 3
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -958,6 +1003,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -994,8 +1041,8 @@ MonoBehaviour:
       characterID: 1
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 8
+        eyebrow: 7
         shadow: 0
         useDOScale: 0
       motion:
@@ -1005,6 +1052,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -1041,8 +1090,8 @@ MonoBehaviour:
       characterID: 0
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 5
+        eyebrow: 8
         shadow: 0
         useDOScale: 0
       motion:
@@ -1052,6 +1101,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -1092,8 +1143,8 @@ MonoBehaviour:
       characterID: 1
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 1
+        eyebrow: 7
         shadow: 0
         useDOScale: 0
       motion:
@@ -1103,6 +1154,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -1138,8 +1191,8 @@ MonoBehaviour:
       characterID: 0
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 8
+        eyebrow: 7
         shadow: 0
         useDOScale: 0
       motion:
@@ -1149,6 +1202,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -1184,10 +1239,10 @@ MonoBehaviour:
       characterID: 0
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 5
+        eyebrow: 8
         shadow: 0
-        useDOScale: 0
+        useDOScale: 1
       motion:
         type: 0
         duration: 1.5
@@ -1195,6 +1250,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -1243,6 +1300,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -1278,8 +1337,8 @@ MonoBehaviour:
       characterID: 1
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 23
+        eyebrow: 2
         shadow: 0
         useDOScale: 0
       motion:
@@ -1289,6 +1348,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -1335,6 +1396,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -1370,8 +1433,8 @@ MonoBehaviour:
       characterID: 1
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 9
+        eyebrow: 7
         shadow: 0
         useDOScale: 0
       motion:
@@ -1381,6 +1444,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -1427,6 +1492,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -1473,6 +1540,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -1522,6 +1591,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -1571,6 +1642,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -1607,8 +1680,8 @@ MonoBehaviour:
       characterID: 2
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 1
+        eyebrow: 4
         shadow: 0
         useDOScale: 0
       motion:
@@ -1618,6 +1691,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -1656,10 +1731,10 @@ MonoBehaviour:
       characterID: 1
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 8
+        eyebrow: 2
         shadow: 0
-        useDOScale: 0
+        useDOScale: 1
       motion:
         type: 0
         duration: 1.5
@@ -1667,6 +1742,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -1677,7 +1754,7 @@ MonoBehaviour:
         effectType: 0
         effectDuration: 0
         effectPower: 0
-      line: "(\uBA85\uC6D4\uC744 \uC9F8\uB824\uBCF8\uB2E4)\u2026.."
+      line: "\u2026.."
       playSFX: {fileID: 0}
       stopBGM: 0
       stopAllSFX: 0
@@ -1702,8 +1779,8 @@ MonoBehaviour:
       characterID: 0
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 13
+        eyebrow: 7
         shadow: 0
         useDOScale: 0
       motion:
@@ -1713,6 +1790,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -1748,8 +1827,8 @@ MonoBehaviour:
       characterID: 2
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 1
+        eyebrow: 1
         shadow: 0
         useDOScale: 0
       motion:
@@ -1759,6 +1838,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -1771,7 +1852,7 @@ MonoBehaviour:
         effectPower: 0
       line: "\uD558\uAE30\uC0AC \uADF8\uC815\uB3C4 \uB4E4\uB9CC\uD558\uC9C0, \uCC98\uC74C\uBD24\uC744\uB550
         \uAC74\uBB3C\uC774 \uAE54\uB054\uD558\uAC8C \uBC18\uC73C\uB85C \uC798\uB824\uC11C
-        \uAC70\uC758 \uC0C8\uB85C\uC9C0\uC5C8\uC73C\uB2C8\uAE4C.\r\n\uADF8\uB798\uB3C4
+        \uAC70\uC758 \uC0C8\uB85C\uC9C0\uC5C8\uC73C\uB2C8\uAE4C. \uADF8\uB798\uB3C4
         \uBA85\uC6D4\uC5B8\uB2C8\uAC00 \uBBF8\uC801\uAC10\uAC01\uC774 \uC788\uC5B4\uC11C
         \uAE54\uB054\uD558\uAC8C \uC798 \uD588\uB124."
       playSFX: {fileID: 0}
@@ -1798,8 +1879,8 @@ MonoBehaviour:
       characterID: 2
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 1
+        eyebrow: 4
         shadow: 0
         useDOScale: 0
       motion:
@@ -1809,6 +1890,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -1820,8 +1903,56 @@ MonoBehaviour:
         effectDuration: 0
         effectPower: 0
       line: "\uB9D0\uD588\uC796\uC544, \uD560\uAEBC\uBA74 \uD655 \uD06C\uAC8C \uC2DC\uC791\uD574\uC57C
-        \uD06C\uAC8C \uBC8C \uC218 \uC788\uB2E4\uACE0.\r\n\uC5ED\uC2DC \uC0C8 \uC220\uC740
+        \uD06C\uAC8C \uBC8C \uC218 \uC788\uB2E4\uACE0. \uC5ED\uC2DC \uC0C8 \uC220\uC740
         \uC0C8 \uBD80\uB300\uC5D0 \uB2F4\uC544\uC57C\uD558\uC9C0 \uC54A\uACA0\uC5B4?"
+      playSFX: {fileID: 0}
+      stopBGM: 0
+      stopAllSFX: 0
+      useTypingSound: 1
+      isInnerThought: 0
+      showEmotionIcon: 0
+      emotion: 0
+      useAccentFontSize: 0
+      useSmallFontSize: 0
+      hideDialogueUI: 0
+      autoNext: 0
+      autoDelay: 0
+      hideFromLog: 0
+      transitionSpeed: 0
+    - id: 0
+      lineType: 0
+      illustrationOverride: {fileID: 0}
+      illustrationOverlay: {fileID: 0}
+      resetIllustration: 0
+      resetOverlay: 0
+      illustrationSequence: []
+      characterID: 0
+      isUnknown: 0
+      expressionData:
+        face: 4
+        eyebrow: 4
+        shadow: 0
+        useDOScale: 0
+      motion:
+        type: 0
+        duration: 1.5
+        value: 0
+        targetSlotIndex: -1
+        stopDistance: 100
+        targetValue: 0
+        useFlip: 0
+        flip: 0
+      motions: []
+      playTogether: 0
+      changeDisplayName: 
+      resetDisplayName: 0
+      flips: []
+      extraExpressions: []
+      screenEffect:
+        effectType: 0
+        effectDuration: 0
+        effectPower: 0
+      line: "\uADF8\uCE58?"
       playSFX: {fileID: 0}
       stopBGM: 0
       stopAllSFX: 0
@@ -1846,8 +1977,8 @@ MonoBehaviour:
       characterID: 1
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 9
+        eyebrow: 2
         shadow: 0
         useDOScale: 0
       motion:
@@ -1857,6 +1988,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -1893,8 +2026,8 @@ MonoBehaviour:
       characterID: 0
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 15
+        eyebrow: 7
         shadow: 0
         useDOScale: 0
       motion:
@@ -1904,6 +2037,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -1950,6 +2085,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions:
       - characterID: 1
         targetID: 0
@@ -1960,6 +2097,8 @@ MonoBehaviour:
           targetSlotIndex: 1
           stopDistance: 50
           targetValue: 0
+          useFlip: 0
+          flip: 0
       - characterID: 0
         targetID: 0
         motion:
@@ -1969,6 +2108,8 @@ MonoBehaviour:
           targetSlotIndex: 0
           stopDistance: 0
           targetValue: 0
+          useFlip: 0
+          flip: 0
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
@@ -2004,8 +2145,8 @@ MonoBehaviour:
       characterID: 0
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 15
+        eyebrow: 1
         shadow: 0
         useDOScale: 0
       motion:
@@ -2015,6 +2156,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -2051,8 +2194,8 @@ MonoBehaviour:
       characterID: 1
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 8
+        eyebrow: 2
         shadow: 0
         useDOScale: 0
       motion:
@@ -2062,6 +2205,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -2097,8 +2242,8 @@ MonoBehaviour:
       characterID: 0
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 14
+        eyebrow: 7
         shadow: 0
         useDOScale: 0
       motion:
@@ -2108,6 +2253,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -2143,10 +2290,10 @@ MonoBehaviour:
       characterID: 1
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 9
+        eyebrow: 2
         shadow: 0
-        useDOScale: 0
+        useDOScale: 1
       motion:
         type: 0
         duration: 1.5
@@ -2154,6 +2301,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -2190,8 +2339,8 @@ MonoBehaviour:
       characterID: 0
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 15
+        eyebrow: 8
         shadow: 0
         useDOScale: 0
       motion:
@@ -2201,6 +2350,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -2236,8 +2387,8 @@ MonoBehaviour:
       characterID: 1
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 23
+        eyebrow: 7
         shadow: 0
         useDOScale: 0
       motion:
@@ -2247,6 +2398,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -2293,6 +2446,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -2329,8 +2484,8 @@ MonoBehaviour:
       characterID: 1
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 1
+        eyebrow: 1
         shadow: 0
         useDOScale: 0
       motion:
@@ -2340,6 +2495,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -2375,8 +2532,8 @@ MonoBehaviour:
       characterID: 2
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 1
+        eyebrow: 1
         shadow: 0
         useDOScale: 0
       motion:
@@ -2386,6 +2543,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -2422,8 +2581,8 @@ MonoBehaviour:
       characterID: 0
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 5
+        eyebrow: 8
         shadow: 0
         useDOScale: 0
       motion:
@@ -2433,6 +2592,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -2469,8 +2630,8 @@ MonoBehaviour:
       characterID: 2
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 1
+        eyebrow: 4
         shadow: 0
         useDOScale: 0
       motion:
@@ -2480,6 +2641,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -2516,8 +2679,8 @@ MonoBehaviour:
       characterID: 0
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 1
+        eyebrow: 4
         shadow: 0
         useDOScale: 0
       motion:
@@ -2527,6 +2690,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -2564,8 +2729,8 @@ MonoBehaviour:
       characterID: 1
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 23
+        eyebrow: 1
         shadow: 0
         useDOScale: 0
       motion:
@@ -2575,6 +2740,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -2586,7 +2753,7 @@ MonoBehaviour:
         effectDuration: 0
         effectPower: 0
       line: "\uBB58 \uC815\uB9D0\uC740 \uC815\uB9D0\uC774\uC57C\u2026 \uB098 \uC9C4\uC9DC
-        \uB3CC\uC544\uBC84\uB9AC\uACA0\uB124..\r\n\uC774 \uB3C8\uC774\uBA74 \uB0A9\uBD80\uAE30\uD55C\uC774
+        \uB3CC\uC544\uBC84\uB9AC\uACA0\uB124.. \uC774 \uB3C8\uC774\uBA74 \uB0A9\uBD80\uAE30\uD55C\uC774
         \uBB38\uC81C\uAC00 \uC544\uB2C8\uB77C \uC8FD\uC744 \uB54C\uAE4C\uC9C0 \uC77C\uB9CC\uD574\uC57C\uD55C\uB2E4\uACE0."
       playSFX: {fileID: 0}
       stopBGM: 0
@@ -2612,8 +2779,8 @@ MonoBehaviour:
       characterID: 2
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 1
+        eyebrow: 7
         shadow: 0
         useDOScale: 0
       motion:
@@ -2623,6 +2790,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -2661,8 +2830,8 @@ MonoBehaviour:
       characterID: 1
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 9
+        eyebrow: 2
         shadow: 0
         useDOScale: 0
       motion:
@@ -2672,6 +2841,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -2708,8 +2879,8 @@ MonoBehaviour:
       characterID: 2
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 1
+        eyebrow: 4
         shadow: 0
         useDOScale: 0
       motion:
@@ -2719,6 +2890,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -2768,6 +2941,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -2805,8 +2980,8 @@ MonoBehaviour:
       characterID: 1
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 17
+        eyebrow: 7
         shadow: 0
         useDOScale: 0
       motion:
@@ -2816,6 +2991,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -2851,8 +3028,8 @@ MonoBehaviour:
       characterID: 2
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 1
+        eyebrow: 1
         shadow: 0
         useDOScale: 0
       motion:
@@ -2862,6 +3039,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -2873,9 +3052,10 @@ MonoBehaviour:
         effectDuration: 0
         effectPower: 0
       line: "\uADF8\uB7FC~ \uB098 \uADF8\uB807\uAC8C \uAC01\uBC15\uD55C \uC5EC\uC6B0
-        \uC544\uB2C8\uB2E4? \uC18D\uACE0\uB9CC \uC0B4\uC558\uC5B4 \uC18D\uACE0\uB9CC.\r\n\uBA85\uC6D4\uB204\uB098\uC758
-        \uD0C1\uC6D4\uD55C \uC548\uBAA9\uC744 \uC880 \uBBFF\uC5B4\uBD10. \uB204\uB098\uAC00
-        \uD655\uC2E4\uD788 \uC0AC\uC5C5\uAC10\uAC01\uC774 \uC788\uB2E4\uB2C8\uAE4C?"
+        \uC544\uB2C8\uB2E4? \uC18D\uACE0\uB9CC \uC0B4\uC558\uC5B4 \uC18D\uACE0\uB9CC.
+        \uBA85\uC6D4\uB204\uB098\uC758 \uD0C1\uC6D4\uD55C \uC548\uBAA9\uC744 \uC880
+        \uBBFF\uC5B4\uBD10. \uB204\uB098\uAC00 \uD655\uC2E4\uD788 \uC0AC\uC5C5\uAC10\uAC01\uC774
+        \uC788\uB2E4\uB2C8\uAE4C?"
       playSFX: {fileID: 0}
       stopBGM: 0
       stopAllSFX: 0
@@ -2900,8 +3080,8 @@ MonoBehaviour:
       characterID: 0
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 5
+        eyebrow: 1
         shadow: 0
         useDOScale: 0
       motion:
@@ -2911,6 +3091,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -2946,8 +3128,8 @@ MonoBehaviour:
       characterID: 1
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 9
+        eyebrow: 2
         shadow: 0
         useDOScale: 0
       motion:
@@ -2957,6 +3139,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -2992,8 +3176,8 @@ MonoBehaviour:
       characterID: 0
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 4
+        eyebrow: 2
         shadow: 0
         useDOScale: 0
       motion:
@@ -3003,6 +3187,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3013,10 +3199,7 @@ MonoBehaviour:
         effectType: 0
         effectDuration: 0
         effectPower: 0
-      line: "\uD79D\u2026(\uC190\uB4DC\uB294 \uADF8\uB9BC\uC73C\uB85C \uBCC0\uACBD
-        \uD544\uC694Emotion\uC73C\uB85C \uD0C0\uC785\uC73C\uB85C \uB9CC\uB4E4\uC5B4\uB3C4
-        \uB420\uAC70 \uAC19\uAE30\uB294 \uD55C\uB370 \uD544\uC694\uC2DC \uBCC0\uC218
-        \uCD94\uAC00)"
+      line: "\uD79D...."
       playSFX: {fileID: 0}
       stopBGM: 0
       stopAllSFX: 0
@@ -3041,8 +3224,8 @@ MonoBehaviour:
       characterID: 1
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 23
+        eyebrow: 3
         shadow: 0
         useDOScale: 0
       motion:
@@ -3052,6 +3235,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3087,8 +3272,8 @@ MonoBehaviour:
       characterID: 1
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 1
+        eyebrow: 1
         shadow: 0
         useDOScale: 0
       motion:
@@ -3098,6 +3283,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3136,8 +3323,8 @@ MonoBehaviour:
       characterID: 1
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 1
+        eyebrow: 3
         shadow: 0
         useDOScale: 0
       motion:
@@ -3147,6 +3334,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3185,8 +3374,8 @@ MonoBehaviour:
       characterID: 1
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 8
+        eyebrow: 2
         shadow: 0
         useDOScale: 0
       motion:
@@ -3196,6 +3385,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3233,8 +3424,8 @@ MonoBehaviour:
       characterID: 2
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 1
+        eyebrow: 1
         shadow: 0
         useDOScale: 0
       motion:
@@ -3244,6 +3435,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3279,8 +3472,8 @@ MonoBehaviour:
       characterID: 1
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 1
+        eyebrow: 1
         shadow: 0
         useDOScale: 0
       motion:
@@ -3290,6 +3483,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3325,8 +3520,8 @@ MonoBehaviour:
       characterID: 1
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 23
+        eyebrow: 1
         shadow: 0
         useDOScale: 0
       motion:
@@ -3336,6 +3531,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3382,6 +3579,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3417,8 +3616,8 @@ MonoBehaviour:
       characterID: 1
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 1
+        eyebrow: 1
         shadow: 0
         useDOScale: 0
       motion:
@@ -3428,6 +3627,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3439,8 +3640,8 @@ MonoBehaviour:
         effectDuration: 0
         effectPower: 0
       line: "\uAC12\uC774 \uC2F8\uB2E4\uB294 \uC774\uC720\uB85C \uC2DD\uC7AC\uB8CC\uC758
-        \uC9C8\uC774 \uC548\uC88B\uC544\uC9C8 \uACBD\uC6B0 \uACC4\uC57D\uC740 \uD30C\uAE30\uC57C.\r\n\uC774\uAC74
-        \uADF8\uCABD \uADC0\uCC45\uC0AC\uC720\uB2C8\uAE4C \uB0A9\uAE30\uC77C\uC744
+        \uC9C8\uC774 \uC548\uC88B\uC544\uC9C8 \uACBD\uC6B0 \uACC4\uC57D\uC740 \uD30C\uAE30\uC57C.
+        \uC774\uAC74 \uADF8\uCABD \uADC0\uCC45\uC0AC\uC720\uB2C8\uAE4C \uB0A9\uAE30\uC77C\uC744
         \uB2E4\uC2DC 1\uB144\uC73C\uB85C \uB3CC\uB9B4\uC218\uB3C4 \uC5C6\uC5B4."
       playSFX: {fileID: 0}
       stopBGM: 0
@@ -3477,6 +3678,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3488,7 +3691,7 @@ MonoBehaviour:
         effectDuration: 0
         effectPower: 0
       line: "\uC2DD\uC7AC\uB8CC\uC758 \uC2E0\uC120\uC744 \uC704\uD574 \uC8FC\uC77C\uC5D0
-        \uC138\uBC88 \uC5EC\uAE38 \uB4E4\uB7EC.\r\n\uD55C\uAEBC\uBC88\uC5D0 \uB9CE\uC774
+        \uC138\uBC88 \uC5EC\uAE38 \uB4E4\uB7EC. \uD55C\uAEBC\uBC88\uC5D0 \uB9CE\uC774
         \uC0AC\uBA74 \uC7AC\uB8CC\uAC00 \uBD80\uD328\uD558\uB2C8\uAE4C."
       playSFX: {fileID: 0}
       stopBGM: 0
@@ -3514,8 +3717,8 @@ MonoBehaviour:
       characterID: 2
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 1
+        eyebrow: 7
         shadow: 0
         useDOScale: 0
       motion:
@@ -3525,6 +3728,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3561,8 +3766,8 @@ MonoBehaviour:
       characterID: 1
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 1
+        eyebrow: 1
         shadow: 0
         useDOScale: 0
       motion:
@@ -3572,6 +3777,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3609,8 +3816,8 @@ MonoBehaviour:
       characterID: 0
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 15
+        eyebrow: 2
         shadow: 0
         useDOScale: 0
       motion:
@@ -3620,6 +3827,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3657,8 +3866,8 @@ MonoBehaviour:
       characterID: 1
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 23
+        eyebrow: 1
         shadow: 0
         useDOScale: 0
       motion:
@@ -3668,6 +3877,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3705,8 +3916,8 @@ MonoBehaviour:
       characterID: 1
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 8
+        eyebrow: 2
         shadow: 0
         useDOScale: 0
       motion:
@@ -3716,6 +3927,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3755,8 +3968,8 @@ MonoBehaviour:
       characterID: 2
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 1
+        eyebrow: 4
         shadow: 0
         useDOScale: 0
       motion:
@@ -3766,6 +3979,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3803,8 +4018,8 @@ MonoBehaviour:
       characterID: 1
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 1
+        eyebrow: 2
         shadow: 0
         useDOScale: 0
       motion:
@@ -3814,6 +4029,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3849,8 +4066,8 @@ MonoBehaviour:
       characterID: 2
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 1
+        eyebrow: 1
         shadow: 0
         useDOScale: 0
       motion:
@@ -3860,6 +4077,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3898,8 +4117,8 @@ MonoBehaviour:
       characterID: 2
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 1
+        eyebrow: 7
         shadow: 0
         useDOScale: 0
       motion:
@@ -3909,6 +4128,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3945,8 +4166,8 @@ MonoBehaviour:
       characterID: 1
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 29
+        eyebrow: 1
         shadow: 0
         useDOScale: 0
       motion:
@@ -3956,6 +4177,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3991,8 +4214,8 @@ MonoBehaviour:
       characterID: 2
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 1
+        eyebrow: 1
         shadow: 0
         useDOScale: 0
       motion:
@@ -4002,6 +4225,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -4038,8 +4263,8 @@ MonoBehaviour:
       characterID: 1
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 5
+        eyebrow: 1
         shadow: 0
         useDOScale: 0
       motion:
@@ -4049,6 +4274,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -4086,8 +4313,8 @@ MonoBehaviour:
       characterID: 1
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 5
+        eyebrow: 7
         shadow: 0
         useDOScale: 0
       motion:
@@ -4097,6 +4324,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -4133,8 +4362,8 @@ MonoBehaviour:
       characterID: 2
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 1
+        eyebrow: 1
         shadow: 0
         useDOScale: 0
       motion:
@@ -4144,6 +4373,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -4180,8 +4411,8 @@ MonoBehaviour:
       characterID: 1
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 1
+        eyebrow: 2
         shadow: 0
         useDOScale: 0
       motion:
@@ -4191,6 +4422,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -4227,8 +4460,8 @@ MonoBehaviour:
       characterID: 2
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 1
+        eyebrow: 1
         shadow: 0
         useDOScale: 0
       motion:
@@ -4238,6 +4471,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -4284,6 +4519,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -4319,8 +4556,8 @@ MonoBehaviour:
       characterID: 0
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 1
+        eyebrow: 7
         shadow: 0
         useDOScale: 0
       motion:
@@ -4330,6 +4567,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -4367,9 +4606,9 @@ MonoBehaviour:
       characterID: 2
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
-        shadow: 0
+        face: 1
+        eyebrow: 1
+        shadow: 2
         useDOScale: 0
       motion:
         type: 0
@@ -4378,6 +4617,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -4415,8 +4656,8 @@ MonoBehaviour:
       characterID: 0
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 5
+        eyebrow: 1
         shadow: 0
         useDOScale: 0
       motion:
@@ -4426,6 +4667,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -4472,11 +4715,15 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
-      flips: []
+      flips:
+      - characterID: 2
+        flip: 1
       extraExpressions: []
       screenEffect:
         effectType: 0
@@ -4508,8 +4755,8 @@ MonoBehaviour:
       characterID: 1
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 1
+        eyebrow: 2
         shadow: 0
         useDOScale: 0
       motion:
@@ -4519,6 +4766,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -4565,6 +4814,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -4612,6 +4863,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -4660,6 +4913,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -4706,6 +4961,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -4742,8 +4999,8 @@ MonoBehaviour:
       characterID: 1
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 17
+        eyebrow: 2
         shadow: 0
         useDOScale: 0
       motion:
@@ -4753,6 +5010,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -4790,8 +5049,8 @@ MonoBehaviour:
       characterID: 0
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 1
+        eyebrow: 7
         shadow: 0
         useDOScale: 0
       motion:
@@ -4801,6 +5060,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -4836,8 +5097,8 @@ MonoBehaviour:
       characterID: 1
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 17
+        eyebrow: 7
         shadow: 0
         useDOScale: 0
       motion:
@@ -4847,6 +5108,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -4882,8 +5145,8 @@ MonoBehaviour:
       characterID: 0
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 5
+        eyebrow: 2
         shadow: 0
         useDOScale: 0
       motion:
@@ -4893,6 +5156,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -4929,10 +5194,10 @@ MonoBehaviour:
       characterID: 1
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 9
+        eyebrow: 2
         shadow: 0
-        useDOScale: 0
+        useDOScale: 1
       motion:
         type: 0
         duration: 1.5
@@ -4940,6 +5205,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -4975,8 +5242,8 @@ MonoBehaviour:
       characterID: 0
       isUnknown: 0
       expressionData:
-        face: 0
-        eyebrow: 0
+        face: 15
+        eyebrow: 2
         shadow: 0
         useDOScale: 0
       motion:
@@ -4986,6 +5253,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions:
       - characterID: 0
         targetID: 0
@@ -4996,6 +5265,8 @@ MonoBehaviour:
           targetSlotIndex: 0
           stopDistance: 0
           targetValue: 0
+          useFlip: 0
+          flip: 0
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
@@ -5043,6 +5314,8 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions:
       - characterID: 1
         targetID: 0
@@ -5053,6 +5326,8 @@ MonoBehaviour:
           targetSlotIndex: 0
           stopDistance: 0
           targetValue: 0
+          useFlip: 0
+          flip: 0
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
