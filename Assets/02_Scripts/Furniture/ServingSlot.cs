@@ -37,6 +37,8 @@ public class ServingSlot : MonoBehaviour, IInteractable
     
     private void Update()
     {
+        if (DayManager.Instance.IsPaused) return;
+        
         foreach (var slot in inventory.Slots)
         {
             if (slot.Item == null)

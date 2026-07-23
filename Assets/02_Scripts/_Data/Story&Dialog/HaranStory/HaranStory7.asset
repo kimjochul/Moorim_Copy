@@ -17,28 +17,8 @@ MonoBehaviour:
   description: 
   characterIDs: 000000000100000002000000
   scenes:
-  - visualType: 0
-    characters:
-    - characterID: 0
-      slotIndex: 2
-      startVisible: 1
-      useSlotUI: 1
-      startFlip: 0
-    - characterID: 1
-      slotIndex: 1
-      startVisible: 1
-      useSlotUI: 1
-      startFlip: 1
-    - characterID: 2
-      slotIndex: 3
-      startVisible: 0
-      useSlotUI: 1
-      startFlip: 0
-    - characterID: 11
-      slotIndex: -1
-      startVisible: 0
-      useSlotUI: 0
-      startFlip: 0
+  - visualType: 1
+    characters: []
     lines:
     - id: 0
       lineType: 1
@@ -61,6 +41,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -107,6 +89,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -119,7 +103,7 @@ MonoBehaviour:
         effectPower: 0
       line: "\uB9F9\uACFC \uAC80\uAC00\uB4E4\uC774 \uCE58\uB904\uC628 \uC628\uAC16
         \uC545\uD589\uB4E4\uACFC \uC6B0\uB9AC \uAC00\uBB38\uC5D0\uC11C \uD589\uD574\uC628,
-        \uADF8\uB9AC\uACE0.. \n\uC5B4\uB5A4 \uAC83\uB3C4 \uD558\uC9C0 \uC54A\uC544
+        \uADF8\uB9AC\uACE0.. \uC5B4\uB5A4 \uAC83\uB3C4 \uD558\uC9C0 \uC54A\uC544
         \uCE68\uBB35\uB9CC\uC744 \uC77C\uAD00\uD574 \uC628 \uB098 \uB610\uD55C \uC804\uBD80."
       playSFX: {fileID: 0}
       stopBGM: 0
@@ -156,6 +140,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -205,6 +191,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -251,6 +239,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -298,6 +288,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -346,6 +338,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -371,6 +365,41 @@ MonoBehaviour:
       autoDelay: 0
       hideFromLog: 0
       transitionSpeed: 0
+    background: {fileID: 21300000, guid: fc62914ec8888a444af1809bd1ef9d0e, type: 3}
+    illustration: {fileID: 0}
+    isRecallScene: 0
+    illustrationOverlay: {fileID: 0}
+    endEffect:
+      effectType: 0
+      effectDuration: 0
+      effectPower: 0
+    transitionType: 1
+    startWithBlack: 0
+    sceneBGM: {fileID: 0}
+    changeBGM: 0
+  - visualType: 0
+    characters:
+    - characterID: 0
+      slotIndex: 2
+      startVisible: 1
+      useSlotUI: 1
+      startFlip: 0
+    - characterID: 1
+      slotIndex: 1
+      startVisible: 1
+      useSlotUI: 1
+      startFlip: 1
+    - characterID: 2
+      slotIndex: 3
+      startVisible: 0
+      useSlotUI: 1
+      startFlip: 0
+    - characterID: 11
+      slotIndex: -1
+      startVisible: 0
+      useSlotUI: 0
+      startFlip: 0
+    lines:
     - id: 0
       lineType: 0
       illustrationOverride: {fileID: 0}
@@ -392,6 +421,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -399,8 +430,8 @@ MonoBehaviour:
       flips: []
       extraExpressions: []
       screenEffect:
-        effectType: 2
-        effectDuration: 0.5
+        effectType: 0
+        effectDuration: 0
         effectPower: 0
       line: "..\uC694\uC998\uB530\uB77C \uB780\uC774\uAC00 \uB2A6\uAC8C\uC624\uB124."
       playSFX: {fileID: 0}
@@ -438,6 +469,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -485,6 +518,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -531,6 +566,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -577,6 +614,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions:
       - characterID: 0
         targetID: 0
@@ -587,6 +626,8 @@ MonoBehaviour:
           targetSlotIndex: 0
           stopDistance: 0
           targetValue: 0
+          useFlip: 0
+          flip: 0
       - characterID: 1
         targetID: 0
         motion:
@@ -596,6 +637,8 @@ MonoBehaviour:
           targetSlotIndex: 0
           stopDistance: 0
           targetValue: 0
+          useFlip: 0
+          flip: 0
       playTogether: 1
       changeDisplayName: 
       resetDisplayName: 0
@@ -643,6 +686,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -690,6 +735,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -738,6 +785,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -784,6 +833,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -830,6 +881,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -878,6 +931,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -927,6 +982,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -975,6 +1032,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -1022,6 +1081,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -1071,6 +1132,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -1119,6 +1182,8 @@ MonoBehaviour:
         targetSlotIndex: 1
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -1165,6 +1230,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -1211,6 +1278,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -1258,6 +1327,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -1307,6 +1378,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -1356,6 +1429,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -1404,6 +1479,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -1450,6 +1527,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -1498,6 +1577,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -1545,6 +1626,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -1594,6 +1677,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -1642,6 +1727,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -1692,6 +1779,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -1740,6 +1829,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -1786,6 +1877,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -1832,6 +1925,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -1879,6 +1974,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -1927,6 +2024,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -1973,6 +2072,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -2020,6 +2121,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -2068,6 +2171,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 650
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -2114,6 +2219,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -2160,6 +2267,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -2206,6 +2315,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -2252,6 +2363,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -2299,6 +2412,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -2345,6 +2460,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -2392,6 +2509,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -2438,6 +2557,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -2484,6 +2605,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -2530,6 +2653,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -2578,6 +2703,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -2625,6 +2752,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -2672,6 +2801,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -2719,6 +2850,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -2765,6 +2898,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -2813,6 +2948,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -2860,6 +2997,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -2906,6 +3045,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -2952,6 +3093,8 @@ MonoBehaviour:
         targetSlotIndex: 3
         stopDistance: 200
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3000,6 +3143,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3046,6 +3191,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3094,6 +3241,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3140,6 +3289,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3186,6 +3337,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3232,6 +3385,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3279,6 +3434,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3325,6 +3482,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3372,6 +3531,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3420,6 +3581,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3466,6 +3629,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3512,6 +3677,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3561,6 +3728,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3607,6 +3776,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3653,6 +3824,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3701,6 +3874,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3747,6 +3922,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3793,6 +3970,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3839,6 +4018,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3885,6 +4066,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3933,6 +4116,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -3980,6 +4165,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -4027,6 +4214,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -4075,6 +4264,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -4121,6 +4312,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -4169,6 +4362,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -4216,6 +4411,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -4265,6 +4462,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -4312,6 +4511,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -4358,6 +4559,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -4406,6 +4609,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -4453,6 +4658,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -4499,6 +4706,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -4547,6 +4756,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -4594,6 +4805,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -4641,6 +4854,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -4689,6 +4904,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -4739,6 +4956,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -4787,6 +5006,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -4833,6 +5054,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -4880,6 +5103,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -4928,6 +5153,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -4976,6 +5203,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -5022,6 +5251,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -5068,6 +5299,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -5115,6 +5348,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -5161,6 +5396,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -5209,6 +5446,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -5257,6 +5496,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -5304,6 +5545,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -5350,6 +5593,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -5396,6 +5641,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -5442,6 +5689,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -5489,6 +5738,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -5537,6 +5788,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -5583,6 +5836,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -5629,6 +5884,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -5677,6 +5934,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -5723,6 +5982,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -5770,6 +6031,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -5818,6 +6081,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -5867,6 +6132,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -5915,6 +6182,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -5961,6 +6230,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -6008,6 +6279,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -6057,6 +6330,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -6106,6 +6381,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -6155,6 +6432,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -6202,6 +6481,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -6249,6 +6530,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -6296,6 +6579,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -6345,6 +6630,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -6391,6 +6678,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -6440,6 +6729,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -6487,6 +6778,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -6535,6 +6828,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -6582,6 +6877,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -6628,6 +6925,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -6674,6 +6973,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -6722,6 +7023,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -6769,6 +7072,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -6815,6 +7120,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -6861,6 +7168,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -6907,6 +7216,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -6953,6 +7264,8 @@ MonoBehaviour:
         targetSlotIndex: 3
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -7000,6 +7313,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -7046,6 +7361,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -7092,6 +7409,8 @@ MonoBehaviour:
         targetSlotIndex: 0
         stopDistance: 0
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
@@ -7126,7 +7445,7 @@ MonoBehaviour:
       effectDuration: 0
       effectPower: 0
     transitionType: 0
-    startWithBlack: 1
+    startWithBlack: 0
     sceneBGM: {fileID: 0}
     changeBGM: 0
   rewardQuest: {fileID: 0}
