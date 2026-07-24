@@ -87,7 +87,17 @@ public class CookingStation : MonoBehaviour, IInteractable
         
         float finalCookTime = Mathf.Max(minimumCookTime, cookTime * (1f - totalBonus));
         
-        yield return new WaitForSeconds(finalCookTime);
+        float elapsed = 0f;
+
+        while (elapsed < finalCookTime)
+        {
+            if (!DayManager.Instance.IsPaused)
+            {
+                elapsed += Time.deltaTime;
+            }
+
+            yield return null;
+        }
  
         // PlayerManager.Instance.StopCurrentPlayer();
         SetState(CookingState.Done);

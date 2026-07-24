@@ -26,6 +26,8 @@ public class CookingEffects : MonoBehaviour
     private static readonly int DONE_TRIGGER = Animator.StringToHash("Done");
     private static readonly int IDLE_TRIGGER = Animator.StringToHash("Idle");
 
+    private bool wasPaused;
+    
     void Start()
     {
         if (bubbleObj != null)
@@ -43,7 +45,31 @@ public class CookingEffects : MonoBehaviour
         if (station != null)
             station.OnStateChanged -= StateChanged;
     }
+    
+    private void Update()
+    {
+        if (audioSource == null)
+            return;
 
+        bool isPaused = DayManager.Instance != null && DayManager.Instance.IsPaused;
+
+        if (isPaused == wasPaused)
+            return;
+
+        wasPaused = isPaused;
+
+        if (isPaused)
+        {
+            if (audioSource.isPlaying)
+                audioSource.Pause();
+        }
+        else
+        {
+            if (audioSource.clip != null)
+                audioSource.UnPause();
+        }
+    }
+    
     private void StateChanged(CookingState state, Sprite foodIcon)
     {
        switch (state)

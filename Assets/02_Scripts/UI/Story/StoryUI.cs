@@ -367,12 +367,12 @@ public class StoryUI : MonoBehaviour
             {
                 contentText.color = new Color(0.83f,0.83f,0.83f);
                 darkBackGround.SetActive(true);
-                darkBackgroundGroup.DOFade(0.96f, 0.5f).SetEase(Ease.OutCubic);
+                darkBackgroundGroup.DOFade(0.96f, 0.5f).SetEase(Ease.OutQuad);
             }
             else
             {
                 contentText.color = new Color(1f,1f,0.85f);
-                darkBackgroundGroup.DOFade(0f, 0.5f).SetEase(Ease.OutCubic)
+                darkBackgroundGroup.DOFade(0f, 0.5f).SetEase(Ease.InQuad)
                     .OnComplete(() => { darkBackGround.SetActive(false); });
             }
             StoryManager.Instance.CharacterUI.ApplyInnerThoughtFocus(-1,false);
@@ -1075,11 +1075,11 @@ public class StoryUI : MonoBehaviour
 
         if (enable)
         {
-            dialogueCanvasGroup.DOFade(focusFade, focusDuration).SetEase(Ease.OutCubic);
+            dialogueCanvasGroup.DOFade(focusFade, focusDuration).SetEase(Ease.OutQuad);
         }
         else
         {
-            dialogueCanvasGroup.DOFade(1f, focusDuration).SetEase(Ease.OutCubic);
+            dialogueCanvasGroup.DOFade(1f, focusDuration).SetEase(Ease.InQuad);
         }
     }
 
