@@ -38,7 +38,7 @@ public class ScreenEffectUI : MonoBehaviour
 
         fadeImage.color = new Color(0,0,0,0);
 
-        fadeImage.DOFade(1f, duration).SetEase(Ease.InSine);
+        fadeImage.DOFade(1f, duration).SetEase(Ease.OutQuad);
     }
 
     public void FadeFromBlack(float duration)
@@ -50,7 +50,7 @@ public class ScreenEffectUI : MonoBehaviour
             .OnComplete(() =>
             {
                 fadeImage.gameObject.SetActive(false);
-            }).SetEase(Ease.InSine);
+            }).SetEase(Ease.InQuad);
     }
 
     public void FlashWhite(float duration = 0.75f)
@@ -62,8 +62,8 @@ public class ScreenEffectUI : MonoBehaviour
 
         Sequence seq = DOTween.Sequence();
 
-        seq.Append(fadeImage.DOFade(1f, duration * 0.2f));
-        seq.Append(fadeImage.DOFade(0f, duration * 0.8f));
+        seq.Append(fadeImage.DOFade(1f, duration * 0.2f).SetEase(Ease.OutQuad));
+        seq.Append(fadeImage.DOFade(0f, duration * 0.8f).SetEase(Ease.InQuad));
 
         seq.OnComplete(() =>
         {
@@ -77,12 +77,12 @@ public class ScreenEffectUI : MonoBehaviour
         fadeImage.gameObject.SetActive(true);
         fadeImage.color = new Color(1,1,1,0);
 
-        yield return fadeImage.DOFade(1f, duration * 0.2f).WaitForCompletion();
+        yield return fadeImage.DOFade(1f, duration * 0.2f).SetEase(Ease.OutQuad).WaitForCompletion();
 
         yield return new WaitForSeconds(midTerm);
         onMid?.Invoke();
         
-        yield return fadeImage.DOFade(0f, duration * 0.8f).WaitForCompletion();
+        yield return fadeImage.DOFade(0f, duration * 0.8f).SetEase(Ease.InQuad).WaitForCompletion();
 
         fadeImage.gameObject.SetActive(false);
     }
@@ -99,12 +99,12 @@ public class ScreenEffectUI : MonoBehaviour
         Sequence seq = DOTween.Sequence();
 
         // 빠르게 검게
-        seq.Append(fadeImage.DOFade(1f, duration * 0.3f));
+        seq.Append(fadeImage.DOFade(1f, duration * 0.3f).SetEase(Ease.OutQuad));
 
         seq.AppendInterval(duration * 0.4f);
             
         // 다시 복귀
-        seq.Append(fadeImage.DOFade(0f, duration * 0.3f));
+        seq.Append(fadeImage.DOFade(0f, duration * 0.3f).SetEase(Ease.InQuad));
 
         seq.OnComplete(() =>
         {
@@ -125,6 +125,7 @@ public class ScreenEffectUI : MonoBehaviour
         // 검게
         yield return fadeImage
             .DOFade(1f, duration * 0.3f)
+            .SetEase(Ease.OutQuad)
             .WaitForCompletion();
 
         // 여기서 장면 교체
@@ -135,6 +136,7 @@ public class ScreenEffectUI : MonoBehaviour
         // 다시 밝게
         yield return fadeImage
             .DOFade(0f, duration * 0.7f)
+            .SetEase(Ease.InQuad)
             .WaitForCompletion();
 
         fadeImage.gameObject.SetActive(false);
