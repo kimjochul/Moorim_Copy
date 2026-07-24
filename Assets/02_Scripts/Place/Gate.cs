@@ -1,11 +1,13 @@
 using System;
 using DG.Tweening;
 using UnityEngine;
-using UnityEngine.AI;
 using static Constants; 
 
 public class Gate : MonoBehaviour, IInteractable 
 {
+    // 씬 단위 싱글톤 (씬 로드마다 새로 등록됨)
+    public static Gate Instance { get; private set; }
+
     [Header("Door Settings")] 
     public GameObject doorHandle0;
     public GameObject doorHandle1;
@@ -13,28 +15,55 @@ public class Gate : MonoBehaviour, IInteractable
     
     private Tween doorTween;
     
-    // 이벤트 등 외부 의존성 전부 제거됨
-    // ✅ 기본값을 true로 변경했습니다. (열린 상태로 시작)
-    public static bool isOpen { get; private set; } = true; 
+    public bool IsOpen { get; private set; } = true; // 인스턴스 변수: 씬 로드 시 자동 초기화
 
-    // IInteractable 인터페이스
     public InteractMode Mode => InteractMode.Immediate; 
     
-    // 문이 열리거나 닫혔을 때 발생할 이벤트
-    public static event Action<bool> OnGateStateChanged;
+    public event Action<bool> OnGateStateChanged; // 인스턴스 이벤트
 
-    public bool CanInteract(PlayerType playerType)
+    private void Awake()
     {
-        return true; 
+        if (Instance == null)
+            Instance = this;
     }
+
+    private void Start()
+    {
+        ForceOpen();
+        DayManager.Instance.OnDayEnd += ForceOpen;
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this)
+            Instance = null;
+
+        if (DayManager.Instance != null)
+            DayManager.Instance.OnDayEnd -= ForceOpen;
+
+        doorTween?.Kill();
+    }
+
+    // 트윈 없이 즉시 열림 (하루 종료 / 씬 시작용)
+    private void ForceOpen()
+    {
+        doorTween?.Kill();
+
+        IsOpen = true;
+        doorHandle0.transform.localRotation = Quaternion.Euler(0, 90, 0);
+        doorHandle1.transform.localRotation = Quaternion.Euler(0, -90, 0);
+
+        OnGateStateChanged?.Invoke(true);
+    }
+
+    public bool CanInteract(PlayerType playerType) => true;
 
     public void Interact(PlayerController player)
     {
         if (doorTween != null && doorTween.IsActive() && doorTween.IsPlaying()) 
             return;
 
-        // 이제 isOpen이 true이므로, 첫 클릭 시 바로 CloseDoor()가 실행됩니다.
-        if (isOpen)
+        if (IsOpen)
             CloseDoor();
         else
             OpenDoor();
@@ -42,45 +71,30 @@ public class Gate : MonoBehaviour, IInteractable
 
     public void OnInteractEnd(PlayerController player) { }
 
-    public Vector3 GetInteractPosition()
-    {
-        return transform.position;
-    }
+    public Vector3 GetInteractPosition() => transform.position;
     
     private void OpenDoor()
     {
-        isOpen = true; 
-
+        IsOpen = true; 
         doorTween?.Kill();
         
-        // 시퀀스를 사용하여 두 문이 동시에 움직이도록 설정
         Sequence s = DOTween.Sequence();
         s.Join(doorHandle0.transform.DOLocalRotate(new Vector3(0, 90, 0), openDoorTime).SetEase(Ease.OutQuad));
         s.Join(doorHandle1.transform.DOLocalRotate(new Vector3(0, -90, 0), openDoorTime).SetEase(Ease.OutQuad));
-        
-        s.OnComplete(() => 
-        {
-            OnGateStateChanged?.Invoke(isOpen);
-        });
+        s.OnComplete(() => OnGateStateChanged?.Invoke(IsOpen));
         
         doorTween = s;
     }
 
     private void CloseDoor()
     {
-        isOpen = false; 
-        
+        IsOpen = false; 
         doorTween?.Kill();
         
-        // 닫힐 때는 둘 다 (0, 0, 0)으로 복귀
         Sequence s = DOTween.Sequence();
         s.Join(doorHandle0.transform.DOLocalRotate(Vector3.zero, openDoorTime).SetEase(Ease.OutQuad));
         s.Join(doorHandle1.transform.DOLocalRotate(Vector3.zero, openDoorTime).SetEase(Ease.OutQuad));
-        
-        s.OnComplete(() => 
-        {
-            OnGateStateChanged?.Invoke(isOpen);
-        });
+        s.OnComplete(() => OnGateStateChanged?.Invoke(IsOpen));
         
         doorTween = s;
     }

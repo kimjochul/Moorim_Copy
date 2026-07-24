@@ -405,7 +405,7 @@ public class TutorialManager : MonoBehaviour
             }
 
             // 문이 닫히면 잡으라고 안내
-            if (!isGateClosedOnce && !Gate.isOpen)
+            if (!isGateClosedOnce && !Gate.Instance.IsOpen)
             {
                 isGateClosedOnce = true;
                 if (gateHighlightEffect0) gateHighlightEffect0.highlighted = false;
