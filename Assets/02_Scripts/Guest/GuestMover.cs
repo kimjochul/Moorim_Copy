@@ -6,6 +6,8 @@ public class GuestMover : MonoBehaviour
     [Header("이동(A*) 설정")]
     private NavMeshAgent agent; 
     private Vector3 targetDestination; 
+    
+    private bool pausedByManager = false;
 
     void Awake()
     {
@@ -72,5 +74,18 @@ public class GuestMover : MonoBehaviour
         agent.ResetPath();
         agent.isStopped = false;
         agent.velocity = Vector3.zero;
+    }
+    
+    public void SetPaused(bool pause)
+    {
+        if (pausedByManager == pause) return;
+        pausedByManager = pause;
+
+        if (agent == null || !agent.enabled || !agent.isOnNavMesh)
+            return;
+
+        agent.isStopped = pause;
+        if (pause)
+            agent.velocity = Vector3.zero;
     }
 }

@@ -57,9 +57,11 @@ public class GuestManager : MonoBehaviour
 
     void Awake()
     {
-        
         DayManager.Instance.OnDayStart += StartSpawn;
         DayManager.Instance.OnDayEnd += StopSpawn;
+        
+        Debug.Log($"<color=yellow>DayManager.Instance.OnDayStart += StartSpawn;");        
+
 
         // 풀 매니저에 프리팹 등록
         foreach (var entry in normalGuestPrefabs)
@@ -87,7 +89,7 @@ public class GuestManager : MonoBehaviour
             SeatManager.Instance.OnSeatFreed += HandleSeatFreed;
         }
         
-        Gate.OnGateStateChanged += HandleGateStateChanged;
+        Gate.Instance.OnGateStateChanged += HandleGateStateChanged;
     }
 
     void OnDisable()
@@ -96,6 +98,9 @@ public class GuestManager : MonoBehaviour
         {
             DayManager.Instance.OnDayStart -= StartSpawn;
             DayManager.Instance.OnDayEnd -= StopSpawn;
+            
+            Debug.Log($"<color=red>DayManager.Instance.OnDayStart -= StartSpawn;");        
+
         }
         
         if (SeatManager.Instance != null)
@@ -103,7 +108,7 @@ public class GuestManager : MonoBehaviour
             SeatManager.Instance.OnSeatFreed -= HandleSeatFreed;
         }
         
-        Gate.OnGateStateChanged -= HandleGateStateChanged;
+        Gate.Instance.OnGateStateChanged -= HandleGateStateChanged;
     }
 
     private void Update()
@@ -114,20 +119,27 @@ public class GuestManager : MonoBehaviour
 
     private void StartSpawn()
     {
-        Debug.Log("StartSpawn");
-        Debug.Log(spawnInterval * 100 / (100 + EconomyManager.Instance.RestaurantEconomy.Fame));
+        Debug.Log($"<color=green> StartSpawn");        
         InvokeRepeating(nameof(SpawnGuset), startSpawnTime, spawnInterval * 100 / (100 + EconomyManager.Instance.RestaurantEconomy.Fame));
         //Invoke(nameof(SpawnGuset), startSpawnTime);
     }
     
     public GuestBase SpawnGuset()
     {
-        Debug.Log("SpawnGuset");
-        
-        bool canEnterDirectly = Gate.isOpen && (SeatManager.Instance.FindEmptyChair() != null);
-        
-        if (!canEnterDirectly && waitingGuests.Count >= maxWaitingCount) 
+        if (DayManager.Instance != null && DayManager.Instance.IsPaused)
             return null;
+        
+        bool hasChair = SeatManager.Instance.FindEmptyChair() != null;
+        bool canEnterDirectly = Gate.Instance.IsOpen && (SeatManager.Instance.FindEmptyChair() != null);
+        
+        Debug.Log($"SpawnGuset / Gate:{Gate.Instance.IsOpen} / 빈의자:{hasChair} / 대기:{waitingGuests.Count}/{maxWaitingCount}");
+
+
+        if (!canEnterDirectly && waitingGuests.Count >= maxWaitingCount)
+        {
+            Debug.Log("<color=orange>스폰 스킵: 입장 불가 + 대기열 만석</color>");
+            return null;
+        }
         
         GuestAppearance appearance = GuestAppearance.NormalMaleA;
 
@@ -173,7 +185,7 @@ public class GuestManager : MonoBehaviour
 
     public GuestBase SpawnGuset(SpawnType spawnType)
     {
-        bool canEnterDirectly = Gate.isOpen && (SeatManager.Instance.FindEmptyChair() != null);
+        bool canEnterDirectly = Gate.Instance.IsOpen && (SeatManager.Instance.FindEmptyChair() != null);
         
         if (!canEnterDirectly && waitingGuests.Count >= maxWaitingCount) 
             return null;
@@ -213,6 +225,8 @@ public class GuestManager : MonoBehaviour
         globalIDCounter++; 
 
         GameObject guestObj = PoolManager.Instance.Get(appearance.ToString());
+        Debug.Log($"풀 Get({appearance}) → {(guestObj != null ? guestObj.name : "<color=red>NULL</color>")}");
+
         
         if (guestObj != null)
         {
@@ -274,7 +288,7 @@ public class GuestManager : MonoBehaviour
     private void ProcessWaitingQueue()
     {
         // 문이 닫혀있으면 아무도 들여보낼 수 없음
-        if (!Gate.isOpen) return;
+        if (!Gate.Instance.IsOpen) return;
 
         // 대기 인원이 있고 빈 자리가 있는 동안 반복해서 입장
         while (waitingGuests.Count > 0)
@@ -334,6 +348,7 @@ public class GuestManager : MonoBehaviour
     {
         CancelInvoke();
         ForceAllGuestsExit();
+        SeatManager.Instance.EmptyAllChairs();
     }
 
     private void ForceAllGuestsExit()

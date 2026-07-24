@@ -5,8 +5,9 @@ using static Constants;
 // 부모 클래스
 public abstract class GuestBase : MonoBehaviour
 {
-    [Header("기본 대기 시간 (자식들이 변경 가능)")]
-    [SerializeField] protected float orderMinWaitLimit = 15f;
+    [Header("기본 대기 시간 (자식들이 변경 가능)")] [SerializeField]
+    protected float orderMinWaitLimit = 15f;
+
     [SerializeField] protected float orderMaxWaitLimit = 20f;
     [SerializeField] protected float foodMinWaitLimit = 30f;
     [SerializeField] protected float foodMidWaitLimit = 60f;
@@ -15,14 +16,13 @@ public abstract class GuestBase : MonoBehaviour
     [SerializeField] protected float menuChooseTime = 3f;
     [SerializeField] protected float payWaitTime = 3f;
 
-    [Header("데이터 연결")]
-    [SerializeField] private GuestRewardData rewardData;
+    [Header("데이터 연결")] [SerializeField] private GuestRewardData rewardData;
 
     protected GuestMover mover;
     private GuestManager guestManager;
     private GuestBubbleUI bubbleUI;
     protected GuestAnimation guestAnim;
-    
+
     protected RecipeUnlockManager recipeUnlockManager;
 
     public Transform exitDoor;
@@ -141,8 +141,8 @@ public abstract class GuestBase : MonoBehaviour
         OnGuestPaid = null;
         OnGuestExited = null;
         OnOrderServed = null;
-        Gate.OnGateStateChanged -= HandleGateStateChanged;
-        
+        Gate.Instance.OnGateStateChanged -= HandleGateStateChanged;
+
         recipeUnlockManager = RecipeUnlockManager.Instance;
     }
 
@@ -179,7 +179,7 @@ public abstract class GuestBase : MonoBehaviour
             BindAnimCallbacks();
         }
 
-        Gate.OnGateStateChanged += HandleGateStateChanged;
+        Gate.Instance.OnGateStateChanged += HandleGateStateChanged;
         ChangeState(GuestState.Enter);
     }
 
@@ -187,10 +187,7 @@ public abstract class GuestBase : MonoBehaviour
     {
         guestAnim.OnHandUpFinished += () => { };
 
-        guestAnim.OnHandDownFinished += () =>
-        {
-            isPlayingHandDown = false;
-        };
+        guestAnim.OnHandDownFinished += () => { isPlayingHandDown = false; };
 
         guestAnim.OnStandUpFinished += () =>
         {
@@ -210,6 +207,13 @@ public abstract class GuestBase : MonoBehaviour
 
     void Update()
     {
+        bool paused = DayManager.Instance != null && DayManager.Instance.IsPaused;
+
+        mover.SetPaused(paused);
+        guestAnim?.SetPaused(paused);
+
+        if (paused) return;
+
         GuestFSM();
     }
 
@@ -224,13 +228,13 @@ public abstract class GuestBase : MonoBehaviour
     {
         switch (currentState)
         {
-            case GuestState.Enter:      HandleEnterState();     break;
-            case GuestState.Waiting:    HandleWaitingState();   break;
-            case GuestState.WaitOrder:  HandleWaitOrderState(); break;
-            case GuestState.WaitFood:   HandleWaitFoodState();  break;
-            case GuestState.Eat:        HandleEatState();       break;
-            case GuestState.Pay:        HandlePayState();       break;
-            case GuestState.Exit:       HandleExitState();      break;
+            case GuestState.Enter: HandleEnterState(); break;
+            case GuestState.Waiting: HandleWaitingState(); break;
+            case GuestState.WaitOrder: HandleWaitOrderState(); break;
+            case GuestState.WaitFood: HandleWaitFoodState(); break;
+            case GuestState.Eat: HandleEatState(); break;
+            case GuestState.Pay: HandlePayState(); break;
+            case GuestState.Exit: HandleExitState(); break;
         }
     }
 
@@ -240,7 +244,7 @@ public abstract class GuestBase : MonoBehaviour
         {
             myChair = SeatManager.Instance.FindEmptyChair();
 
-            if (Gate.isOpen && myChair != null)
+            if (Gate.Instance.IsOpen && myChair != null)
             {
                 myChair.Reserve(this);
                 mover.MoveTo(myChair.sitPoint.position);
@@ -284,16 +288,16 @@ public abstract class GuestBase : MonoBehaviour
     private void HandleWaitingState()
     {
     }
-    
+
     public void AssignChairAndEnter(Chair chair)
     {
         myChair = chair;
         myChair.Reserve(this);
 
         mover.MoveTo(myChair.sitPoint.position);
-        
+
         isEnterPathSet = true;
-        
+
         ChangeState(GuestState.Enter);
     }
 
@@ -333,7 +337,7 @@ public abstract class GuestBase : MonoBehaviour
         if (stateTimer >= foodMaxWaitLimit && CurrentMood == GuestMood.Bad)
         {
             SetMood(GuestMood.VeryBad);
-            TriggerAngryExit(-2);  
+            TriggerAngryExit(-2);
         }
         else if (stateTimer >= foodMinWaitLimit && CurrentMood == GuestMood.Neutral)
             SetMood(GuestMood.Bad);
@@ -380,7 +384,8 @@ public abstract class GuestBase : MonoBehaviour
             hasProcessedPayment = true;
 
             int basePrice = (myOrder != null && myOrder.orderedFood != null)
-                ? myOrder.orderedFood.price : 0;
+                ? myOrder.orderedFood.price
+                : 0;
             var result = GuestRewardCalculator.Calculate(basePrice, CurrentMood, rewardData);
             SendReward(result);
 
@@ -444,7 +449,8 @@ public abstract class GuestBase : MonoBehaviour
 
         if (myChair != null && myChair.myFoodSpot != null && deliveredFood.foodPrefab != null)
         {
-            currentFoodModel = Instantiate(deliveredFood.foodPrefab, myChair.myFoodSpot.position, myChair.myFoodSpot.rotation);
+            currentFoodModel = Instantiate(deliveredFood.foodPrefab, myChair.myFoodSpot.position,
+                myChair.myFoodSpot.rotation);
             currentFoodModel.transform.SetParent(myChair.myFoodSpot);
         }
 
@@ -489,9 +495,9 @@ public abstract class GuestBase : MonoBehaviour
         isAngryExiting = true;
         SetMood(GuestMood.VeryBad);
         SendReward(GuestRewardCalculator.Penalty(penaltyLevel));
-        
+
         OnGuestAngryExited?.Invoke(this);
-        
+
         guestAnim.PlayAngry();
     }
 
@@ -525,12 +531,12 @@ public abstract class GuestBase : MonoBehaviour
 
         PoolManager.Instance.Return(myApperance.ToString(), gameObject);
     }
-    
+
     protected void InvokeOrderChanged()
     {
         OnOrderChanged?.Invoke(this, myOrder);
     }
-    
+
     public void TimeSetForTutorial()
     {
         orderMinWaitLimit = 99999f;
@@ -539,12 +545,28 @@ public abstract class GuestBase : MonoBehaviour
         foodMidWaitLimit = 99999f;
         foodMaxWaitLimit = 99999f;
     }
-    
+
     private void HandleGateStateChanged(bool isGateOpen)
     {
         if (mover != null)
         {
             mover.RecalculatePath();
+        }
+    }
+
+    public float AngerProgress
+    {
+        get
+        {
+            switch (currentState)
+            {
+                case GuestState.WaitOrder:
+                    return Mathf.Clamp01(stateTimer / orderMaxWaitLimit);
+                case GuestState.WaitFood:
+                    return Mathf.Clamp01(stateTimer / foodMaxWaitLimit);
+                default:
+                    return 0f; // 대기 상태가 아니면 게이지 없음
+            }
         }
     }
 }

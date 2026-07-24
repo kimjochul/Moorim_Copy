@@ -51,7 +51,19 @@ public class SeatManager : Singleton<SeatManager>
             emptyChairList.Add(chair);
             OnSeatFreed?.Invoke(chair);
         }
+    }
 
+    public void EmptyAllChairs()
+    {
+        allChairs.RemoveAll(c => c == null);
+        emptyChairList.RemoveAll(c => c == null);
+        emptyChairSet.RemoveWhere(c => c == null);
 
+        foreach (var chair in allChairs)
+        {
+            chair.Empty(); 
+        }
+
+        Debug.Log($"[SeatManager] 전체 의자 초기화. 빈 의자: {emptyChairList.Count}/{allChairs.Count}");
     }
 }

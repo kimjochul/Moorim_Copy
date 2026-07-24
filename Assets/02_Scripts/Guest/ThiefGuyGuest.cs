@@ -76,7 +76,7 @@ public class ThiefGuyGuest : GuestBase
         if (fleeTimer > 0f) return;
 
         // 1. 문이 열려있다면 출구로 전력 질주
-        if (Gate.isOpen)
+        if (Gate.Instance.IsOpen)
         {
             if (exitDoor != null)
             {

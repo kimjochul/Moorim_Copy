@@ -159,32 +159,42 @@ public class GuestAnimation : MonoBehaviour
 
     private IEnumerator WaitForAnimation(string stateName, Action onComplete)
     {
-        yield return null; // 트리거 반영 1프레임 대기
+        yield return null;
 
-        // 상태 진입 대기 (최대 2초 안전장치)
         float safety = 0f;
         while (true)
         {
+            // ★ 일시정지 중엔 타이머 누적 없이 대기만
+            if (DayManager.Instance != null && DayManager.Instance.IsPaused)
+            {
+                yield return null;
+                continue;
+            }
+
             var stateInfo = anim.GetCurrentAnimatorStateInfo(0);
             if (stateInfo.IsName(stateName) && stateInfo.normalizedTime < 0.3f)
                 break;
-            
+        
             safety += Time.deltaTime;
             if (safety > 2f)
             {
                 Debug.LogWarning($"[GuestAnimation] '{stateName}' 상태 진입 실패");
-                onComplete?.Invoke(); // 타임아웃 시에도 콜백은 쏨 (흐름 안 막히게)
+                onComplete?.Invoke();
                 waitCoroutine = null;
                 yield break;
             }
             yield return null;
         }
 
-        // 재생 완료 대기 (normalizedTime 0.95 이상)
         AnimatorStateInfo info = anim.GetCurrentAnimatorStateInfo(0);
         while (info.IsName(stateName) && info.normalizedTime < 0.95f)
         {
             yield return null;
+
+            // ★ 일시정지 중엔 진행 체크 안 함
+            if (DayManager.Instance != null && DayManager.Instance.IsPaused)
+                continue;
+
             info = anim.GetCurrentAnimatorStateInfo(0);
         }
 
@@ -228,5 +238,12 @@ public class GuestAnimation : MonoBehaviour
         anim.ResetTrigger(HANDUP_TRIGGER);
         anim.ResetTrigger(HANDDOWN_TRIGGER);
         anim.ResetTrigger(CATCHED_TRIGGER);
+    }
+    
+    
+    public void SetPaused(bool pause)
+    {
+        if (anim != null)
+            anim.speed = pause ? 0f : 1f;
     }
 }
