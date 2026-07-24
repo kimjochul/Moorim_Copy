@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using static Constants;
@@ -13,7 +14,8 @@ public class GuestBubbleUI : MonoBehaviour
     [Header("Bubble UI")]
     [SerializeField] private Image moodIcon;
     [SerializeField] private Image statusIcon;
-
+    [SerializeField] private Image statusFill;
+    
     [Header("Mood UI")]
     [SerializeField] private Sprite veryBadSprite;
     [SerializeField] private Sprite badSprite;
@@ -24,6 +26,8 @@ public class GuestBubbleUI : MonoBehaviour
     [Header("State UI")]
     [SerializeField] private Sprite orderSprite;
     [SerializeField] private Sprite paySprite;
+    
+    private Coroutine gaugeCoroutine;
 
     private GuestBase guest;
 
@@ -31,6 +35,8 @@ public class GuestBubbleUI : MonoBehaviour
     {
         moodRect = moodBubble.GetComponent<RectTransform>();
         statusRect = statusBubble.GetComponent<RectTransform>();
+        
+        
     }
 
     public void Bind(GuestBase target)
@@ -53,15 +59,19 @@ public class GuestBubbleUI : MonoBehaviour
                 // 착석 → 기분 말풍선 켜기
                 ShowBubble(moodBubble, moodRect);
                 moodIcon.sprite = GetMoodSprite(g.CurrentMood);
+                StartGauge();
                 break;
 
             case GuestState.WaitFood:
                 // 기분 유지, 상태 말풍선은 OrderPlaced에서 켜짐
+                StartGauge();
                 break;
 
             case GuestState.Eat:
                 // 기분 유지, 상태 말풍선 끄기 (음식 받았으니까)
+                HideBubble(moodBubble, moodRect);
                 HideBubble(statusBubble, statusRect);
+                StopGauge();
                 break;
 
             case GuestState.Pay:
@@ -81,6 +91,7 @@ public class GuestBubbleUI : MonoBehaviour
     private void MoodChanged(GuestBase g, GuestMood mood)
     {
         moodIcon.sprite = GetMoodSprite(mood);
+        UpdateGaugeColor(mood);
     }
 
     private void ReadyToOrder(GuestBase g)
@@ -111,6 +122,7 @@ public class GuestBubbleUI : MonoBehaviour
     {
         moodBubble.SetActive(false);
         statusBubble.SetActive(false);
+        StopGauge();
     }
 
     private Sprite GetMoodSprite(GuestMood mood)
@@ -136,5 +148,56 @@ public class GuestBubbleUI : MonoBehaviour
     {
         UIAnimationManager.Instance.HidePop(rect);
         bubble.SetActive(false);
+    }
+    
+    private void StartGauge()
+    {
+        StopGauge();
+        gaugeCoroutine = StartCoroutine(UpdateGauge());
+    }
+
+    private void StopGauge()
+    {
+        if (gaugeCoroutine != null)
+        {
+            StopCoroutine(gaugeCoroutine);
+            gaugeCoroutine = null;
+        }
+
+        if (statusFill != null)
+        {
+            statusFill.gameObject.SetActive(false);
+            statusFill.fillAmount = 0;
+        }
+    }
+
+    private IEnumerator UpdateGauge()
+    {
+        if (statusFill == null)
+            yield break;
+
+        statusFill.gameObject.SetActive(true);
+        UpdateGaugeColor(guest.CurrentMood);
+
+        while (true)
+        {
+            if (guest.IsAngryExiting)
+                break; // 분노 퇴장 시작하면 게이지 끝
+
+            statusFill.fillAmount = guest.AngerProgress;
+            yield return null;
+        }
+
+        statusFill.gameObject.SetActive(false);
+        gaugeCoroutine = null;
+    }
+    
+    private void UpdateGaugeColor(GuestMood mood)
+    {
+        if (statusFill == null) return;
+
+        // Bad 이하면 빨강, 아니면 주황
+        bool isBadMood = mood == GuestMood.Bad || mood == GuestMood.VeryBad;
+        statusFill.color = isBadMood ? Color.red : Color.orange;
     }
 }

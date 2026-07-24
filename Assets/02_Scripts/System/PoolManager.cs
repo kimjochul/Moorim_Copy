@@ -1,8 +1,6 @@
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.Pool;
 using UnityEngine.SceneManagement;
 
 public class PoolManager : Singleton<PoolManager>
@@ -27,6 +25,9 @@ public class PoolManager : Singleton<PoolManager>
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         poolParent = GameObject.FindWithTag("Pool").transform;
+
+        // 씬이 바뀌면 이전 씬의 풀 오브젝트들은 파괴됨 = 죽은 참조 정리
+        CleanupDestroyedObjects();
     }
 
     protected override void OnDestroy()
@@ -35,18 +36,34 @@ public class PoolManager : Singleton<PoolManager>
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
+    // 씬 전환 등으로 파괴된 오브젝트 참조를 큐에서 제거
+    private void CleanupDestroyedObjects()
+    {
+        foreach (var key in pools.Keys)
+        {
+            var queue = pools[key];
+            int count = queue.Count;
+            for (int i = 0; i < count; i++)
+            {
+                GameObject obj = queue.Dequeue();
+                if (obj != null)          // 파괴된 오브젝트는 == null
+                    queue.Enqueue(obj);   // 살아있는 것만 다시 넣음
+            }
+        }
+    }
+
     // 프리팹 정보를 여기에 등록하는 메소드
-    // 이 메소드를 호출해야 해당 타입의 풀이 생성됨.
     public void Register(string key, GameObject prefab, int preloadCount = 3)
     {
-        // 이미 등록된 타입이면 무시
+        // 프리팹 매핑은 항상 갱신 (씬 재로드 대비)
+        prefabMap[key] = prefab;
+
+        // 이미 풀이 있으면 프리로드는 생략
         if (pools.ContainsKey(key))
             return;
-        
-        prefabMap[key] = prefab;
+
         var queue = new Queue<GameObject>();
 
-        // 미리 만들어두기
         for (int i = 0; i < preloadCount; i++)
         {
             GameObject obj = CreateObject(key);
@@ -57,31 +74,40 @@ public class PoolManager : Singleton<PoolManager>
         Debug.Log($"[풀] {key} 등록 완료 {preloadCount}개");
     }
 
-    // 풀에서 꺼내기, 큐가 비면 자동으로 새로 만듦
+    // 풀에서 꺼내기. 죽은 참조는 건너뛰고, 큐가 비면 새로 만듦
     public GameObject Get(string key)
     {
-        // 등록 안 된 타입이면 에러
         if (!prefabMap.ContainsKey(key))
+        {
+            Debug.LogError($"[풀] 등록되지 않은 키: {key}");
             return null;
+        }
 
-        GameObject obj;
+        if (pools.TryGetValue(key, out var queue))
+        {
+            // 살아있는 오브젝트가 나올 때까지 꺼냄 (죽은 참조는 버림)
+            while (queue.Count > 0)
+            {
+                GameObject obj = queue.Dequeue();
+                if (obj != null)
+                    return obj;
+            }
+        }
 
-        if (pools.ContainsKey(key) && pools[key].Count > 0)
-            obj = pools[key].Dequeue(); // 재활용
-        else
-            obj = CreateObject(key);
-
-        return obj;
+        // 큐가 비었거나 전부 죽은 참조였음 = 새로 생성
+        return CreateObject(key);
     }
 
-    // Destroy 대신 이 메소드를 호출, 배활성화 후 큐에 반환
+    // Destroy 대신 이 메소드를 호출. 비활성화 후 큐에 반환
     public void Return(string key, GameObject obj)
     {
         if (obj == null)
             return;
-        
+
         obj.SetActive(false);
-        obj.transform.SetParent(poolParent);
+
+        if (poolParent != null)
+            obj.transform.SetParent(poolParent);
 
         if (!pools.ContainsKey(key))
             pools[key] = new Queue<GameObject>();
