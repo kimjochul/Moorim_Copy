@@ -1050,6 +1050,7 @@ public class StoryUI : MonoBehaviour
             autoPlayCoroutine = null;
         }
 
+        storySettingMenu.RefreshAutoButtonSprite();
         isCutSceneAuto = false;
         isAutoPlayEnabled = false;
     }
@@ -1162,6 +1163,7 @@ public class StoryUI : MonoBehaviour
         if (isAutoPlayEnabled)
         {
             isAutoPlayEnabled = false;
+            storySettingMenu.RefreshAutoButtonSprite();
             StopAutoPlay();
         }
 
