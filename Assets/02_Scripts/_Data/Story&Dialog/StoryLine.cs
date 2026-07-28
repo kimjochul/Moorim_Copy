@@ -256,6 +256,7 @@ public enum MotionType
     Sit,
     Stand,
     EnterMove,
+    Greet,
 }
 
 public enum ScreenEffectType

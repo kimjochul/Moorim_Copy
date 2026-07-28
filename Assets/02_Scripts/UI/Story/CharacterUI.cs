@@ -420,6 +420,11 @@ public class CharacterUI : MonoBehaviour
                 yield return slot.StandRoutine(motion.duration);
                 break;
             
+            case MotionType.Greet:
+                slot.transform.SetAsLastSibling();
+                yield return slot.GreetRoutine(motion.value, motion.targetValue, motion.stopDistance, motion.duration);
+                break;
+            
             case MotionType.Attack:
             {
                 slot.transform.SetAsLastSibling();
