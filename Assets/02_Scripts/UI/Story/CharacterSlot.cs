@@ -652,60 +652,40 @@ public class CharacterSlot : MonoBehaviour
         EndMotion();
     }
     
-    public IEnumerator GreetRoutine(float forward = 70f, float bow = 12f, float jumpHeight = 25f, float duration = 0.45f)
+    public IEnumerator GreetRoutine(float forward = 70f, float bow = 20f, float duration = 0.45f)
     {
         BeginMotion();
 
         motionRootX.DOKill();
         motionRootY.DOKill();
 
-        float baseY = motionRootY.anchoredPosition.y;
         float baseX = motionRootX.anchoredPosition.x;
+        float baseY = motionRootY.anchoredPosition.y;
         float dir = isFlipped ? -1f : 1f;
 
+        // 1. 앞으로 이동
+        yield return motionRootX
+            .DOAnchorPosX(baseX + dir * forward, duration * 0.3f)
+            .SetEase(Ease.OutQuad)
+            .WaitForCompletion();
+
+        // 2. 숙이기
+        yield return motionRootY
+            .DOAnchorPosY(baseY - bow, duration * 0.4f)
+            .SetEase(Ease.OutQuad)
+            .WaitForCompletion();
+
+        // 3. 뒤로 가면서 일어나기
         Sequence seq = DOTween.Sequence();
-
-        // 앞으로 갔다가 복귀
-        seq.Append(
+        seq.Join(
             motionRootX
-                .DOAnchorPosX(dir * forward, duration * 0.5f)
+                .DOAnchorPosX(baseX, duration * 0.3f)
+                .SetEase(Ease.InOutQuad));
+
+        seq.Join(
+            motionRootY
+                .DOAnchorPosY(baseY, duration * 0.3f)
                 .SetEase(Ease.OutQuad));
-
-        seq.Append(
-            motionRootX
-                .DOAnchorPosX(0f, duration * 0.5f)
-                .SetEase(Ease.InQuad));
-
-        float time = 0f;
-
-        while (time < duration)
-        {
-            time += Time.deltaTime;
-
-            float t = Mathf.Clamp01(time / duration);
-
-            float y;
-
-            if (t < 0.25f)
-            {
-                // 살짝 숙이기
-                y = Mathf.Lerp(0f, -bow, t / 0.25f);
-            }
-            else
-            {
-                // 위로 포물선
-                float tt = (t - 0.25f) / 0.75f;
-                y = Mathf.Lerp(-bow, 0f, tt);
-                y += Mathf.Sin(tt * Mathf.PI) * jumpHeight;
-            }
-
-            motionRootY.anchoredPosition = new Vector2(0, baseY + y);
-
-            yield return null;
-        }
-
-        motionRootX.anchoredPosition = new Vector2(baseX, 0);
-        motionRootY.anchoredPosition = new Vector2(0, baseY);
 
         yield return seq.WaitForCompletion();
 
@@ -855,7 +835,7 @@ public class CharacterSlot : MonoBehaviour
         }
     }
     
-    private void ChangeShadow(bool showShadow, float duration = 0.2f)
+    private void ChangeShadow(bool showShadow, float duration = 0.1f)
     {
         shadowImage.DOKill();
 

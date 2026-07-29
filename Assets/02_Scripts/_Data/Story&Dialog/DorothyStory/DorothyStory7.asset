@@ -6390,11 +6390,11 @@ MonoBehaviour:
         targetID: 0
         motion:
           type: 20
-          duration: 1
-          value: -100
+          duration: 1.5
+          value: -50
           targetSlotIndex: 0
-          stopDistance: -50
-          targetValue: 12
+          stopDistance: 0
+          targetValue: 30
           useFlip: 0
           flip: 0
       playTogether: 0
@@ -7462,13 +7462,13 @@ MonoBehaviour:
     startWithBlack: 0
     sceneBGM: {fileID: 0}
     changeBGM: 0
-  - visualType: 0
+  - visualType: 1
     characters:
     - characterID: 3
       slotIndex: 0
-      startVisible: 1
-      useSlotUI: 1
-      startFlip: 1
+      startVisible: 0
+      useSlotUI: 0
+      startFlip: 0
     lines:
     - id: 0
       lineType: 0
@@ -7572,26 +7572,6 @@ MonoBehaviour:
       autoDelay: 0
       hideFromLog: 0
       transitionSpeed: 0
-    background: {fileID: 21300000, guid: fc62914ec8888a444af1809bd1ef9d0e, type: 3}
-    illustration: {fileID: 0}
-    isRecallScene: 0
-    illustrationOverlay: {fileID: 0}
-    endEffect:
-      effectType: 0
-      effectDuration: 0
-      effectPower: 0
-    transitionType: 0
-    startWithBlack: 0
-    sceneBGM: {fileID: 0}
-    changeBGM: 0
-  - visualType: 1
-    characters:
-    - characterID: 3
-      slotIndex: 0
-      startVisible: 0
-      useSlotUI: 0
-      startFlip: 0
-    lines:
     - id: 0
       lineType: 0
       illustrationOverride: {fileID: 0}
@@ -7801,5 +7781,8 @@ MonoBehaviour:
     changeBGM: 0
   rewardQuest: {fileID: 0}
   rewardMoney: 0
-  rewardFame: 0
-  rewardItems: []
+  rewardFame: 100
+  rewardItems:
+  - item: {fileID: 11400000, guid: 16719206457e61a449925cc25d8b85fd, type: 2}
+    count: 1
+    inventoryType: 6

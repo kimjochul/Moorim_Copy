@@ -422,7 +422,7 @@ public class CharacterUI : MonoBehaviour
             
             case MotionType.Greet:
                 slot.transform.SetAsLastSibling();
-                yield return slot.GreetRoutine(motion.value, motion.targetValue, motion.stopDistance, motion.duration);
+                yield return slot.GreetRoutine(motion.value, motion.targetValue, motion.duration);
                 break;
             
             case MotionType.Attack:

@@ -134,6 +134,7 @@ public enum FaceType
     Serious1,
     Serious2,
     Serious3,
+    Anger4
 }
 
 public enum EyebrowType
