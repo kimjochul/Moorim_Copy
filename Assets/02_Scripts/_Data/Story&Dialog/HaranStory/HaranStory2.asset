@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: HaranStory2
   m_EditorClassIdentifier: Assembly-CSharp::Story
   id: 12
-  storyName: "\uB4F1\uAC00\uAD50\uD658"
+  storyName: "2. \uB4F1\uAC00\uAD50\uD658"
   description: 
+  mainSpeaker: "\uD558\uB780"
   characterIDs: 000000000100000002000000
   scenes:
   - visualType: 1
@@ -3209,7 +3210,14 @@ MonoBehaviour:
       changeDisplayName: 
       resetDisplayName: 0
       flips: []
-      extraExpressions: []
+      extraExpressions:
+      - characterID: 0
+        expressionData:
+          face: 5
+          eyebrow: 4
+          shadow: 0
+          useDOScale: 0
+        isUnknown: 0
       screenEffect:
         effectType: 2
         effectDuration: 1

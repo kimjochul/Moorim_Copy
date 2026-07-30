@@ -36,8 +36,9 @@ public class StoryReplaySlot : MonoBehaviour, IPointerEnterHandler, IPointerExit
         briefStoryInfo = storyInfo;
         this.storyDetailPanel = detailPanel;
         parentTab = parent;
-        
-        titleText.text = story.storyName;
+
+        string title = $"[{story.mainSpeaker}] {story.storyName}";
+        titleText.text = title;
     }
 
     public void OnClick()

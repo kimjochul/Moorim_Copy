@@ -58,7 +58,7 @@ public class EconomyManager : Singleton<EconomyManager>, IInitializable
     /// <param name="amount"></param>
     public void AddMoney(int amount)
     {
-        float bonus = BondManager.Instance.GetPercentModifier(BondEffectType.FameGainRate);
+        float bonus = BondManager.Instance.GetPercentModifier(BondEffectType.MoneyGainRate);
         int change = Mathf.RoundToInt(amount * (1f + bonus));
         
         _todayMoneyIncome += change;

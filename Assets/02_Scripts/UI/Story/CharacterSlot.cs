@@ -843,19 +843,17 @@ public class CharacterSlot : MonoBehaviour
         {
             shadowImage.gameObject.SetActive(true);
 
-            RefreshColor();
+            Color c = GetShadowColor();
+            c.a = 0.5f;
+            shadowImage.color = c;
 
-            shadowImage.DOFade(0.5f, duration);
+            RefreshColor();
         }
         else
         {
-            shadowImage.DOFade(0f, duration)
-                .OnComplete(() =>
-                {
-                    shadowImage.gameObject.SetActive(false);
+            shadowImage.gameObject.SetActive(false);
 
-                    RefreshColor();
-                });
+            RefreshColor();
         }
     }
     

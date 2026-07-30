@@ -10,6 +10,8 @@ public class Story:ScriptableObject
     public string storyName;
     public string description;
 
+    public string mainSpeaker;
+
     public List<int> characterIDs;
     public List<StoryScene> scenes;
     

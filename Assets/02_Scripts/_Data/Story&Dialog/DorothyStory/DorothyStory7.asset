@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: DorothyStory7
   m_EditorClassIdentifier: Assembly-CSharp::Story
   id: 27
-  storyName: "\uBCC4\uC774 \uC9C0\uB098\uAC04 \uC790\uB9AC\uC5D4"
+  storyName: "7. \uBCC4\uC774 \uC9C0\uB098\uAC04 \uC790\uB9AC\uC5D4"
   description: 
+  mainSpeaker: "\uB3C4\uB85C\uC2DC"
   characterIDs: 030000001a000000
   scenes:
   - visualType: 1
@@ -6125,13 +6126,13 @@ MonoBehaviour:
     startWithBlack: 1
     sceneBGM: {fileID: 0}
     changeBGM: 0
-  - visualType: 0
+  - visualType: 1
     characters:
     - characterID: 3
       slotIndex: 0
-      startVisible: 1
-      useSlotUI: 1
-      startFlip: 1
+      startVisible: 0
+      useSlotUI: 0
+      startFlip: 0
     - characterID: 34
       slotIndex: 0
       startVisible: 0
@@ -6149,18 +6150,18 @@ MonoBehaviour:
       startFlip: 0
     - characterID: 1
       slotIndex: 2
-      startVisible: 1
-      useSlotUI: 1
+      startVisible: 0
+      useSlotUI: 0
       startFlip: 0
     - characterID: 0
       slotIndex: 1
-      startVisible: 1
-      useSlotUI: 1
+      startVisible: 0
+      useSlotUI: 0
       startFlip: 0
     - characterID: 2
       slotIndex: 3
-      startVisible: 1
-      useSlotUI: 1
+      startVisible: 0
+      useSlotUI: 0
       startFlip: 0
     - characterID: 99
       slotIndex: 0
@@ -6385,18 +6386,7 @@ MonoBehaviour:
         targetValue: 0
         useFlip: 0
         flip: 0
-      motions:
-      - characterID: 3
-        targetID: 0
-        motion:
-          type: 20
-          duration: 1.5
-          value: -50
-          targetSlotIndex: 0
-          stopDistance: 0
-          targetValue: 30
-          useFlip: 0
-          flip: 0
+      motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
