@@ -59,7 +59,6 @@ public class GuestBubbleUI : MonoBehaviour
                 // 착석 → 기분 말풍선 켜기
                 ShowBubble(moodBubble, moodRect);
                 moodIcon.sprite = GetMoodSprite(g.CurrentMood);
-                StartGauge();
                 break;
 
             case GuestState.WaitFood:
@@ -75,9 +74,8 @@ public class GuestBubbleUI : MonoBehaviour
                 break;
 
             case GuestState.Pay:
-                // 기분 말풍선 끄기
-                // statusBubble은 ReadyToPay에서 켜줌
-                HideBubble(moodBubble, moodRect);
+                // 계산 할 땐 돈, 기분 아이콘 다 킴.
+                // 둘 다 ReadyToPay에서 켜줌
                 break;
 
             case GuestState.Exit:
@@ -96,9 +94,10 @@ public class GuestBubbleUI : MonoBehaviour
 
     private void ReadyToOrder(GuestBase g)
     {
-        // 메뉴를 골랐을 때 주문표 아이콘 표시
+        // 메뉴를 골랐을 때 주문표 아이콘 표시, 게이지 시작
         ShowBubble(statusBubble, statusRect);
         statusIcon.sprite = orderSprite;
+        StartGauge();
     }
 
     private void OrderPlaced(GuestBase g, GuestOrderData order)
@@ -116,6 +115,9 @@ public class GuestBubbleUI : MonoBehaviour
         // 계산 아이콘 표시 (Pop 애니메이션 포함)
         statusIcon.sprite = paySprite;
         ShowBubble(statusBubble, statusRect);
+        
+        moodIcon.sprite = GetMoodSprite(g.CurrentMood);
+        ShowBubble(moodBubble, moodRect);
     }
 
     public void HideAll()
@@ -179,12 +181,14 @@ public class GuestBubbleUI : MonoBehaviour
         statusFill.gameObject.SetActive(true);
         UpdateGaugeColor(guest.CurrentMood);
 
+        float startProgress = guest.AngerProgress;
+
         while (true)
         {
             if (guest.IsAngryExiting)
-                break; // 분노 퇴장 시작하면 게이지 끝
+                break;
 
-            statusFill.fillAmount = guest.AngerProgress;
+            statusFill.fillAmount = Mathf.InverseLerp(startProgress, 1f, guest.AngerProgress);
             yield return null;
         }
 

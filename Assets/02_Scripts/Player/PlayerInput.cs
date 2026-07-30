@@ -77,7 +77,7 @@ public class PlayerInput : MonoBehaviour
                 return;
             
             Debug.Log(UIManager.Instance.IsBookActive);
-             UIManager.Instance.ActiveBook(!UIManager.Instance.IsBookActive);
+            UIManager.Instance.ActiveBook(!UIManager.Instance.IsBookActive);
         }
 
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -88,6 +88,18 @@ public class PlayerInput : MonoBehaviour
             if (CookingController.Instance != null && CookingController.Instance.IsCookingUIOpen)
             {
                 CookingController.Instance.CloseCookingSystem();
+                return;
+            }
+            
+            if (UIManager.Instance.IsBookActive)
+            {
+                UIManager.Instance.ActiveBook(false);
+                return;
+            }
+
+            if (UIManager.Instance.IsSaveLoadActive)
+            {
+                UIManager.Instance.ActiveSaveUI(false);
                 return;
             }
             

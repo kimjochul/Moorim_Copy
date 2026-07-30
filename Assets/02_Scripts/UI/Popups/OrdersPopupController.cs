@@ -16,7 +16,15 @@ public class OrdersPopupController : PopupController
     void Start()
     {
         closeBtn.onClick.AddListener(OnClickCancelButton);
-        DayManager.Instance.OnDayEnd += ResetOrders;
+        
+        if (DayManager.Instance != null) 
+            DayManager.Instance.OnDayEnd += ResetOrders;
+    }
+    
+    void OnDestroy()
+    {
+        if (DayManager.Instance != null) 
+            DayManager.Instance.OnDayEnd -= ResetOrders;
     }
     
     public new void Show()
@@ -79,6 +87,9 @@ public class OrdersPopupController : PopupController
     }
     void UpdateNotification(bool isActive)
     {
+        if (orderNotificationObj == null) 
+            return;
+        
         orderNotificationObj.SetActive(isActive);
     }
 }
