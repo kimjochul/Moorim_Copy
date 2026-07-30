@@ -127,8 +127,15 @@ public class PlayerManager : Singleton<PlayerManager>
     {
         if (selectedUnit == null)
             return;
+
+        float bonus = 0;
         
-        float currentMoveSpeed = IsRunMode ? moveSpeed * 1.5f : moveSpeed;
+        if (BondManager.Instance)
+            bonus = BondManager.Instance.GetPercentModifier(BondEffectType.MoveSpeed);
+
+        float totalSum = (moveSpeed + moveSpeed * bonus);
+        
+        float currentMoveSpeed = IsRunMode ? totalSum * 1.5f : totalSum;
         
         selectedUnit.SetSpeed(currentMoveSpeed, angularSpeed, accelerationSpeed);
         selectedUnit.MoveTo(destination, onArrived);

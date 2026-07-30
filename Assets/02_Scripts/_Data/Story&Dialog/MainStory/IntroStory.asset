@@ -14,6 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Story
   id: 0
   storyName: "\uC778\uD2B8\uB85C"
+  description: 
+  mainSpeaker: "\uBA54\uC778"
+  characterIDs: 
   scenes:
   - visualType: 1
     characters: []
@@ -27,7 +30,11 @@ MonoBehaviour:
       illustrationSequence: []
       characterID: 0
       isUnknown: 0
-      emotion: 0
+      expressionData:
+        face: 0
+        eyebrow: 0
+        shadow: 0
+        useDOScale: 0
       motion:
         type: 0
         duration: 0
@@ -35,10 +42,13 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
       extraExpressions: []
       screenEffect:
         effectType: 0
@@ -55,6 +65,7 @@ MonoBehaviour:
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
+      emotion: 0
       useAccentFontSize: 0
       useSmallFontSize: 0
       hideDialogueUI: 0
@@ -71,7 +82,11 @@ MonoBehaviour:
       illustrationSequence: []
       characterID: 0
       isUnknown: 0
-      emotion: 0
+      expressionData:
+        face: 0
+        eyebrow: 0
+        shadow: 0
+        useDOScale: 0
       motion:
         type: 0
         duration: 0
@@ -79,10 +94,13 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
       extraExpressions: []
       screenEffect:
         effectType: 0
@@ -99,6 +117,7 @@ MonoBehaviour:
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
+      emotion: 0
       useAccentFontSize: 0
       useSmallFontSize: 0
       hideDialogueUI: 0
@@ -115,7 +134,11 @@ MonoBehaviour:
       illustrationSequence: []
       characterID: 0
       isUnknown: 0
-      emotion: 0
+      expressionData:
+        face: 0
+        eyebrow: 0
+        shadow: 0
+        useDOScale: 0
       motion:
         type: 0
         duration: 0
@@ -123,10 +146,13 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
       extraExpressions: []
       screenEffect:
         effectType: 0
@@ -143,6 +169,7 @@ MonoBehaviour:
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
+      emotion: 0
       useAccentFontSize: 0
       useSmallFontSize: 0
       hideDialogueUI: 0
@@ -159,7 +186,11 @@ MonoBehaviour:
       illustrationSequence: []
       characterID: 0
       isUnknown: 0
-      emotion: 0
+      expressionData:
+        face: 0
+        eyebrow: 0
+        shadow: 0
+        useDOScale: 0
       motion:
         type: 0
         duration: 0
@@ -167,10 +198,13 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
       extraExpressions: []
       screenEffect:
         effectType: 0
@@ -185,6 +219,7 @@ MonoBehaviour:
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
+      emotion: 0
       useAccentFontSize: 0
       useSmallFontSize: 0
       hideDialogueUI: 0
@@ -201,7 +236,11 @@ MonoBehaviour:
       illustrationSequence: []
       characterID: 0
       isUnknown: 0
-      emotion: 0
+      expressionData:
+        face: 0
+        eyebrow: 0
+        shadow: 0
+        useDOScale: 0
       motion:
         type: 0
         duration: 0
@@ -209,10 +248,13 @@ MonoBehaviour:
         targetSlotIndex: -1
         stopDistance: 100
         targetValue: 0
+        useFlip: 0
+        flip: 0
       motions: []
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
+      flips: []
       extraExpressions: []
       screenEffect:
         effectType: 0
@@ -230,6 +272,7 @@ MonoBehaviour:
       useTypingSound: 1
       isInnerThought: 0
       showEmotionIcon: 0
+      emotion: 0
       useAccentFontSize: 0
       useSmallFontSize: 0
       hideDialogueUI: 0
@@ -250,3 +293,6 @@ MonoBehaviour:
     sceneBGM: {fileID: 11400000, guid: 3b9d2f1a5ca175f44a87dd8cac3e6e4e, type: 2}
     changeBGM: 0
   rewardQuest: {fileID: 0}
+  rewardMoney: 0
+  rewardFame: 0
+  rewardItems: []

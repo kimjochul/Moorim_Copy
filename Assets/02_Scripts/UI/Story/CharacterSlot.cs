@@ -652,6 +652,46 @@ public class CharacterSlot : MonoBehaviour
         EndMotion();
     }
     
+    public IEnumerator GreetRoutine(float forward = 70f, float bow = 20f, float duration = 0.45f)
+    {
+        BeginMotion();
+
+        motionRootX.DOKill();
+        motionRootY.DOKill();
+
+        float baseX = motionRootX.anchoredPosition.x;
+        float baseY = motionRootY.anchoredPosition.y;
+        float dir = isFlipped ? -1f : 1f;
+
+        // 1. 앞으로 이동
+        yield return motionRootX
+            .DOAnchorPosX(baseX + dir * forward, duration * 0.3f)
+            .SetEase(Ease.OutQuad)
+            .WaitForCompletion();
+
+        // 2. 숙이기
+        yield return motionRootY
+            .DOAnchorPosY(baseY - bow, duration * 0.4f)
+            .SetEase(Ease.OutQuad)
+            .WaitForCompletion();
+
+        // 3. 뒤로 가면서 일어나기
+        Sequence seq = DOTween.Sequence();
+        seq.Join(
+            motionRootX
+                .DOAnchorPosX(baseX, duration * 0.3f)
+                .SetEase(Ease.InOutQuad));
+
+        seq.Join(
+            motionRootY
+                .DOAnchorPosY(baseY, duration * 0.3f)
+                .SetEase(Ease.OutQuad));
+
+        yield return seq.WaitForCompletion();
+
+        EndMotion();
+    }
+    
     public void ClearImmediate()
     {
         motionRootX.anchoredPosition = Vector2.zero;
@@ -795,7 +835,7 @@ public class CharacterSlot : MonoBehaviour
         }
     }
     
-    private void ChangeShadow(bool showShadow, float duration = 0.2f)
+    private void ChangeShadow(bool showShadow, float duration = 0.1f)
     {
         shadowImage.DOKill();
 
@@ -803,19 +843,17 @@ public class CharacterSlot : MonoBehaviour
         {
             shadowImage.gameObject.SetActive(true);
 
-            RefreshColor();
+            Color c = GetShadowColor();
+            c.a = 0.5f;
+            shadowImage.color = c;
 
-            shadowImage.DOFade(0.5f, duration);
+            RefreshColor();
         }
         else
         {
-            shadowImage.DOFade(0f, duration)
-                .OnComplete(() =>
-                {
-                    shadowImage.gameObject.SetActive(false);
+            shadowImage.gameObject.SetActive(false);
 
-                    RefreshColor();
-                });
+            RefreshColor();
         }
     }
     

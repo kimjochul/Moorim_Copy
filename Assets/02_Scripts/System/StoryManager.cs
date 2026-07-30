@@ -231,11 +231,10 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         Coroutine bgRoutine = null;
         
         float duration = GetTransitionDuration(TransitionSpeed.Dramatic);
+        characterUI.Hide();
         
         if (currentScene.visualType == SceneVisualType.Illustration)
         {
-            characterUI.Hide();
-            
             if (useCrossFadeTransition)
             {
                 if(currentScene.illustrationOverlay != null)
