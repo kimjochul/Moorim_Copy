@@ -351,9 +351,11 @@ public class UIManager : Singleton<UIManager>
         if (quest != null)
             quest.Hide();
 
+        /*
         var order = FindFirstObjectByType<OrdersPopupController>(FindObjectsInactive.Include);
         if (order != null)
             order.Hide();
+        */
 
         var cook = FindFirstObjectByType<CookingController>(FindObjectsInactive.Include);
         if (cook != null)
