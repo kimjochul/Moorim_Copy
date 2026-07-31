@@ -298,7 +298,9 @@ public class UIManager : Singleton<UIManager>
     {
         //Debug.Log($"Book={IsBookActive}, Setting={IsSettingActive}, Save={IsSaveLoadActive}");
         
-        if (IsBookActive || IsSettingActive || IsSaveLoadActive)
+        bool recallStoryPlaying = StoryManager.Instance != null && StoryManager.Instance.IsRecallPlaying;
+        
+        if (IsBookActive || IsSettingActive || IsSaveLoadActive || recallStoryPlaying )
             DayManager.Instance.PauseTime();
         else 
             DayManager.Instance.ResumeTime();

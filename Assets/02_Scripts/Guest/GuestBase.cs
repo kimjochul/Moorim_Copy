@@ -16,6 +16,12 @@ public abstract class GuestBase : MonoBehaviour
     [SerializeField] protected float menuChooseTime = 3f;
     [SerializeField] protected float payWaitTime = 3f;
 
+    protected float baseOrderMinWaitLimit;
+    protected float baseOrderMaxWaitLimit;
+    protected float baseFoodMinWaitLimit;
+    protected float baseFoodMidWaitLimit;
+    protected float baseFoodMaxWaitLimit;
+    
     [Header("데이터 연결")] [SerializeField] private GuestRewardData rewardData;
 
     protected GuestMover mover;
@@ -73,6 +79,13 @@ public abstract class GuestBase : MonoBehaviour
         mover = GetComponent<GuestMover>();
         bubbleUI = GetComponentInChildren<GuestBubbleUI>();
         recipeUnlockManager = RecipeUnlockManager.Instance;
+        
+        baseOrderMinWaitLimit = orderMinWaitLimit;
+        baseOrderMaxWaitLimit = orderMaxWaitLimit;
+
+        baseFoodMinWaitLimit = foodMinWaitLimit;
+        baseFoodMidWaitLimit = foodMidWaitLimit;
+        baseFoodMaxWaitLimit = foodMaxWaitLimit;
     }
 
     // 풀에서 꺼낼 때 호출
@@ -156,6 +169,11 @@ public abstract class GuestBase : MonoBehaviour
         exitDoor = exit;
         guestManager = manager;
 
+        ApplyBondEffects();
+
+        Debug.Log(
+            $"{orderMinWaitLimit}, {orderMaxWaitLimit}, {foodMinWaitLimit}, {foodMidWaitLimit}, {foodMaxWaitLimit}");
+        
         if (myOrder == null)
             myOrder = new GuestOrderData();
         else
@@ -569,5 +587,34 @@ public abstract class GuestBase : MonoBehaviour
     {
         int newMood = Mathf.Clamp((int)CurrentMood + steps, (int)GuestMood.VeryBad, (int)GuestMood.VeryGood);
         SetMood((GuestMood)newMood);
+    }
+    
+    private void ApplyBondEffects()
+    {
+        orderMinWaitLimit = baseOrderMinWaitLimit;
+        orderMaxWaitLimit = baseOrderMaxWaitLimit;
+
+        foodMinWaitLimit = baseFoodMinWaitLimit;
+        foodMidWaitLimit = baseFoodMidWaitLimit;
+        foodMaxWaitLimit = baseFoodMaxWaitLimit;
+
+        float multiplier = 1f + BondManager.Instance.GetPercentModifier(BondEffectType.CustomerPatience);
+
+        orderMinWaitLimit *= multiplier;
+        orderMaxWaitLimit *= multiplier;
+
+        foodMinWaitLimit *= multiplier;
+        foodMidWaitLimit *= multiplier;
+        foodMaxWaitLimit *= multiplier;
+    }
+    
+    protected void SetBaseWaitTime(float orderMin, float orderMax, float foodMin, float foodMid, float foodMax)
+    {
+        baseOrderMinWaitLimit = orderMin;
+        baseOrderMaxWaitLimit = orderMax;
+
+        baseFoodMinWaitLimit = foodMin;
+        baseFoodMidWaitLimit = foodMid;
+        baseFoodMaxWaitLimit = foodMax;
     }
 }

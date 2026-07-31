@@ -167,18 +167,7 @@ public class GuestManager : MonoBehaviour
         }
         else
         {
-            float rand = UnityEngine.Random.value;
-            if (rand < 0.05f)
-                appearance = GuestAppearance.ThiefGuy;
-            else if (rand < 0.1f)
-                appearance = GuestAppearance.RichMan;
-            else if (rand < 0.15f) 
-                appearance = GuestAppearance.BadGuest;
-            else
-            {
-                int randomIndex = UnityEngine.Random.Range(0, normalGuestPrefabs.Length);
-                appearance  = normalGuestPrefabs[randomIndex].appearance;
-            }
+            appearance = GetRandomGuestAppearance();
         }
 
         return InstantiateAndSetupGuest(appearance);
@@ -269,6 +258,70 @@ public class GuestManager : MonoBehaviour
         }
         
         return null;
+    }
+    
+    private GuestAppearance GetRandomGuestAppearance()
+    {
+        // 기본 비율
+        float goodChance = 5f; // 부자
+        float badChance = 30f;  // 도둑 + 악성 손님
+
+        // Upgrade
+        goodChance += UpgradeManager.Instance.GetValue(UpgradeType.RichGuestChance);
+        badChance -= UpgradeManager.Instance.GetValue(UpgradeType.BadGuestChance);
+
+        // Bond
+        goodChance += BondManager.Instance.GetModifier(BondEffectType.RichGuestChance);
+        badChance -= BondManager.Instance.GetModifier(BondEffectType.BadGuestChance);
+
+        // 제한
+        goodChance = Mathf.Clamp(goodChance, 0, 100);
+        badChance = Mathf.Clamp(badChance, 0, 100);
+
+        // 일반 손님 비율
+        float normalChance = 100f - goodChance - badChance;
+
+
+        // 혹시 합이 100 초과하면 비율 조정
+        if(normalChance < 0)
+        {
+            float total = goodChance + badChance;
+
+            goodChance = goodChance / total * 100f;
+            badChance = badChance / total * 100f;
+            normalChance = 0;
+        }
+        
+        Debug.Log($"{goodChance}, {badChance}");
+        float rand = UnityEngine.Random.Range(0f, 100f);
+
+        // 좋은 손님
+        if(rand < goodChance)
+        {
+            return GuestAppearance.RichMan;
+        }
+
+        rand -= goodChance;
+
+        // 나쁜 손님
+        if(rand < badChance)
+        {
+            // Bad 내부 종류
+            float badRand = UnityEngine.Random.value;
+
+
+            if(badRand < 0.33f)
+                return GuestAppearance.ThiefGuy;
+
+            if(badRand < 0.66f)
+                return GuestAppearance.BadGuest;
+
+            return GuestAppearance.ViolenceGuest;
+        }
+
+
+        // 일반 손님
+        return normalGuestPrefabs[UnityEngine.Random.Range(0, normalGuestPrefabs.Length)].appearance;
     }
     
     private void HandleSeatFreed(Chair freedChair)

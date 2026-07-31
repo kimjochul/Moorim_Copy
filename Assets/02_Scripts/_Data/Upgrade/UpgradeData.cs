@@ -48,6 +48,10 @@ public enum UpgradeType
     RefridgeSlotAmount,
     ServerSlotAmount,
     Guard,
+    
+    // 손님 관련
+    RichGuestChance,
+    BadGuestChance,
 }
 
 public enum CharacterSkillLevel

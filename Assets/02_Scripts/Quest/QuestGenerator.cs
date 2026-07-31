@@ -244,7 +244,7 @@ public class QuestGenerator : MonoBehaviour
             return;
         
         int tier = GetQuestTier();
-        float rewardMultiplier = 1f + (tier - 1) * 0.5f;
+        float rewardMultiplier = 1f + (tier - 1);
         
         int unlockedRecipeCount = GetUnlockedRecipeCount();
         int randomFoodTypes = Mathf.Min(tier, unlockedRecipeCount);
@@ -275,7 +275,7 @@ public class QuestGenerator : MonoBehaviour
                     selectedRecipes.Add(recipe.id);
                 }
                 
-                itemCondition.requiredCount = Random.Range(tier, tier + 3);
+                itemCondition.requiredCount = Random.Range(1, 1 + (tier/2) + 1); // 1 2 2 3 3 티어별로 이렇게 올라감
                 itemCondition.useRandomItem = false;
                 itemCondition.useFoodType = false;
                 

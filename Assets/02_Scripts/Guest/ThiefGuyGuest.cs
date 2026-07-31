@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
+using static Constants;
 
 public class ThiefGuyGuest : GuestBase
 {
@@ -22,11 +23,14 @@ public class ThiefGuyGuest : GuestBase
 
     void Awake()
     {
-        orderMaxWaitLimit = 40f;
-        foodMaxWaitLimit = 120f;
         agent = GetComponent<NavMeshAgent>();
-        
-       
+    }
+
+    public override void Init(int id, GuestAppearance appearance, Transform exit, GuestManager manager)
+    {
+        SetBaseWaitTime(orderMinWaitLimit, 40f, foodMinWaitLimit, foodMidWaitLimit, 120f);
+
+        base.Init(id, appearance, exit, manager);
     }
 
     public override void ResetState()

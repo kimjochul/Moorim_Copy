@@ -24,6 +24,10 @@ public class ServeCondition : QuestCondition
             return;
         
         currentServeCount += questEvent.currentCount;
+        
+        if (currentServeCount >= requireCount)
+            currentServeCount = requireCount;
+        
         NotifyUpdated();
     }
 

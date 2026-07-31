@@ -92,7 +92,8 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
     
     [SerializeField] StoryReplayManager replayManager;
     public StoryReplayManager StoryReplayManager => replayManager;
-
+    public bool IsRecallPlaying => isPlaying && playMode == StoryPlayMode.Recall;
+    
     public void Init()
     {
         dayManager = DayManager.Instance;

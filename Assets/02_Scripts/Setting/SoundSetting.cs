@@ -5,12 +5,12 @@ using UnityEngine.UI;
 
 public class SoundSetting : MonoBehaviour
 {
-    [Header("º¼·ý ½½¶óÀÌ´õ UI")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì´ï¿½ UI")]
     [SerializeField] private Slider masterSlider;
     [SerializeField] private Slider bgmSlider;
     [SerializeField] private Slider sfxSlider;
 
-    [Header("BGM ¼±ÅÃ UI")]
+    [Header("BGM ï¿½ï¿½ï¿½ï¿½ UI")]
     [SerializeField] private TMP_Dropdown bgmDropdown;
     void Start()
     {
@@ -19,7 +19,7 @@ public class SoundSetting : MonoBehaviour
     }
     private void Init()
     {
-        // »ç¿îµå
+        // ï¿½ï¿½ï¿½ï¿½
         if (SoundManager.Instance != null)
         {
             this.masterSlider.value = SoundManager.Instance.MasterVolume;
@@ -27,10 +27,10 @@ public class SoundSetting : MonoBehaviour
             this.sfxSlider.value = SoundManager.Instance.SfxVolume;
         }
 
-        // ºê±Ý µå·Ó´Ù¿î
+        // ï¿½ï¿½ï¿½ ï¿½ï¿½Ó´Ù¿ï¿½
         if (this.bgmDropdown != null)
         {
-            // ±âÁ¸¿¡ ¿¬°áµÈ ¸®½º³Ê°¡ ÀÖ´Ù¸é Áö¿öÁÖ´Â °ÍÀÌ ¾ÈÀüÇÕ´Ï´Ù.
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ê°ï¿½ ï¿½Ö´Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
             this.bgmDropdown.onValueChanged.RemoveAllListeners();
             this.bgmDropdown.onValueChanged.AddListener(OnBgmSelectionChanged);
         }
@@ -66,7 +66,7 @@ public class SoundSetting : MonoBehaviour
         this.bgmDropdown.RefreshShownValue();
     }
 
-    // ½½¶óÀÌ´õ¸¦ ¿òÁ÷ÀÏ ¶§¸¶´Ù ½ÇÇàµÇ´Â ÇÔ¼öµé
+    // ï¿½ï¿½ï¿½ï¿½ï¿½Ì´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ç´ï¿½ ï¿½Ô¼ï¿½ï¿½ï¿½
 
     public void SetMasterVolume(float volume)
     {
@@ -89,6 +89,9 @@ public class SoundSetting : MonoBehaviour
     public void OnBgmSelectionChanged(int index)
     {
         if (SoundManager.Instance == null) return;
+
+        if (StoryManager.Instance != null && StoryManager.Instance.IsRecallPlaying)
+            return;
 
         string selectedBgmName = this.bgmDropdown.options[index].text;
 

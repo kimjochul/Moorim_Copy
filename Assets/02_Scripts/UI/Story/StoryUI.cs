@@ -891,6 +891,8 @@ public class StoryUI : MonoBehaviour
     
     public void ToggleLogUI()
     {
+        storySettingMenu.RefreshAutoButtonSprite();
+        
         if (isLogOpen)
         {
             CloseLogUI();
@@ -1036,7 +1038,7 @@ public class StoryUI : MonoBehaviour
         return isAutoPlayEnabled;
     }
     
-    private void StopAllAutoPlay()
+    public void StopAllAutoPlay()
     {
         if (autoCoroutine != null)
         {
@@ -1089,6 +1091,9 @@ public class StoryUI : MonoBehaviour
     #region 행동 가능 여부 확인 함수
     private bool CanAdvance()
     {
+        if (UIManager.Instance != null && UIManager.Instance.IsSettingActive)
+            return false;
+        
         return !IsBlocked();
     }
 
