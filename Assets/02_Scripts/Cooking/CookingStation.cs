@@ -15,7 +15,9 @@ public class CookingStation : MonoBehaviour, IInteractable
     [SerializeField] private float minimumCookTime = 3f;
 
     [SerializeField] private float cookSpeedCheckForDebug = 0;
- 
+    
+    private Coroutine cookingRoutine;
+    
     // ── 이벤트 ──
     /// <summary>
     /// 조리대 상태가 변경될 때 발행됩니다. (상태, 완성 음식 아이콘)
@@ -32,6 +34,18 @@ public class CookingStation : MonoBehaviour, IInteractable
  
     public InteractMode Mode => InteractMode.ClickToInteract;
  
+    private void OnEnable()
+    {
+        if (DayManager.Instance != null)
+            DayManager.Instance.OnDayEnd += HandleDayEnd;
+    }
+
+    private void OnDisable()
+    {
+        if (DayManager.Instance != null)
+            DayManager.Instance.OnDayEnd -= HandleDayEnd;
+    }
+    
     public bool CanInteract(PlayerType playerType)
     {
         return playerType == PlayerType.Sowol;
@@ -74,7 +88,7 @@ public class CookingStation : MonoBehaviour, IInteractable
     {
         currentRecipe = recipe;
         SetState(CookingState.Cooking);
-        StartCoroutine(CookingRoutine());
+        cookingRoutine = StartCoroutine(CookingRoutine());
     }
  
     private IEnumerator CookingRoutine()
@@ -100,6 +114,7 @@ public class CookingStation : MonoBehaviour, IInteractable
         }
  
         // PlayerManager.Instance.StopCurrentPlayer();
+        cookingRoutine = null;
         SetState(CookingState.Done);
     }
  
@@ -136,4 +151,15 @@ public class CookingStation : MonoBehaviour, IInteractable
         OnStateChanged?.Invoke(newState, icon);
     }
 
+    private void HandleDayEnd()
+    {
+        if (cookingRoutine != null)
+        {
+            StopCoroutine(cookingRoutine);
+            cookingRoutine = null;
+        }
+
+        currentRecipe = null;
+        SetState(CookingState.Idle);
+    }
 }

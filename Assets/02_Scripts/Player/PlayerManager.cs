@@ -51,6 +51,9 @@ public class PlayerManager : Singleton<PlayerManager>
     void Start()
     {
         SelectPlayer(PlayerType.Myungwol);
+        
+        if (DayManager.Instance != null)
+            DayManager.Instance.OnDayEnd += HandleDayEnd;
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -64,6 +67,9 @@ public class PlayerManager : Singleton<PlayerManager>
     {
         base.OnDestroy();
         SceneManager.sceneLoaded -= OnSceneLoaded;
+        
+        if (DayManager.Instance != null)
+            DayManager.Instance.OnDayEnd -= HandleDayEnd;
     }
 
     public void SelectPlayer(PlayerType playerType)
@@ -228,5 +234,12 @@ public class PlayerManager : Singleton<PlayerManager>
             return players[index];
 
         return null;
+    }
+    
+    // 하루가 끝나면 움직이지 않음.
+    private void HandleDayEnd()
+    {
+        ReservedInteractable = null;
+        selectedUnit?.Stop();
     }
 }
