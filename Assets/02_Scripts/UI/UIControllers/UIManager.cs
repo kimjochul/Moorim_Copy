@@ -28,9 +28,8 @@ public class UIManager : Singleton<UIManager>
     
     private bool _isQuestPopupOpen = false;
     private bool _isOrderPopupOpen = false;
-
+    
     private GameObject inventory;
-
     
     public bool IsBookActive => book != null && book.gameObject.activeSelf;  // 혹은 book.IsShowing 같은 프로퍼티
     public bool IsSettingActive => setting != null && setting.gameObject.activeSelf;

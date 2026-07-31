@@ -141,7 +141,9 @@ public abstract class GuestBase : MonoBehaviour
         OnGuestPaid = null;
         OnGuestExited = null;
         OnOrderServed = null;
-        Gate.Instance.OnGateStateChanged -= HandleGateStateChanged;
+        
+        if (Gate.Instance != null) 
+            Gate.Instance.OnGateStateChanged -= HandleGateStateChanged;
 
         recipeUnlockManager = RecipeUnlockManager.Instance;
     }
@@ -366,11 +368,6 @@ public abstract class GuestBase : MonoBehaviour
 
         if (!hasShownPayUI)
         {
-            if (foodQuality == FoodQuality.Good && CurrentMood == GuestMood.Neutral)
-                SetMood(GuestMood.VeryGood);
-            else if (foodQuality == FoodQuality.Fine && CurrentMood == GuestMood.Neutral)
-                SetMood(GuestMood.Good);
-
             OnGuestReadyToPay?.Invoke(this);
             hasShownPayUI = true;
             stateTimer = 0f;
@@ -449,8 +446,7 @@ public abstract class GuestBase : MonoBehaviour
 
         if (myChair != null && myChair.myFoodSpot != null && deliveredFood.foodPrefab != null)
         {
-            currentFoodModel = Instantiate(deliveredFood.foodPrefab, myChair.myFoodSpot.position,
-                myChair.myFoodSpot.rotation);
+            currentFoodModel = Instantiate(deliveredFood.foodPrefab, myChair.myFoodSpot.position, myChair.myFoodSpot.rotation);
             currentFoodModel.transform.SetParent(myChair.myFoodSpot);
         }
 
@@ -459,30 +455,28 @@ public abstract class GuestBase : MonoBehaviour
 
         if (myOrder.orderedFood == deliveredFood && !myOrder.isServed)
         {
+            
             myOrder.isServed = true;
             OnOrderServed?.Invoke(this);
 
             if (quality == FoodQuality.Fine)
-                SetMood(GuestMood.Good);
+                ShiftMood(+1);   
             else if (quality == FoodQuality.Good)
-                SetMood(GuestMood.VeryGood);
+                ShiftMood(+2);   
 
             guestAnim.PlayHandUp();
             ChangeState(GuestState.Eat);
         }
         else
         {
+            ShiftMood(-1);
+            
             if (CurrentMood == GuestMood.VeryBad)
             {
                 TriggerAngryExit(-2);
                 return;
             }
-
-            SetMood(GuestMood.Bad);
-
-            if (quality == FoodQuality.Fine || quality == FoodQuality.Good)
-                SetMood(GuestMood.Neutral);
-
+            
             guestAnim.PlayHandUp();
             ChangeState(GuestState.Eat);
         }
@@ -568,5 +562,12 @@ public abstract class GuestBase : MonoBehaviour
                     return 0f; // 대기 상태가 아니면 게이지 없음
             }
         }
+    }
+    
+    // 기분을 step만큼 변경함
+    protected void ShiftMood(int steps)
+    {
+        int newMood = Mathf.Clamp((int)CurrentMood + steps, (int)GuestMood.VeryBad, (int)GuestMood.VeryGood);
+        SetMood((GuestMood)newMood);
     }
 }

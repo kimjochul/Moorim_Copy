@@ -108,7 +108,8 @@ public class GuestManager : MonoBehaviour
             SeatManager.Instance.OnSeatFreed -= HandleSeatFreed;
         }
         
-        Gate.Instance.OnGateStateChanged -= HandleGateStateChanged;
+        if (Gate.Instance != null)
+            Gate.Instance.OnGateStateChanged -= HandleGateStateChanged;
     }
 
     private void Update()
@@ -278,6 +279,8 @@ public class GuestManager : MonoBehaviour
     // 문이 열리거나 닫혔을 때
     private void HandleGateStateChanged(bool isOpen)
     {
+        Debug.Log($"<color=cyan>GateStateChanged 수신: {isOpen}</color>");
+
         if (isOpen)
         {
             ProcessWaitingQueue();
