@@ -28,6 +28,8 @@ public class StorySettingMenu : MonoBehaviour
         logButton.onClick.AddListener(storyUI.ToggleLogUI);
         autoButton.onClick.AddListener(ToggleAutoPlay);
 
+        settingButton.onClick.AddListener(storyUI.StopAllAutoPlay);
+        
         sceneSkipButton.onClick.AddListener(() =>
         {
             StoryManager.Instance.SkipCurrentScene();

@@ -8,7 +8,9 @@ public enum BondEffectType
     MoneyGainRate,
     CookingSpeed,
     CustomerPatience,
-    MoveSpeed
+    MoveSpeed,
+    RichGuestChance,
+    BadGuestChance
 }
 
 public class BondManager : Singleton<BondManager>, IInitializable
