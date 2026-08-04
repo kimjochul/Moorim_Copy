@@ -15,7 +15,8 @@ public class CookingController : MonoBehaviour
     [SerializeField] private RecipeListView recipeListView;
     [SerializeField] private CookingView cookingView;
     [SerializeField] private CookingIngredientSlotUI IngredientSlotUI;
-
+    [SerializeField] private GameObject orderListPopup;
+    
     // 내가 기억해야 할 데이터
     private CookingModel model = new CookingModel();
     private List<Recipe> runtimeRecipes = new List<Recipe>();
@@ -29,6 +30,7 @@ public class CookingController : MonoBehaviour
     private Vector2 cookingInitPos;
     private Vector2 recipeInitPos;
     private Vector2 commonInvenInitPos;
+    private Vector2 orderListInitPos;
     
     private RecipeUnlockManager recipeUnlockManager;
     private IngredientUnlockManager ingredientUnlockManager;
@@ -55,6 +57,7 @@ public class CookingController : MonoBehaviour
         
         cookingInitPos = cookingView.GetComponent<RectTransform>().anchoredPosition;
         recipeInitPos = recipeListView.GetComponent<RectTransform>().anchoredPosition;
+        orderListInitPos = orderListPopup.GetComponent<RectTransform>().anchoredPosition;
     }
 
     void OnDestroy()
@@ -98,7 +101,7 @@ public class CookingController : MonoBehaviour
     {
         cookingView.GetComponent<RectTransform>().anchoredPosition = cookingInitPos;
         recipeListView.GetComponent<RectTransform>().anchoredPosition = recipeInitPos;
-        
+        orderListPopup.GetComponent<RectTransform>().anchoredPosition = orderListInitPos;
     }
 
     private void InitRuntimeRecipes()
@@ -123,6 +126,7 @@ public class CookingController : MonoBehaviour
         ResetUIPosition();
         cookingView.GetComponent<RectTransform>().DOKill(true);
         recipeListView.GetComponent<RectTransform>().DOKill(true);
+        orderListPopup.GetComponent<RectTransform>().DOKill(true);
         
         mainCookingUICanvas.SetActive(true);
         
@@ -135,8 +139,12 @@ public class CookingController : MonoBehaviour
         // 요리 UI 연출
         RectTransform cookingRect = this.cookingView.GetComponent<RectTransform>();
         RectTransform recipeRect = this.recipeListView.GetComponent<RectTransform>();
+        RectTransform orderListRect = this.orderListPopup.GetComponent<RectTransform>();
 
-        UIAnimationManager.Instance.ShowGroupSlide(cookingRect, recipeRect, cookingInitPos, recipeInitPos,Direction.Right);
+        UIAnimationManager.Instance.ShowGroupSlide(cookingRect, recipeRect, cookingInitPos, recipeInitPos, Direction.Right,
+            onComplete: () => {
+                UIAnimationManager.Instance.ShowSlide(orderListRect, orderListInitPos, Direction.Right, 800f, 0.4f);
+            });
 
         // 인벤토리 애니메이션 연출
 
@@ -162,6 +170,9 @@ public class CookingController : MonoBehaviour
         // 요리 UI 연출
         RectTransform cookingRect = this.cookingView.GetComponent<RectTransform>();
         RectTransform recipeRect = this.recipeListView.GetComponent<RectTransform>();
+        RectTransform orderListRect = this.orderListPopup.GetComponent<RectTransform>();
+
+        UIAnimationManager.Instance.HideSlide(orderListRect, orderListInitPos, Direction.Right, 800f, 0.3f);
 
         UIAnimationManager.Instance.HideGroupSlide(cookingRect, recipeRect, cookingInitPos, recipeInitPos, Direction.Right,
         onComplete: () => {
