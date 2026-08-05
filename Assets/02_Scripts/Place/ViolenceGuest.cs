@@ -10,15 +10,23 @@ public class ViolenceGuest : GuestBase
     public int veryBadDamage = 3000;
     public float damageInterval = 2f; // 돈이 깎이는 주기 (초)
 
+    [Header("난동 UI")]
+    [SerializeField] private Sprite violenceSprite; // 난동 중 말풍선에 띄울 아이콘
+
     public bool isCausingTrouble = false;
     private Coroutine troubleCoroutine;
+
+    private GuestBubbleUI bubble;
     
     public static event Action<ViolenceGuest> OnViolenceStarted;
 
     public override void ResetState()
     {
         base.ResetState();
-        
+
+        if (bubble == null)
+            bubble = GetComponentInChildren<GuestBubbleUI>(true);
+
         isCausingTrouble = false;
         if (troubleCoroutine != null)
         {
@@ -51,6 +59,9 @@ public class ViolenceGuest : GuestBase
             guestAnim.PlayAngry(); // 난동 애니메이션
         }
         
+        if (bubble != null)
+            bubble.SetViolenceBubble(true, violenceSprite);
+
         troubleCoroutine = StartCoroutine(TroubleRoutine(mood));
         
         OnViolenceStarted?.Invoke(this);
@@ -82,6 +93,9 @@ public class ViolenceGuest : GuestBase
             StopCoroutine(troubleCoroutine);
             troubleCoroutine = null;
         }
+
+        if (bubble != null)
+            bubble.SetViolenceBubble(false);
 
         // 제압 후 얌전히 일어나서 나가도록 처리
         isPlayingStandUp = true;

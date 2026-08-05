@@ -34,6 +34,8 @@ public class CookingController : MonoBehaviour
     
     private RecipeUnlockManager recipeUnlockManager;
     private IngredientUnlockManager ingredientUnlockManager;
+    
+    private int openRequestId;
 
     void Awake()
     {
@@ -141,8 +143,15 @@ public class CookingController : MonoBehaviour
         RectTransform recipeRect = this.recipeListView.GetComponent<RectTransform>();
         RectTransform orderListRect = this.orderListPopup.GetComponent<RectTransform>();
 
+        openRequestId++;
+        int requestId = openRequestId;
+
         UIAnimationManager.Instance.ShowGroupSlide(cookingRect, recipeRect, cookingInitPos, recipeInitPos, Direction.Right,
             onComplete: () => {
+                // 이 콜백이 최신 열기 요청의 것이고, 아직 창이 열려 있을 때만 실행
+                if (requestId != openRequestId) return;
+                if (!mainCookingUICanvas.activeSelf) return;
+
                 UIAnimationManager.Instance.ShowSlide(orderListRect, orderListInitPos, Direction.Right, 800f, 0.4f);
             });
 
@@ -161,6 +170,8 @@ public class CookingController : MonoBehaviour
 
     public void CloseCookingSystem(bool returnIngredients = true)
     {
+        openRequestId++;
+        
         if (returnIngredients)
             ReturnIngredientsToInventory();
         

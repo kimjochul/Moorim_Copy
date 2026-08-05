@@ -23,7 +23,7 @@ public class GuestManager : MonoBehaviour
 
     [Header("Spawn Info")]
     private readonly float startSpawnTime = 1f;
-    private readonly float spawnInterval = 80f;
+    private readonly float spawnInterval = 20f;
 
 
     [Header("Watitng Point")]
@@ -59,9 +59,6 @@ public class GuestManager : MonoBehaviour
     {
         DayManager.Instance.OnDayStart += StartSpawn;
         DayManager.Instance.OnDayEnd += StopSpawn;
-        
-        Debug.Log($"<color=yellow>DayManager.Instance.OnDayStart += StartSpawn;");        
-
 
         // 풀 매니저에 프리팹 등록
         foreach (var entry in normalGuestPrefabs)
@@ -130,12 +127,8 @@ public class GuestManager : MonoBehaviour
         if (DayManager.Instance != null && DayManager.Instance.IsPaused)
             return null;
         
-        bool hasChair = SeatManager.Instance.FindEmptyChair() != null;
         bool canEnterDirectly = Gate.Instance.IsOpen && (SeatManager.Instance.FindEmptyChair() != null);
         
-        Debug.Log($"SpawnGuset / Gate:{Gate.Instance.IsOpen} / 빈의자:{hasChair} / 대기:{waitingGuests.Count}/{maxWaitingCount}");
-
-
         if (!canEnterDirectly && waitingGuests.Count >= maxWaitingCount)
         {
             Debug.Log("<color=orange>스폰 스킵: 입장 불가 + 대기열 만석</color>");
@@ -213,6 +206,8 @@ public class GuestManager : MonoBehaviour
     private GuestBase InstantiateAndSetupGuest(GuestAppearance appearance)
     {
         globalIDCounter++; 
+        
+        DailyTestLogger.Instance?.RecordGuestSpawned(appearance);
 
         GameObject guestObj = PoolManager.Instance.Get(appearance.ToString());
         Debug.Log($"풀 Get({appearance}) → {(guestObj != null ? guestObj.name : "<color=red>NULL</color>")}");

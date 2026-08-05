@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 public class OrdersPopupController : PopupController
 {
-    [SerializeField] private Button closeBtn;
     [SerializeField] private GameObject orderPopupPrefab;
     [SerializeField] private Transform contentTransform;
     [SerializeField] private GameObject orderNotificationObj;
@@ -15,8 +14,6 @@ public class OrdersPopupController : PopupController
 
     void Start()
     {
-        closeBtn.onClick.AddListener(OnClickCancelButton);
-        
         if (DayManager.Instance != null) 
             DayManager.Instance.OnDayEnd += ResetOrders;
     }

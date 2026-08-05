@@ -24,11 +24,8 @@ public class PlayerInteractor : MonoBehaviour
         if (interactable != pm.ReservedInteractable)
             return;
 
-        // 모드에 따라 분기
-        if (interactable.Mode == InteractMode.AutoOnEnter)
-            pm.ExecuteInteract(interactable); // 트리거 진입 즉시 자동 상호작용
-        else 
-            pm.ExecuteInteract(interactable); // 첫 클릭으로 이동해서 도착한 경우 → 자동 실행
+        // 모드에 관계없이 ExecuteInteract가 이전 UI를 닫고 새로 연다
+        pm.ExecuteInteract(interactable);
     }
 
     private void OnTriggerExit(Collider other)
@@ -40,12 +37,19 @@ public class PlayerInteractor : MonoBehaviour
 
         PlayerController owner = GetComponentInParent<PlayerController>();
         
-        // PlayerManager pm = PlayerManager.Instance;
+        PlayerManager pm = PlayerManager.Instance;
 
         // AutoOnEnter 모드: 트리거 퇴장 시 자동으로 상호작용 종료
         if (interactable.Mode == InteractMode.AutoOnEnter)
-            interactable.OnInteractEnd(owner);;
-            //interactable.OnInteractEnd(pm.SelectedUnit);;
+        {
+            pm.EndInteract(interactable, owner);
+        }
+        // ClickToInteract(조리대 등)도 멀어지면 닫는다.
+        // 원래는 여기서 안 닫혀서 조리 UI가 남은 채로 배식대 UI가 같이 뜨는 문제가 있었음.
+        else if (pm.CurrentInteracting == interactable)
+        {
+            pm.CloseCurrentInteract();
+        }
  
         // ActiveInteractable 해제
         if (owner.ActiveInteractable == interactable)

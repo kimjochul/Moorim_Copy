@@ -126,6 +126,27 @@ public class GuestBubbleUI : MonoBehaviour
         statusBubble.SetActive(false);
         StopGauge();
     }
+    
+    public void SetViolenceBubble(bool isCausingTrouble, Sprite icon = null)
+    {
+        if (!isCausingTrouble)
+        {
+            HideBubble(statusBubble, statusRect);
+            return;
+        }
+
+        HideBubble(moodBubble, moodRect);
+        StopGauge();
+
+        if (icon == null)
+        {
+            HideBubble(statusBubble, statusRect);
+            return;
+        }
+
+        statusIcon.sprite = icon;
+        ShowBubble(statusBubble, statusRect);
+    }
 
     private Sprite GetMoodSprite(GuestMood mood)
     {
