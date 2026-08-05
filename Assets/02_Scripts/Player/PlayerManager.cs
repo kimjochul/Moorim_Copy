@@ -31,6 +31,11 @@ public class PlayerManager : Singleton<PlayerManager>
         set {if (selectedUnit != null) selectedUnit.ActiveInteractable = value;}
     } // 트리거 진입한 대상 -> 중계용으로 변경
 
+    // ── 동시에 열리는 UI 방지: 지금 UI를 열어둔 대상은 항상 하나 ──
+    private IInteractable currentInteracting;
+    private PlayerController currentInteractingOwner;
+    public IInteractable CurrentInteracting => currentInteracting;
+
     // UI 활성화 중 캐릭터 스왑을 막기 위한 프로퍼티
     public bool BlockSwap { get; set; }
 
@@ -84,7 +89,7 @@ public class PlayerManager : Singleton<PlayerManager>
             if (selectedUnit.ActiveInteractable != null)
             {
                 lastInteractables[CurrentPlayer] = selectedUnit.ActiveInteractable;
-                selectedUnit.ActiveInteractable.OnInteractEnd(selectedUnit);
+                EndInteract(selectedUnit.ActiveInteractable, selectedUnit);
             }
             else
             {
@@ -108,7 +113,7 @@ public class PlayerManager : Singleton<PlayerManager>
                 if (last == selectedUnit.ActiveInteractable
                     && last is MonoBehaviour mb && mb.gameObject.activeInHierarchy)
                 {
-                    last.Interact(selectedUnit);
+                    BeginInteract(last, selectedUnit);
                     resumed = true;
                 }
                 /*
@@ -124,7 +129,7 @@ public class PlayerManager : Singleton<PlayerManager>
         
         // 복귀 시 재개
         if (!resumed && selectedUnit.ActiveInteractable != null && selectedUnit.ActiveInteractable.CanInteract(playerType))
-            selectedUnit.ActiveInteractable.Interact(selectedUnit);
+            BeginInteract(selectedUnit.ActiveInteractable, selectedUnit);
         
         OnPlayerSwapped?.Invoke(playerType);
     }
@@ -204,6 +209,53 @@ public class PlayerManager : Singleton<PlayerManager>
         selectedUnit?.Stop();
     }
 
+    // ── 상호작용 소유권 관리 ──
+    // 트리거/ActiveInteractable에 의존하지 않고 PlayerManager가 직접 "지금 열린 것"을 들고 있는다.
+
+    public void BeginInteract(IInteractable target) => BeginInteract(target, selectedUnit);
+
+    public void BeginInteract(IInteractable target, PlayerController owner)
+    {
+        if (target == null || owner == null) return;
+
+        // 이미 열려 있는 다른 상호작용이 있으면 먼저 닫는다
+        if (currentInteracting != null && currentInteracting != target)
+            CloseCurrentInteract();
+
+        currentInteracting = target;
+        currentInteractingOwner = owner;
+
+        target.Interact(owner);
+    }
+
+    public void EndInteract(IInteractable target, PlayerController owner)
+    {
+        if (target == null) return;
+
+        if (currentInteracting == target)
+        {
+            currentInteracting = null;
+            currentInteractingOwner = null;
+        }
+
+        target.OnInteractEnd(owner);
+    }
+
+    // 현재 열려 있는 상호작용을 닫는다. 연 사람(owner) 기준으로 닫아야
+    // GuestInteractable처럼 PlayerType을 검사하는 쪽이 정상 동작한다.
+    public void CloseCurrentInteract()
+    {
+        if (currentInteracting == null) return;
+
+        var prev = currentInteracting;
+        var prevOwner = currentInteractingOwner != null ? currentInteractingOwner : selectedUnit;
+
+        currentInteracting = null;
+        currentInteractingOwner = null;
+
+        prev.OnInteractEnd(prevOwner);
+    }
+
     // 상호작용 실행
     // 트리거 진입 시 or 트리거 안에서 재클릭 시 호출
     // CanInteract 확인 후 Interact를 직접 호출
@@ -219,8 +271,8 @@ public class PlayerManager : Singleton<PlayerManager>
         // 상호작용 애니메이션 실행
         selectedUnit.ChangeState(PlayerState.Interact);
 
-        // 상호작용 실행
-        target.Interact(selectedUnit);
+        // 상호작용 실행 (이전에 열려 있던 UI는 여기서 닫힘)
+        BeginInteract(target, selectedUnit);
 
         // 예약만 초기화 - ActiveInteractable은 트리거 안에 있는 한 유지
         ReservedInteractable = null;
@@ -239,6 +291,7 @@ public class PlayerManager : Singleton<PlayerManager>
     // 하루가 끝나면 움직이지 않음.
     private void HandleDayEnd()
     {
+        CloseCurrentInteract();
         ReservedInteractable = null;
         selectedUnit?.Stop();
     }

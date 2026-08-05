@@ -225,8 +225,8 @@ public class EconomyManager : Singleton<EconomyManager>, IInitializable
     
     public void ResetData()
     {
-        RestaurantEconomy.Money = 100000;
-        RestaurantEconomy.Fame = 300;
+        RestaurantEconomy.Money = 10000;
+        RestaurantEconomy.Fame = 0;
         RestaurantEconomy.Debt = 100000; // 기본값
 
         _todayMoneyIncome = 0; 

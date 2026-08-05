@@ -53,6 +53,7 @@ public abstract class GuestBase : MonoBehaviour
     protected bool isPlayingStandUp = false;
     private bool hasShownPayUI = false;
     private bool hasProcessedPayment = false;
+    private bool hasNotifiedExit = false;
 
     // 음식 모델
     private GameObject currentFoodModel;
@@ -109,6 +110,7 @@ public abstract class GuestBase : MonoBehaviour
         isPlayingStandUp = false;
         hasShownPayUI = false;
         hasProcessedPayment = false;
+        hasNotifiedExit = false;
 
         // 타이머 & 상태값
         stateTimer = 0f;
@@ -396,15 +398,7 @@ public abstract class GuestBase : MonoBehaviour
 
         if (stateTimer >= payWaitTime && !hasProcessedPayment)
         {
-            hasProcessedPayment = true;
-
-            int basePrice = (myOrder != null && myOrder.orderedFood != null)
-                ? myOrder.orderedFood.price
-                : 0;
-            var result = GuestRewardCalculator.Calculate(basePrice, CurrentMood, rewardData);
-            SendReward(result);
-
-            OnGuestPaid?.Invoke();
+            ProcessPayment();
 
             if (currentFoodModel != null)
             {
@@ -417,11 +411,55 @@ public abstract class GuestBase : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 음식값 + 명성 지급. 한 손님당 한 번만 실행된다.
+    /// </summary>
+    private void ProcessPayment()
+    {
+        if (hasProcessedPayment) return;
+
+        hasProcessedPayment = true;
+
+        int basePrice = (myOrder != null && myOrder.orderedFood != null)
+            ? myOrder.orderedFood.price
+            : 0;
+
+        var result = GuestRewardCalculator.Calculate(basePrice, CurrentMood, rewardData);
+        SendReward(result);
+
+        OnGuestPaid?.Invoke();
+    }
+
+    /// <summary>
+    /// 영업 종료 등으로 강제 퇴장할 때, 이미 음식을 받은 손님(Eat/Pay)에게는 값을 받아낸다.
+    /// 주문 대기(WaitOrder), 음식 대기(WaitFood) 손님은 음식을 못 받았으므로 대상이 아니다.
+    /// </summary>
+    public bool TrySettlePendingPayment()
+    {
+        if (hasProcessedPayment) return false;
+        if (isAngryExiting) return false;
+
+        if (currentState != GuestState.Eat && currentState != GuestState.Pay)
+            return false;
+
+        ProcessPayment();
+        return true;
+    }
+
+    // OnGuestExited는 손님당 한 번만 (기분 집계 중복 방지)
+    private void NotifyExitedOnce()
+    {
+        if (hasNotifiedExit) return;
+
+        hasNotifiedExit = true;
+        OnGuestExited?.Invoke();
+    }
+
     protected virtual void HandleExitState()
     {
         if (!isExitPathSet)
         {
-            OnGuestExited?.Invoke();
+            NotifyExitedOnce();
 
             if (myChair != null)
             {
@@ -532,6 +570,18 @@ public abstract class GuestBase : MonoBehaviour
     {
         if (!gameObject.activeSelf)
             return;
+
+        // 먹고 있던 손님은 값을 치르고 나간다
+        TrySettlePendingPayment();
+
+        // 기분 집계에도 반영 (이게 없으면 마감 시 남아있던 손님이 통계에서 누락됨)
+        NotifyExitedOnce();
+
+        if (currentFoodModel != null)
+        {
+            Destroy(currentFoodModel);
+            currentFoodModel = null;
+        }
 
         if (myChair != null)
         {

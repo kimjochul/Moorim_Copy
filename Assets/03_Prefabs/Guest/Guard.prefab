@@ -240,6 +240,7 @@ MonoBehaviour:
   statusRect: {fileID: 6205140398200481181}
   moodIcon: {fileID: 5337879156318498058}
   statusIcon: {fileID: 6963037345009642134}
+  statusFill: {fileID: 0}
   veryBadSprite: {fileID: -1026134251, guid: 43e924b4cb29faf49b0036b867f8643d, type: 3}
   badSprite: {fileID: -511717653, guid: 43e924b4cb29faf49b0036b867f8643d, type: 3}
   neutralSprite: {fileID: -968364465, guid: 43e924b4cb29faf49b0036b867f8643d, type: 3}
@@ -954,7 +955,7 @@ PrefabInstance:
     - target: {fileID: 5866666021909216657, guid: 37456966543d2b840b35815d2b2c5af0, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: b7b0d454a6f3cdd40bd06d0680d8be96, type: 2}
+      objectReference: {fileID: 9100000, guid: 4c5a193ef34b0f64da68e18434b382a1, type: 2}
     - target: {fileID: 5866666021909216657, guid: 37456966543d2b840b35815d2b2c5af0, type: 3}
       propertyPath: m_ApplyRootMotion
       value: 0
@@ -967,14 +968,14 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 37456966543d2b840b35815d2b2c5af0, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 107869703210032285}
+      addedObject: {fileID: 5984750781070449640}
   m_SourcePrefab: {fileID: 100100000, guid: 37456966543d2b840b35815d2b2c5af0, type: 3}
 --- !u!1 &2589819455125173981 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 37456966543d2b840b35815d2b2c5af0, type: 3}
   m_PrefabInstance: {fileID: 3400651765025901452}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &107869703210032285
+--- !u!114 &5984750781070449640
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -983,9 +984,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 2589819455125173981}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0051f7ddc14d12c438a94be1adad0620, type: 3}
+  m_Script: {fileID: 11500000, guid: 850cffe46fcbf624596a462bf9d0565d, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GuestAnimation
+  m_EditorClassIdentifier: Assembly-CSharp::GuardAnimation
+  guard: {fileID: 0}
 --- !u!4 &2934996474197568615 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 37456966543d2b840b35815d2b2c5af0, type: 3}

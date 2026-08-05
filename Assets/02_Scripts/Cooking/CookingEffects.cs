@@ -90,6 +90,7 @@ public class CookingEffects : MonoBehaviour
                 break;
  
             case CookingState.Idle:
+                vfxPrefabs.SetActive(false);
                 PlayAnimation(IDLE_TRIGGER);
                 StopLoopSound();
                 HideBubble();

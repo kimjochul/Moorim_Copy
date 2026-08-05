@@ -162,7 +162,7 @@ public class PlayerInput : MonoBehaviour
         
         if (interactable.Mode == InteractMode.Immediate)
         {
-            interactable.Interact(PlayerManager.Instance.SelectedUnit);
+            PlayerManager.Instance.BeginInteract(interactable);
             return;
         }
         
