@@ -105,7 +105,6 @@ public class DayManager : Singleton<DayManager>
         }
         
         OnDateChanged?.Invoke();
-        SaveManager.Instance.SaveGame(0, SaveSlotType.Auto);
         
         foreach (var npc in NPCs)
         {
@@ -113,6 +112,9 @@ public class DayManager : Singleton<DayManager>
         }
         
         OnDayStart?.Invoke();
+        
+        SaveManager.Instance.SaveDayStartCheckpoint();
+        SaveManager.Instance.SaveGame(0, SaveSlotType.Auto);
     }
     
     private void LoadDayStart()
@@ -124,12 +126,15 @@ public class DayManager : Singleton<DayManager>
         IsRunning = true;
         isPaused = false;
 
+        _timer = 0f;
+        
         _prevHour = -1;
         _prevMinute = -1;
 
         _isBusinessOver = false;
         
         OnDateChanged?.Invoke();
+        OnTimeChanged?.Invoke((int)gameStartHour, 0);
         OnDayStart?.Invoke();
     }
 

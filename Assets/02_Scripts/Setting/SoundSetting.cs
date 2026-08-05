@@ -92,6 +92,9 @@ public class SoundSetting : MonoBehaviour
 
         if (StoryManager.Instance != null && StoryManager.Instance.IsRecallPlaying)
             return;
+        
+        if (StoryManager.Instance != null && StoryManager.Instance.IsPlaying)
+            return;
 
         string selectedBgmName = this.bgmDropdown.options[index].text;
 

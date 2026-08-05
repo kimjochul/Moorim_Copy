@@ -78,6 +78,7 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
     private StoryPlayMode playMode = StoryPlayMode.Normal;
 
     private bool isPlaying;
+    public bool IsPlaying => isPlaying && playMode == StoryPlayMode.Normal;
     private bool isTransitioning;
     private bool isInputLocked;
     public bool IsInputLocked => isInputLocked;
