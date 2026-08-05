@@ -1,7 +1,6 @@
 using System.IO;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class SaveSlotUI : MonoBehaviour
@@ -34,10 +33,30 @@ public class SaveSlotUI : MonoBehaviour
 
     private void OnClick()
     {
-        string path = GetPath();
+        string path = slotType == SaveSlotType.Auto ? GetSavePath() : GetManualPath();
 
+        if(slotType == SaveSlotType.Manual && currentMode == SaveLoadMode.Save && !SaveManager.Instance.CanManualSave())
+        {
+            UIManager.Instance.CreateOkPopup(
+                "오늘 영업을 시작한 이후에만 저장할 수 있습니다.",
+                ()=>{},
+                ()=>{},
+                false);
+
+            return;
+        }
+        
         if (currentMode == SaveLoadMode.Save)
         {
+            if (slotIndex == 0)
+            {
+                UIManager.Instance.CreateOkPopup(
+                    "자동 저장 파일에는 저장하실 수 없습니다.",
+                    () => { }, () => {},false
+                );
+                return;
+            }
+            
             if (File.Exists(path))
             {
                 UIManager.Instance.CreateOkPopup(
@@ -70,7 +89,19 @@ public class SaveSlotUI : MonoBehaviour
 
     public void Refresh()
     {
-        string path = GetPath();
+        if (slotType == SaveSlotType.Auto)
+        {
+            RefreshAuto();
+        }
+        else
+        {
+            RefreshManual();
+        }
+    }
+
+    private void RefreshAuto()
+    {
+        string path = GetSavePath();
 
         if (!File.Exists(path))
         {
@@ -78,10 +109,15 @@ public class SaveSlotUI : MonoBehaviour
             return;
         }
 
-        string json = File.ReadAllText(path);
-        SaveData data = JsonUtility.FromJson<SaveData>(json);
+        SaveData data = JsonUtility.FromJson<SaveData>(File.ReadAllText(path));
 
-        string stateText = data.day.flowState switch
+        if(data == null || data.day == null)
+        {
+            infoText.text = "비정상 저장 파일";
+            return;
+        }
+        
+        string state = data.day.flowState switch
         {
             GameFlowState.Gameplay => "영업 중",
             GameFlowState.Receipt => "영업 종료",
@@ -90,15 +126,46 @@ public class SaveSlotUI : MonoBehaviour
             _ => ""
         };
 
-        infoText.text = $"{data.day.day}일차 {data.day.hour:00}:{data.day.minute:00} ({stateText})";
+        infoText.text = $"{data.day.day}일차 ({state})";
+    }
+    
+    private void RefreshManual()
+    {
+        string path = GetManualPath();
+
+        if (!File.Exists(path))
+        {
+            infoText.text = "비어 있음";
+            return;
+        }
+
+        ManualSaveData data = JsonUtility.FromJson<ManualSaveData>(File.ReadAllText(path));
+
+        if(data == null || data.meta == null)
+        {
+            infoText.text = "비정상 저장 파일";
+            return;
+        }
+        
+        string state = data.meta.flowState switch
+        {
+            GameFlowState.Gameplay => "영업 중",
+            GameFlowState.Receipt => "영업 종료",
+            GameFlowState.Story => "스토리",
+            GameFlowState.NPC => "NPC",
+            _ => ""
+        };
+
+        infoText.text = $"{data.meta.day}일차 ({state})\n{data.meta.saveTime}";
+    }
+    
+    private string GetSavePath()
+    {
+        return Path.Combine(Application.persistentDataPath, "auto_save.json");
     }
 
-    private string GetPath()
+    private string GetManualPath()
     {
-        string fileName = slotType == SaveSlotType.Auto
-            ? "auto_save.json"
-            : $"save_{slotIndex}.json";
-
-        return Path.Combine(Application.persistentDataPath, fileName);
+        return Path.Combine(Application.persistentDataPath, $"save_{slotIndex}.json");
     }
 }

@@ -24,50 +24,34 @@ public class SaveLoadUI : MonoBehaviour
         closeButton.onClick.AddListener(Close);
     }
     
-    public void OpenSaveUI(bool isShow)
+    private void OpenUI(bool show, SaveLoadMode mode)
     {
-        if (isShow)
-        {
-            gameObject.SetActive(true);
-            
-            _currentMode = SaveLoadMode.Save;
-            screenImage.sprite = saveScreen;
-            
-            // 1번 = 자동
-            slots[0].Init(0, SaveSlotType.Auto, SaveLoadMode.Save);
+        gameObject.SetActive(show);
 
-            // 2~4번 = 수동
-            for (int i = 1; i < slots.Length; i++)
-            {
-                slots[i].Init(i, SaveSlotType.Manual, SaveLoadMode.Save);
-            }
-        }
-        else
+        if(!show)
+            return;
+
+        _currentMode = mode;
+
+        screenImage.sprite = mode == SaveLoadMode.Save ? saveScreen : loadScreen;
+
+        slots[0].Init(0, SaveSlotType.Auto, mode);
+
+        for(int i = 1; i < slots.Length; i++)
         {
-            gameObject.SetActive(false);
+            slots[i].Init(i, SaveSlotType.Manual, mode);
         }
     }
+    
+    public void OpenSaveUI(bool isShow)
+    {
+        OpenUI(isShow, SaveLoadMode.Save);
+    }
+
 
     public void OpenLoadUI(bool isShow)
     {
-        if (isShow)
-        {
-            gameObject.SetActive(true);
-
-            _currentMode = SaveLoadMode.Load;
-            screenImage.sprite = loadScreen;
-            
-            slots[0].Init(0, SaveSlotType.Auto, SaveLoadMode.Load);
-
-            for (int i = 1; i < slots.Length; i++)
-            {
-                slots[i].Init(i, SaveSlotType.Manual, SaveLoadMode.Load);
-            }
-        }
-        else
-        {
-            gameObject.SetActive(false);
-        }
+        OpenUI(isShow, SaveLoadMode.Load);
     }
 
     private void Close()

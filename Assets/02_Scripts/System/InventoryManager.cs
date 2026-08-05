@@ -188,6 +188,7 @@ public class InventoryManager : Singleton<InventoryManager>, IInitializable
             return;
         }
         UIManager.Instance.CloseInventoryPopup(inventory);
+        SlotItemInfoUI.Instance?.Hide();
         
         if (currentOpenedInventory == inventory)
             currentOpenedInventory = null;

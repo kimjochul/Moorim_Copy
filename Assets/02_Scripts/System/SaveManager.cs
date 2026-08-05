@@ -22,6 +22,19 @@ public class SaveData
     public UpgradeSaveData upgrade;
 }
 
+[Serializable]
+public class ManualSaveData
+{
+    // 이어하기용
+    public SaveData current;
+
+    // 오늘 시작으로 되돌리기용
+    public SaveData checkpoint;
+
+    // UI 표시용
+    public SaveMetaData meta;
+}
+
 public enum SaveSlotType
 {
     Auto,
@@ -34,6 +47,7 @@ public class SaveMetaData
     public int hour;
     public int minute;
     public string saveTime; // 실제 시간
+    public GameFlowState flowState;
 }
 
 public class SaveManager : Singleton<SaveManager>
@@ -78,21 +92,65 @@ public class SaveManager : Singleton<SaveManager>
             return;
         }
         
+        if(type == SaveSlotType.Manual)
+        {
+            SaveManual(slotIndex);
+            return;
+        }
+        
         string path = GetSavePath(slotIndex, type);
-
+        
         SaveData data = CreateSaveData();
         string json = JsonUtility.ToJson(data, true);
-        
-        SaveMetaData meta = new SaveMetaData
-        {
-            day = data.day.day,
-            hour = data.day.hour,
-            minute = data.day.minute,
-            saveTime = DateTime.Now.ToString()
-        };
         File.WriteAllText(path, json);
         
         Debug.Log($"저장 완료: {path}");
+    }
+    
+    private void SaveManual(int slot)
+    {
+        ManualSaveData manual = new();
+
+        // 현재 상태
+        manual.current = CreateSaveData();
+
+        // DayStart 체크포인트
+        string checkpointPath = GetDayStartCheckpointPath();
+
+        if (!File.Exists(checkpointPath))
+        {
+            Debug.LogError("DayStart 체크포인트 없음");
+            return;
+        }
+
+        manual.checkpoint = JsonUtility.FromJson<SaveData>(File.ReadAllText(checkpointPath));
+        
+        manual.meta = new SaveMetaData()
+        {
+            day = manual.current.day.day,
+            hour = manual.current.day.hour,
+            minute = manual.current.day.minute,
+            saveTime = DateTime.Now.ToString(),
+            flowState = manual.current.day.flowState,
+        };
+        
+        File.WriteAllText(GetManualPath(slot), JsonUtility.ToJson(manual, true));
+        Debug.Log($"수동 저장 완료 : 슬롯 {slot}");
+        
+        // 만약 슬롯 삭제 기능 넣을 거면 두 개 호출 필수
+        // File.Delete(GetCheckpointPath(slot));
+        // File.Delete(GetMetaPath(slot));
+    }
+    
+    public void SaveDayStartCheckpoint()
+    {
+        SaveData data = CreateSaveData();
+
+        string json = JsonUtility.ToJson(data, true);
+
+        File.WriteAllText(GetDayStartCheckpointPath(), json);
+
+        Debug.Log("DayStart 체크포인트 저장");
     }
     
     private string GetSavePath(int slotIndex, SaveSlotType type)
@@ -103,7 +161,19 @@ public class SaveManager : Singleton<SaveManager>
 
         return Path.Combine(Application.persistentDataPath, fileName);
     }
+    
+    private string GetManualPath(int slot)
+    {
+        return Path.Combine(Application.persistentDataPath, $"save_{slot}.json");
+    }
 
+    private string GetDayStartCheckpointPath()
+    {
+        return Path.Combine(
+            Application.persistentDataPath,
+            "daystart_checkpoint.json");
+    }
+    
     // ------------------------
     // 불러오기
     // ------------------------
@@ -118,6 +188,35 @@ public class SaveManager : Singleton<SaveManager>
         SceneLoader.Instance.LoadScene("01_Scenes/03.Game", () =>
         {
             InitAll();
+            
+            if(type == SaveSlotType.Manual)
+            {
+                ManualSaveData manual = JsonUtility.FromJson<ManualSaveData>(File.ReadAllText(GetManualPath(slotIndex)));
+
+                if(!File.Exists(GetManualPath(slotIndex)))
+                    return;
+                
+                if(manual == null)
+                    return;
+                
+                SaveData loadData = null;
+
+                if(manual.current.day.flowState == GameFlowState.Gameplay)
+                {
+                    loadData = manual.checkpoint;
+                }
+                else
+                {
+                    loadData = manual.current;
+                }
+
+                ApplySaveData(loadData);
+                GameManager.Instance.ResetFlow();
+                UIManager.Instance.CloseAllUI();
+                ApplyFlowState(loadData.day.flowState);
+
+                return;
+            }
             
             string path = GetSavePath(loadSlotIndex, loadType);
 
@@ -135,27 +234,8 @@ public class SaveManager : Singleton<SaveManager>
                 
                 GameManager.Instance.ResetFlow();
                 UIManager.Instance.CloseAllUI();
-           
-                switch(data.day.flowState)
-                {
-                    case GameFlowState.Gameplay:
-                        DayManager.Instance.RemoteDayStart(true);
-                        break;
 
-                    case GameFlowState.Receipt:
-                        DayManager.Instance.RefreshUI();
-                        GameManager.Instance.SetState(GameFlowState.Gameplay);
-                        GameManager.Instance.CompleteState(GameFlowState.Gameplay);
-                        break;
-
-                    case GameFlowState.Story:
-                        // Story부터 시작
-                        break;
-
-                    case GameFlowState.NPC:
-                        GameManager.Instance.EnterState(GameFlowState.NPC);
-                        break;
-                }
+                ApplyFlowState(data.day.flowState);
             }
         });
     }
@@ -207,6 +287,30 @@ public class SaveManager : Singleton<SaveManager>
         QuestManager.Instance.Init();
         BondManager.Instance.Init();
         UpgradeManager.Instance.Init();
+    }
+    
+    private void ApplyFlowState(GameFlowState flowState)
+    {
+        switch(flowState)
+        {
+            case GameFlowState.Gameplay:
+                DayManager.Instance.RemoteDayStart(true);
+                break;
+
+            case GameFlowState.Receipt:
+                DayManager.Instance.RefreshUI();
+                GameManager.Instance.SetState(GameFlowState.Gameplay);
+                GameManager.Instance.CompleteState(GameFlowState.Gameplay);
+                break;
+
+            case GameFlowState.Story:
+                // Story 복구
+                break;
+
+            case GameFlowState.NPC:
+                GameManager.Instance.EnterState(GameFlowState.NPC);
+                break;
+        }
     }
     
     // ------------------------
@@ -304,6 +408,11 @@ public class SaveManager : Singleton<SaveManager>
         QuestManager.Instance.ResetData();
         BondManager.Instance.ResetData();
         UpgradeManager.Instance.ResetData();
+    }
+    
+    public bool CanManualSave()
+    {
+        return File.Exists(GetDayStartCheckpointPath());
     }
     
     public void SaveAndQuit()
