@@ -35,6 +35,9 @@ public class StoryLine
     public bool resetDisplayName;
     public List<FlipCommand> flips;
     
+    [Tooltip("이 대사 진행 시 해당 캐릭터 슬롯을 가장 앞으로 가져옵니다.")]
+    public bool bringCharacterToFront;
+    
     [Header("현재 화자 외에 추가 표정 변경")]
     public List<ExpressionChange> extraExpressions;
     

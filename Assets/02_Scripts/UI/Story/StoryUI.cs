@@ -227,6 +227,11 @@ public class StoryUI : MonoBehaviour
         
         ApplyLineUI(line);
         
+        if (line.bringCharacterToFront)
+        {
+            StoryManager.Instance.CharacterUI.BringCharacterToFront(line.characterID);
+        }
+        
         if (!line.hideFromLog)
         {
             history.Add(line);
