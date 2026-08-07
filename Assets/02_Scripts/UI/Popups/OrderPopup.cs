@@ -9,13 +9,8 @@ public class OrderPopup : MonoBehaviour
     [SerializeField] private Image foodIcon;
     [SerializeField] private TMP_Text foodNameText;
     
-    private GuestBase guest;
-    public GuestBase Gest => guest;
-
-    public void Init(GuestBase _guest, GuestOrderData order)
+    public void Init(GuestOrderData order)
     {
-        guest = _guest;
-
         if (order.orderedFood != null)
         {
             foodIcon.sprite = order.orderedFood.icon;

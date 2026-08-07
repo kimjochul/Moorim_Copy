@@ -21,18 +21,12 @@ public class ThiefGuyGuest : GuestBase
 
     private NavMeshAgent agent;
 
-    void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         agent = GetComponent<NavMeshAgent>();
     }
-
-    public override void Init(int id, GuestAppearance appearance, Transform exit, GuestManager manager)
-    {
-        SetBaseWaitTime(orderMinWaitLimit, 40f, foodMinWaitLimit, foodMidWaitLimit, 120f);
-
-        base.Init(id, appearance, exit, manager);
-    }
-
+    
     public override void ResetState()
     {
         base.ResetState();

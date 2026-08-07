@@ -50,6 +50,9 @@ public class NPCQuestDetailPanel : MonoBehaviour
     
     private void RefreshAll()
     {
+        if (currentQuest == null)
+            return;
+        
         RefreshConditions();
         SetupButton();
     }
@@ -140,6 +143,9 @@ public class NPCQuestDetailPanel : MonoBehaviour
 
     public void Clear()
     {
+        if (currentQuest != null)
+            SubscribeConditions(false);
+        
         currentQuest = null;
 
         foreach (Transform child in conditionContent)

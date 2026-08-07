@@ -8,7 +8,7 @@ public class RichManGuest : GuestBase
 
     public override void Init(int id, GuestAppearance appearance, Transform exit, GuestManager manager)
     {
-        SetBaseWaitTime(10f, 15f, 30f, 37f, 45f);
+        SetBaseWaitTime(10f, 15f, 30f, 45f);
 
         base.Init(id, appearance, exit, manager);
 

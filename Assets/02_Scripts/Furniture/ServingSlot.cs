@@ -103,8 +103,15 @@ public class ServingSlot : MonoBehaviour, IInteractable
     /// <param name="foodData"></param>
     public void PlaceFood(Inventory sourceInven, Slot sourceSlot)
     {
-        SetFreshness(sourceSlot.Item);
         Slot targetSlot = sourceInven.TryMoveToInventory(inventory, sourceSlot, sourceSlot.Count);
+        
+        if (targetSlot == null)
+        {
+            Debug.Log("배식대에 자리가 없어 음식을 놓지 못함");
+            return;
+        }
+        
+        SetFreshness(sourceSlot.Item);
         OnItemAddedToServing(targetSlot);
     }
     
@@ -139,6 +146,9 @@ public class ServingSlot : MonoBehaviour, IInteractable
     
     private void OnItemAddedToServing(Slot slot)
     {
+        if (slot == null || slot.Item == null)
+            return;
+        
         // 기존 음식 제거 (중복 방지)
         if (objFoodPrefab != null)
         {
