@@ -53,17 +53,19 @@ public class ViolenceGuest : GuestBase
     private void StartTrouble(GuestMood mood)
     {
         isCausingTrouble = true;
-        
+    
         if (guestAnim != null)
         {
             guestAnim.PlayAngry(); // 난동 애니메이션
         }
-        
+    
         if (bubble != null)
             bubble.SetViolenceBubble(true, violenceSprite);
 
+        InvokeOrderServed();   // 난동 시작하면 주문표에서 제거
+
         troubleCoroutine = StartCoroutine(TroubleRoutine(mood));
-        
+    
         OnViolenceStarted?.Invoke(this);
     }
 

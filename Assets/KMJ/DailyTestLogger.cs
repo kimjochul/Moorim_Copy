@@ -33,20 +33,33 @@ public class GuestMoodLog
 }
 
 [Serializable]
+public class UpgradeLog
+{
+    public string upgradeType;  // UpgradeType 이름
+    public int level;           // 업그레이드 후 레벨
+}
+
+[Serializable]
 public class DailyTestLog
 {
     public int day;                 // 1일차, 10일차 ...
     public string dayOfWeek;
 
+    public int startMoney;          // 하루 시작 시점 보유 돈
+    public int endMoney;            // 하루 종료 시점 보유 돈
     public int moneyIncome;         // 그날 얻은 돈 (수입)
     public int ingredientCost;      // 사용한 재료의 가격 합계
     public int netIncome;           // 수입 - 재료비
+
+    public int startFame;           // 하루 시작 시점 명성 (그날 손님 스폰 주기를 결정)
+    public int endFame;             // 하루 종료 시점 명성
     public int fameIncome;          // 그날 얻은 명성
 
     public int servedGuestCount;    // 결제까지 끝낸 손님 수
     public int enteredGuestCount;   // 스폰된 손님 총 수
     public int recordedGuestCount;  // 기분이 집계된 손님 수 (퇴장 처리된 손님)
 
+    public List<UpgradeLog> upgrades = new();
     public List<GuestTypeLog> guestTypes = new();
     public List<GuestMoodLog> guestMoods = new();
     public List<UsedIngredientLog> usedIngredients = new();
@@ -100,6 +113,13 @@ public class DailyTestLogger : MonoBehaviour
     private readonly Dictionary<string, int> guestTypeCounts = new();
     private readonly Dictionary<GuestMood, int> moodCounts = new();
 
+    // 그날 진행한 업그레이드
+    private readonly List<UpgradeLog> todayUpgrades = new();
+
+    // 하루 시작 시점의 돈 / 명성
+    private int startMoney;
+    private int startFame;
+
     // 아이템 정보 캐시 (매번 리플렉션 안 하도록)
     private readonly Dictionary<int, ItemInfo> itemInfoCache = new();
 
@@ -127,6 +147,9 @@ public class DailyTestLogger : MonoBehaviour
 
         DayManager.Instance.OnDayStart += HandleDayStart;
         DayManager.Instance.OnDayEnd += HandleDayEnd;
+
+        if (UpgradeManager.Instance != null)
+            UpgradeManager.Instance.SelectedOptionUpgraded += HandleUpgraded;
     }
 
     private void OnDisable()
@@ -136,6 +159,9 @@ public class DailyTestLogger : MonoBehaviour
             DayManager.Instance.OnDayStart -= HandleDayStart;
             DayManager.Instance.OnDayEnd -= HandleDayEnd;
         }
+
+        if (UpgradeManager.Instance != null)
+            UpgradeManager.Instance.SelectedOptionUpgraded -= HandleUpgraded;
 
         UnbindTracker();
     }
@@ -244,6 +270,28 @@ public class DailyTestLogger : MonoBehaviour
 
     #endregion
 
+    #region 업그레이드 기록
+
+    /// <summary>
+    /// UpgradeManager.SelectedOptionUpgraded 구독.
+    /// 세이브 로드 시 ApplyLoadedUpgrades()도 이 이벤트를 발행하지만,
+    /// 로드는 DayStart보다 먼저 처리되고 DayStart에서 리스트를 비우므로 섞이지 않는다.
+    /// </summary>
+    private void HandleUpgraded(UpgradeType type)
+    {
+        int level = UpgradeManager.Instance != null
+            ? UpgradeManager.Instance.GetLevel(type)
+            : 0;
+
+        todayUpgrades.Add(new UpgradeLog
+        {
+            upgradeType = type.ToString(),
+            level = level
+        });
+    }
+
+    #endregion
+
     #region DayManager 이벤트 핸들러
 
     private void HandleDayStart()
@@ -254,6 +302,15 @@ public class DailyTestLogger : MonoBehaviour
         guestTypeCounts.Clear();
         moodCounts.Clear();
         startSnapshot.Clear();
+        todayUpgrades.Clear();
+
+        // 하루 시작 시점의 돈 / 명성
+        // (명성은 그날 손님 스폰 주기를 결정하는 값이라 따로 남긴다)
+        if (EconomyManager.Instance != null && EconomyManager.Instance.RestaurantEconomy != null)
+        {
+            startMoney = EconomyManager.Instance.RestaurantEconomy.Money;
+            startFame = EconomyManager.Instance.RestaurantEconomy.Fame;
+        }
 
         if (!useInventoryDiff)
             return;
@@ -309,13 +366,26 @@ public class DailyTestLogger : MonoBehaviour
             log.dayOfWeek = DayManager.Instance.DayData.dayOfWeek.ToString();
         }
 
+        // 하루 시작 시점 값 (HandleDayStart에서 저장해둔 것)
+        log.startMoney = startMoney;
+        log.startFame = startFame;
+
         // 돈 / 명성 / 응대 손님 수
         if (EconomyManager.Instance != null)
         {
             log.moneyIncome = EconomyManager.Instance.TodayMoneyIncome;
             log.fameIncome = EconomyManager.Instance.TodayFameIncome;
             log.servedGuestCount = EconomyManager.Instance.TodayCustomerCount;
+
+            if (EconomyManager.Instance.RestaurantEconomy != null)
+            {
+                log.endMoney = EconomyManager.Instance.RestaurantEconomy.Money;
+                log.endFame = EconomyManager.Instance.RestaurantEconomy.Fame;
+            }
         }
+
+        // 그날 진행한 업그레이드
+        log.upgrades.AddRange(todayUpgrades);
 
         // 손님 유형
         var typeKeys = new List<string>(guestTypeCounts.Keys);
@@ -524,12 +594,26 @@ public class DailyTestLogger : MonoBehaviour
     {
         var sb = new StringBuilder();
 
+        // 시작 + 수입 - 종료 = 그날 쓴 돈 (상점 구매, 업그레이드 등)
+        int spent = log.startMoney + log.moneyIncome - log.endMoney;
+
         sb.AppendLine("========================================");
         sb.AppendLine($"{log.day}일차 ({log.dayOfWeek})   [{log.savedAt}]");
-        sb.AppendLine($"수입    : {log.moneyIncome:N0}");
-        sb.AppendLine($"명성    : {log.fameIncome:N0}");
+        sb.AppendLine($"돈   : {log.startMoney:N0} → {log.endMoney:N0}   (수입 +{log.moneyIncome:N0} / 지출 -{spent:N0})");
+        sb.AppendLine($"명성 : {log.startFame:N0} → {log.endFame:N0}   (획득 +{log.fameIncome:N0})");
         sb.AppendLine($"결제한 손님 : {log.servedGuestCount}");
         sb.AppendLine($"들어온 손님 : {log.enteredGuestCount}");
+
+        sb.AppendLine("업그레이드:");
+        if (log.upgrades.Count == 0)
+        {
+            sb.AppendLine("  (없음)");
+        }
+        else
+        {
+            foreach (var up in log.upgrades)
+                sb.AppendLine($"  - {up.upgradeType} → Lv.{up.level}");
+        }
 
         sb.AppendLine("손님 유형:");
         if (log.guestTypes.Count == 0)
