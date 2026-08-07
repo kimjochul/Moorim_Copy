@@ -39,9 +39,16 @@ public class BadGuest : GuestBase
         int safetyCount = 0;
         while (newRecipe == oldRecipe && safetyCount < 10)
         {
-            newRecipe = recipeUnlockManager.RandomUnlockedRecipe();
+            var candidate = recipeUnlockManager.RandomUnlockedRecipe();
+            
+            if (candidate != null)
+                newRecipe = candidate;
+            
             safetyCount++;
         }
+        
+        if (newRecipe == null || newRecipe == oldRecipe)
+            return;
 
         // 3. 주문서 데이터 업데이트
         myOrder.recipe = newRecipe;

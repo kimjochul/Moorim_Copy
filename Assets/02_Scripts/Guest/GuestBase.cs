@@ -5,21 +5,18 @@ using static Constants;
 // 부모 클래스
 public abstract class GuestBase : MonoBehaviour
 {
-    [Header("기본 대기 시간 (자식들이 변경 가능)")] [SerializeField]
+    [Header("기본 대기 시간 (자식들이 변경 가능)")] 
     protected float orderMinWaitLimit = 15f;
-
-    [SerializeField] protected float orderMaxWaitLimit = 20f;
-    [SerializeField] protected float foodMinWaitLimit = 30f;
-    [SerializeField] protected float foodMidWaitLimit = 60f;
-    [SerializeField] protected float foodMaxWaitLimit = 90f;
-    [SerializeField] protected float foodEatLimit = 15f;
-    [SerializeField] protected float menuChooseTime = 3f;
-    [SerializeField] protected float payWaitTime = 3f;
+    protected float orderMaxWaitLimit = 20f;
+    protected float foodMinWaitLimit = 60f;
+    protected float foodMaxWaitLimit = 90f;
+    protected float foodEatLimit = 15f;
+    protected float menuChooseTime = 3f;
+    protected float payWaitTime = 3f;
 
     protected float baseOrderMinWaitLimit;
     protected float baseOrderMaxWaitLimit;
     protected float baseFoodMinWaitLimit;
-    protected float baseFoodMidWaitLimit;
     protected float baseFoodMaxWaitLimit;
     
     [Header("데이터 연결")] [SerializeField] private GuestRewardData rewardData;
@@ -75,7 +72,7 @@ public abstract class GuestBase : MonoBehaviour
     public event Action<GuestBase> OnGuestAngryExited;
     public event Action<GuestBase, GuestOrderData> OnOrderChanged;
 
-    void Awake()
+    protected virtual void Awake()
     {
         mover = GetComponent<GuestMover>();
         bubbleUI = GetComponentInChildren<GuestBubbleUI>();
@@ -85,7 +82,6 @@ public abstract class GuestBase : MonoBehaviour
         baseOrderMaxWaitLimit = orderMaxWaitLimit;
 
         baseFoodMinWaitLimit = foodMinWaitLimit;
-        baseFoodMidWaitLimit = foodMidWaitLimit;
         baseFoodMaxWaitLimit = foodMaxWaitLimit;
     }
 
@@ -156,6 +152,8 @@ public abstract class GuestBase : MonoBehaviour
         OnGuestPaid = null;
         OnGuestExited = null;
         OnOrderServed = null;
+        OnOrderChanged = null;        
+        OnGuestAngryExited = null;   
         
         if (Gate.Instance != null) 
             Gate.Instance.OnGateStateChanged -= HandleGateStateChanged;
@@ -174,7 +172,7 @@ public abstract class GuestBase : MonoBehaviour
         ApplyBondEffects();
 
         Debug.Log(
-            $"{orderMinWaitLimit}, {orderMaxWaitLimit}, {foodMinWaitLimit}, {foodMidWaitLimit}, {foodMaxWaitLimit}");
+            $"{orderMinWaitLimit}, {orderMaxWaitLimit}, {foodMinWaitLimit}, {foodMaxWaitLimit}");
         
         if (myOrder == null)
             myOrder = new GuestOrderData();
@@ -604,7 +602,6 @@ public abstract class GuestBase : MonoBehaviour
         orderMinWaitLimit = 99999f;
         orderMaxWaitLimit = 99999f;
         foodMinWaitLimit = 99999f;
-        foodMidWaitLimit = 99999f;
         foodMaxWaitLimit = 99999f;
     }
 
@@ -645,7 +642,6 @@ public abstract class GuestBase : MonoBehaviour
         orderMaxWaitLimit = baseOrderMaxWaitLimit;
 
         foodMinWaitLimit = baseFoodMinWaitLimit;
-        foodMidWaitLimit = baseFoodMidWaitLimit;
         foodMaxWaitLimit = baseFoodMaxWaitLimit;
 
         float multiplier = 1f + BondManager.Instance.GetPercentModifier(BondEffectType.CustomerPatience);
@@ -654,17 +650,20 @@ public abstract class GuestBase : MonoBehaviour
         orderMaxWaitLimit *= multiplier;
 
         foodMinWaitLimit *= multiplier;
-        foodMidWaitLimit *= multiplier;
         foodMaxWaitLimit *= multiplier;
     }
     
-    protected void SetBaseWaitTime(float orderMin, float orderMax, float foodMin, float foodMid, float foodMax)
+    protected void SetBaseWaitTime(float orderMin, float orderMax, float foodMin, float foodMax)
     {
         baseOrderMinWaitLimit = orderMin;
         baseOrderMaxWaitLimit = orderMax;
 
         baseFoodMinWaitLimit = foodMin;
-        baseFoodMidWaitLimit = foodMid;
         baseFoodMaxWaitLimit = foodMax;
+    }
+    
+    protected void InvokeOrderServed()
+    {
+        OnOrderServed?.Invoke(this);
     }
 }

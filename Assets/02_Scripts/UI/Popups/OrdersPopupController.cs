@@ -52,7 +52,7 @@ public class OrdersPopupController : PopupController
         newPopupObj.transform.SetAsLastSibling();
 
         OrderPopup popup = newPopupObj.GetComponent<OrderPopup>();
-        popup.Init(guest, order);
+        popup.Init(order);
 
         activeOrders[guest] = popup;
 
