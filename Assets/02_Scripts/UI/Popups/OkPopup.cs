@@ -13,10 +13,8 @@ public class OkPopup : PopupController
     {
         this.txtMessage.text = message;
         
-        if (!useCancel)
-            btnCancel.gameObject.SetActive(false);
-        else
-            btnOk.gameObject.SetActive(true);
+        btnOk.gameObject.SetActive(true);
+        btnCancel.gameObject.SetActive(useCancel);
     }
     public void ButtonOk(UnityAction action)
     {
@@ -29,6 +27,9 @@ public class OkPopup : PopupController
 
     public void ButtonCancel(UnityAction action)
     {
+        if (!btnCancel.gameObject.activeSelf)
+            return;
+        
         this.btnCancel.onClick.AddListener(() =>
         {
             action?.Invoke();

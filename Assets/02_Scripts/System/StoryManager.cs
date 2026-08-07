@@ -95,6 +95,8 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
     public StoryReplayManager StoryReplayManager => replayManager;
     public bool IsRecallPlaying => isPlaying && playMode == StoryPlayMode.Recall;
     
+    private StoryRewardPopupData rewardPopupData;
+    
     public void Init()
     {
         dayManager = DayManager.Instance;
@@ -466,13 +468,15 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         }
         
         ApplyStoryRewardsAndFlags();
-            
+        yield return StartCoroutine(ShowStoryRewardPopupRoutine());
         yield return StartCoroutine(PlayQueuedStory());
     }
 
     private void ApplyStoryRewardsAndFlags()
     {
         runtimeNameOverrides.Clear();
+
+        rewardPopupData = new StoryRewardPopupData();
         
         if (currentTrigger != null && !string.IsNullOrEmpty(currentTrigger.addFlagOnComplete))
         {
@@ -494,12 +498,14 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         // 돈 보상
         if (currentStory.rewardMoney > 0)
         {
+            rewardPopupData.money = currentStory.rewardMoney;
             EconomyManager.Instance.AddMoney(currentStory.rewardMoney);
         }
 
         // 명성 보상
         if (currentStory.rewardFame > 0)
         {
+            rewardPopupData.fame = currentStory.rewardFame;
             EconomyManager.Instance.AddFame(currentStory.rewardFame);
         }
 
@@ -519,6 +525,8 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
                     IItem item = ItemFactory.Instance.CreateItem(reward.item.id);
                     inventory.GetItem(item, reward.count);
                 }
+                
+                rewardPopupData.itemRewardNames.Add(reward.item.name);
             }
         }
         
@@ -526,16 +534,93 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         {
             foreach (var recipeId in currentTrigger.unlockRecipeIds)
             {
+                // 이미 해금되지 않은 경우만 팝업에 추가
+                if (!recipeUnlockManager.IsUnlocked(recipeId))
+                {
+                    RecipeMastery mastery = DataManager.Instance.GetRecipeMasteryData(recipeId);
+                    if (mastery != null)
+                    {
+                        rewardPopupData.unlockedRecipes.Add(mastery.data);
+                    }
+                }
                 recipeUnlockManager.Unlock(recipeId);
             }
         }
-        if (currentTrigger.unlockIngredientIds != null)
+        if (currentTrigger != null && currentTrigger.unlockIngredientIds != null)
         {
-            foreach (var id in currentTrigger.unlockIngredientIds)
+            foreach (var ingredientId in currentTrigger.unlockIngredientIds)
             {
-                ingredientUnlockManager.Unlock(id);
+                // 이미 해금되지 않은 경우만 팝업에 추가
+                if (!ingredientUnlockManager.IsUnlocked(ingredientId))
+                {
+                    IngredientData ingredient = DataManager.Instance.GetIngredientData(ingredientId);
+                    if (ingredient != null)
+                    {
+                        rewardPopupData.unlockedIngredients.Add(ingredient);
+                    }
+                }
+                ingredientUnlockManager.Unlock(ingredientId);
             }
         }
+    }
+    
+    private IEnumerator ShowStoryRewardPopupRoutine()
+    {
+        if (rewardPopupData == null || !rewardPopupData.HasReward)
+        {
+            yield break;
+        }
+
+        bool confirmed = false;
+
+        string message = "";
+
+        if (rewardPopupData.money > 0)
+        {
+            message += $"돈 +{rewardPopupData.money}\n";
+        }
+        if (rewardPopupData.fame > 0)
+        {
+            message += $"명성 +{rewardPopupData.fame}\n";
+        }
+        if (rewardPopupData.itemRewardNames.Count > 0)
+        {
+            message += "\n[획득한 물건]\n";
+
+            foreach (var itemName in rewardPopupData.itemRewardNames)
+            {
+                message += $"{itemName}\n";
+            }
+        }
+        if (rewardPopupData.unlockedRecipes.Count > 0)
+        {
+            message += "\n[해금된 음식]\n";
+
+            foreach (var recipe in rewardPopupData.unlockedRecipes)
+            {
+                message += $"{recipe.recipeName}\n";
+            }
+        }
+        if (rewardPopupData.unlockedIngredients.Count > 0)
+        {
+            message += "\n[해금된 재료]\n";
+
+            foreach (var ingredient in rewardPopupData.unlockedIngredients)
+            {
+                message += $"{ingredient.itemName}\n";
+            }
+        }
+
+        UIManager.Instance.CreateOkPopup(
+            message,
+            () => confirmed = true,
+            null,
+            false
+        );
+
+        yield return new WaitUntil(() => confirmed);
+
+        rewardPopupData = null;
     }
     
     public void SkipCurrentScene()

@@ -305,6 +305,16 @@ public class CharacterUI : MonoBehaviour
         slot.SetFlip(flip);
     }
     
+    public void BringCharacterToFront(int characterID)
+    {
+        var slot = FindSlot(characterID);
+
+        if (slot == null)
+            return;
+
+        slot.transform.SetAsLastSibling();
+    }
+    
     public IEnumerator PlayMotionRoutine(int characterID, MotionData motion, bool isUnknown)
     {
         var slot = FindSlot(characterID);
