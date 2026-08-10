@@ -526,7 +526,7 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
                     inventory.GetItem(item, reward.count);
                 }
                 
-                rewardPopupData.itemRewardNames.Add(reward.item.name);
+                rewardPopupData.itemRewardNames.Add(reward.item.itemName);
             }
         }
         
