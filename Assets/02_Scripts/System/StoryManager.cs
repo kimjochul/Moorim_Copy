@@ -233,9 +233,9 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         
         Coroutine illustRoutine = null;
         Coroutine bgRoutine = null;
+        Coroutine characterRoutine = null;
         
         float duration = GetTransitionDuration(TransitionSpeed.Dramatic);
-        characterUI.Hide();
         
         if (currentScene.visualType == SceneVisualType.Illustration)
         {
@@ -279,6 +279,7 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         if (useCrossFadeTransition)
         {
             bgRoutine = StartCoroutine(storyUI.ChangeBackgroundRoutine(currentScene.background, duration));
+            characterRoutine = StartCoroutine(CharacterUI.FadeRoutine(0f, duration, true));
         }
         else
             storyUI.SetBackground(currentScene.background);
@@ -288,6 +289,9 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
 
         if (bgRoutine != null)
             yield return bgRoutine;
+        
+        if (characterRoutine != null)
+            yield return characterRoutine;
     }
 
     public void ShowNextLine()

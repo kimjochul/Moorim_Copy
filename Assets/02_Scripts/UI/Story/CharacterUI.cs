@@ -17,6 +17,8 @@ public class SlotPreset
 
 public class CharacterUI : MonoBehaviour
 {
+    [SerializeField] private CanvasGroup canvasGroup;
+    
     [Header("슬롯들")]
     [SerializeField] private List<CharacterSlot> slots;
     [SerializeField] private List<SlotPreset> presets;
@@ -40,6 +42,8 @@ public class CharacterUI : MonoBehaviour
         {
             dataDict[data.characterID] = data;
         }
+        
+        canvasGroup.alpha = 1f;
     }
     
     private void OnEnable()
@@ -572,5 +576,21 @@ public class CharacterUI : MonoBehaviour
             return data;
 
         return null;
+    }
+    
+    public IEnumerator FadeRoutine(float targetAlpha, float duration, bool fadeIn)
+    {
+        canvasGroup.DOKill();
+
+        if (fadeIn)
+            yield return canvasGroup.DOFade(targetAlpha, duration).SetEase(Ease.OutQuad).WaitForCompletion();
+        else
+            yield return canvasGroup.DOFade(targetAlpha, duration).SetEase(Ease.InQuad).WaitForCompletion();
+    }
+    
+    public void ResetFade()
+    {
+        canvasGroup.DOKill();
+        canvasGroup.alpha = 1f;
     }
 }

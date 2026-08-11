@@ -2657,6 +2657,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5218554450114539413}
   - component: {fileID: 3777080234107094751}
+  - component: {fileID: 7770976249139491430}
   m_Layer: 5
   m_Name: CharacterUI
   m_TagString: Untagged
@@ -2700,6 +2701,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d03f91bbfd241e4f854cd61ab58d2dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterUI
+  canvasGroup: {fileID: 7770976249139491430}
   slots:
   - {fileID: 6849779747585175739}
   - {fileID: 7154708722071851068}
@@ -2729,8 +2731,21 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a5913a1c26fe5f74b90488bac73ed188, type: 2}
   - {fileID: 11400000, guid: 0fa4fca5aad03aa438ab23cce34f9a46, type: 2}
   - {fileID: 11400000, guid: 0bf84ef33779ef843a0276bb001df7d0, type: 2}
+  - {fileID: 11400000, guid: b820c9c4ee0f00a4cbb77dac4f2dfbef, type: 2}
   - {fileID: 11400000, guid: 3e2dfd70b5ec52f49a2b334becffe3c3, type: 2}
   dimObject: {fileID: 5361561584732436261}
+--- !u!225 &7770976249139491430
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6773173791614348488}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &6811098089582743175
 GameObject:
   m_ObjectHideFlags: 0
