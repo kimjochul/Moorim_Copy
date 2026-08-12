@@ -33,6 +33,19 @@ public class CharacterUI : MonoBehaviour
 
     private Dictionary<int, int> currentSlotMap = new(); // characterID → slotIndex
     
+    public bool DuringMotion
+    {
+        get
+        {
+            foreach (var slot in slots)
+            {
+                if (slot.IsPlayingMotion)
+                    return true;
+            }
+
+            return false;
+        }
+    }
     
     private void Awake()
     {
@@ -578,14 +591,11 @@ public class CharacterUI : MonoBehaviour
         return null;
     }
     
-    public IEnumerator FadeRoutine(float targetAlpha, float duration, bool fadeIn)
+    public IEnumerator FadeOut(float duration)
     {
         canvasGroup.DOKill();
 
-        if (fadeIn)
-            yield return canvasGroup.DOFade(targetAlpha, duration).SetEase(Ease.OutQuad).WaitForCompletion();
-        else
-            yield return canvasGroup.DOFade(targetAlpha, duration).SetEase(Ease.InQuad).WaitForCompletion();
+        yield return canvasGroup.DOFade(0f, duration).SetEase(Ease.InQuad).WaitForCompletion();
     }
     
     public void ResetFade()

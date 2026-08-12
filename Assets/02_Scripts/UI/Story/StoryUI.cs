@@ -30,6 +30,7 @@ public class DialogueLog
 
 public class StoryUI : MonoBehaviour
 {
+    [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI speakerText;
     [SerializeField] private Image namePlateImage;
     [SerializeField] private Sprite unknownCharacterNamePlate;
@@ -141,13 +142,16 @@ public class StoryUI : MonoBehaviour
             UIManager.Instance.OnFontSizeChanged -= SetFontSize;
     }
     
-    public void Show()
+    public void Show(Story story)
     {
         root.SetActive(true);
         canvasBG.SetActive(true);
         screenRoot.SetActive(true);
         defaultIllustBG.SetActive(true);
         currentBg.gameObject.SetActive(true);
+        
+        string title = $"[{story.mainSpeaker}] {story.storyName}";
+        titleText.text = title;
         ResetBackgroundState();
         ResetIllustrationState();
         
@@ -160,6 +164,8 @@ public class StoryUI : MonoBehaviour
     public void Hide()
     {
         StopAllAutoPlay();
+        
+        titleText.text = "";
         
         root.SetActive(false);
         canvasBG.SetActive(false);
@@ -765,6 +771,81 @@ public class StoryUI : MonoBehaviour
                 }
             }));
     }
+    
+    public void ShowCharacterSceneIllustration(StoryLine line)
+    {
+        if (illustrationCoroutine != null)
+        {
+            StopCoroutine(illustrationCoroutine);
+        }
+
+        float duration = StoryManager.Instance.GetTransitionDuration(line.transitionSpeed);
+
+        illustrationCoroutine = StartCoroutine(
+            ChangeIllustrationRoutine(
+                line.illustrationOverride,
+                line.illustrationOverlay,
+                false,
+                false,
+                duration
+            )
+        );
+    }
+    
+    public IEnumerator FadeOutIllustration(float duration)
+    {
+        // 기존 일러스트 관련 코루틴 정지
+        if (illustrationCoroutine != null)
+        {
+            StopCoroutine(illustrationCoroutine);
+            illustrationCoroutine = null;
+        }
+
+        if (illustrationSequenceCoroutine != null)
+        {
+            StopCoroutine(illustrationSequenceCoroutine);
+            illustrationSequenceCoroutine = null;
+        }
+        
+        // 기존 DOTween 제거
+        currentGroup.DOKill();
+        nextGroup.DOKill();
+        currentOverlayGroup.DOKill();
+        nextOverlayGroup.DOKill();
+
+        isTransitioning = true;
+        
+        currentIllust.gameObject.SetActive(true);
+        currentOverlay.gameObject.SetActive(currentOverlay.sprite != null);
+        
+        Sequence sequence = DOTween.Sequence();
+
+        sequence.Join(currentGroup.DOFade(0f, duration).SetEase(Ease.InQuad));
+
+        if (currentOverlay.gameObject.activeSelf)
+        {
+            sequence.Join(currentOverlayGroup.DOFade(0f, duration).SetEase(Ease.InQuad));
+        }
+
+        yield return sequence.WaitForCompletion();
+
+        currentGroup.alpha = 0f;
+        currentOverlayGroup.alpha = 0f;
+
+        currentIllust.gameObject.SetActive(false);
+        nextIllust.gameObject.SetActive(false);
+
+        currentOverlay.gameObject.SetActive(false);
+        nextOverlay.gameObject.SetActive(false);
+
+        currentIllust.sprite = null;
+        nextIllust.sprite = null;
+
+        currentOverlay.sprite = null;
+        nextOverlay.sprite = null;
+
+        isTransitioning = false;
+    }
 
     public void HideIllustration()
     {
@@ -1119,10 +1200,16 @@ public class StoryUI : MonoBehaviour
             !isCutSceneAuto;
     }
     
-    private bool CanSkip()
+    public bool CanSkip()
     {
+        Debug.Log(StoryManager.Instance.CharacterUI.DuringMotion);
+        
+        if (StoryManager.Instance.CharacterUI == null)
+            return false;
+
         return
-            !isTransitioning;
+            !isTransitioning &&
+            !StoryManager.Instance.CharacterUI.DuringMotion;
     }
     #endregion
 
