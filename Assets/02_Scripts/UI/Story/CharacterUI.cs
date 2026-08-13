@@ -39,13 +39,16 @@ public class CharacterUI : MonoBehaviour
         {
             foreach (var slot in slots)
             {
-                if (slot.IsPlayingMotion)
+                if (slot != null && slot.IsPlayingMotion)
                     return true;
             }
 
             return false;
         }
     }
+    
+    private bool isInnerThought;
+    private int innerThoughtCharacterID = -1;
     
     private void Awake()
     {
@@ -85,60 +88,282 @@ public class CharacterUI : MonoBehaviour
         if (newChars == null)
             return;
 
-        // 이전 상태 백업
+        #region SetupScene 처리 기준
+
+        /*
+         * ================================================================
+         * SetupScene의 기본 처리 기준
+         * ================================================================
+         *
+         * SetupScene은 "현재 스토리 씬에 맞게 캐릭터 구성을 변경"하는 역할이다.
+         *
+         *
+         * [1. 기존 캐릭터 + 동일 슬롯]
+         * ----------------------------------------------------------------
+         * 같은 캐릭터가 이전 Scene과 현재 Scene에서 같은 슬롯을 사용하는 경우.
+         *
+         * 예:
+         *
+         * 이전 Scene
+         *   Character A → Slot 0
+         *
+         * 현재 Scene
+         *   Character A → Slot 0
+         *
+         * → 기존 CharacterSlot을 유지한다.
+         *
+         * 단, 현재 Scene의 기본 위치/크기/Flip/SiblingOrder를 다시 적용한다.
+         *
+         * 따라서 현재 코드에서는 SlotRoot 위치도 preset 기준으로 다시 설정된다.
+         *
+         * ※ 주의
+         * MotionXRoot / MotionYRoot 등의 자식 Transform에서 발생한
+         * 연출 상태를 유지해야 한다면 해당 Root가 SetupScene의 영향을
+         * 받지 않는 구조여야 한다.
+         *
+         *
+         * [2. 기존 캐릭터 + 다른 슬롯]
+         * ----------------------------------------------------------------
+         * 같은 캐릭터지만 이전 Scene과 현재 Scene에서 사용하는 슬롯이
+         * 달라진 경우.
+         *
+         * 예:
+         *
+         * 이전 Scene
+         *   Character A → Slot 0
+         *
+         * 현재 Scene
+         *   Character A → Slot 2
+         *
+         * → 이전 Slot 0을 ResetSlot()으로 정리한다.
+         * → 새로운 Slot 2를 PrepareSlot()으로 초기화한다.
+         * → Character A를 Slot 2에 SetCharacter()로 배치한다.
+         *
+         * 즉, 슬롯을 이동하는 경우에는 기존 슬롯의 상태를 이어받지 않는다.
+         *
+         *
+         * [3. 완전히 새로운 캐릭터]
+         * ----------------------------------------------------------------
+         * 이전 Scene에는 없었던 캐릭터.
+         *
+         * 예:
+         *
+         * 이전 Scene
+         *   Character A
+         *
+         * 현재 Scene
+         *   Character A
+         *   Character B
+         *
+         * → Character B는 새로운 캐릭터로 처리한다.
+         * → 대상 Slot을 PrepareSlot()으로 초기화한다.
+         * → startVisible == true라면 Appear()로 등장시킨다.
+         * → startVisible == false라면 SetHidden()으로 숨긴다.
+         *
+         *
+         * [4. 기존 Slot에 다른 캐릭터가 들어오는 경우]
+         * ----------------------------------------------------------------
+         * 예:
+         *
+         * 이전 Scene
+         *   Slot 0 → Character A
+         *
+         * 현재 Scene
+         *   Slot 0 → Character B
+         *
+         * → Character A가 새 Scene에 없다면 3번 제거 단계에서
+         *   Slot 0이 먼저 ResetSlot()된다.
+         *
+         * → Character B는 existedBefore == false이므로
+         *   새로운 캐릭터처럼 처리된다.
+         *
+         *
+         * [5. 새 Scene에 존재하지 않는 기존 캐릭터]
+         * ----------------------------------------------------------------
+         * 이전 Scene에는 있었지만 현재 Scene에는 없는 캐릭터.
+         *
+         * → ResetSlot()으로 Slot을 완전히 정리한다.
+         *
+         *
+         * [6. startVisible]
+         * ----------------------------------------------------------------
+         *
+         * startVisible == true
+         *
+         *   - 동일 슬롯의 기존 캐릭터
+         *       → 기존 캐릭터 유지
+         *       → 비활성 상태라면 SetCharacter()로 다시 활성화
+         *
+         *   - 다른 슬롯으로 이동한 기존 캐릭터
+         *       → SetCharacter()
+         *
+         *   - 완전히 새로운 캐릭터
+         *       → Appear()
+         *
+         *
+         * startVisible == false
+         *
+         *   → 모든 경우 SetHidden()
+         *
+         *
+         * [7. currentSlotMap]
+         * ----------------------------------------------------------------
+         * SetupScene이 끝난 뒤에는 반드시
+         *
+         *   characterID → 현재 slotIndex
+         *
+         * 형태가 되도록 다시 작성한다.
+         *
+         *
+         * [8. SortingOrder]
+         * ----------------------------------------------------------------
+         * SetupScene에서는 기본적으로
+         *
+         *   preset.sortingOrder
+         *
+         * 를 적용한다.
+         *
+         * InnerThought의 특수한 순서나 스토리 진행 중
+         * BringCharacterToFront() 등으로 변경된 순서는
+         * SetupScene 이후 별도로 적용되는 구조로 취급한다.
+         *
+         *
+         * [9. Motion 상태]
+         * ----------------------------------------------------------------
+         * 동일 슬롯이라도 현재 코드에서는 StopSlotMotion()을 호출한다.
+         *
+         * 따라서 SetupScene 호출 시 진행 중인 DOTween / Coroutine은
+         * 정리된다.
+         *
+         * 또한 아래에서 SlotRoot.anchoredPosition을 preset 위치로
+         * 다시 설정하기 때문에 SlotRoot 자체의 이동 상태는 유지되지 않는다.
+         *
+         * MotionXRoot / MotionYRoot 등 별도의 자식 Root에서 이동 상태를
+         * 관리한다면 그 Root의 상태는 별도로 유지할 수 있다.
+         *
+         * ================================================================
+         */
+
+        #endregion
+
+        // --------------------------------------------------
+        // 1. 기존 캐릭터의 슬롯 위치 백업
+        // --------------------------------------------------
         Dictionary<int, int> oldMap = new(currentSlotMap);
+
+        // 새 씬 기준으로 다시 작성
         currentSlotMap.Clear();
 
+        // --------------------------------------------------
+        // 2. 새 씬에 존재하는 캐릭터 ID 수집
+        // --------------------------------------------------
         HashSet<int> newIDs = new();
+
         foreach (var info in newChars)
         {
-            if (!info.useSlotUI)
+            if (info == null || !info.useSlotUI)
                 continue;
 
             newIDs.Add(info.characterID);
         }
 
-        // 제거될 슬롯 정리
+        // --------------------------------------------------
+        // 3. 새 씬에 없는 기존 캐릭터 제거
+        // --------------------------------------------------
         foreach (var slot in slots)
         {
+            if (slot == null)
+                continue;
+
             int currentID = slot.CurrentCharacterID;
 
             if (currentID == -1)
                 continue;
 
+            // 새 씬에서도 사용하는 캐릭터라면 유지
             if (newIDs.Contains(currentID))
                 continue;
 
-            slot.StopAllCoroutines();
-            slot.transform.DOKill();
-
-            RectTransform rt = slot.SlotRoot;
-            rt.DOKill();
-
-            slot.ClearImmediate();
+            ResetSlot(slot);
         }
 
-        // 새 씬 세팅
+        // --------------------------------------------------
+        // 4. 새 씬 캐릭터 세팅
+        // --------------------------------------------------
         foreach (var info in newChars)
         {
-            if (!info.useSlotUI)
+            if (info == null || !info.useSlotUI)
                 continue;
 
-            if (info.slotIndex < 0 || info.slotIndex >= slots.Count)
-                continue;
+            // 슬롯 번호 검증
+            if (!IsValidSlotIndex(info.slotIndex))
+            {
+                Debug.LogWarning(
+                    $"[CharacterUI] Invalid slotIndex. " +
+                    $"characterID:{info.characterID}, slotIndex:{info.slotIndex}"
+                );
 
+                continue;
+            }
+
+            // 캐릭터 데이터 확인
             if (!dataDict.TryGetValue(info.characterID, out var data))
+            {
+                Debug.LogWarning(
+                    $"[CharacterUI] Character data not found. " +
+                    $"characterID:{info.characterID}"
+                );
+
+                continue;
+            }
+
+            CharacterSlot targetSlot = slots[info.slotIndex];
+            SlotPreset preset = presets[info.slotIndex];
+
+            if (targetSlot == null)
                 continue;
 
-            var slot = slots[info.slotIndex];
-            var preset = presets[info.slotIndex];
-            RectTransform rt = slot.SlotRoot;
+            // --------------------------------------------------
+            // 기존 캐릭터가 어디 있었는지 확인
+            // --------------------------------------------------
+            bool existedBefore = oldMap.TryGetValue(info.characterID, out int oldSlotIndex);
+            bool sameSlot = existedBefore && oldSlotIndex == info.slotIndex;
 
-            // 슬롯 초기화
-            slot.StopAllCoroutines();
-            slot.transform.DOKill();
-            rt.DOKill();
+            // --------------------------------------------------
+            // 기존 캐릭터가 다른 슬롯으로 이동한 경우
+            // --------------------------------------------------
+            if (existedBefore && !sameSlot)
+            {
+                if (oldSlotIndex != info.slotIndex && IsValidSlotIndex(oldSlotIndex))
+                {
+                    CharacterSlot oldSlot = slots[oldSlotIndex];
+                    if (oldSlot != null && oldSlot != targetSlot)
+                    {
+                        ResetSlot(oldSlot);
+                    }
+                }
+            }
 
+            // --------------------------------------------------
+            // 대상 슬롯 정리
+            //
+            // 같은 캐릭터 + 같은 슬롯이면 기존 오브젝트를
+            // 완전히 지우지 않는다.
+            // --------------------------------------------------
+            if (!sameSlot)
+            {
+                PrepareSlot(targetSlot);
+            }
+            else
+            {
+                // 같은 슬롯이어도 현재 진행 중인 DOTween이나
+                // 코루틴은 정리
+                StopSlotMotion(targetSlot);
+            }
+
+            // --------------------------------------------------
+            // 기본 위치 / 크기
+            // --------------------------------------------------
             Vector2 finalPos = preset.position;
             float finalScale = preset.scale;
 
@@ -147,82 +372,108 @@ public class CharacterUI : MonoBehaviour
                 finalPos += data.visual.offset;
                 finalScale *= data.visual.baseScale;
             }
-            slot.transform.SetSiblingIndex(preset.sortingOrder);
-            rt.anchoredPosition = finalPos;
-            slot.SetBaseScale(finalScale);
-            slot.SetFlip(info.startFlip);
-            // 같은 캐릭터 유지 여부
-            bool existedBefore = oldMap.TryGetValue(info.characterID, out int prevSlot);
 
-            bool sameSlot = existedBefore && prevSlot == info.slotIndex;
+            // --------------------------------------------------
+            // 슬롯 기본 상태 적용
+            // --------------------------------------------------
+            targetSlot.SlotRoot.anchoredPosition = finalPos;
+            targetSlot.SetBaseScale(finalScale);
+            targetSlot.SetFlip(info.startFlip);
 
-            // 같은 슬롯 유지
-            if (sameSlot)
+            // 여기서 기존 sortingOrder를 복구
+            //
+            // 단, InnerThought 자체의 특별한 순서는 건드리지 않는다.
+            // SetupScene은 "씬 초기화"의 역할만 담당.
+            targetSlot.transform.SetSiblingIndex(preset.sortingOrder);
+
+            // --------------------------------------------------
+            // 캐릭터 표시 상태
+            // --------------------------------------------------
+            if (info.startVisible)
             {
-                currentSlotMap[info.characterID] = info.slotIndex;
-
-                if (!info.startVisible)
+                if (sameSlot)
                 {
-                    slot.SetHidden(data, data.characterImage);
-
-                    continue;
+                    // 기존 캐릭터 유지
+                    //
+                    // 숨겨져 있었다면 다시 표시
+                    if (!targetSlot.gameObject.activeSelf)
+                    {
+                        targetSlot.SetCharacter(data, data.characterImage);
+                    }
                 }
-
-                // 이전엔 숨김이었는데 이번 씬에서 등장
-                if (!slot.gameObject.activeSelf && info.startVisible)
+                else if (existedBefore)
                 {
-                    slot.SetCharacter(data, data.characterImage);
-                }
-
-                continue;
-            }
-            
-            // 슬롯 변경된 같은 캐릭터
-            if (existedBefore)
-            {
-                // 이전 슬롯 정리
-                var oldSlot = slots[prevSlot];
-                if (oldSlot != slot)
-                {
-                    oldSlot.StopAllCoroutines();
-                    oldSlot.transform.DOKill();
-                    RectTransform oldRt = oldSlot.GetComponent<RectTransform>();
-
-                    oldRt.DOKill();
-                    oldSlot.ClearImmediate();
-                }
-                
-                if (info.startVisible)
-                {
-                    slot.SetCharacter(data, data.characterImage);
+                    // 다른 슬롯에서 이동
+                    targetSlot.SetCharacter(data, data.characterImage);
                 }
                 else
                 {
-                    slot.SetHidden(data, data.characterImage);
+                    // 완전히 새로운 캐릭터
+                    targetSlot.Appear(data, data.characterImage, finalPos);
                 }
-                currentSlotMap[info.characterID] = info.slotIndex;
-                Debug.Log($"SETUP character:{info.characterID} -> slot:{info.slotIndex}");
-                Debug.Log($"REAL SLOT OBJECT : {slot.name}");
-                continue;
-            }
-
-            // 완전 새 캐릭터
-            if (info.startVisible)
-            {
-                slot.Appear(dataDict[info.characterID], data.characterImage, finalPos);
             }
             else
             {
-                slot.SetHidden(dataDict[info.characterID], data.characterImage);
+                targetSlot.SetHidden(data, data.characterImage);
             }
+
+            // --------------------------------------------------
+            // 새 슬롯 맵 등록
+            // --------------------------------------------------
             currentSlotMap[info.characterID] = info.slotIndex;
-            
-            Debug.Log($"SETUP character:{info.characterID} -> slot:{info.slotIndex}");
-            Debug.Log($"REAL SLOT OBJECT : {slot.name}");
+
+            Debug.Log(
+                $"[CharacterUI] Setup " +
+                $"character:{info.characterID} " +
+                $"slot:{info.slotIndex} " +
+                $"sameSlot:{sameSlot} " +
+                $"existedBefore:{existedBefore}"
+            );
         }
-        Debug.Log("-------------------------");
+
+        Debug.Log("[CharacterUI] SetupScene Complete");
     }
 
+    private bool IsValidSlotIndex(int index)
+    {
+        return index >= 0 &&
+               index < slots.Count &&
+               index < presets.Count;
+    }
+    
+    private void StopSlotMotion(CharacterSlot slot)
+    {
+        if (slot == null)
+            return;
+
+        slot.StopAllCoroutines();
+
+        slot.transform.DOKill();
+
+        if (slot.SlotRoot != null)
+            slot.SlotRoot.DOKill();
+    }
+    
+    private void PrepareSlot(CharacterSlot slot)
+    {
+        if (slot == null)
+            return;
+
+        StopSlotMotion(slot);
+
+        slot.ClearImmediate();
+    }
+    
+    private void ResetSlot(CharacterSlot slot)
+    {
+        if (slot == null)
+            return;
+
+        StopSlotMotion(slot);
+
+        slot.ClearImmediate();
+    }
+    
     public void SetExpression(int characterID, ExpressionData expression)
     {
         CharacterSlot slot = FindSlot(characterID);
@@ -271,6 +522,9 @@ public class CharacterUI : MonoBehaviour
 
     public void ApplyInnerThoughtFocus(int thinkerID, bool enable)
     {
+        isInnerThought = enable;
+        innerThoughtCharacterID = enable ? thinkerID : -1;
+        
         if (dimObject == null)
             return;
 
@@ -310,6 +564,29 @@ public class CharacterUI : MonoBehaviour
                 }
             }
         }
+    }
+    
+    private void SetMotionSiblingOrder(CharacterSlot slot)
+    {
+        if (slot == null)
+            return;
+
+        // InnerThought가 아니면 기존 동작 그대로
+        if (!isInnerThought)
+        {
+            slot.transform.SetAsLastSibling();
+            return;
+        }
+
+        // InnerThought 상태에서는
+        // 속마음 화자만 맨 앞으로 보낸다.
+        if (slot.CurrentCharacterID == innerThoughtCharacterID)
+        {
+            slot.transform.SetAsLastSibling();
+            return;
+        }
+
+        // 그 외 캐릭터는 현재 순서를 그대로 유지한다.
     }
     
     public void SetFlip(int characterID, bool flip)
@@ -357,12 +634,12 @@ public class CharacterUI : MonoBehaviour
         switch (motion.type)
         {
             case MotionType.MoveLeft:
-                slot.transform.SetAsLastSibling();
+                SetMotionSiblingOrder(slot);
                 yield return slot.MoveRoutine(Vector2.left, motion.value, motion.duration);
                 break;
 
             case MotionType.MoveRight:
-                slot.transform.SetAsLastSibling();
+                SetMotionSiblingOrder(slot);
                 yield return slot.MoveRoutine(Vector2.right, motion.value, motion.duration);
                 break;
             
@@ -372,7 +649,7 @@ public class CharacterUI : MonoBehaviour
                     motion.targetSlotIndex >= slots.Count)
                     yield break;
                 
-                slot.transform.SetAsLastSibling();
+                SetMotionSiblingOrder(slot);
                 var target = slots[motion.targetSlotIndex];
 
                 Vector2 targetPos = target.SlotPos;
@@ -396,7 +673,19 @@ public class CharacterUI : MonoBehaviour
                 }
                 yield return slot.MoveToPosition(originalPos, motion.duration); 
 
-                slot.transform.SetSiblingIndex(preset.sortingOrder);
+                if (isInnerThought)
+                {
+                    // 속마음 화자는 항상 Dim보다 위
+                    if (slot.CurrentCharacterID == innerThoughtCharacterID)
+                    {
+                        slot.transform.SetAsLastSibling();
+                    }
+                }
+                else
+                {
+                    // 기존 동작
+                    slot.transform.SetSiblingIndex(preset.sortingOrder);
+                }
                 break;
             }
 
@@ -405,22 +694,22 @@ public class CharacterUI : MonoBehaviour
                 break;
             
             case MotionType.ExitLeft:
-                slot.transform.SetAsLastSibling();
+                SetMotionSiblingOrder(slot);
                 yield return slot.ExitRoutine(Vector2.left, motion.value, motion.duration);
                 break;
 
             case MotionType.ExitRight:
-                slot.transform.SetAsLastSibling();
+                SetMotionSiblingOrder(slot);
                 yield return slot.ExitRoutine(Vector2.right, motion.value, motion.duration);
                 break;
 
             case MotionType.EnterLeft:
-                slot.transform.SetAsLastSibling();
+                SetMotionSiblingOrder(slot);
                 yield return slot.EnterRoutine(finalPos, Vector2.left, motion.value, motion.duration, isUnknown);
                 break;
 
             case MotionType.EnterRight:
-                slot.transform.SetAsLastSibling();
+                SetMotionSiblingOrder(slot);
                 yield return slot.EnterRoutine(finalPos, Vector2.right, motion.value, motion.duration, isUnknown);
                 break;
 
@@ -429,12 +718,11 @@ public class CharacterUI : MonoBehaviour
                 break;
 
             case MotionType.Emphasis:
-                slot.transform.SetAsLastSibling();
+                SetMotionSiblingOrder(slot);
                 yield return slot.EmphasisRoutine();
                 break;
 
             case MotionType.Nervous:
-                slot.transform.SetAsLastSibling();
                 yield return slot.NervousRoutine();
                 break;
             
@@ -443,18 +731,18 @@ public class CharacterUI : MonoBehaviour
                 break;
 
             case MotionType.Stand:
-                slot.transform.SetAsLastSibling();
+                SetMotionSiblingOrder(slot);
                 yield return slot.StandRoutine(motion.duration);
                 break;
             
             case MotionType.Greet:
-                slot.transform.SetAsLastSibling();
+                SetMotionSiblingOrder(slot);
                 yield return slot.GreetRoutine(motion.value, motion.targetValue, motion.duration);
                 break;
             
             case MotionType.Attack:
             {
-                slot.transform.SetAsLastSibling();
+                SetMotionSiblingOrder(slot);
                 var target = FindSlot(motion.targetSlotIndex);
                 Vector2 dir = target != null ? GetDirection(slot, target) : Vector2.right;
                 if (motion.value >= 50f)
@@ -467,7 +755,7 @@ public class CharacterUI : MonoBehaviour
             
             case MotionType.EnterMove:
             {
-                slot.transform.SetAsLastSibling();
+                SetMotionSiblingOrder(slot);
                 Vector2 targetPos = new Vector2(motion.targetValue, slot.SlotRoot.anchoredPosition.y);
                 yield return slot.EnterMoveRoutine(motion.value, targetPos, motion.duration, isUnknown);
                 break;

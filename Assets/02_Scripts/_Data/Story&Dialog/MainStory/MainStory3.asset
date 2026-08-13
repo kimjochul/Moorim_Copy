@@ -9447,15 +9447,37 @@ MonoBehaviour:
         shadow: 0
         useDOScale: 0
       motion:
-        type: 15
-        duration: 1
+        type: 0
+        duration: 0
         value: 0
-        targetSlotIndex: 1
-        stopDistance: 300
+        targetSlotIndex: 0
+        stopDistance: 0
         targetValue: 0
-        useFlip: 1
-        flip: 1
-      motions: []
+        useFlip: 0
+        flip: 0
+      motions:
+      - characterID: 23
+        targetID: 0
+        motion:
+          type: 18
+          duration: 0.5
+          value: 0
+          targetSlotIndex: 0
+          stopDistance: 0
+          targetValue: 0
+          useFlip: 1
+          flip: 1
+      - characterID: 23
+        targetID: 0
+        motion:
+          type: 15
+          duration: 1
+          value: 0
+          targetSlotIndex: 1
+          stopDistance: 300
+          targetValue: 0
+          useFlip: 0
+          flip: 0
       playTogether: 0
       changeDisplayName: 
       resetDisplayName: 0
