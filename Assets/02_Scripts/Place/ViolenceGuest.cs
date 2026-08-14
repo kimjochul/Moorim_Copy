@@ -6,9 +6,10 @@ using static Constants;
 public class ViolenceGuest : GuestBase
 {
     [Header("난동 패널티")]
-    public int badDamage = 2000;
-    public int veryBadDamage = 3000;
-    public float damageInterval = 2f; // 돈이 깎이는 주기 (초)
+    [SerializeField] private float angryDuration = 2.767f;   // Guest Angry 애니메이션 길이
+    [SerializeField] private int maxTotalDamage = 5000;      // 난동 1회당 깎일 수 있는 최대 금액
+    [SerializeField] private float badDamageRatio = 0.6f;    // Bad일 때는 최대치의 몇 %까지 깎을지
+    [SerializeField] private float damageTickInterval = 0.1f;// 돈이 깎이는 주기 (초)
 
     [Header("난동 UI")]
     [SerializeField] private Sprite violenceSprite; // 난동 중 말풍선에 띄울 아이콘
@@ -69,17 +70,57 @@ public class ViolenceGuest : GuestBase
         OnViolenceStarted?.Invoke(this);
     }
 
+    /// <summary>
+    /// 난동(Angry 애니메이션) 재생 시간 동안만 돈을 깎는다.
+    /// 총 피해액은 maxTotalDamage를 넘지 않으며, 시간이 다 되면 스스로 일어나 나간다.
+    /// </summary>
     private IEnumerator TroubleRoutine(GuestMood mood)
     {
-        while (isCausingTrouble)
+        int totalLimit = (mood == GuestMood.VeryBad)
+            ? maxTotalDamage
+            : Mathf.RoundToInt(maxTotalDamage * badDamageRatio);
+
+        float damagePerSecond = totalLimit / angryDuration;
+
+        float elapsed = 0f;
+        float tickTimer = 0f;
+        int paid = 0;
+
+        while (isCausingTrouble && elapsed < angryDuration)
         {
-            int damageAmount = (mood == GuestMood.VeryBad) ? veryBadDamage : badDamage;
-            
-            EconomyManager.Instance.AddMoney(-damageAmount);
-            Debug.Log($"<color=red>괴한이 난동을 피웁니다! 금전적 피해: -{damageAmount}</color>");
-            
-            yield return new WaitForSeconds(damageInterval);
+            yield return null;
+
+            // 일시정지 중에는 시간도, 피해도 진행되지 않는다
+            if (DayManager.Instance != null && DayManager.Instance.IsPaused)
+                continue;
+
+            elapsed += Time.deltaTime;
+            tickTimer += Time.deltaTime;
+
+            if (tickTimer < damageTickInterval && elapsed < angryDuration)
+                continue;
+
+            tickTimer = 0f;
+
+            // 지금까지 깎였어야 할 누적 금액에서 이미 깎은 만큼만 추가로 깎는다.
+            // 이렇게 하면 반올림 오차가 쌓여도 총액이 totalLimit을 넘지 않는다.
+            int target = Mathf.Min(totalLimit, Mathf.RoundToInt(damagePerSecond * elapsed));
+            int tickDamage = target - paid;
+
+            if (tickDamage <= 0)
+                continue;
+
+            EconomyManager.Instance.AddMoney(-tickDamage);
+            paid = target;
         }
+
+        troubleCoroutine = null;
+
+        Debug.Log($"<color=red>괴한의 난동 종료. 총 피해: -{paid}</color>");
+
+        // 제압당하지 않고 시간이 다 됐으면 스스로 일어나서 나간다
+        if (isCausingTrouble)
+            StopTroubleAndLeave();
     }
 
     // 도둑의 CatchThief()와 같은 역할
@@ -88,19 +129,28 @@ public class ViolenceGuest : GuestBase
         if (!isCausingTrouble) return;
 
         Debug.Log("<color=cyan>괴한을 제압했습니다!</color>");
-        isCausingTrouble = false;
-        
+
         if (troubleCoroutine != null)
         {
             StopCoroutine(troubleCoroutine);
             troubleCoroutine = null;
         }
 
+        StopTroubleAndLeave();
+    }
+
+    /// <summary>
+    /// 난동 상태를 끝내고 일어나서 퇴장시킨다. (제압당했을 때 / 난동 시간이 끝났을 때 공통)
+    /// </summary>
+    private void StopTroubleAndLeave()
+    {
+        isCausingTrouble = false;
+
         if (bubble != null)
             bubble.SetViolenceBubble(false);
 
-        // 제압 후 얌전히 일어나서 나가도록 처리
         isPlayingStandUp = true;
+
         if (guestAnim != null)
         {
             guestAnim.PlayStandUp(); 

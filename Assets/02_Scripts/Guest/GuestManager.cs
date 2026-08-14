@@ -23,7 +23,7 @@ public class GuestManager : MonoBehaviour
 
     [Header("Spawn Info")]
     private readonly float startSpawnTime = 1f;
-    private readonly float spawnInterval = 20f;
+    private readonly float spawnInterval = 25f;
 
 
     [Header("Watitng Point")]
@@ -231,6 +231,7 @@ public class GuestManager : MonoBehaviour
                 {
                     GuestCount++; 
                     OnGuestServed?.Invoke(); 
+                    DailyTestLogger.Instance?.RecordGuestPaid(appearance, guest.CurrentMood); // DailyTestLogger.cs용
                 };
 
                 guest.OnGuestExited += () =>

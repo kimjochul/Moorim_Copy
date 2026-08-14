@@ -56,8 +56,12 @@ public class SaveManager : Singleton<SaveManager>
     public bool isLoadedGame = false;
     private bool isQuitting = false;
     
-    private int loadSlotIndex;
-    private SaveSlotType loadType;
+    private int loadSlotIndex;      // DailyTestLogger.cs용
+    private SaveSlotType loadType;  // DailyTestLogger.cs용
+    
+    // 현재 플레이 중인 슬롯 (테스트 로그 파일 분리 등에 사용)
+    public int CurrentSlotIndex => loadSlotIndex;
+    public SaveSlotType CurrentSlotType => loadType;
     
     protected override void Awake()
     {
@@ -71,6 +75,10 @@ public class SaveManager : Singleton<SaveManager>
     {
         Time.timeScale = 1f;
         isLoadedGame = false;
+        
+        loadSlotIndex = 0;                  // DailyTestLogger.cs용
+        loadType = SaveSlotType.Auto;       // DailyTestLogger.cs용
+        
         SceneLoader.Instance.LoadScene("01_Scenes/03.Game", () =>
         {
             InitAll();

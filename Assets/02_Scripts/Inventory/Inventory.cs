@@ -53,22 +53,21 @@ public class Inventory : MonoBehaviour, IInitializable
         isInit = true;
     }
     
-    /// <summary>
-    /// 슬롯을 생성하는 함수
-    /// </summary>
-    /// <param name="num"></param>
+    
     private void CreateSlots(int num)
     {
         for (int i = 0; i < num; i++)
         {
             Slot slot = Instantiate(slotPrefab, transform).GetComponent<Slot>();
             slot.SetOwner(this);
-            slot.SetIndex(i);
+            //slot.SetIndex(i); 
+            slot.SetIndex(slots.Count);
             slot.OnSlotDrop += HandleSlotDrop;
             slot.OnSlotClick += HandleSlotClick;
             slots.Add(slot);
         }
     }
+    
     
     /// <summary>
     /// 업그레이드 적용함수

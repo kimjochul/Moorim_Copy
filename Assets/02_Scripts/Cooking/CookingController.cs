@@ -172,6 +172,9 @@ public class CookingController : MonoBehaviour
     {
         openRequestId++;
         
+        if (PlayerManager.Instance != null && currentStation != null)
+            PlayerManager.Instance.ClearCurrentInteract(currentStation);
+        
         if (returnIngredients)
             ReturnIngredientsToInventory();
         

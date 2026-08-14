@@ -82,14 +82,12 @@ public class PlayerManager : Singleton<PlayerManager>
         int index = (int)playerType;
         if (index >= players.Length || players[index] == null) return;
 
-        // 이전 유닛 해제
         if (selectedUnit != null)
         {
-            // ui 닫기 (ActiveInteractable은 유지)
-            if (selectedUnit.ActiveInteractable != null)
+            if (currentInteracting != null && currentInteractingOwner == selectedUnit)
             {
-                lastInteractables[CurrentPlayer] = selectedUnit.ActiveInteractable;
-                EndInteract(selectedUnit.ActiveInteractable, selectedUnit);
+                lastInteractables[CurrentPlayer] = currentInteracting;
+                EndInteract(currentInteracting, selectedUnit);
             }
             else
             {
@@ -126,11 +124,11 @@ public class PlayerManager : Singleton<PlayerManager>
                 */
             }
         }
-        
+        /*
         // 복귀 시 재개
         if (!resumed && selectedUnit.ActiveInteractable != null && selectedUnit.ActiveInteractable.CanInteract(playerType))
             BeginInteract(selectedUnit.ActiveInteractable, selectedUnit);
-        
+        */
         OnPlayerSwapped?.Invoke(playerType);
     }
 
@@ -294,5 +292,16 @@ public class PlayerManager : Singleton<PlayerManager>
         CloseCurrentInteract();
         ReservedInteractable = null;
         selectedUnit?.Stop();
+    }
+    
+    public void ClearCurrentInteract(IInteractable target)
+    {
+        if (currentInteracting == target)
+        {
+            currentInteracting = null;
+            currentInteractingOwner = null;
+        }
+
+        lastInteractables.Remove(CurrentPlayer);
     }
 }

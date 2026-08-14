@@ -300,16 +300,20 @@ public class QuestGenerator : MonoBehaviour
                 catchCondition.requiredCatchCount = Random.Range(1, tier + 1);
             }
         }
+
         // 보상도 랜덤으로 설정 (보상 하한선이 돈, 명예가 같은 대신 상인은 골드 상한선, 우체부는 명성 상한선이 더 높은 방향으로 보상 설정)
+        // 에셋(quest.Data.reward)이 아니라 이 퀘스트의 런타임 보상만 수정한다
         if (quest.QuestType == QuestType.Merchant)
         {
-            quest.Data.reward.gold = Mathf.RoundToInt(Random.Range(50, 150) * rewardMultiplier);
-            quest.Data.reward.reputation = Mathf.RoundToInt(Random.Range(10, 20) * rewardMultiplier);
+            quest.SetRuntimeReward(
+                Mathf.RoundToInt(Random.Range(50, 150) * rewardMultiplier),
+                Mathf.RoundToInt(Random.Range(8, 12) * rewardMultiplier));
         } 
         else if (quest.QuestType == QuestType.PostMan)
         {
-            quest.Data.reward.gold = Mathf.RoundToInt(Random.Range(50, 100) * rewardMultiplier);
-            quest.Data.reward.reputation = Mathf.RoundToInt(Random.Range(10, 30) * rewardMultiplier);
+            quest.SetRuntimeReward(
+                Mathf.RoundToInt(Random.Range(50, 100) * rewardMultiplier),
+                Mathf.RoundToInt(Random.Range(10, 16) * rewardMultiplier));
         }
     }
     
