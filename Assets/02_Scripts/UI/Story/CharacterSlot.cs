@@ -68,28 +68,44 @@ public class CharacterSlot : MonoBehaviour
         defaultEmotionIconPos = iconBubble.rectTransform.anchoredPosition;
     }
     
-    public void SetCharacter(Character character, Sprite bodySprite)
+    public void SetCharacter(Character character, Sprite bodySprite, bool resetExpression = true)
     {
         HideEmotionIcon();
         
+        // 기존 연출 완전히 종료
+        ResetMotionRoot();
         visualRoot.DOKill();
         
+        StopAllCoroutines();
+
         currentCharacter = character;
         currentCharacterID = character.characterID;
         characterImage.sprite = bodySprite;
-        
-        currentFace = FaceType.Neutral;
-        currentEyebrow = EyebrowType.Default;
         
         characterImage.color = Color.white;
 
         faceImage.color = Color.white;
         eyebrowImage.color = Color.white;
 
+        // --------------------------------------------------
+        // 표정 초기화 여부
+        // --------------------------------------------------
+        if (resetExpression)
+        {
+            currentFace = FaceType.Neutral;
+            currentEyebrow = EyebrowType.Default;
+            currentShadow = false;
+        }
+        
+        // 그림자 Sprite는 캐릭터 기준으로 다시 설정
         if (character.shadow != null)
         {
-            currentShadow = false;
             shadowImage.sprite = character.shadow;
+        }
+        else
+        {
+            shadowImage.sprite = null;
+            currentShadow = false;
         }
 
         if (character.visual != null)
@@ -111,20 +127,32 @@ public class CharacterSlot : MonoBehaviour
         gameObject.SetActive(true);
     }
     
-    public void SetHidden(Character character, Sprite bodySprite)
+    public void SetHidden(Character character, Sprite bodySprite, bool resetExpression = true)
     {
         currentCharacter = character;
         currentCharacterID = character.characterID;
         characterImage.sprite = bodySprite;
         
-        currentFace = FaceType.Neutral;
-        currentEyebrow = EyebrowType.Default;
-        RefreshExpression();
+        visualRoot.DOKill();
+        ResetMotionRoot();
         
+        StopAllCoroutines();
+        
+        if (resetExpression)
+        {
+            currentFace = FaceType.Neutral;
+            currentEyebrow = EyebrowType.Default;
+            currentShadow = false;
+        }
+
         if (character.shadow != null)
         {
-            currentShadow = false;
             shadowImage.sprite = character.shadow;
+        }
+        else
+        {
+            shadowImage.sprite = null;
+            currentShadow = false;
         }
         
         if (character.visual != null)
@@ -137,6 +165,7 @@ public class CharacterSlot : MonoBehaviour
         }
         
         RefreshShadow();
+        RefreshExpression();
         RefreshScale();
         gameObject.SetActive(false);
     }
@@ -855,6 +884,25 @@ public class CharacterSlot : MonoBehaviour
 
             RefreshColor();
         }
+    }
+    
+    public void ResetExpression()
+    {
+        currentFace = FaceType.Neutral;
+        currentEyebrow = EyebrowType.Default;
+        currentShadow = false;
+
+        RefreshExpression();
+        RefreshShadow();
+    }
+    
+    public void ResetMotionRoot()
+    {
+        motionRootX.DOKill();
+        motionRootY.DOKill();
+
+        motionRootX.anchoredPosition = Vector2.zero;
+        motionRootY.anchoredPosition = Vector2.zero;
     }
     
     private void BeginMotion()

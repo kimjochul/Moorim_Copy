@@ -196,7 +196,7 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         currentIndex = 0;
         isPlaying = true;
 
-        storyUI.Show();
+        storyUI.Show(story);
 
         if (HasAnyCharacter(currentStory))
             characterUI.Show();
@@ -209,6 +209,9 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
     private IEnumerator SetupSceneInternal(bool useCrossFadeTransition) // 암전하는 fade를 사용 안하면 true
     {
         currentScene = currentStory.scenes[currentSceneIndex];
+        StoryScene beforeScene = null;
+        if(currentIndex != 0 ) 
+            beforeScene = currentStory.scenes[currentSceneIndex-1];
         currentIndex = 0;
             
         storyUI.SetRecallDim(currentScene.isRecallScene);
@@ -233,18 +236,20 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         
         Coroutine illustRoutine = null;
         Coroutine bgRoutine = null;
+        Coroutine characterFade = null;
         
         float duration = GetTransitionDuration(TransitionSpeed.Dramatic);
-        characterUI.Hide();
         
-        if (currentScene.visualType == SceneVisualType.Illustration)
+        if (currentScene.visualType == SceneVisualType.Illustration) // 세팅하려는 씬이 일러스트 타입 일 때
         {
             if (useCrossFadeTransition)
             {
                 if(currentScene.illustrationOverlay != null)
+                {
                     illustRoutine = StartCoroutine(
                     storyUI.ChangeIllustrationRoutine(currentScene.illustration, currentScene.illustrationOverlay, false, false, duration)
                     );
+                }
                 else
                     illustRoutine = StartCoroutine(
                         storyUI.ChangeIllustrationRoutine(currentScene.illustration, duration)
@@ -252,6 +257,8 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
             }
             else
             {
+                characterUI.Hide();
+                
                 if(currentScene.illustrationOverlay != null)
                     storyUI.ShowIllustration(currentScene.illustration, currentScene.illustrationOverlay);
                 else
@@ -261,33 +268,41 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         else
         {
             storyUI.HideIllustration();
-
+            
             if (currentScene.characters == null || currentScene.characters.Count == 0)
                 characterUI.Hide();
             else
                 characterUI.Show();
 
+            characterUI.ResetFade();
             characterUI.SetupScene(currentScene.characters);
 
             yield return null;
         }
             
-        // Debug.Log($"{currentStory.id}");
-        // foreach(var currentCharacter in currentScene.characters)
-        //     Debug.Log(currentCharacter.characterID);
-
         if (useCrossFadeTransition)
         {
+            if(beforeScene != null && beforeScene.visualType == SceneVisualType.CharacterSlots && currentScene.visualType == SceneVisualType.Illustration)
+                characterFade = StartCoroutine(CharacterUI.FadeOut(duration));
+                
             bgRoutine = StartCoroutine(storyUI.ChangeBackgroundRoutine(currentScene.background, duration));
+            yield return new WaitForSeconds(duration);
         }
         else
             storyUI.SetBackground(currentScene.background);
+        
+        // Debug.Log($"{currentStory.id}");
+        // foreach(var currentCharacter in currentScene.characters)
+        //     Debug.Log(currentCharacter.characterID);
         
         if (illustRoutine != null)
             yield return illustRoutine;
 
         if (bgRoutine != null)
             yield return bgRoutine;
+        
+        if (characterFade != null)
+            yield return characterFade;
     }
 
     public void ShowNextLine()
@@ -355,16 +370,23 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
             SoundManager.Instance.PlaySFX(line.playSFX);
         }
         
-        storyUI.ShowLine(line);
-        ApplyScreenEffect(line.screenEffect);
-        ApplyCharacterFocusEffect(line);
-        ApplyFlip(line);
-        
-        if (line.illustrationSequence != null && line.illustrationSequence.Count > 0)
+        // 캐릭터 씬에서 일러스트 사용
+        if (line.useIllustInCharacterScene)
+        {
+            if (line.resetIllustration && line.resetOverlay)
+            {
+                yield return StartCoroutine(StoryUI.FadeOutIllustration(GetTransitionDuration(line.transitionSpeed)));
+            }
+            else
+            {
+                StoryUI.ShowCharacterSceneIllustration(line);
+            }
+        }
+        else if (line.illustrationSequence != null && line.illustrationSequence.Count > 0)
             storyUI.PlayIllustrationSequence(line.illustrationSequence, line.illustrationSequence[0].useFlashTransition);
         else if (line.illustrationOverride != null || line.illustrationOverlay != null || line.resetIllustration || line.resetOverlay)
         {
-            StartCoroutine(
+            yield return StartCoroutine(
                 storyUI.ChangeIllustrationRoutine(
                     line.illustrationOverride,
                     line.illustrationOverlay,
@@ -372,6 +394,12 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
                     line.resetOverlay,
                     transitionDuration));
         }
+        
+        storyUI.ShowLine(line);
+        ApplyScreenEffect(line.screenEffect);
+        ApplyCharacterFocusEffect(line);
+        ApplyFlip(line);
+        
         
         if (line.lineType == LineType.Dialogue)
         {
@@ -526,7 +554,7 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
                     inventory.GetItem(item, reward.count);
                 }
                 
-                rewardPopupData.itemRewardNames.Add(reward.item.name);
+                rewardPopupData.itemRewardNames.Add(reward.item.itemName);
             }
         }
         

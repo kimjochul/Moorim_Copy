@@ -32,12 +32,18 @@ public class StorySettingMenu : MonoBehaviour
         
         sceneSkipButton.onClick.AddListener(() =>
         {
-            StoryManager.Instance.SkipCurrentScene();
+            if (StoryManager.Instance.StoryUI.CanSkip())
+            {
+                StoryManager.Instance.SkipCurrentScene();
+            }
         });
 
         storySkipButton.onClick.AddListener(() =>
         {
-            StoryManager.Instance.SkipCurrentStory();
+            if (StoryManager.Instance.StoryUI.CanSkip())
+            {
+                StoryManager.Instance.SkipCurrentStory();
+            }
         });
     }
 

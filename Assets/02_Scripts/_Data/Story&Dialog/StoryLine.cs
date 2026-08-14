@@ -10,8 +10,9 @@ public class StoryLine
     
     [Header("대화인지 나레이션인지")]
     public LineType lineType;
-    
-    [Header("일러스트 단일 그림 화면인 경우")]
+
+    [Header("일러스트 단일 그림 화면인 경우")] 
+    public bool useIllustInCharacterScene = false; // 캐릭터 슬롯 씬에서 일러스트 호출할 때
     public Sprite illustrationOverride;
     
     [Header("추가 오버레이 일러스트")]

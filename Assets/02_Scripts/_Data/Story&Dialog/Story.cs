@@ -61,6 +61,9 @@ public class CharacterInScene
     public bool useSlotUI = true;
     
     public bool startFlip;
+    
+    [Header("씬 전환 시 상태")]
+    public bool resetExpression = true;
 }
 
 [Serializable]
