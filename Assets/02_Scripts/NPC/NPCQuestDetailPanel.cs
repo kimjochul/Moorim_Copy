@@ -52,7 +52,7 @@ public class NPCQuestDetailPanel : MonoBehaviour
     {
         if (currentQuest == null)
             return;
-        
+
         RefreshConditions();
         SetupButton();
     }
@@ -67,7 +67,6 @@ public class NPCQuestDetailPanel : MonoBehaviour
         SubscribeConditions(true);
         
         this.parent = parent;
-        currentQuest = quest;
 
         questName.text = quest.QuestName;
         description.text = quest.Data.questDetail;
@@ -112,7 +111,8 @@ public class NPCQuestDetailPanel : MonoBehaviour
         foreach (Transform child in rewardContent)
             Destroy(child.gameObject);
 
-        foreach (var reward in currentQuest.Data.GetRewardEntries())
+        // 에셋이 아니라 이 퀘스트의 런타임 보상을 표시한다
+        foreach (var reward in currentQuest.GetRuntimeRewardEntries())
         {
             var ui = Instantiate(rewardPrefab, rewardContent);
             ui.Init(reward);
@@ -143,9 +143,10 @@ public class NPCQuestDetailPanel : MonoBehaviour
 
     public void Clear()
     {
+        // 구독 해제를 먼저 해야 한다. currentQuest를 null로 만든 뒤에는 OnDisable에서 해제할 수 없다
         if (currentQuest != null)
             SubscribeConditions(false);
-        
+
         currentQuest = null;
 
         foreach (Transform child in conditionContent)

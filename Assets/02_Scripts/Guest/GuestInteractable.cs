@@ -40,7 +40,14 @@ public class GuestInteractable : MonoBehaviour, IInteractable
     public void Interact(PlayerController player)
     {
         if (myBrain == null || myBrain.IsAngryExiting) return;
-        
+
+        // 난동 중인 괴한은 제압 (상태와 무관하게 최우선)
+        if (myBrain is ViolenceGuest violence && violence.isCausingTrouble)
+        {
+            violence.SuppressViolence();
+            return;
+        }
+
         if (myBrain.currentState == GuestState.WaitOrder)
             myBrain.TakeOrder();
         else if (myBrain.currentState == GuestState.WaitFood)
@@ -51,7 +58,7 @@ public class GuestInteractable : MonoBehaviour, IInteractable
         else if (myBrain.currentState == GuestState.Exit)
         {
             ThiefGuyGuest thief = myBrain as ThiefGuyGuest;
-            
+
             if (thief != null)
                 thief.CatchThief();
         }

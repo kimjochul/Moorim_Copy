@@ -523,14 +523,17 @@ public abstract class GuestBase : MonoBehaviour
         }
         else
         {
+            myOrder.isServed = true;
+            OnOrderServed?.Invoke(this);
+
             ShiftMood(-1);
-            
+    
             if (CurrentMood == GuestMood.VeryBad)
             {
                 TriggerAngryExit(-2);
                 return;
             }
-            
+    
             guestAnim.PlayHandUp();
             ChangeState(GuestState.Eat);
         }

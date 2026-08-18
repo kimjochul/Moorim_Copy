@@ -56,14 +56,25 @@ public class EconomyManager : Singleton<EconomyManager>, IInitializable
     /// 주간 영업 중에 금일 수입을 업데이트하기 위한 함수
     /// </summary>
     /// <param name="amount"></param>
-    public void AddMoney(int amount)
+    public void AddMoney(int amount, bool applyBonus = true)
     {
-        float bonus = BondManager.Instance.GetPercentModifier(BondEffectType.MoneyGainRate);
-        int change = Mathf.RoundToInt(amount * (1f + bonus));
+        int change = amount;
+
+        if (applyBonus)
+        {
+            float bonus = BondManager.Instance.GetPercentModifier(BondEffectType.MoneyGainRate);
+            change = Mathf.RoundToInt(amount * (1f + bonus));
+        }
         
+        if (change < 0)
+            change = Mathf.Max(change, -RestaurantEconomy.Money);
+
+        if (change == 0)
+            return;
+
         _todayMoneyIncome += change;
         RestaurantEconomy.Money += change;
-        
+
         TodayEconomyChanged?.Invoke();
         RestaurantEconomyChanged?.Invoke();
     }
@@ -72,15 +83,25 @@ public class EconomyManager : Singleton<EconomyManager>, IInitializable
     /// 주간 영업 중에 금일 명성 치 수입을 업데이트하기 위한 함수
     /// </summary>
     /// <param name="amount"></param>
-    public void AddFame(int amount)
+    public void AddFame(int amount, bool applyBonus = true)
     {
-        float bonus = BondManager.Instance.GetPercentModifier(BondEffectType.FameGainRate);
-        int change = Mathf.RoundToInt(amount * (1f + bonus));
+        int change = amount;
 
+        if (applyBonus)
+        {
+            float bonus = BondManager.Instance.GetPercentModifier(BondEffectType.FameGainRate);
+            change = Mathf.RoundToInt(amount * (1f + bonus));
+        }
         
+        if (change < 0)
+            change = Mathf.Max(change, -RestaurantEconomy.Fame);
+
+        if (change == 0)
+            return;
+
         _todayFameIncome += change;
         RestaurantEconomy.Fame += change;
-        
+
         TodayEconomyChanged?.Invoke();
         RestaurantEconomyChanged?.Invoke();
     }

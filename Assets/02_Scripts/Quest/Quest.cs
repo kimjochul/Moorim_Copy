@@ -2,9 +2,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-
-
 /// <summary>
 /// 퀘스트 객체에 대한 클래스
 /// Condition 리스트 보관
@@ -24,7 +21,13 @@ public class Quest : IObserver
     public bool IsAccepted  { get; private set; }
     public bool IsFailed { get; private set; }
 
-    public QuestReward RuntimeReward => data.reward;
+    /// <summary>
+    /// 이 퀘스트만의 보상. QuestData(에셋)의 값을 복사해서 쓴다.
+    /// 에셋을 직접 수정하면 같은 템플릿으로 만든 다른 퀘스트의 보상까지 바뀌므로 반드시 사본을 사용한다.
+    /// </summary>
+    public QuestReward RuntimeReward { get; private set; }
+    // public QuestReward RuntimeReward => data.reward; 
+
     public List<int> RewardRecipeIds;
     public List<int> RewardIngredientIds;
     
@@ -49,6 +52,13 @@ public class Quest : IObserver
         
         targetNPC = questData.npcType;
         this.inventory = inventory;
+
+        // 에셋 값을 복사 (에셋 오염 방지)
+        RuntimeReward = new QuestReward
+        {
+            gold = questData.reward.gold,
+            reputation = questData.reward.reputation
+        };
         
         conditions = new List<QuestCondition>();
         foreach (var condition in data.conditions)
@@ -78,10 +88,14 @@ public class Quest : IObserver
         RewardRecipeIds = questData.rewardRecipeIds;
         RewardIngredientIds = questData.rewardIngredientIds;
 
-        conditions = new List<QuestCondition>();
+        // 저장된 보상값으로 복원 (에셋은 건드리지 않음)
+        RuntimeReward = new QuestReward
+        {
+            gold = runtimeData.rewardGold,
+            reputation = runtimeData.rewardFame
+        };
 
-        data.reward.gold = runtimeData.rewardGold;
-        data.reward.reputation = runtimeData.rewardFame;
+        conditions = new List<QuestCondition>();
 
         foreach (var savedCond in runtimeData.conditions)
         {
@@ -95,6 +109,67 @@ public class Quest : IObserver
 
             conditions.Add(condition);
         }
+    }
+
+    /// <summary>
+    /// 난이도 스케일링 등으로 이 퀘스트만의 보상을 설정할 때 사용
+    /// </summary>
+    public void SetRuntimeReward(int gold, int reputation)
+    {
+        RuntimeReward.gold = gold;
+        RuntimeReward.reputation = reputation;
+    }
+
+    /// <summary>
+    /// UI 표시용 보상 목록. 에셋이 아니라 이 퀘스트의 런타임 보상을 기준으로 만든다.
+    /// </summary>
+    public List<QuestRewardEntry> GetRuntimeRewardEntries()
+    {
+        List<QuestRewardEntry> list = new();
+
+        if (RuntimeReward.gold > 0)
+        {
+            list.Add(new QuestRewardEntry
+            {
+                type = QuestRewardType.Gold,
+                amount = RuntimeReward.gold
+            });
+        }
+
+        if (RuntimeReward.reputation > 0)
+        {
+            list.Add(new QuestRewardEntry
+            {
+                type = QuestRewardType.Reputation,
+                amount = RuntimeReward.reputation
+            });
+        }
+
+        if (RewardRecipeIds != null)
+        {
+            foreach (int id in RewardRecipeIds)
+            {
+                list.Add(new QuestRewardEntry
+                {
+                    type = QuestRewardType.Recipe,
+                    id = id
+                });
+            }
+        }
+
+        if (RewardIngredientIds != null)
+        {
+            foreach (int id in RewardIngredientIds)
+            {
+                list.Add(new QuestRewardEntry
+                {
+                    type = QuestRewardType.Ingredient,
+                    id = id
+                });
+            }
+        }
+
+        return list;
     }
     
     /// <summary>
@@ -174,10 +249,13 @@ public class Quest : IObserver
     public void Complete()
     {
         IsCompleted = true;
-        Debug.Log($"퀘스트 완료: {QuestName}");
-        
-        EconomyManager.Instance.AddMoney(RuntimeReward.gold);
-        EconomyManager.Instance.AddFame(RuntimeReward.reputation);
+        Debug.Log($"퀘스트 완료: {QuestName} / 보상 {RuntimeReward.gold}원, 명성 {RuntimeReward.reputation}");
+
+        DailyTestLogger.Instance?.RecordQuestCompleted(this);
+
+        // 퀘스트 보상은 인연 효과(획득률 증가)를 적용하지 않고 표기된 값 그대로 지급
+        EconomyManager.Instance.AddMoney(RuntimeReward.gold, false);
+        EconomyManager.Instance.AddFame(RuntimeReward.reputation, false);
         
         QuestManager.Instance.CompletedQuests.Add(this);
         QuestManager.Instance.EraseQuestFromActive(this);

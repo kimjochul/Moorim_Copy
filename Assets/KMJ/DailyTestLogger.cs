@@ -39,6 +39,24 @@ public class UpgradeLog
     public int level;           // 업그레이드 후 레벨
 }
 
+/// <summary>
+/// 퀘스트는 하루가 끝난 뒤 NPC에게서 완료하므로 일일 로그와 별도로 기록한다.
+/// </summary>
+[Serializable]
+public class QuestClearLog
+{
+    public int day;
+    public string questName;
+    public string questType;
+
+    public int beforeMoney;
+    public int afterMoney;
+    public int beforeFame;
+    public int afterFame;
+
+    public string savedAt;
+}
+
 [Serializable]
 public class DailyTestLog
 {
@@ -57,11 +75,14 @@ public class DailyTestLog
 
     public int servedGuestCount;    // 결제까지 끝낸 손님 수
     public int enteredGuestCount;   // 스폰된 손님 총 수
-    public int recordedGuestCount;  // 기분이 집계된 손님 수 (퇴장 처리된 손님)
 
     public List<UpgradeLog> upgrades = new();
-    public List<GuestTypeLog> guestTypes = new();
-    public List<GuestMoodLog> guestMoods = new();
+    public List<GuestTypeLog> enteredGuestTypes = new();   // 들어온 손님 유형
+    public List<GuestTypeLog> paidGuestTypes = new();      // 결제한 손님 유형
+    public int caughtThiefCount;                           // 잡은 도둑 수
+    public int caughtThiefMoney;                           // 도둑에게 받아낸 돈
+    public int caughtThiefFame;                            // 도둑 검거로 얻은 명성
+    public List<GuestMoodLog> paidGuestMoods = new();      // 결제한 손님 기분
     public List<UsedIngredientLog> usedIngredients = new();
 
     public string savedAt;          // 실제 시각
@@ -79,6 +100,7 @@ public class DailyTestLogFile
 /// <summary>
 /// 게임 테스트용 일일 결과 로거.
 /// 씬의 빈 오브젝트에 붙여두면 DayEnd 때마다 persistentDataPath에 json/txt로 기록한다.
+/// 파일은 현재 플레이 중인 세이브 슬롯별로 분리해서 저장한다.
 /// </summary>
 public class DailyTestLogger : MonoBehaviour
 {
@@ -97,10 +119,10 @@ public class DailyTestLogger : MonoBehaviour
     [Tooltip("켜면 IngredientData인 아이템만 재료로 집계한다. (완성 요리가 재료비에 섞이는 것 방지)")]
     [SerializeField] private bool ingredientsOnly = true;
 
-    [Tooltip("켜면 OnDayEnd 다음 프레임에 기록한다. (기분은 실시간 집계라 영향 없음)")]
+    [Tooltip("켜면 OnDayEnd 다음 프레임에 기록한다.")]
     [SerializeField] private bool waitOneFrame = true;
 
-    [Tooltip("저장 파일 이름 (확장자 제외)")]
+    [Tooltip("저장 파일 이름 (확장자 제외). 실제 파일명 뒤에 슬롯 번호가 붙는다.")]
     [SerializeField] private string fileName = "day_test_log";
 
     [Tooltip("사람이 읽는 txt도 같이 남길지")]
@@ -110,8 +132,14 @@ public class DailyTestLogger : MonoBehaviour
     private readonly Dictionary<int, int> startSnapshot = new();
 
     private readonly Dictionary<int, int> manualUsed = new();
-    private readonly Dictionary<string, int> guestTypeCounts = new();
-    private readonly Dictionary<GuestMood, int> moodCounts = new();
+
+    // 손님 집계
+    private readonly Dictionary<string, int> enteredTypeCounts = new();
+    private readonly Dictionary<string, int> paidTypeCounts = new();
+    private readonly Dictionary<GuestMood, int> paidMoodCounts = new();
+    private int caughtThiefCount;
+    private int caughtThiefMoney;
+    private int caughtThiefFame;
 
     // 그날 진행한 업그레이드
     private readonly List<UpgradeLog> todayUpgrades = new();
@@ -120,10 +148,8 @@ public class DailyTestLogger : MonoBehaviour
     private int startMoney;
     private int startFame;
 
-    // 아이템 정보 캐시 (매번 리플렉션 안 하도록)
+    // 아이템 정보 캐시
     private readonly Dictionary<int, ItemInfo> itemInfoCache = new();
-
-    private GuestResultTracker trackedTracker;
 
     private struct ItemInfo
     {
@@ -162,61 +188,12 @@ public class DailyTestLogger : MonoBehaviour
 
         if (UpgradeManager.Instance != null)
             UpgradeManager.Instance.SelectedOptionUpgraded -= HandleUpgraded;
-
-        UnbindTracker();
     }
 
     private void OnDestroy()
     {
         if (Instance == this)
             Instance = null;
-    }
-
-    #region GuestResultTracker 연결 (손님 기분 집계)
-
-    /// <summary>
-    /// GuestResultTracker.EndDay()가 DailyResult를 Reset해버리기 때문에,
-    /// 하루가 끝난 뒤 DailyResult를 읽으면 값이 0이다.
-    /// 그래서 OnGuestRecorded 이벤트를 구독해서 실시간으로 직접 센다.
-    /// </summary>
-    private void BindTracker()
-    {
-        GuestResultTracker tracker = null;
-
-        if (EconomyManager.Instance != null)
-            tracker = EconomyManager.Instance.GuestResultTracker;
-
-        if (tracker == null)
-            tracker = FindFirstObjectByType<GuestResultTracker>(FindObjectsInactive.Include);
-
-        if (tracker == trackedTracker)
-            return;
-
-        UnbindTracker();
-
-        if (tracker == null)
-        {
-            Debug.LogWarning("[DailyTestLogger] GuestResultTracker 못 찾음. 기분 집계 불가");
-            return;
-        }
-
-        trackedTracker = tracker;
-        trackedTracker.OnGuestRecorded += HandleGuestRecorded;
-    }
-
-    private void UnbindTracker()
-    {
-        if (trackedTracker == null)
-            return;
-
-        trackedTracker.OnGuestRecorded -= HandleGuestRecorded;
-        trackedTracker = null;
-    }
-
-    private void HandleGuestRecorded(GuestMood mood)
-    {
-        moodCounts.TryGetValue(mood, out int prev);
-        moodCounts[mood] = prev + 1;
     }
 
     private static string MoodToKorean(GuestMood mood)
@@ -232,13 +209,11 @@ public class DailyTestLogger : MonoBehaviour
         }
     }
 
-    #endregion
-
     #region 외부에서 직접 기록할 때 쓰는 API
 
     /// <summary>
     /// 손님 스폰 시 호출.
-    /// GuestManager.InstantiateAndSetupGuest()에 아래 한 줄 추가:
+    /// GuestManager.InstantiateAndSetupGuest()에 아래 한 줄:
     /// DailyTestLogger.Instance?.RecordGuestSpawned(appearance);
     /// </summary>
     public void RecordGuestSpawned(string guestType)
@@ -246,8 +221,8 @@ public class DailyTestLogger : MonoBehaviour
         if (string.IsNullOrEmpty(guestType))
             guestType = "Unknown";
 
-        guestTypeCounts.TryGetValue(guestType, out int prev);
-        guestTypeCounts[guestType] = prev + 1;
+        enteredTypeCounts.TryGetValue(guestType, out int prev);
+        enteredTypeCounts[guestType] = prev + 1;
     }
 
     public void RecordGuestSpawned(GuestAppearance appearance)
@@ -256,8 +231,30 @@ public class DailyTestLogger : MonoBehaviour
     }
 
     /// <summary>
+    /// 손님이 결제를 마쳤을 때 호출. (돈/명성을 실제로 준 손님만 집계)
+    /// GuestManager의 guest.OnGuestPaid 람다 안에 아래 한 줄:
+    /// DailyTestLogger.Instance?.RecordGuestPaid(appearance, guest.CurrentMood);
+    /// </summary>
+    public void RecordGuestPaid(GuestAppearance appearance, GuestMood mood)
+    {
+        string type = appearance.ToString();
+
+        paidTypeCounts.TryGetValue(type, out int prevType);
+        paidTypeCounts[type] = prevType + 1;
+
+        paidMoodCounts.TryGetValue(mood, out int prevMood);
+        paidMoodCounts[mood] = prevMood + 1;
+    }
+    
+    public void RecordThiefCaught(int money, int fame)
+    {
+        caughtThiefCount++;
+        caughtThiefMoney += money;
+        caughtThiefFame += fame;
+    }
+
+    /// <summary>
     /// 재료를 실제로 소모하는 지점에서 호출 (useInventoryDiff를 끌 때 사용).
-    /// 예) DailyTestLogger.Instance?.RecordUsedIngredient(item.ID, 1);
     /// </summary>
     public void RecordUsedIngredient(int itemID, int count = 1)
     {
@@ -270,13 +267,67 @@ public class DailyTestLogger : MonoBehaviour
 
     #endregion
 
-    #region 업그레이드 기록
+    #region 퀘스트 완료 기록 (하루 로그와 별도)
 
     /// <summary>
-    /// UpgradeManager.SelectedOptionUpgraded 구독.
-    /// 세이브 로드 시 ApplyLoadedUpgrades()도 이 이벤트를 발행하지만,
-    /// 로드는 DayStart보다 먼저 처리되고 DayStart에서 리스트를 비우므로 섞이지 않는다.
+    /// 퀘스트 완료 시 호출.
+    /// 퀘스트는 DayEnd 이후 NPC에게서 완료하므로 일일 로그에 포함되지 않고 별도 블록으로 남긴다.
+    /// Quest.Complete() 맨 위에 아래 한 줄:
+    /// DailyTestLogger.Instance?.RecordQuestCompleted(this);
     /// </summary>
+    public void RecordQuestCompleted(Quest quest)
+    {
+        if (quest == null)
+            return;
+
+        var log = new QuestClearLog
+        {
+            questName = quest.QuestName,
+            questType = quest.QuestType.ToString(),
+            savedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+        };
+
+        if (DayManager.Instance != null && DayManager.Instance.DayData != null)
+            log.day = DayManager.Instance.DayData.day;
+
+        if (EconomyManager.Instance != null && EconomyManager.Instance.RestaurantEconomy != null)
+        {
+            log.beforeMoney = EconomyManager.Instance.RestaurantEconomy.Money;
+            log.beforeFame = EconomyManager.Instance.RestaurantEconomy.Fame;
+        }
+
+        // 보상 지급(AddMoney/AddFame)은 이 호출 직후에 일어나므로
+        // 프레임 끝에 after 값을 읽어야 인연 보너스까지 반영된 실제 증가분이 잡힌다
+        if (isActiveAndEnabled)
+            StartCoroutine(WriteQuestLogEndOfFrame(log));
+        else
+            WriteQuestLog(log);
+    }
+
+    private IEnumerator WriteQuestLogEndOfFrame(QuestClearLog log)
+    {
+        yield return new WaitForEndOfFrame();
+        WriteQuestLog(log);
+    }
+
+    private void WriteQuestLog(QuestClearLog log)
+    {
+        if (EconomyManager.Instance != null && EconomyManager.Instance.RestaurantEconomy != null)
+        {
+            log.afterMoney = EconomyManager.Instance.RestaurantEconomy.Money;
+            log.afterFame = EconomyManager.Instance.RestaurantEconomy.Fame;
+        }
+
+        if (writeTxt)
+            AppendQuestToTxt(log);
+
+        Debug.Log($"[DailyTestLogger] 퀘스트 완료 기록: {log.questName}");
+    }
+
+    #endregion
+
+    #region 업그레이드 기록
+
     private void HandleUpgraded(UpgradeType type)
     {
         int level = UpgradeManager.Instance != null
@@ -296,13 +347,17 @@ public class DailyTestLogger : MonoBehaviour
 
     private void HandleDayStart()
     {
-        BindTracker();
-
         manualUsed.Clear();
-        guestTypeCounts.Clear();
-        moodCounts.Clear();
+        enteredTypeCounts.Clear();
+        paidTypeCounts.Clear();
+        paidMoodCounts.Clear();
+        caughtThiefCount = 0;
+        caughtThiefMoney = 0;
+        caughtThiefFame = 0;
         startSnapshot.Clear();
         todayUpgrades.Clear();
+        
+        
 
         // 하루 시작 시점의 돈 / 명성
         // (명성은 그날 손님 스폰 주기를 결정하는 값이라 따로 남긴다)
@@ -329,8 +384,7 @@ public class DailyTestLogger : MonoBehaviour
 
     private IEnumerator WriteNextFrame()
     {
-        // OnDayEnd에 걸린 다른 핸들러(StopSpawn 등)가 먼저 끝나도록 한 프레임 대기.
-        // 수입/명성/기분 집계는 다음 DayStart 전까지 유지되므로 값은 그대로 유효하다.
+        // OnDayEnd에 걸린 다른 핸들러(StopSpawn 등)가 먼저 끝나도록 한 프레임 대기
         yield return null;
 
         WriteLog();
@@ -345,7 +399,7 @@ public class DailyTestLogger : MonoBehaviour
         if (writeTxt)
             AppendToTxt(log);
 
-        Debug.Log($"[DailyTestLogger] {log.day}일차 기록 완료 → {GetDirectory()}");
+        Debug.Log($"[DailyTestLogger] {log.day}일차 기록 완료 → {GetTxtPath()}");
     }
 
     #endregion
@@ -366,7 +420,7 @@ public class DailyTestLogger : MonoBehaviour
             log.dayOfWeek = DayManager.Instance.DayData.dayOfWeek.ToString();
         }
 
-        // 하루 시작 시점 값 (HandleDayStart에서 저장해둔 것)
+        // 하루 시작 시점 값
         log.startMoney = startMoney;
         log.startFame = startFame;
 
@@ -387,26 +441,30 @@ public class DailyTestLogger : MonoBehaviour
         // 그날 진행한 업그레이드
         log.upgrades.AddRange(todayUpgrades);
 
-        // 손님 유형
-        var typeKeys = new List<string>(guestTypeCounts.Keys);
-        typeKeys.Sort(StringComparer.Ordinal);
-
-        foreach (var key in typeKeys)
+        // 들어온 손님 유형
+        foreach (var entry in SortedTypeList(enteredTypeCounts))
         {
-            log.guestTypes.Add(new GuestTypeLog { guestType = key, count = guestTypeCounts[key] });
-            log.enteredGuestCount += guestTypeCounts[key];
+            log.enteredGuestTypes.Add(entry);
+            log.enteredGuestCount += entry.count;
         }
 
-        // 손님 기분 (정해진 순서대로)
+        // 결제한 손님 유형
+        foreach (var entry in SortedTypeList(paidTypeCounts))
+            log.paidGuestTypes.Add(entry);
+        
+        log.caughtThiefCount = caughtThiefCount;
+        log.caughtThiefMoney = caughtThiefMoney;
+        log.caughtThiefFame = caughtThiefFame;
+
+        // 결제한 손님 기분 (정해진 순서대로)
         foreach (var moodName in MoodOrder)
         {
-            foreach (var pair in moodCounts)
+            foreach (var pair in paidMoodCounts)
             {
                 if (MoodToKorean(pair.Key) != moodName || pair.Value <= 0)
                     continue;
 
-                log.guestMoods.Add(new GuestMoodLog { mood = moodName, count = pair.Value });
-                log.recordedGuestCount += pair.Value;
+                log.paidGuestMoods.Add(new GuestMoodLog { mood = moodName, count = pair.Value });
             }
         }
 
@@ -441,6 +499,19 @@ public class DailyTestLogger : MonoBehaviour
         return log;
     }
 
+    private List<GuestTypeLog> SortedTypeList(Dictionary<string, int> counts)
+    {
+        var keys = new List<string>(counts.Keys);
+        keys.Sort(StringComparer.Ordinal);
+
+        var result = new List<GuestTypeLog>();
+
+        foreach (var key in keys)
+            result.Add(new GuestTypeLog { guestType = key, count = counts[key] });
+
+        return result;
+    }
+
     private Dictionary<int, int> CollectUsedIngredients()
     {
         if (!useInventoryDiff)
@@ -466,7 +537,6 @@ public class DailyTestLogger : MonoBehaviour
 
     /// <summary>
     /// 모든 인벤토리의 아이템 개수를 itemID 기준으로 합산.
-    /// Inventory 내부 구조를 몰라도 되도록 GetSaveData()를 이용한다.
     /// </summary>
     private Dictionary<int, int> TakeInventorySnapshot()
     {
@@ -509,9 +579,6 @@ public class DailyTestLogger : MonoBehaviour
 
     #region 아이템 이름 / 가격 조회
 
-    /// <summary>
-    /// DataManager에서 ItemData를 가져와 표시 이름(itemName)과 가격(price)을 뽑는다.
-    /// </summary>
     private ItemInfo GetItemInfo(int id)
     {
         if (itemInfoCache.TryGetValue(id, out ItemInfo cached))
@@ -561,8 +628,23 @@ public class DailyTestLogger : MonoBehaviour
         return dir;
     }
 
-    private string GetJsonPath() => Path.Combine(GetDirectory(), fileName + ".json");
-    private string GetTxtPath() => Path.Combine(GetDirectory(), fileName + ".txt");
+    /// <summary>
+    /// 현재 플레이 중인 세이브 슬롯에 따라 파일명을 나눈다.
+    /// 예) day_test_log_auto.txt, day_test_log_slot2.txt
+    /// </summary>
+    private string GetSlotSuffix()
+    {
+        if (SaveManager.Instance == null)
+            return "";
+
+        if (SaveManager.Instance.CurrentSlotType == SaveSlotType.Auto)
+            return "_auto";
+
+        return $"_slot{SaveManager.Instance.CurrentSlotIndex}";
+    }
+
+    private string GetJsonPath() => Path.Combine(GetDirectory(), fileName + GetSlotSuffix() + ".json");
+    private string GetTxtPath() => Path.Combine(GetDirectory(), fileName + GetSlotSuffix() + ".txt");
 
     private void AppendToJson(DailyTestLog log)
     {
@@ -601,8 +683,8 @@ public class DailyTestLogger : MonoBehaviour
         sb.AppendLine($"{log.day}일차 ({log.dayOfWeek})   [{log.savedAt}]");
         sb.AppendLine($"돈   : {log.startMoney:N0} → {log.endMoney:N0}   (수입 +{log.moneyIncome:N0} / 지출 -{spent:N0})");
         sb.AppendLine($"명성 : {log.startFame:N0} → {log.endFame:N0}   (획득 +{log.fameIncome:N0})");
-        sb.AppendLine($"결제한 손님 : {log.servedGuestCount}");
         sb.AppendLine($"들어온 손님 : {log.enteredGuestCount}");
+        sb.AppendLine($"결제한 손님 : {log.servedGuestCount}");
 
         sb.AppendLine("업그레이드:");
         if (log.upgrades.Count == 0)
@@ -615,25 +697,46 @@ public class DailyTestLogger : MonoBehaviour
                 sb.AppendLine($"  - {up.upgradeType} → Lv.{up.level}");
         }
 
-        sb.AppendLine("손님 유형:");
-        if (log.guestTypes.Count == 0)
+        sb.AppendLine("들어온 손님 유형:");
+        if (log.enteredGuestTypes.Count == 0)
         {
             sb.AppendLine("  (기록 없음 - RecordGuestSpawned 훅 확인)");
         }
         else
         {
-            foreach (var t in log.guestTypes)
+            foreach (var t in log.enteredGuestTypes)
                 sb.AppendLine($"  - {t.guestType}손님 {t.count}명");
         }
 
-        sb.AppendLine($"손님 기분: (집계 {log.recordedGuestCount}명)");
-        if (log.guestMoods.Count == 0)
+        sb.AppendLine("결제한 손님 유형:");
+        if (log.paidGuestTypes.Count == 0)
         {
-            sb.AppendLine("  (기록 없음)");
+            sb.AppendLine("  (없음)");
         }
         else
         {
-            foreach (var m in log.guestMoods)
+            foreach (var t in log.paidGuestTypes)
+                sb.AppendLine($"  - {t.guestType}손님 {t.count}명");
+        }
+        sb.AppendLine("잡은 도둑:");
+        if (log.caughtThiefCount == 0)
+        {
+            sb.AppendLine("  (없음)");
+        }
+        else
+        {
+            sb.AppendLine($"  - {log.caughtThiefCount}명 검거" +
+                          $"  (받아낸 돈 {log.caughtThiefMoney:N0} / 명성 +{log.caughtThiefFame})");
+        }
+
+        sb.AppendLine("결제한 손님 기분:");
+        if (log.paidGuestMoods.Count == 0)
+        {
+            sb.AppendLine("  (없음)");
+        }
+        else
+        {
+            foreach (var m in log.paidGuestMoods)
                 sb.AppendLine($"  - {m.mood} 손님 {m.count}명");
         }
 
@@ -659,6 +762,23 @@ public class DailyTestLogger : MonoBehaviour
         File.AppendAllText(GetTxtPath(), sb.ToString(), Encoding.UTF8);
     }
 
+    private void AppendQuestToTxt(QuestClearLog log)
+    {
+        var sb = new StringBuilder();
+
+        int moneyGain = log.afterMoney - log.beforeMoney;
+        int fameGain = log.afterFame - log.beforeFame;
+
+        sb.AppendLine("========================================");
+        sb.AppendLine($"{log.day}일차 종료 후 퀘스트 완료   [{log.savedAt}]");
+        sb.AppendLine($"완료한 퀘스트 : [{log.questType}] {log.questName}");
+        sb.AppendLine($"돈   : {log.beforeMoney:N0} → {log.afterMoney:N0}   (획득 +{moneyGain:N0})");
+        sb.AppendLine($"명성 : {log.beforeFame:N0} → {log.afterFame:N0}   (획득 +{fameGain:N0})");
+        sb.AppendLine();
+
+        File.AppendAllText(GetTxtPath(), sb.ToString(), Encoding.UTF8);
+    }
+
     #endregion
 
     #region 편의 기능
@@ -669,13 +789,24 @@ public class DailyTestLogger : MonoBehaviour
         Application.OpenURL("file://" + GetDirectory());
     }
 
-    [ContextMenu("로그 초기화")]
+    [ContextMenu("현재 슬롯 로그 초기화")]
     private void ClearLogs()
     {
         if (File.Exists(GetJsonPath())) File.Delete(GetJsonPath());
         if (File.Exists(GetTxtPath())) File.Delete(GetTxtPath());
 
-        Debug.Log("[DailyTestLogger] 로그 삭제 완료");
+        Debug.Log($"[DailyTestLogger] 로그 삭제 완료 ({GetSlotSuffix()})");
+    }
+
+    [ContextMenu("모든 슬롯 로그 초기화")]
+    private void ClearAllLogs()
+    {
+        string dir = GetDirectory();
+
+        foreach (string path in Directory.GetFiles(dir, fileName + "*"))
+            File.Delete(path);
+
+        Debug.Log("[DailyTestLogger] 전체 로그 삭제 완료");
     }
 
     #endregion

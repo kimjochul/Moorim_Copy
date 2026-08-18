@@ -291,11 +291,12 @@ public class QuestManager : Singleton<QuestManager>, ISubject, IInitializable
 
         foreach (var quest in waitingQuests)
         {
+            // 에셋이 아니라 이 퀘스트의 런타임 보상을 저장한다
             var questData = new QuestRuntimeData
             {
                 questID = quest.QuestID,
-                rewardGold = quest.Data.reward.gold,
-                rewardFame = quest.Data.reward.reputation
+                rewardGold = quest.RuntimeReward.gold,
+                rewardFame = quest.RuntimeReward.reputation
             };
 
             var conditions = quest.GetConditions();
@@ -320,11 +321,12 @@ public class QuestManager : Singleton<QuestManager>, ISubject, IInitializable
         
         foreach (var quest in activeQuests)
         {
+            // 에셋이 아니라 이 퀘스트의 런타임 보상을 저장한다
             var questData = new QuestRuntimeData
             {
                 questID = quest.QuestID,
-                rewardGold = quest.Data.reward.gold,
-                rewardFame = quest.Data.reward.reputation
+                rewardGold = quest.RuntimeReward.gold,
+                rewardFame = quest.RuntimeReward.reputation
             };
 
             var conditions = quest.GetConditions();

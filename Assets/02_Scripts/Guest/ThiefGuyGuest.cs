@@ -237,17 +237,28 @@ public class ThiefGuyGuest : GuestBase
             Debug.Log("도둑 검거 성공 음식값이랑 명성값을 받아냄.");
             isCaught = true;
 
+            int money = 0;
+            int fame = 2;
+
             if (myOrder != null && myOrder.orderedFood != null)
             {
-                EconomyManager.Instance.AddMoney(myOrder.orderedFood.price); 
-                EconomyManager.Instance.AddFame(5); 
+                money = myOrder.orderedFood.price;
+
+                EconomyManager.Instance.AddMoney(money); 
+                EconomyManager.Instance.AddFame(fame); 
             }
-            
+            else
+            {
+                fame = 0;   // 주문이 없으면 보상도 없음
+            }
+
+            DailyTestLogger.Instance?.RecordThiefCaught(money, fame);
+        
             QuestManager.Instance.NotifyListener(new QuestEvent
             {
                 type = QuestEventType.CatchThief
             });
-            
+        
             mover.StopAndDisable();
             guestAnim.OnCatchedFinished += OnResumeEscape;
             guestAnim.PlayCatched();
