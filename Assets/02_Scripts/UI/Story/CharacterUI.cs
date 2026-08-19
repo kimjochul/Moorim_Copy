@@ -111,32 +111,41 @@ public class CharacterUI : MonoBehaviour
          * 현재 Scene
          *   Character A → Slot 0
          *
-         * → 기존 CharacterSlot을 유지한다.
+         * → 기존 CharacterSlot을 그대로 유지한다.
          *
-         * 단, 씬 전환 시 다음 상태는 현재 Scene 기준으로 다시 적용한다.
+         * 기존 캐릭터와 슬롯을 유지하기 때문에 다음 상태가 이어진다.
+         *
+         *   - CharacterSlot 자체
+         *   - 현재 캐릭터 데이터
+         *   - 현재 Sprite
+         *   - 현재 표정
+         *   - MotionXRoot 위치
+         *   - MotionYRoot 위치
+         *
+         * 특히 MotionXRoot / MotionYRoot는
+         * SetupScene에서 위치를 초기화하지 않는다.
+         *
+         * 따라서 이전 Scene에서 Motion에 의해 이동한 상태라면
+         * 그 위치가 다음 Scene에서도 그대로 유지된다.
+         *
+         * 단, 현재 진행 중인 Motion의 Coroutine / DOTween은
+         * StopSlotMotion()으로 정리한다.
+         *
+         * 즉,
+         *
+         *   "진행 중인 Motion은 종료하지만,
+         *    MotionRoot의 현재 위치는 유지한다."
+         *
+         *
+         * 반대로 다음 상태는 현재 Scene 기준으로 다시 적용한다.
          *
          *   - SlotRoot 위치
          *   - BaseScale
          *   - Flip
          *   - SortingOrder
          *
-         * 또한 현재 Scene 시작 시 기존 연출 상태가 남지 않도록
-         *
-         *   - MotionXRoot → (0, 0)
-         *   - MotionYRoot → (0, 0)
-         *
-         * 으로 초기화한다.
-         *
-         * 표정은 CharacterInScene.resetExpression에 따라 결정한다.
-         *
-         *   resetExpression == true
-         *       → Neutral / Default / Shadow Off로 초기화
-         *
-         *   resetExpression == false
-         *       → 이전 Scene의 표정 상태 유지
-         *
-         * 즉, 캐릭터와 슬롯은 유지하지만
-         * "씬 연출 상태"와 "표정 상태"는 각각 별도로 처리한다.
+         * 따라서 SlotRoot가 직접 이동한 경우에는
+         * 현재 Scene의 preset.position으로 되돌아간다.
          *
          *
          * [2. 기존 캐릭터 + 다른 슬롯]
@@ -156,9 +165,9 @@ public class CharacterUI : MonoBehaviour
          * → 새로운 Slot 2를 PrepareSlot()으로 초기화한다.
          * → Character A를 Slot 2에 SetCharacter()로 배치한다.
          *
-         * 슬롯을 이동하는 경우에는 이전 슬롯의 상태를 이어받지 않는다.
+         * 기존 슬롯을 완전히 정리하므로 이전 Slot의 상태를 이어받지 않는다.
          *
-         * 따라서 새 슬롯에서는 기본 캐릭터 상태로 시작한다.
+         * 따라서 새 슬롯에서는 캐릭터의 기본 상태로 시작한다.
          *
          *
          * [3. 완전히 새로운 캐릭터]
@@ -184,8 +193,7 @@ public class CharacterUI : MonoBehaviour
          * → startVisible == false라면
          *      SetHidden()으로 숨긴다.
          *
-         * 새로운 캐릭터이므로 이전 Scene의 표정이나 연출 상태를
-         * 이어받지 않는다.
+         * 새로운 캐릭터이므로 이전 Scene의 상태를 이어받지 않는다.
          *
          *
          * [4. 기존 Slot에 다른 캐릭터가 들어오는 경우]
@@ -213,18 +221,7 @@ public class CharacterUI : MonoBehaviour
          *
          * → ResetSlot()으로 Slot을 완전히 정리한다.
          *
-         * ResetSlot()에서는 기존 캐릭터의
-         *
-         *   - Coroutine
-         *   - DOTween
-         *   - 캐릭터 데이터
-         *   - Sprite
-         *   - 표정
-         *   - 그림자
-         *   - Emotion Icon
-         *   - MotionRoot 상태
-         *
-         * 등을 정리한다.
+         * ResetSlot()에서는 기존 캐릭터의 상태를 제거한다.
          *
          *
          * [6. startVisible]
@@ -233,13 +230,16 @@ public class CharacterUI : MonoBehaviour
          * startVisible == true
          *
          *   [동일 캐릭터 + 동일 슬롯]
-         *       → 기존 캐릭터 유지
-         *       → 비활성 상태라면 SetCharacter()
+         *       → 기존 CharacterSlot 유지
+         *       → MotionXRoot / MotionYRoot 위치 유지
+         *       → 현재 진행 중인 Motion은 StopSlotMotion()으로 종료
+         *       → 캐릭터가 비활성 상태라면 SetCharacter()
          *       → 활성 상태라면 resetExpression에 따라
-         *         표정만 초기화하거나 유지
+         *         표정을 초기화하거나 기존 표정 유지
          *
          *   [다른 슬롯으로 이동한 기존 캐릭터]
-         *       → SetCharacter()
+         *       → 기존 슬롯 Reset
+         *       → 새 슬롯에 SetCharacter()
          *
          *   [완전히 새로운 캐릭터]
          *       → Appear()
@@ -249,135 +249,164 @@ public class CharacterUI : MonoBehaviour
          *
          *   → SetHidden()
          *
-         *   → resetExpression에 따라 표정 상태를
-         *     초기화하거나 유지한다.
+         *   → resetExpression 값에 따라
+         *     표정 상태를 초기화하거나 유지한다.
          *
          *
          * [7. resetExpression]
          * ----------------------------------------------------------------
-         * 동일 캐릭터 + 동일 슬롯에서 씬 전환 시
+         * 동일 캐릭터 + 동일 슬롯에서
          * 이전 Scene의 표정을 유지할지 결정한다.
          *
          * resetExpression == true
          *
-         *   → 표정을 씬 기본 상태로 초기화
-         *
-         *   - Face      → Neutral
-         *   - Eyebrow   → Default
-         *   - Shadow    → Off
-         *
+         *   → ResetExpression()을 통해
+         *     씬 기본 표정으로 초기화한다.
          *
          * resetExpression == false
          *
-         *   → 이전 Scene에서 사용하던
-         *      Face / Eyebrow / Shadow 상태를 유지한다.
+         *   → 기존 표정 상태를 유지한다.
          *
-         * 표정 상태만 선택적으로 유지하며,
-         * MotionRoot의 위치까지 유지하는 것은 아니다.
+         * 즉, resetExpression은
+         * "같은 캐릭터 + 같은 슬롯에서 표정 상태를 유지할지"
+         * 결정하는 옵션이다.
+         *
+         * MotionXRoot / MotionYRoot의 위치와는 별개의 설정이다.
          *
          *
          * [8. Motion 상태]
          * ----------------------------------------------------------------
-         * SetupScene에서는 씬 전환 시 이전 연출 상태를 이어받지 않는다.
+         * Motion 상태는 캐릭터의 종류와 슬롯 변경 여부에 따라 다르게 처리한다.
          *
-         * StopSlotMotion()을 통해 기존 Coroutine / DOTween을 정리하고,
-         * CharacterSlot의 SetCharacter() / SetHidden()에서
-         * MotionRoot를 원점으로 초기화한다.
          *
-         *   MotionXRoot → Vector2.zero
-         *   MotionYRoot → Vector2.zero
+         * [동일 캐릭터 + 동일 슬롯]
+         *
+         *   → 기존 CharacterSlot 유지
+         *   → MotionXRoot 위치 유지
+         *   → MotionYRoot 위치 유지
+         *
+         *   → 단, 현재 실행 중인 Coroutine / DOTween은
+         *     StopSlotMotion()으로 종료한다.
          *
          * 따라서 이전 Scene에서
          *
-         *   - 이동
-         *   - 앉기
-         *   - 점프
-         *   - 흔들림
-         *   - 긴장
-         *   - 공격
-         *   - 기타 Motion
+         *   MotionXRoot = (100, 0)
+         *   MotionYRoot = (0, 20)
          *
-         * 등의 결과가 다음 Scene에 남지 않는다.
+         * 상태였다면,
          *
-         * 단, MoveRoutine처럼 MotionXRoot의 이동량을 SlotRoot에
-         * 반영하는 Motion의 경우 SlotRoot 위치 자체가 변경될 수 있으므로,
-         * SetupScene에서 SlotRoot를 현재 Scene의 preset 위치로
-         * 다시 설정하여 이를 초기화한다.
+         * SetupScene 이후에도 해당 위치는 유지된다.
+         *
+         *
+         * [다른 슬롯으로 이동]
+         *
+         *   → 기존 슬롯 Reset
+         *   → 새 슬롯 Prepare
+         *
+         *   → 이전 MotionRoot 상태를 이어받지 않는다.
+         *
+         *
+         * [새로운 캐릭터]
+         *
+         *   → PrepareSlot()으로 새 슬롯을 초기화하므로
+         *     이전 Motion 상태를 이어받지 않는다.
+         *
+         *
+         * ※ SlotRoot는 MotionRoot와 별개로 처리된다.
+         *
+         * SetupScene에서
+         *
+         *   targetSlot.SlotRoot.anchoredPosition = finalPos;
+         *
+         * 를 수행하기 때문에 SlotRoot 위치는
+         * 현재 Scene의 preset 기준 위치로 다시 설정된다.
          *
          *
          * [9. 기본 위치 / 크기]
          * ----------------------------------------------------------------
-         * 모든 캐릭터는 현재 Scene의 SlotPreset을 기준으로
-         * 기본 위치와 크기를 다시 적용한다.
+         * 모든 캐릭터의 SlotRoot 위치와 기본 크기는
+         * 현재 Scene의 SlotPreset을 기준으로 적용한다.
          *
-         * 기본 위치:
+         * 위치:
          *
          *   preset.position
          *   + character.visual.offset
          *
-         * 기본 크기:
+         * 크기:
          *
          *   preset.scale
          *   × character.visual.baseScale
          *
-         * 따라서 이전 Scene에서의 SlotRoot 위치나 크기 변화는
-         * 현재 Scene에 그대로 이어지지 않는다.
+         * 따라서 같은 캐릭터 + 같은 슬롯이라도
+         * SlotRoot 위치와 BaseScale은 현재 Scene 기준으로 갱신된다.
+         *
+         * 단, MotionXRoot / MotionYRoot의 위치는 별도로 변경하지 않는다.
          *
          *
          * [10. Flip]
          * ----------------------------------------------------------------
          * 현재 Scene의 startFlip 값을 항상 적용한다.
          *
-         * 따라서 이전 Scene에서 사용했던 Flip 상태는
+         * 따라서 이전 Scene의 Flip 상태는
          * 현재 Scene의 startFlip으로 덮어쓴다.
          *
          *
          * [11. SortingOrder]
          * ----------------------------------------------------------------
-         * SetupScene에서는 기본적으로
+         * 현재 Scene의
          *
          *   preset.sortingOrder
          *
          * 를 적용한다.
          *
-         * 이전 Scene에서 BringCharacterToFront()나 Motion 등에 의해
-         * 변경된 SiblingOrder는 씬 전환 시 기본값으로 돌아간다.
+         * 따라서 이전 Scene에서 변경된 SiblingOrder는
+         * 현재 Scene의 기본값으로 다시 설정된다.
          *
-         * InnerThought의 특수한 SiblingOrder는
-         * SetupScene 이후 ApplyInnerThoughtFocus()에서
-         * 다시 적용되는 구조로 취급한다.
+         * InnerThought 등 별도의 연출에서
+         * 추가로 SiblingOrder를 변경하는 경우에는
+         * SetupScene 이후 별도로 처리한다.
          *
          *
          * [12. currentSlotMap]
          * ----------------------------------------------------------------
-         * SetupScene 시작 시 기존 currentSlotMap을 백업하고
-         * 새로운 Scene 기준으로 다시 작성한다.
+         * SetupScene 시작 시 기존 currentSlotMap을 백업한다.
          *
-         * SetupScene이 끝난 뒤에는 반드시
+         * 이후 currentSlotMap을 Clear하고
+         * 현재 Scene 기준으로 다시 작성한다.
+         *
+         * SetupScene이 끝난 뒤에는
          *
          *   characterID → 현재 slotIndex
          *
-         * 형태가 되도록 한다.
+         * 형태가 된다.
          *
          *
          * [13. 전체 처리 요약]
          * ----------------------------------------------------------------
          *
          * 동일 캐릭터 + 동일 슬롯
-         *   → Slot 유지
-         *   → 기본 위치/크기/Flip/SortingOrder 적용
-         *   → MotionRoot 초기화
-         *   → resetExpression에 따라 표정 유지/초기화
+         *   → CharacterSlot 유지
+         *   → MotionXRoot / MotionYRoot 위치 유지
+         *   → 기존 표정 유지 가능
+         *   → 현재 Motion의 Coroutine / DOTween은 종료
+         *   → SlotRoot 위치는 현재 Scene preset으로 갱신
+         *   → BaseScale 갱신
+         *   → Flip 갱신
+         *   → SortingOrder 갱신
+         *
          *
          * 동일 캐릭터 + 다른 슬롯
          *   → 이전 Slot Reset
-         *   → 새 Slot에 SetCharacter
-         *   → 새 슬롯의 기본 상태로 시작
+         *   → 새 Slot Prepare
+         *   → 새 슬롯에 SetCharacter
+         *   → 이전 MotionRoot 상태를 이어받지 않음
+         *
          *
          * 새로운 캐릭터
-         *   → 새 Slot 준비
+         *   → 새 Slot Prepare
          *   → startVisible이면 Appear
          *   → 아니면 SetHidden
+         *
          *
          * 현재 Scene에 없는 캐릭터
          *   → ResetSlot
@@ -932,7 +961,7 @@ public class CharacterUI : MonoBehaviour
                 // 공격 먼저
                 yield return actor.PlayAttack(dir, motion.value, motion.duration * 0.5f);
                 // 피격
-                if (target != null)
+                if (target != null && cmd.targetID != cmd.characterID)
                 {
                     yield return target.PlayHit(-dir, motion.value * 0.5f, motion.duration * 0.5f);
                 }
@@ -982,6 +1011,9 @@ public class CharacterUI : MonoBehaviour
     
     private Vector2 GetDirection(CharacterSlot from, CharacterSlot to)
     {
+        if (from == to)
+            return Vector2.right;
+        
         RectTransform a = from.GetComponent<RectTransform>();
         RectTransform b = to.GetComponent<RectTransform>();
 
