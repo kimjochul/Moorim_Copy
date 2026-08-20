@@ -12,7 +12,8 @@ public class UpgradeData : ScriptableObject
     public string description;
 
     public UpgradeType type;
-
+    public UpgradeAcquireType acquireType = UpgradeAcquireType.Normal;
+    
     public List<UpgradeLevelData> levels;
     public int MaxLevel => levels.Count;
 }
@@ -58,4 +59,10 @@ public enum CharacterSkillLevel
 {
     Ghost = 1,
     Teleport = 2,
+}
+
+public enum UpgradeAcquireType
+{
+    Normal,
+    Story
 }
