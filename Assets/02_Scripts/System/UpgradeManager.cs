@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class UpgradeManager : Singleton<UpgradeManager>
@@ -70,7 +71,7 @@ public class UpgradeManager : Singleton<UpgradeManager>
 
     public List<UpgradeData> GetUpgradeList()
     {
-        return upgradeList;
+        return upgradeList.Where(data => data.acquireType == UpgradeAcquireType.Normal).ToList();
     }
     
     public UpgradeSaveData GetSaveData()

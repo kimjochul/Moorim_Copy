@@ -267,7 +267,8 @@ public class CharacterSlot : MonoBehaviour
         if (useDOScale)
             PlayExpressionScale();
 
-        Debug.Log($"표정 변경 {faceSprite?.name} 눈썹 변경 {eyebrowSprite?.name}");
+        if(HasFaceLayer || HasEyebrowLayer)
+            Debug.Log($"표정 변경 {faceSprite?.name} 눈썹 변경 {eyebrowSprite?.name}");
     }
     
     private void PlayExpressionScale()

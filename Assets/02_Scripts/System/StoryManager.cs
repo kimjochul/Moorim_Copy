@@ -590,6 +590,13 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
                 ingredientUnlockManager.Unlock(ingredientId);
             }
         }
+        if (currentTrigger != null && currentTrigger.upgradeTypes != null)
+        {
+            foreach (var upgradeType in currentTrigger.upgradeTypes)
+            {
+                UpgradeManager.Instance.Upgrade(upgradeType);
+            }
+        }
     }
     
     private IEnumerator ShowStoryRewardPopupRoutine()

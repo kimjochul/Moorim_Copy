@@ -8,6 +8,9 @@ public class Setting : MonoBehaviour
     [SerializeField] private Button btnClose;
     [SerializeField] private Button btnExit;
 
+    [SerializeField] private Button saveButton;
+    [SerializeField] private Button loadButton;
+    
     private UnityAction onShow;
     private UnityAction onHide;
 
@@ -19,12 +22,21 @@ public class Setting : MonoBehaviour
     {
         this.btnClose.onClick.AddListener(() => UIManager.Instance.ActiveSetting(false));
         this.btnExit.onClick.AddListener(OnClickExit);
-
+        
+        
+        saveButton.onClick.AddListener(OnClickSave);
+        loadButton.onClick.AddListener(OnClickLoad);
     }
     public void Show()
     {
         this.onShow?.Invoke();
         this.objSetting.SetActive(true);
+
+        bool openSaveLoad = !(GameManager.Instance == null ||
+                            GameManager.Instance.CurrentState is GameFlowState.Story or GameFlowState.None);
+        
+        saveButton.gameObject.SetActive(openSaveLoad);
+        loadButton.gameObject.SetActive(openSaveLoad);
     }
     public void Hide()
     {
@@ -47,5 +59,15 @@ public class Setting : MonoBehaviour
             onCancel: () => { },
             useCancel: true
         );
+    }
+    
+    private void OnClickSave()
+    {
+        UIManager.Instance.ActiveSaveUI(true);
+    }
+
+    private void OnClickLoad()
+    {
+        UIManager.Instance.ActiveLoadUI(true);
     }
 }

@@ -274,6 +274,12 @@ public class UIManager : Singleton<UIManager>
     // 세이브 화면
     public void ActiveSaveUI(bool isShow)
     {
+        if(setting != null)
+        {
+            if(setting.isActiveAndEnabled)
+                setting.Hide();
+        }
+        
         if (isShow)
             saveLoadUI.OpenSaveUI(isShow); 
         else
@@ -283,6 +289,12 @@ public class UIManager : Singleton<UIManager>
     // 로드 화면
     public void ActiveLoadUI(bool isShow)
     {
+        if(setting != null)
+        {
+            if(setting.isActiveAndEnabled)
+                setting.Hide();
+        }
+        
         if (isShow)
             saveLoadUI.OpenLoadUI(isShow); 
         else

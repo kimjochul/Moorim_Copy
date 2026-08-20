@@ -31,6 +31,9 @@ public class StoryTrigger
     [Header("스토리 종료 시 해금")]
     public List<int> unlockRecipeIds;
     public List<int> unlockIngredientIds;
+    
+    [Header("스토리 종료 시 업그레이드")]
+    public List<UpgradeType> upgradeTypes;
 }
 
 [Serializable]

@@ -37,12 +37,11 @@ public class ScrollMenu : MonoBehaviour
     public void Toggle()
     {
         if (isOpen)
-        {
             Close();
-            toolTipUI.Hide();
-        }
         else
             Open();
+        
+        toolTipUI.Hide();
     }
 
     private void Open()
