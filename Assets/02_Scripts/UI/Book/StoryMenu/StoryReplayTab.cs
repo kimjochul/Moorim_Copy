@@ -6,7 +6,6 @@ public class StoryReplayTab : BaseTab
     [SerializeField] private StoryReplaySlot slotPrefab;
     [SerializeField] private Transform contentParent;
     
-    [SerializeField] private BriefStoryInfo briefStoryInfo;
     [SerializeField] private StoryDetailPanel detailPanel;
     
     private StoryReplaySlot currentSelectedSlot;
@@ -21,7 +20,7 @@ public class StoryReplayTab : BaseTab
             Story story = StoryManager.Instance.StoryReplayManager.GetStory(storyID);
             StoryReplaySlot slot = Instantiate(slotPrefab, contentParent);
             
-            slot.Setup(story, briefStoryInfo, detailPanel, this);
+            slot.Setup(story, detailPanel, this);
         }
         
         detailPanel.gameObject.SetActive(false);

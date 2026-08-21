@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class StoryReplaySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class StoryReplaySlot : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private Button slotButton; 
@@ -13,7 +13,6 @@ public class StoryReplaySlot : MonoBehaviour, IPointerEnterHandler, IPointerExit
     [SerializeField] private Sprite selectedSprite;
     
     private Story story;
-    private BriefStoryInfo briefStoryInfo;
     private StoryDetailPanel storyDetailPanel;
     private StoryReplayTab parentTab;
 
@@ -30,10 +29,9 @@ public class StoryReplaySlot : MonoBehaviour, IPointerEnterHandler, IPointerExit
             slotButton.onClick.RemoveListener(OnClick);
     }
     
-    public void Setup(Story story, BriefStoryInfo storyInfo, StoryDetailPanel detailPanel, StoryReplayTab parent)
+    public void Setup(Story story, StoryDetailPanel detailPanel, StoryReplayTab parent)
     {
         this.story = story;
-        briefStoryInfo = storyInfo;
         this.storyDetailPanel = detailPanel;
         parentTab = parent;
 
@@ -52,16 +50,5 @@ public class StoryReplaySlot : MonoBehaviour, IPointerEnterHandler, IPointerExit
         isSelected = selected;
 
         slotButton.image.sprite = isSelected ? selectedSprite : slotSprite;
-    }
-
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-        briefStoryInfo.SetInfo(story);
-        briefStoryInfo.ShowInfo(transform as RectTransform);
-    }
-
-    public void OnPointerExit(PointerEventData eventData)
-    {
-        briefStoryInfo.HideInfo();
     }
 }

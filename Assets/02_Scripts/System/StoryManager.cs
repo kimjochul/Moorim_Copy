@@ -594,7 +594,15 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         {
             foreach (var upgradeType in currentTrigger.upgradeTypes)
             {
-                UpgradeManager.Instance.Upgrade(upgradeType);
+                if (UpgradeManager.Instance.Upgrade(upgradeType))
+                {
+                    UpgradeData upgradeData = UpgradeManager.Instance.GetData(upgradeType);
+
+                    if (upgradeData != null)
+                    {
+                        rewardPopupData.unlockedUpgrades.Add(upgradeData);
+                    }
+                }
             }
         }
     }
@@ -643,6 +651,19 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
             foreach (var ingredient in rewardPopupData.unlockedIngredients)
             {
                 message += $"{ingredient.itemName}\n";
+            }
+        }
+        if (rewardPopupData.unlockedUpgrades.Count > 0)
+        {
+            message += "\n[해금된 업그레이드]\n";
+
+            foreach (var upgrade in rewardPopupData.unlockedUpgrades)
+            {
+                int level = UpgradeManager.Instance.GetLevel(upgrade.type);
+
+                message += $"{upgrade.upgradeName}\n";
+                message += $"{level} 단계\n";
+                message += $"{upgrade.levels[level - 1].effectDescription}\n";
             }
         }
 

@@ -8,6 +8,8 @@ public class Story:ScriptableObject
 {
     public int id;
     public string storyName;
+    
+    [TextArea(3, 10)]
     public string description;
 
     public string mainSpeaker;

@@ -32,17 +32,22 @@ public class UpgradeManager : Singleton<UpgradeManager>
         return levels.GetValueOrDefault(type);
     }
 
-    public void Upgrade(UpgradeType type)
+    public bool Upgrade(UpgradeType type)
     {
         UpgradeData data = GetData(type);
+        
+        if (data == null)
+            return false;
 
         int currentLevel = GetLevel(type);
 
         if (currentLevel >= data.MaxLevel)
-            return;
+            return false;
 
         levels[type] = currentLevel + 1;
         SelectedOptionUpgraded?.Invoke(type);
+
+        return true;
     }
     
     public float GetValue(UpgradeType type)
