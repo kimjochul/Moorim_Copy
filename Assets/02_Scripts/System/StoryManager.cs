@@ -22,6 +22,15 @@ public class TriggerGroup
     public bool isActive;
 }
 
+[Serializable]
+public class StorySequence
+{
+    public string sequenceName;
+
+    [Tooltip("위에서부터 순서대로 재생됩니다.")]
+    public List<int> storyIds = new();
+}
+
 public enum StoryPlayMode
 {
     Normal,
@@ -39,7 +48,10 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
     [SerializeField] private StorySO storySO;
 
     [SerializeField] private List<TriggerGroup> triggerGroups;
-
+    
+    [Header("스토리 재생 순서")]
+    [SerializeField] private StorySequence storySequence;
+    
     [SerializeField] private RestaurantEconomy economy;
     
     [Header("캐릭터 데이터")]
@@ -97,6 +109,8 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
     
     private StoryRewardPopupData rewardPopupData;
     
+    public StorySequence StorySequence => storySequence;
+    
     public void Init()
     {
         dayManager = DayManager.Instance;
@@ -131,22 +145,29 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
             allTriggers.AddRange(group.so.triggers);
         }
 
-        var sorted = allTriggers.OrderByDescending(t => t.priority);
+        // 1. 현재 조건에서 재생 가능한 Trigger만 찾는다.
+        var availableTriggers = allTriggers.Where(trigger =>
+            {
+                if (trigger.playOnce && playedStoryIds.Contains(trigger.storyId))
+                    return false;
 
-        foreach (var trigger in sorted)
+                return CheckCondition(trigger);
+            }).ToList();
+        
+        // 2. StorySequence에 설정된 순서대로 정렬한다.
+        var sortedTriggers = availableTriggers
+            .OrderBy(trigger => GetStorySequenceOrder(trigger.storyId))
+            .ThenByDescending(trigger => trigger.priority);
+
+        // 3. Queue에 넣는다.
+        foreach (var trigger in sortedTriggers)
         {
-            if (trigger.playOnce && playedStoryIds.Contains(trigger.storyId))
-                continue;
-
-            if (!CheckCondition(trigger))
-                continue;
-
             triggerQueue.Enqueue(trigger);
 
             if (trigger.playOnce)
             {
                 playedStoryIds.Add(trigger.storyId);
-                
+
                 if (!playedStoryHistory.Contains(trigger.storyId))
                     playedStoryHistory.Add(trigger.storyId);
             }
@@ -155,6 +176,19 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         Debug.Log($"{triggerQueue.Count} stories played");
         
         StartCoroutine(PlaySceneTransition(PlayQueuedStory));
+    }
+    
+    private int GetStorySequenceOrder(int storyId)
+    {
+        if (storySequence == null || storySequence.storyIds == null)
+            return int.MaxValue;
+
+        int index = storySequence.storyIds.IndexOf(storyId);
+
+        if (index < 0)
+            return int.MaxValue;
+
+        return index;
     }
     
     private IEnumerator PlayQueuedStory()
