@@ -10463,7 +10463,7 @@ MonoBehaviour:
   m_charWidthMaxAdj: 0
   m_TextWrappingMode: 1
   m_wordWrappingRatios: 0.4
-  m_overflowMode: 0
+  m_overflowMode: 1
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
@@ -24274,7 +24274,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -24305,6 +24305,8 @@ MonoBehaviour:
   txtName: {fileID: 4886132110423289471}
   txtDescription: {fileID: 2550710115772537513}
   popupRect: {fileID: 6881496804205802936}
+  descriptionRect: {fileID: 6881496804205802936}
+  maxDescriptionHeight: 1000
 --- !u!114 &5206930470211300378
 MonoBehaviour:
   m_ObjectHideFlags: 0
