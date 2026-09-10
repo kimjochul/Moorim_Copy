@@ -12,9 +12,11 @@ public class BookView : MonoBehaviour
         public BaseMenu menuView;
     }
 
-    [Header("¸Þ´º UI")]
+    [Header("ï¿½Þ´ï¿½ UI")]
     public MenuUIPair[] menus;
 
+    [SerializeField] private BriefStoryInfo briefStoryInfo;
+    
     public UnityAction<int> OnMenuToggleClicked;
 
     private void Awake()
@@ -30,5 +32,10 @@ public class BookView : MonoBehaviour
         }
     }
 
-    public void ShowBook(bool isShow) => this.gameObject.SetActive(isShow);
+    public void ShowBook(bool isShow)
+    {
+        briefStoryInfo.HideInfo();
+        
+        this.gameObject.SetActive(isShow);
+    }
 }
