@@ -21,6 +21,8 @@ public class BondItemBuffInfo : MonoBehaviour
             BondEffectType.CookingSpeed => "조리 속도",
             BondEffectType.CustomerPatience => "손님 인내심",
             BondEffectType.MoveSpeed => "이동 속도",
+            BondEffectType.RichGuestChance => "우호 손님 확률",
+            BondEffectType.BadGuestChance => "불량 손놈 확률",
             _ => "알 수 없음"
         };
     }

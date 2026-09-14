@@ -2472,7 +2472,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 26}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &6313352703284469167
 MonoBehaviour:
@@ -3458,8 +3458,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: f8021998d19615c4e84053b2ca248694, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -3625,7 +3625,7 @@ RectTransform:
   m_Father: {fileID: 6024071823211504199}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: -9.0532}
   m_SizeDelta: {x: 16, y: 30.8935}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -3972,7 +3972,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: -1198514045, guid: f1afa1d7eb5c46a4babfd9f8428857ba, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -5830,6 +5830,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4777427366200889695}
     m_Modifications:
+    - target: {fileID: 1544722971896827096, guid: 2b1aead5a661e674b98aa3cd3d5a5d7d, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 18358a8ba3384674abb2a9ad6ac36777, type: 3}
     - target: {fileID: 1672340179651745989, guid: 2b1aead5a661e674b98aa3cd3d5a5d7d, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -5910,6 +5914,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3097700250523200767, guid: 2b1aead5a661e674b98aa3cd3d5a5d7d, type: 3}
+      propertyPath: m_Type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3097700250523200767, guid: 2b1aead5a661e674b98aa3cd3d5a5d7d, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 122570806681b784195ad79473220c69, type: 3}
     - target: {fileID: 3773765918654772023, guid: 2b1aead5a661e674b98aa3cd3d5a5d7d, type: 3}
       propertyPath: m_Name
       value: Quest
