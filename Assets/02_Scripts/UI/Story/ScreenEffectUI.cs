@@ -230,7 +230,7 @@ public class ScreenEffectUI : MonoBehaviour
         c.a = 0f;
         blurImage.color = c;
 
-        blurImage.DOFade(1f, duration).SetEase(Ease.InSine);
+        blurImage.DOFade(1f, duration).SetEase(Ease.OutQuad);
     }
 
     public void FadeFromBlur(float duration)
@@ -241,7 +241,7 @@ public class ScreenEffectUI : MonoBehaviour
             .OnComplete(() =>
             {
                 blurImage.gameObject.SetActive(false);
-            }).SetEase(Ease.InSine);
+            }).SetEase(Ease.InQuad);
     }
 
     #endregion

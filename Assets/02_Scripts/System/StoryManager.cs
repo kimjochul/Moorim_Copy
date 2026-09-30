@@ -267,6 +267,7 @@ public class StoryManager : Singleton<StoryManager>, IInitializable
         {
             screenEffectUI.SetBlackImmediate(false);
         }
+        screenEffectUI.FadeFromBlur(0.001f);
         
         Coroutine illustRoutine = null;
         Coroutine bgRoutine = null;
