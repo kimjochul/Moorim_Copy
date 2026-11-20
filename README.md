@@ -15,7 +15,7 @@
 
 ## 담당 역할 (kimjochul)
 
-손님·NPC AI, 플레이어 스킬, 튜토리얼, 카메라, 요리·상점 편의 기능, QA 도구, 메인 씬 구성
+손님·NPC AI, 플레이어 스킬, 튜토리얼, 카메라, 요리·상점 편의 기능, 안정화 및 QA, 메인 씬 구성
 
 ### 1. 특수 손님 AI
 
@@ -76,14 +76,22 @@
 - 최대 보유량을 넘지 않도록 구매 수량 제한
 - 슬롯 개수에 맞춰 인벤토리 UI 그리드 크기 자동 조절
 
-### 8. QA · 밸런싱 도구
+### 8. 안정화 (QA 기간 버그 수정)
 
-**스크립트:** [DailyTestLogger](Assets/KMJ/DailyTestLogger.cs) · [Quest](Assets/02_Scripts/Quest/Quest.cs)
+**스크립트:** [GuestBase](Assets/02_Scripts/Guest/GuestBase.cs) · [GuestManager](Assets/02_Scripts/Guest/GuestManager.cs) · [PoolManager](Assets/02_Scripts/System/PoolManager.cs) · [SeatManager](Assets/02_Scripts/Seat/SeatManager.cs) · [Gate](Assets/02_Scripts/Place/Gate.cs) · [Quest](Assets/02_Scripts/Quest/Quest.cs)
+
+- **일시정지를 IsPaused 기반으로 전환:** 일시정지 중에는 손님 대기 타이머, 인내심 게이지 코루틴, 손님 스폰이 멈추도록 `DayManager.IsPaused` 플래그로 통일
+- **씬 재로드 시 죽은 참조 해결:** 씬이 바뀌면서 파괴된 풀 오브젝트와 의자 참조를 정리. 풀에서 꺼낼 때 파괴된 오브젝트는 건너뛰고, 남은 게 없으면 새로 생성
+- **이벤트 구독 누수 해결:** 문(Gate)의 static 이벤트를 씬 단위 인스턴스 이벤트로 바꾸고, `OnDestroy`에서 구독을 해제해 씬 재시작 후 중복 호출과 오류 방지
+- **ScriptableObject 보상 오염 해결:** 퀘스트 보상을 에셋에서 직접 쓰지 않고 런타임 사본으로 처리해, 한 퀘스트의 보상 변경이 같은 템플릿의 다른 퀘스트에 번지던 문제 수정
+
+### 9. QA · 밸런싱 도구
+
+**스크립트:** [DailyTestLogger](Assets/KMJ/DailyTestLogger.cs)
 
 - 일차별 수입, 재료비, 순이익, 명성, 손님 수, 만족도 분포를 JSON으로 기록해 밸런스 조정에 활용
-- 퀘스트 보상을 런타임 사본으로 처리해 ScriptableObject 원본 데이터가 바뀌던 버그 해결
 
-### 9. 씬 · 환경
+### 10. 씬 · 환경
 
 **스크립트:** [Gate](Assets/02_Scripts/Place/Gate.cs)
 
